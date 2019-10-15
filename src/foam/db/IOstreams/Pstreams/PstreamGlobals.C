@@ -32,6 +32,8 @@ namespace Foam
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
+MPI_Comm PstreamGlobals::MPI_COMM_FOAM;
+
 // Outstanding non-blocking operations.
 //! \cond fileScope
 DynamicList<MPI_Request> PstreamGlobals::outstandingRequests_;

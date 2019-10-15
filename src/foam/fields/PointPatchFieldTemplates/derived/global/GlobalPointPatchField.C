@@ -1158,8 +1158,7 @@ void GlobalPointPatchField
         // communications.  Reconsider.  HJ, 29/Mar/2011
         if (Pstream::defaultCommsType() == Pstream::nonBlocking)
         {
-            IPstream::waitRequests();
-            OPstream::waitRequests();
+            Pstream::waitRequests();
         }
 
         tmp<Field<scalar> > trpf =
@@ -1286,8 +1285,7 @@ void GlobalPointPatchField
         // communications.  Reconsider.  HJ, 29/Mar/2011
         if (Pstream::defaultCommsType() == Pstream::nonBlocking)
         {
-            IPstream::waitRequests();
-            OPstream::waitRequests();
+            Pstream::waitRequests();
         }
 
         tmp<Field<scalar> > trpf =

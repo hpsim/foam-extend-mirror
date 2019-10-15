@@ -291,6 +291,8 @@ evaluate()
      || Pstream::defaultComms() == Pstream::nonBlocking
     )
     {
+        label nReq = Pstream::nRequests();
+
         forAll(*this, patchi)
         {
             this->operator[](patchi).initEvaluate
@@ -302,8 +304,7 @@ evaluate()
         // Block for any outstanding requests
         if (Pstream::defaultComms() == Pstream::nonBlocking)
         {
-            IPstream::waitRequests();
-            OPstream::waitRequests();
+            Pstream::waitRequests(nReq);
         }
 
         forAll(*this, patchi)
@@ -360,6 +361,8 @@ evaluateCoupled()
      || Pstream::defaultComms() == Pstream::nonBlocking
     )
     {
+        label nReq = Pstream::nRequests();
+
         forAll(*this, patchi)
         {
             if (this->operator[](patchi).coupled())
@@ -374,8 +377,7 @@ evaluateCoupled()
         // Block for any outstanding requests
         if (Pstream::defaultComms() == Pstream::nonBlocking)
         {
-            IPstream::waitRequests();
-            OPstream::waitRequests();
+            Pstream::waitRequests(nReq);
         }
 
         forAll(*this, patchi)

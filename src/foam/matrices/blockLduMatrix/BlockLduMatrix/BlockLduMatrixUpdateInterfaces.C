@@ -181,8 +181,7 @@ void Foam::BlockLduMatrix<Type>::updateInterfaces
             else
             {
                 // Block for all requests and remove storage
-                IPstream::waitRequests();
-                OPstream::waitRequests();
+                Pstream::waitRequests();
             }
         }
 

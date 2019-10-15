@@ -398,6 +398,9 @@ Foam::argList::argList
     args_(argc),
     options_(argc)
 {
+    // Code currently does not need threading
+    bool needsThread = false;
+
     // Check if this run is a parallel run by searching for any parallel option
     // If found call runPar which might filter argv
     for (int argI = 0; argI < argc; ++argI)
@@ -408,7 +411,7 @@ Foam::argList::argList
 
             if (validParOptions.found(optionName))
             {
-                parRunControl_.runPar(argc, argv);
+                parRunControl_.runPar(argc, argv, needsThread);
                 break;
             }
         }

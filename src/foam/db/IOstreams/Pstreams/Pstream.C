@@ -55,11 +55,13 @@ const Foam::NamedEnum<Foam::Pstream::commsTypes, 3>
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::Pstream::setParRun(const label nProcs)
+void Foam::Pstream::setParRun(const label nProcs, const bool haveThreads)
 {
     if (nProcs == 0)
     {
         parRun_ = false;
+        haveThreads_ = haveThreads;
+
         freeCommunicator(Pstream::worldComm);
 
         label comm = allocateCommunicator(-1, labelList(1, label(0)), false);
@@ -78,6 +80,7 @@ void Foam::Pstream::setParRun(const label nProcs)
     else
     {
         parRun_ = true;
+        haveThreads_ = haveThreads;
 
         // Redo worldComm communicator (created at static initialisation)
         freeCommunicator(Pstream::worldComm);
@@ -300,8 +303,13 @@ void Foam::Pstream::allocatePstreamCommunicator
                 << Pstream::worldComm << Foam::exit(FatalError);
         }
 
-        PstreamGlobals::MPICommunicators_[index] = MPI_COMM_WORLD;
-        MPI_Comm_group(MPI_COMM_WORLD, &PstreamGlobals::MPIGroups_[index]);
+        PstreamGlobals::MPICommunicators_[index] =
+            PstreamGlobals::MPI_COMM_FOAM;
+        MPI_Comm_group
+        (
+            PstreamGlobals::MPI_COMM_FOAM,
+            &PstreamGlobals::MPIGroups_[index]
+        );
         MPI_Comm_rank
         (
             PstreamGlobals::MPICommunicators_[index],
@@ -561,14 +569,37 @@ void Foam::Pstream::addValidParOptions(HashTable<string>& validParOptions)
 }
 
 
-bool Foam::Pstream::init(int& argc, char**& argv)
+bool Foam::Pstream::init(int& argc, char**& argv, const bool needsThread)
 {
-    MPI_Init(&argc, &argv);
+    int provided_thread_support;
+
+    MPI_Init_thread
+    (
+        &argc,
+        &argv,
+        (
+            needsThread
+          ? MPI_THREAD_MULTIPLE
+          : MPI_THREAD_SINGLE
+        ),
+        &provided_thread_support
+    );
+
+    int myGlobalRank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &myGlobalRank);
+
+    MPI_Comm_split
+    (
+        MPI_COMM_WORLD,
+        1,
+        myGlobalRank,
+        &PstreamGlobals::MPI_COMM_FOAM
+    );
 
     int numprocs;
-    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+    MPI_Comm_size(PstreamGlobals::MPI_COMM_FOAM, &numprocs);
     int myRank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
+    MPI_Comm_rank(PstreamGlobals::MPI_COMM_FOAM, &myRank);
 
     if (debug)
     {
@@ -578,14 +609,14 @@ bool Foam::Pstream::init(int& argc, char**& argv)
 
     if (numprocs <= 1)
     {
-        FatalErrorIn("Pstream::init(int& argc, char**& argv)")
+        FatalErrorInFunction
             << "bool IPstream::init(int& argc, char**& argv) : "
                "attempt to run parallel on 1 processor"
             << Foam::abort(FatalError);
     }
 
     // Initialise parallel structure
-    setParRun(numprocs);
+    setParRun(numprocs, provided_thread_support == MPI_THREAD_MULTIPLE);
 
 #   ifndef SGIMPI
     string bufferSizeName = getEnv("MPI_BUFFER_SIZE");
@@ -601,7 +632,7 @@ bool Foam::Pstream::init(int& argc, char**& argv)
     }
     else
     {
-        FatalErrorIn("Pstream::init(int& argc, char**& argv)")
+        FatalErrorInFunction
             << "Pstream::init(int& argc, char**& argv) : "
             << "environment variable MPI_BUFFER_SIZE not defined"
             << Foam::abort(FatalError);
@@ -662,14 +693,14 @@ void Foam::Pstream::exit(int errnum)
     }
     else
     {
-        MPI_Abort(MPI_COMM_WORLD, errnum);
+        MPI_Abort(PstreamGlobals::MPI_COMM_FOAM, errnum);
     }
 }
 
 
 void Foam::Pstream::abort()
 {
-    MPI_Abort(MPI_COMM_WORLD, 1);
+    MPI_Abort(PstreamGlobals::MPI_COMM_FOAM, 1);
 }
 
 
@@ -716,10 +747,8 @@ void Foam::Pstream::waitRequests(const label start)
             )
         )
         {
-            FatalErrorIn
-            (
-                "Pstream::waitRequests()"
-            )   << "MPI_Waitall returned with error" << Foam::endl;
+            FatalErrorInFunction
+                << "MPI_Waitall returned with error" << Foam::endl;
         }
 
         resetRequests(start);
@@ -883,6 +912,9 @@ void Foam::Pstream::freeTag(const word& s, const int tag)
 
 // By default this is not a parallel run
 bool Foam::Pstream::parRun_(false);
+
+// By default threads are not available
+bool Foam::Pstream::haveThreads_(false);
 
 // Free communicators
 Foam::LIFOStack<Foam::label> Foam::Pstream::freeComms_;
