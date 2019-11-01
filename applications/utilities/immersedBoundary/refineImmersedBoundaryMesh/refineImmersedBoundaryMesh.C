@@ -73,6 +73,8 @@ int main(int argc, char *argv[])
     Info<< "Number of refinement cells = " << rc.size() << endl;
 
     rib.refineMesh(rc);
+
+    Info<< "Writing refined mesh.  nCells = " << mesh.nCells() << endl;
     mesh.write();
 
     Info<< "End\n" << endl;
