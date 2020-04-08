@@ -102,9 +102,8 @@ public:
         CompactIOList(const IOobject&, const Xfer<List<T> >&);
 
 
-    // Destructor
-
-        virtual ~CompactIOList();
+    //- Destructor
+    virtual ~CompactIOList();
 
 
     // Member functions
