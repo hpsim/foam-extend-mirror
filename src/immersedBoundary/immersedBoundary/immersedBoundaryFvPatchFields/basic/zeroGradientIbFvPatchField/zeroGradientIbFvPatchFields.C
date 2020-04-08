@@ -21,41 +21,24 @@ License
     You should have received a copy of the GNU General Public License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
-Global
-    CourantNo
-
-Description
-    Calculates and outputs the mean and maximum Courant Numbers for
-    incompressible flow with immersed boundary correction.
-
-Author
-    Hrvoje Jasak, Wikki Ltd.  All rights reserved
-
 \*---------------------------------------------------------------------------*/
 
-scalar CoNum = 0.0;
-scalar meanCoNum = 0.0;
-scalar velMag = 0.0;
+#include "volFields.H"
+#include "fvPatchFields.H"
+#include "zeroGradientIbFvPatchFields.H"
+#include "addToRunTimeSelectionTable.H"
 
-if (mesh.nInternalFaces())
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+namespace Foam
 {
-    surfaceScalarField magPhi = sGamma*mag(phi);
 
-    surfaceScalarField SfUfbyDelta =
-        mesh.surfaceInterpolation::deltaCoeffs()*magPhi;
+// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-    CoNum = max(SfUfbyDelta/mesh.magSf())
-        .value()*runTime.deltaT().value();
+makePatchFields(zeroGradientIb);
 
-    meanCoNum = (sum(SfUfbyDelta)/sum(mesh.magSf()))
-        .value()*runTime.deltaT().value();
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-    velMag = max(magPhi/mesh.magSf()).value();
-}
-
-Info<< "Immersed boundary Courant Number mean: " << meanCoNum
-    << " max: " << CoNum
-    << " velocity magnitude: " << velMag
-    << endl;
+} // End namespace Foam
 
 // ************************************************************************* //
