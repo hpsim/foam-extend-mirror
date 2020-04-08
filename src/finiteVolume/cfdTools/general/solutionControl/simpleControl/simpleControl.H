@@ -60,10 +60,10 @@ protected:
     // Protected Member Functions
 
         //- Read controls from fvSolution dictionary
-        void read();
+        virtual void read();
 
         //- Return true if all convergence checks are satisfied
-        bool criteriaSatisfied();
+        virtual bool criteriaSatisfied();
 
         //- Disallow default bitwise copy construct
         simpleControl(const simpleControl&);
@@ -89,6 +89,7 @@ public:
 
     //- Destructor
     virtual ~simpleControl();
+
 
 
     // Member Functions
