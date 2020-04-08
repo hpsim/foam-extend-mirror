@@ -25,7 +25,7 @@ Class
     Foam::setToCell
 
 Description
-    A topoSetSource to select faces based on cellSet.
+    A topoSetSource to select cells based on cellSet.
 
 SourceFiles
     setToCell.C
