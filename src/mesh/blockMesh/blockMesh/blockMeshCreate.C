@@ -188,7 +188,7 @@ Foam::faceList Foam::blockMesh::createPatchFaces
             if
             (
                 blockFaces[blockFaceLabel]
-                == patchTopologyFaces[patchTopologyFaceLabel]
+             == patchTopologyFaces[patchTopologyFaceLabel]
             )
             {
                 const labelListList& blockPatchFaces =
@@ -276,7 +276,6 @@ void Foam::blockMesh::createPatches() const
     {
         patches_[patchI] = createPatchFaces(topoPatches[patchI]);
     }
-
 }
 
 
