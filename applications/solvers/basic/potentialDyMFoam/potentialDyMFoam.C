@@ -34,7 +34,7 @@ Author
 
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
-#include "pisoControl.H"
+#include "potentialControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 #   include "createTime.H"
 #   include "createDynamicFvMesh.H"
 
-    pisoControl piso(mesh);
+    potentialControl potential(mesh);
 
 #   include "createFields.H"
 #   include "initTotalVolume.H"
@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
         // Solve potential flow equations
         adjustPhi(phi, U, p);
 
-        while (piso.correctNonOrthogonal())
+        while (potential.correctNonOrthogonal())
         {
             fvScalarMatrix pEqn
             (
@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
             pEqn.setReference(pRefCell, pRefValue);
             pEqn.solve();
 
-            if (piso.finalNonOrthogonalIter())
+            if (potential.finalNonOrthogonalIter())
             {
                 phi -= pEqn.flux();
             }
