@@ -125,7 +125,8 @@ void Foam::blockMesh::checkBlockMesh(const polyMesh& bm) const
                 Info<< tab << tab
                     << "Face " << patchFacei
                     << " of patch " << patchi
-                    << " (" << patches[patchi].name() << ")"
+                    << " (" << patches[patchi].name() << ")" << nl
+                    << patchFace << nl
                     << " does not match any block faces" << endl;
 
                 ok = false;
