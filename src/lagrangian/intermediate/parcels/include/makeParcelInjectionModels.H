@@ -34,9 +34,10 @@ License
 #include "ConeInjectionMP.H"
 #include "FieldActivatedInjection.H"
 #include "KinematicLookupTableInjection.H"
-#include "ManualInjection.H"
 #include "NoInjection.H"
+#include "ManualInjection.H"
 #include "PatchInjection.H"
+#include "CellZoneInjection.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -83,6 +84,12 @@ License
     makeInjectionModelType                                                    \
     (                                                                         \
         PatchInjection,                                                       \
+        KinematicCloud,                                                       \
+        ParcelType                                                            \
+    );                                                                        \
+    makeInjectionModelType                                                    \
+    (                                                                         \
+        CellZoneInjection,                                                    \
         KinematicCloud,                                                       \
         ParcelType                                                            \
     );

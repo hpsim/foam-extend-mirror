@@ -44,6 +44,7 @@ Description
 #include "chemistrySolver.H"
 #include "timeActivatedExplicitSource.H"
 #include "radiationModel.H"
+#include "porousZones.H"
 #include "pimpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -61,6 +62,7 @@ int main(int argc, char *argv[])
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
     #include "createClouds.H"
+    #include "createExplicitSources.H"
     #include "createRadiationModel.H"
     #include "initContinuityErrs.H"
     #include "createTimeControls.H"

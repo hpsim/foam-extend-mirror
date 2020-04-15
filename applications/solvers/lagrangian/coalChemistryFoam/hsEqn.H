@@ -8,7 +8,7 @@
         DpDt
      +  coalParcels.Sh()
      +  limestoneParcels.Sh()
-     +  enthalpySource.Su()
+     +  massSource.Su()*enthalpySource.Su()
      +  radiation->Shs(thermo)
      +  chemistrySh
     );

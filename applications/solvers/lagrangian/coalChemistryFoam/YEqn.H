@@ -27,6 +27,8 @@ tmp<fv::convectionScheme<scalar> > mvConvection
               ==
                 coalParcels.Srho(i)
               + kappa*chemistry.RR(i)().dimensionedInternalField()
+              + massSource.Su()*speciesSource.Su(i),
+                mesh.solutionDict().solver("Yi")
             );
 
             Yi.max(0.0);

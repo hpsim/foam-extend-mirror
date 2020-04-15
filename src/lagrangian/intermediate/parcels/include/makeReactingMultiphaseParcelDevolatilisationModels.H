@@ -31,8 +31,9 @@ License
 #include "thermoPhysicsTypes.H"
 #include "ReactingMultiphaseCloudTemplate.H"
 
-#include "ConstantRateDevolatilisation.H"
 #include "NoDevolatilisation.H"
+#include "ConstantRateDevolatilisation.H"
+#include "DualCompetingRateDevolatilisation.H"
 #include "SingleKineticRateDevolatilisation.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -65,6 +66,13 @@ License
                                                                               \
     makeDevolatilisationModelThermoType                                       \
     (                                                                         \
+        NoDevolatilisation,                                                   \
+        ReactingMultiphaseCloud,                                              \
+        ParcelType,                                                           \
+        ThermoType                                                            \
+    );                                                                        \
+    makeDevolatilisationModelThermoType                                       \
+    (                                                                         \
         ConstantRateDevolatilisation,                                         \
         ReactingMultiphaseCloud,                                              \
         ParcelType,                                                           \
@@ -72,7 +80,7 @@ License
     );                                                                        \
     makeDevolatilisationModelThermoType                                       \
     (                                                                         \
-        NoDevolatilisation,                                                   \
+        DualCompetingRateDevolatilisation,                                    \
         ReactingMultiphaseCloud,                                              \
         ParcelType,                                                           \
         ThermoType                                                            \
