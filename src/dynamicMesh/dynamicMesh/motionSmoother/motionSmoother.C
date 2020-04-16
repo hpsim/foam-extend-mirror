@@ -944,7 +944,7 @@ bool Foam::motionSmoother::scaleMesh
         newPoints = oldPoints_ + totalDisplacement.internalField();
     }
 
-    Info<< "Moving mesh using diplacement scaling :"
+    Info<< "Moving mesh using displacement scaling :"
         << " min:" << gMin(scale_.internalField())
         << "  max:" << gMax(scale_.internalField())
         << endl;
