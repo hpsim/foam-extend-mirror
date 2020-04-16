@@ -23,19 +23,19 @@ boundaryField
 {
     frontAndBack
     {
-        type            calculated;
+        type            zeroGradient;
         value           uniform 0;
     }
 
     inlet
     {
-        type            calculated;
+        type            zeroGradient;
         value           uniform 0;
     }
 
     outlet
     {
-        type            calculated;
+        type            zeroGradient;
         value           uniform 0;
     }
 
@@ -47,7 +47,7 @@ boundaryField
 
     upperWall
     {
-        type            calculated;
+        type            zeroGradient;
         value           uniform 0;
     }
 
