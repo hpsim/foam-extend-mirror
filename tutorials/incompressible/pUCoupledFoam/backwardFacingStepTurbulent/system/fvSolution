@@ -104,7 +104,7 @@ fieldBounds
     p      -5e4 5e4;
 }
 
-SIMPLE
+potentialFlow
 {
     nNonOrthoCorrectors 0;
 }

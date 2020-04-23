@@ -50,7 +50,7 @@ PISO
 
 
 // Potential flow solution
-SIMPLE
+potentialFlow
 {
     nNonOrthogonalCorrectors 1;
     pRefCell 0;
