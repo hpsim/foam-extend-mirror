@@ -82,12 +82,6 @@ Foam::coarseAmgLevel::coarseAmgLevel
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::coarseAmgLevel::~coarseAmgLevel()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::scalarField& Foam::coarseAmgLevel::x()

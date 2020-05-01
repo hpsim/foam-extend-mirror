@@ -97,9 +97,8 @@ public:
         amgCycle(autoPtr<amgLevel> levelPtr);
 
 
-    // Destructor
-
-        ~amgCycle();
+    //- Destructor
+    ~amgCycle();
 
 
     // Member Functions

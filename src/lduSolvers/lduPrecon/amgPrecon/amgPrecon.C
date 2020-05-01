@@ -103,12 +103,6 @@ Foam::amgPrecon::amgPrecon
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::amgPrecon::~amgPrecon()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::label Foam::amgPrecon::nLevels() const

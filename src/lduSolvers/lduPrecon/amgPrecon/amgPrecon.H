@@ -31,7 +31,6 @@ Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved
 
 SourceFiles
-    amgPreconI.H
     amgPrecon.C
 
 \*---------------------------------------------------------------------------*/
@@ -108,9 +107,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~amgPrecon();
+    //- Destructor
+    virtual ~amgPrecon() = default;
 
 
     // Member Functions

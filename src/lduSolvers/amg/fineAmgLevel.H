@@ -104,10 +104,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~fineAmgLevel()
-        {}
+    //- Destructor
+    virtual ~fineAmgLevel() = default;
 
 
     // Member Functions

@@ -91,10 +91,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~amgSolver()
-        {}
+    //- Destructor
+    virtual ~amgSolver() = default;
 
 
     // Member Functions

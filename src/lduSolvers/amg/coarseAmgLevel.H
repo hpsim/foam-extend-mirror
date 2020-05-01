@@ -100,7 +100,7 @@ public:
 
 
     //- Destructor
-    virtual ~coarseAmgLevel();
+    virtual ~coarseAmgLevel() = default;
 
 
     // Member Functions
