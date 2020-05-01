@@ -108,6 +108,19 @@ Foam::lduSolverPerformance Foam::amgSolver::solve
                 gSumMag(amg_.residual(x, b, cmpt))/norm;
 
             solverPerf.nIterations()++;
+
+            // AMG initialisation check
+            if (amg_.nLevels() < 2)
+            {
+                InfoInFunction
+                    << "AMG levels not initialised properly.  nLevels = "
+                        << amg_.nLevels()
+                        << endl;
+
+                // Do not cycle: AMG coarse level creation failed
+                break;
+            }
+
         } while (!stop(solverPerf));
     }
 
