@@ -86,7 +86,7 @@ Foam::argList::initValidTables::initValidTables()
         validOptions.set(switchSetName, "key1=val1,key2=val2,...");
     }
 
-    validOptions.set("dumpControlSwitches", "");
+    validOptions.set("dumpControlSwitches", "all|debug|info|optimisation|tolerances|constants");
 
     Pstream::addValidParOptions(validParOptions);
 }
@@ -852,7 +852,7 @@ void Foam::argList::parse
             //  directly into a case's system/controlDict file to
             //  override some switches values without having to always
             // use the command-line options.
-            debug::dumpControlSwitchesToConsole();
+            debug::dumpControlSwitchesToConsole(option("dumpControlSwitches"));
         }
 
         ::exit(0);
