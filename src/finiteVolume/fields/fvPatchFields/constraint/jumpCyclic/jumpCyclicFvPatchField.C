@@ -156,11 +156,7 @@ void jumpCyclicFvPatchField<Type>::updateInterfaceMatrix
 
     // Add void pointer cast to keep compiler happy when instantiated
     // for vector/tensor fields.  HJ, 4/Jun/2013
-    if
-    (
-        reinterpret_cast<const void*>(&psiInternal)
-     == reinterpret_cast<const void*>(&this->internalField())
-    )
+    if (&psiInternal == &this->internalField())
     {
         // Get component of jump.  HJ, 11/Aug/2009
         const Field<scalar> jf = jump()().component(cmpt);

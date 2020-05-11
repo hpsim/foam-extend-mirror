@@ -262,9 +262,9 @@ void regionCouplingFvPatchField<Type>::initEvaluate
     const Pstream::commsTypes commsType
 )
 {
-    if(debug)
+    if (debug)
     {
-        Info << "In regionCouplingFvPatchField<Type>::initEvaluate() on "
+        InfoInFunction
             << this->dimensionedInternalField().name()
             << " in " << this->patch().boundaryMesh().mesh().name()
             << " " << this->updated() << endl;
@@ -291,7 +291,6 @@ void regionCouplingFvPatchField<Type>::initEvaluate
     harmonic<Type> interp(this->patch().boundaryMesh().mesh());
 
     scalarField weights = interp.weights(fOwn, fNei, this->patch());
-
     Field<Type>::operator=(weights*fOwn + (1.0 - weights)*fNei);
 
     if (regionCouplePatch_.bridgeOverlap())
@@ -324,9 +323,9 @@ void regionCouplingFvPatchField<Type>::evaluate
 template<class Type>
 void regionCouplingFvPatchField<Type>::updateCoeffs()
 {
-    if(debug)
+    if (debug)
     {
-        Info << "In regionCouplingFvPatchField<Type>::updateCoeffs() on "
+        InfoInFunction
             << this->dimensionedInternalField().name()
             << " in " << this->patch().boundaryMesh().mesh().name()
             << " " << this->updated() << endl;
