@@ -341,7 +341,6 @@ list(APPEND SOURCES
   ${schemes}/outletStabilised/outletStabilised.C
   ${schemes}/reverseLinear/reverseLinear.C
   ${schemes}/clippedLinear/clippedLinear.C
-  ${schemes}/harmonic/magLongDelta.C
   ${schemes}/harmonic/harmonic.C
   ${schemes}/fixedBlended/fixedBlended.C
   ${schemes}/localBlended/localBlended.C
