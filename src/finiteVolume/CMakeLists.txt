@@ -145,7 +145,9 @@ list(APPEND SOURCES
 #  ${basicFvPatchFields}/basicSymmetry/basicSymmetryFvPatchFields.C
   ${basicFvPatchFields}/basicSymmetry/basicSymmetryFvPatchScalarField.C
   ${basicFvPatchFields}/calculated/calculatedFvPatchFields.C
-  ${basicFvPatchFields}/calculated/calculatedFvPatchVectorNFields.C
+  ${basicFvPatchFields}/calculated/calculatedFvPatchVectorNFields.C 
+  ${basicFvPatchFields}/extrapolatedCalculated/extrapolatedCalculatedFvPatchFields.C
+  ${basicFvPatchFields}/extrapolatedCalculated/extrapolatedCalculatedFvPatchVectorNFields.C
   ${basicFvPatchFields}/coupled/coupledFvPatchFields.C
   ${basicFvPatchFields}/coupled/coupledFvPatchVectorNFields.C
   ${basicFvPatchFields}/directionMixed/directionMixedFvPatchFields.C
