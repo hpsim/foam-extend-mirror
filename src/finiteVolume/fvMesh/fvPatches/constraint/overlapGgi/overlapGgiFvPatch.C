@@ -79,7 +79,7 @@ void Foam::overlapGgiFvPatch::makeWeights(fvsPatchScalarField& w) const
 }
 
 
-// Make patch face - neighbour cell distances
+// Make patch face delta coefficients
 void Foam::overlapGgiFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 {
     if (overlapGgiPolyPatch_.master())
@@ -100,6 +100,31 @@ void Foam::overlapGgiFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
         shadow().makeDeltaCoeffs(masterDeltas);
 
         dc = interpolate(masterDeltas);
+    }
+}
+
+
+// Make patch face long distance factors
+void Foam::overlapGgiFvPatch::makeMagLongDeltas(fvsPatchScalarField& mld) const
+{
+    if (overlapGgiPolyPatch_.master())
+    {
+        vectorField d = fvPatch::delta();
+
+        // NOT stabilised for bad meshes.  HJ, 11/May/2020
+        mld = (mag(Sf() & d) + mag(Sf() & (delta() - d)))/magSf();
+    }
+    else
+    {
+        fvsPatchScalarField masterLongDeltas
+        (
+            shadow(),
+            mld.dimensionedInternalField()
+        );
+
+        shadow().makeMagLongDeltas(masterLongDeltas);
+
+        mld = interpolate(masterLongDeltas);
     }
 }
 

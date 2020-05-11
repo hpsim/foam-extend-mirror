@@ -122,8 +122,11 @@ protected:
             //- Make patch weighting factors
             virtual void makeWeights(fvsPatchScalarField&) const;
 
-            //- Make patch face - neighbour cell distances
+            //- Make patch face delta coefficients
             virtual void makeDeltaCoeffs(fvsPatchScalarField&) const;
+
+            //- Make patch face long deltas
+            virtual void makeMagLongDeltas(fvsPatchScalarField&) const;
 
             //- Make patch face non-orthogonality correction vectors
             virtual void makeCorrVecs(fvsPatchVectorField&) const;
@@ -290,10 +293,13 @@ public:
             //- Return patch weighting factors
             const scalarField& weights() const;
 
-            //- Return the face - cell distance coeffient
+            //- Return the face delta coefficients
             //  except for coupled patches for which the cell-centre
             //  to coupled-cell-centre distance coeffient is returned
             const scalarField& deltaCoeffs() const;
+
+            //- Return the face long deltas
+            const scalarField& magLongDeltas() const;
 
 
         // Evaluation functions

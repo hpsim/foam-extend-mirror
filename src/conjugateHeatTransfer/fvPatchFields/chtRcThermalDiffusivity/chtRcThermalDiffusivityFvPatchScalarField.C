@@ -184,7 +184,6 @@ Foam::chtRcThermalDiffusivityFvPatchScalarField::calcThermalDiffusivity
 
     const fvPatch& p = owner.patch();
     const fvMesh& mesh = p.boundaryMesh().mesh();
-    const magLongDelta& mld = magLongDelta::New(mesh);
 
     const scalarField fOwn = owner.forig();
     const scalarField TcOwn = TwOwn.Tc();
@@ -259,8 +258,8 @@ Foam::chtRcThermalDiffusivityFvPatchScalarField::calcThermalDiffusivity
     const scalarField weights = interp.weights(fOwn, fNei, p);
     const scalarField kHarm = weights*fOwn + (1.0 - weights)*fNei;
 
-    const scalarField kOwn = fOwn/(1.0 - p.weights())/mld.magDelta(p.index());
-    const scalarField kNei = fNei/p.weights()/mld.magDelta(p.index());
+    const scalarField kOwn = fOwn/((1.0 - p.weights())*p.magLongDeltas());
+    const scalarField kNei = fNei/(p.weights()*p.magLongDeltas());
 
     tmp<scalarField> kTmp(new scalarField(p.size()));
     scalarField& k = kTmp();
@@ -297,7 +296,6 @@ Foam::chtRcThermalDiffusivityFvPatchScalarField::calcTemperature
 
     const fvPatch& p = TwOwn.patch();
     const fvMesh& mesh = p.boundaryMesh().mesh();
-    const magLongDelta& mld = magLongDelta::New(mesh);
 
     const scalarField fOwn = ownerK.forig();
     const scalarField TcOwn = TwOwn.Tc();
@@ -372,8 +370,8 @@ Foam::chtRcThermalDiffusivityFvPatchScalarField::calcTemperature
     scalarField weights = interp.weights(fOwn, fNei, p);
     const scalarField kHarm = weights*fOwn + (1.0 - weights)*fNei;
 
-    const scalarField kOwn = fOwn/(1.0 - p.weights())/mld.magDelta(p.index());
-    const scalarField kNei = fNei/p.weights()/mld.magDelta(p.index());
+    const scalarField kOwn = fOwn/((1.0 - p.weights())*p.magLongDeltas());
+    const scalarField kNei = fNei/(p.weights()*p.magLongDeltas());
 
     tmp<scalarField> TwTmp(new scalarField(TwOwn.Tw()));
     scalarField& Tw = TwTmp();

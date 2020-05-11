@@ -47,12 +47,6 @@ namespace Foam
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::ggiFvPatch::~ggiFvPatch()
-{}
-
-
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
 // Make patch weighting factors
@@ -114,7 +108,7 @@ void Foam::ggiFvPatch::makeWeights(fvsPatchScalarField& w) const
 }
 
 
-// Make patch face - neighbour cell distances
+// Make patch face delta coefficients
 void Foam::ggiFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 {
     if (ggiPolyPatch_.master())
@@ -160,6 +154,56 @@ void Foam::ggiFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 
             // Scale partially overlapping faces
             scalePartialFaces(dc);
+        }
+    }
+}
+
+
+// Make patch face long distance factors
+void Foam::ggiFvPatch::makeMagLongDeltas(fvsPatchScalarField& mld) const
+{
+    if (ggiPolyPatch_.master())
+    {
+        // Master side. No need to scale partially uncovered or set fully
+        // uncovered faces since delta already takes it into account.
+        // VV, 25/Feb/2018.
+
+        vectorField d = fvPatch::delta();
+
+        // NOT stabilised for bad meshes.  HJ, 11/May/2020
+        mld = (mag(Sf() & d) + mag(Sf() & (delta() - d)))/magSf();
+
+        // Note: no need to bridge the overlap since delta already takes it into
+        // account. VV, 18/Oct/2017.
+    }
+    else
+    {
+        // Slave side. Interpolate the master side, scale it for partially
+        // covered faces and set deltaCoeffs for fully uncovered faces if the
+        // bridge overlap is switched on. VV, 15/Feb/2018.
+
+        fvsPatchScalarField masterLongDeltas
+        (
+            shadow(),
+            mld.dimensionedInternalField()
+        );
+
+        shadow().makeMagLongDeltas(masterLongDeltas);
+
+        mld = interpolate(masterLongDeltas);
+
+        if (bridgeOverlap())
+        {
+            // Delta coeffs for fully uncovered faces obtained from deltas on
+            // this side
+            const vectorField d = fvPatch::delta();
+            const scalarField uncoveredMagDeltas = mag(Sf() & d)/magSf();
+
+            // Set delta coeffs for uncovered faces
+            setUncoveredFaces(uncoveredMagDeltas, mld);
+
+            // Scale partially overlapping faces
+            scalePartialFaces(mld);
         }
     }
 }

@@ -23,6 +23,7 @@ License
 
 Author
     Henrik Rusche, Wikki GmbH.  All rights reserved
+    Refactoring by Hrvoje Jasak
 
 \*---------------------------------------------------------------------------*/
 
@@ -32,7 +33,6 @@ Author
 #include "fvPatchFieldMapper.H"
 #include "volFields.H"
 #include "fvMatrices.H"
-#include "magLongDelta.H"
 #include "basicThermo.H"
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
@@ -124,10 +124,7 @@ Foam::tmp<Foam::scalarField> Foam::chtRegionCoupleBase::forig() const
 // Return a named shadow patch field
 Foam::tmp<Foam::scalarField> Foam::chtRegionCoupleBase::korig() const
 {
-    const fvPatch& p = patch();
-    const magLongDelta& mld = magLongDelta::New(p.boundaryMesh().mesh());
-
-    return forig()/(1 - p.weights())/mld.magDelta(p.index());
+    return forig()/((1 - patch().weights())*patch().magLongDeltas());
 }
 
 

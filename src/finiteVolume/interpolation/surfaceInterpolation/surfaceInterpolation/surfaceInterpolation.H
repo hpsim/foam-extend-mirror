@@ -69,16 +69,19 @@ class surfaceInterpolation
         // Demand-driven data
 
             //- Central-differencing weighting factors
-            mutable surfaceScalarField* weightingFactors_;
+            mutable surfaceScalarField* weightingFactorsPtr_;
 
-            //- Face-gradient difference factors
-            mutable surfaceScalarField* deltaCoeffs_;
+            //- Face delta coefficients
+            mutable surfaceScalarField* deltaCoeffsPtr_;
+
+            //- Magnitude of the normal distances to the face
+            mutable surfaceScalarField* magLongDeltasPtr_;
 
             //- Is mesh orthogonal
             mutable bool orthogonal_;
 
             //- Non-orthogonality correction vectors
-            mutable surfaceVectorField* correctionVectors_;
+            mutable surfaceVectorField* correctionVectorsPtr_;
 
 
     // Private member functions
@@ -86,8 +89,11 @@ class surfaceInterpolation
         //- Construct central-differencing weighting factors
         void makeWeights() const;
 
-        //- Construct face-gradient difference factors
+        //- Construct delta coefficients
         void makeDeltaCoeffs() const;
+
+        //- Construct long deltas
+        void makeMagLongDeltas() const;
 
         //- Construct non-orthogonality correction vectors
         void makeCorrectionVectors() const;
@@ -145,11 +151,14 @@ public:
             return solutionDict_;
         }
 
-        //- Return reference to weighting factors array
+        //- Return reference to weighting factors
         const surfaceScalarField& weights() const;
 
-        //- Return reference to difference factors array
+        //- Return reference to delta coefficients
         const surfaceScalarField& deltaCoeffs() const;
+
+        //- Return reference to long deltas
+        const surfaceScalarField& magLongDeltas() const;
 
         //- Return whether mesh is orthogonal or not
         bool orthogonal() const;

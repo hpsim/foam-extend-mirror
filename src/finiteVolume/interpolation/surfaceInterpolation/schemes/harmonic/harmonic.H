@@ -45,7 +45,6 @@ SourceFiles
 #include "surfaceInterpolationScheme.H"
 #include "volFields.H"
 #include "surfaceFields.H"
-#include "magLongDelta.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

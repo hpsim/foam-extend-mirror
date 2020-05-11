@@ -34,17 +34,15 @@ License
 
 namespace Foam
 {
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-defineTypeNameAndDebug(cyclicFvPatch, 0);
-addToRunTimeSelectionTable(fvPatch, cyclicFvPatch, polyPatch);
+    defineTypeNameAndDebug(cyclicFvPatch, 0);
+    addToRunTimeSelectionTable(fvPatch, cyclicFvPatch, polyPatch);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 // Make mesh cell centres.  Moved from fvMeshGeometry
-void cyclicFvPatch::makeC(slicedSurfaceVectorField& C) const
+void Foam::cyclicFvPatch::makeC(slicedSurfaceVectorField& C) const
 {
     C.boundaryField()[index()].UList<vector>::operator=
     (
@@ -54,7 +52,7 @@ void cyclicFvPatch::makeC(slicedSurfaceVectorField& C) const
 
 
 // Make patch weighting factors
-void cyclicFvPatch::makeWeights(fvsPatchScalarField& w) const
+void Foam::cyclicFvPatch::makeWeights(fvsPatchScalarField& w) const
 {
     const scalarField& magFa = magSf();
 
@@ -69,13 +67,13 @@ void cyclicFvPatch::makeWeights(fvsPatchScalarField& w) const
     scalar maxMatchError = 0;
     label errorFace = -1;
 
-    for (label facei = 0; facei < sizeby2; facei++)
+    for (label faceI = 0; faceI < sizeby2; faceI++)
     {
-        scalar avFa = (magFa[facei] + magFa[facei + sizeby2])/2.0;
+        scalar avFa = (magFa[faceI] + magFa[faceI + sizeby2])/2.0;
 
         if
         (
-            mag(magFa[facei] - magFa[facei + sizeby2])/avFa
+            mag(magFa[faceI] - magFa[faceI + sizeby2])/avFa
           > polyPatch::matchTol_()
         )
         {
@@ -84,17 +82,17 @@ void cyclicFvPatch::makeWeights(fvsPatchScalarField& w) const
                 Foam::max
                 (
                     maxMatchError,
-                    mag(magFa[facei] - magFa[facei + sizeby2])/avFa
+                    mag(magFa[faceI] - magFa[faceI + sizeby2])/avFa
                 );
 
-            errorFace = facei;
+            errorFace = faceI;
         }
 
-        scalar di = deltas[facei];
-        scalar dni = deltas[facei + sizeby2];
+        scalar di = deltas[faceI];
+        scalar dni = deltas[faceI + sizeby2];
 
-        w[facei] = dni/(di + dni);
-        w[facei + sizeby2] = 1 - w[facei];
+        w[faceI] = dni/(di + dni);
+        w[faceI + sizeby2] = 1 - w[faceI];
     }
 
     // Check for error in matching
@@ -115,23 +113,46 @@ void cyclicFvPatch::makeWeights(fvsPatchScalarField& w) const
 
 
 // Make patch face - neighbour cell distances
-void cyclicFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
+void Foam::cyclicFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 {
     vectorField d = delta();
     vectorField n = nf();
     label sizeby2 = d.size()/2;
 
-    for (label facei = 0; facei < sizeby2; facei++)
+    for (label faceI = 0; faceI < sizeby2; faceI++)
     {
         // Stabilised form for bad meshes.  HJ, 24/Aug/2011
-        dc[facei] = 1.0/max(n[facei] & d[facei], 0.05*mag(d[facei]));
-        dc[facei + sizeby2] = dc[facei];
+        dc[faceI] = 1.0/max(n[faceI] & d[faceI], 0.05*mag(d[faceI]));
+        dc[faceI + sizeby2] = dc[faceI];
+    }
+}
+
+
+// Make patch face - neighbour cell distances
+void Foam::cyclicFvPatch::makeMagLongDeltas(fvsPatchScalarField& mld) const
+{
+    vectorField d = fvPatch::delta();
+    vectorField patchDelta = this->delta();
+    vectorField pSf = Sf();
+    scalarField pMagSf = magSf();
+    label sizeby2 = d.size()/2;
+
+    for (label faceI = 0; faceI < sizeby2; faceI++)
+    {
+        // NOT stabilised for bad meshes.  HJ, 11/May/2020
+        mld[faceI] =
+        (
+            mag(pSf[faceI] & d[faceI])
+          + mag(pSf[faceI] & (patchDelta[faceI] - d[faceI]))
+        )/pMagSf[faceI];
+
+        mld[faceI + sizeby2] = mld[faceI];
     }
 }
 
 
 // Return delta (P to N) vectors across coupled patch
-tmp<vectorField> cyclicFvPatch::delta() const
+Foam::tmp<Foam::vectorField> Foam::cyclicFvPatch::delta() const
 {
     vectorField patchD = fvPatch::delta();
     label sizeby2 = patchD.size()/2;
@@ -142,24 +163,24 @@ tmp<vectorField> cyclicFvPatch::delta() const
     // To the transformation if necessary
     if (parallel())
     {
-        for (label facei = 0; facei < sizeby2; facei++)
+        for (label faceI = 0; faceI < sizeby2; faceI++)
         {
-            vector ddi = patchD[facei];
-            vector dni = patchD[facei + sizeby2];
+            vector ddi = patchD[faceI];
+            vector dni = patchD[faceI + sizeby2];
 
-            pdv[facei] = ddi - dni;
-            pdv[facei + sizeby2] = -pdv[facei];
+            pdv[faceI] = ddi - dni;
+            pdv[faceI + sizeby2] = -pdv[faceI];
         }
     }
     else
     {
-        for (label facei = 0; facei < sizeby2; facei++)
+        for (label faceI = 0; faceI < sizeby2; faceI++)
         {
-            vector ddi = patchD[facei];
-            vector dni = patchD[facei + sizeby2];
+            vector ddi = patchD[faceI];
+            vector dni = patchD[faceI + sizeby2];
 
-            pdv[facei] = ddi - transform(forwardT()[0], dni);
-            pdv[facei + sizeby2] = -transform(reverseT()[0], pdv[facei]);
+            pdv[faceI] = ddi - transform(forwardT()[0], dni);
+            pdv[faceI + sizeby2] = -transform(reverseT()[0], pdv[faceI]);
         }
     }
 
@@ -167,7 +188,7 @@ tmp<vectorField> cyclicFvPatch::delta() const
 }
 
 
-tmp<labelField> cyclicFvPatch::interfaceInternalField
+Foam::tmp<Foam::labelField> Foam::cyclicFvPatch::interfaceInternalField
 (
     const unallocLabelList& internalData
 ) const
@@ -176,7 +197,7 @@ tmp<labelField> cyclicFvPatch::interfaceInternalField
 }
 
 
-tmp<labelField> cyclicFvPatch::transfer
+Foam::tmp<Foam::labelField> Foam::cyclicFvPatch::transfer
 (
     const Pstream::commsTypes,
     const unallocLabelList& interfaceData
@@ -187,17 +208,17 @@ tmp<labelField> cyclicFvPatch::transfer
 
     label sizeby2 = this->size()/2;
 
-    for (label facei=0; facei<sizeby2; facei++)
+    for (label faceI = 0; faceI < sizeby2; faceI++)
     {
-        pnf[facei] = interfaceData[facei + sizeby2];
-        pnf[facei + sizeby2] = interfaceData[facei];
+        pnf[faceI] = interfaceData[faceI + sizeby2];
+        pnf[faceI + sizeby2] = interfaceData[faceI];
     }
 
     return tpnf;
 }
 
 
-tmp<labelField> cyclicFvPatch::internalFieldTransfer
+Foam::tmp<Foam::labelField> Foam::cyclicFvPatch::internalFieldTransfer
 (
     const Pstream::commsTypes commsType,
     const unallocLabelList& iF
@@ -210,18 +231,14 @@ tmp<labelField> cyclicFvPatch::internalFieldTransfer
 
     label sizeby2 = this->size()/2;
 
-    for (label facei=0; facei<sizeby2; facei++)
+    for (label faceI = 0; faceI < sizeby2; faceI++)
     {
-        pnf[facei] = iF[faceCells[facei + sizeby2]];
-        pnf[facei + sizeby2] = iF[faceCells[facei]];
+        pnf[faceI] = iF[faceCells[faceI + sizeby2]];
+        pnf[faceI + sizeby2] = iF[faceCells[faceI]];
     }
 
     return tpnf;
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

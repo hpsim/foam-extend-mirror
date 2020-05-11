@@ -34,15 +34,13 @@ License
 namespace Foam
 {
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-defineTypeNameAndDebug(processorFvPatch, 0);
-addToRunTimeSelectionTable(fvPatch, processorFvPatch, polyPatch);
-
+    defineTypeNameAndDebug(processorFvPatch, 0);
+    addToRunTimeSelectionTable(fvPatch, processorFvPatch, polyPatch);
+}
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-void processorFvPatch::makeWeights(fvsPatchScalarField& w) const
+void Foam::processorFvPatch::makeWeights(fvsPatchScalarField& w) const
 {
     if (Pstream::parRun())
     {
@@ -76,23 +74,39 @@ void processorFvPatch::makeWeights(fvsPatchScalarField& w) const
 }
 
 
-void processorFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
+void Foam::processorFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 {
     if (Pstream::parRun())
     {
         vectorField d = delta();
 
-        // Stabilised form for bad meshes.  HJ, 24/Aug/2011
+        // NOT stabilised for bad meshes.  HJ, 11/May/2020
         dc = 1.0/max((nf() & d), 0.05*mag(d));
     }
     else
     {
+        // NOT stabilised for bad meshes.  HJ, 11/May/2020
         dc = 1.0/(nf() & fvPatch::delta());
     }
 }
 
 
-tmp<vectorField> processorFvPatch::delta() const
+void Foam::processorFvPatch::makeMagLongDeltas(fvsPatchScalarField& mld) const
+{
+    vectorField d = fvPatch::delta();
+
+    if (Pstream::parRun())
+    {
+        mld = (mag(Sf() & d) + mag(Sf() & (delta() - d)))/magSf();
+    }
+    else
+    {
+        mld = mag(Sf() & d)/magSf();
+    }
+}
+
+
+Foam::tmp<Foam::vectorField> Foam::processorFvPatch::delta() const
 {
     if (Pstream::parRun())
     {
@@ -127,7 +141,7 @@ tmp<vectorField> processorFvPatch::delta() const
 }
 
 
-tmp<labelField> processorFvPatch::interfaceInternalField
+Foam::tmp<Foam::labelField> Foam::processorFvPatch::interfaceInternalField
 (
     const unallocLabelList& internalData
 ) const
@@ -136,7 +150,7 @@ tmp<labelField> processorFvPatch::interfaceInternalField
 }
 
 
-void processorFvPatch::initTransfer
+void Foam::processorFvPatch::initTransfer
 (
     const Pstream::commsTypes commsType,
     const unallocLabelList& interfaceData
@@ -146,7 +160,7 @@ void processorFvPatch::initTransfer
 }
 
 
-tmp<labelField> processorFvPatch::transfer
+Foam::tmp<Foam::labelField> Foam::processorFvPatch::transfer
 (
     const Pstream::commsTypes commsType,
     const unallocLabelList&
@@ -156,7 +170,7 @@ tmp<labelField> processorFvPatch::transfer
 }
 
 
-void processorFvPatch::initInternalFieldTransfer
+void Foam::processorFvPatch::initInternalFieldTransfer
 (
     const Pstream::commsTypes commsType,
     const unallocLabelList& iF
@@ -166,7 +180,7 @@ void processorFvPatch::initInternalFieldTransfer
 }
 
 
-tmp<labelField> processorFvPatch::internalFieldTransfer
+Foam::tmp<Foam::labelField> Foam::processorFvPatch::internalFieldTransfer
 (
     const Pstream::commsTypes commsType,
     const unallocLabelList&
@@ -176,7 +190,7 @@ tmp<labelField> processorFvPatch::internalFieldTransfer
 }
 
 
-void processorFvPatch::initProlongationTransfer
+void Foam::processorFvPatch::initProlongationTransfer
 (
     const Pstream::commsTypes commsType,
     const crMatrix& filteredP
@@ -188,7 +202,7 @@ void processorFvPatch::initProlongationTransfer
 }
 
 
-autoPtr<crMatrix> processorFvPatch::prolongationTransfer
+Foam::autoPtr<Foam::crMatrix> Foam::processorFvPatch::prolongationTransfer
 (
     const Pstream::commsTypes commsType,
     const crMatrix& filteredP
@@ -201,9 +215,5 @@ autoPtr<crMatrix> processorFvPatch::prolongationTransfer
     return tnbrP;
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

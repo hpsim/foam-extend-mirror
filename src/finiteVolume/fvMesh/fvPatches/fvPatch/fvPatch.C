@@ -58,6 +58,16 @@ void fvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 }
 
 
+void fvPatch::makeMagLongDeltas(fvsPatchScalarField& mld) const
+{
+    const vectorField d = delta();
+
+    // Check for boundedness on non-orthogonal boundary faces
+    // HJ, 11/May/2020
+    mld = mag(Sf() & d)/magSf();
+}
+
+
 void fvPatch::makeCorrVecs(fvsPatchVectorField& cv) const
 {
     cv = vector::zero;
@@ -186,6 +196,12 @@ tmp<vectorField> fvPatch::delta() const
 const scalarField& fvPatch::deltaCoeffs() const
 {
     return boundaryMesh().mesh().deltaCoeffs().boundaryField()[index()];
+}
+
+
+const scalarField& fvPatch::magLongDeltas() const
+{
+    return boundaryMesh().mesh().magLongDeltas().boundaryField()[index()];
 }
 
 

@@ -48,12 +48,6 @@ namespace Foam
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::mixingPlaneFvPatch::~mixingPlaneFvPatch()
-{}
-
-
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 // Make patch weighting factors
@@ -113,6 +107,30 @@ void Foam::mixingPlaneFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
         shadow().makeDeltaCoeffs(masterDeltas);
 
         dc = interpolate(masterDeltas);
+    }
+}
+
+
+void Foam::mixingPlaneFvPatch::makeMagLongDeltas(fvsPatchScalarField& mld) const
+{
+    if (mixingPlanePolyPatch_.master())
+    {
+        vectorField d = fvPatch::delta();
+
+        // NOT stabilised for bad meshes.  HJ, 11/May/2020
+        mld = (mag(Sf() & d) + mag(Sf() & (delta() - d)))/magSf();
+    }
+    else
+    {
+        fvsPatchScalarField masterLongDeltas
+        (
+            shadow(),
+            mld.dimensionedInternalField()
+        );
+
+        shadow().makeDeltaCoeffs(masterLongDeltas);
+
+        mld = interpolate(masterLongDeltas);
     }
 }
 

@@ -69,8 +69,11 @@ protected:
         //- Make patch weighting factors
         virtual void makeWeights(fvsPatchScalarField&) const;
 
-        //- Make patch face - neighbour cell distances
+        //- Make patch face delta coefficients
         virtual void makeDeltaCoeffs(fvsPatchScalarField&) const;
+
+        //- Construct long distance factors
+        virtual void makeMagLongDeltas(fvsPatchScalarField&) const;
 
         //- Make patch face non-orthogonality correction vectors
         virtual void makeCorrVecs(fvsPatchVectorField&) const;
@@ -93,7 +96,7 @@ public:
 
 
     //- Destructor
-    virtual ~ggiFvPatch();
+    virtual ~ggiFvPatch() = default;
 
 
     // Member functions
