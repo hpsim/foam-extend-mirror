@@ -25,7 +25,7 @@ License
 
 #include "fvcReconstruct.H"
 #include "fvMesh.H"
-#include "zeroGradientFvPatchFields.H"
+#include "extrapolatedCalculatedFvPatchFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -70,7 +70,7 @@ reconstruct
             ),
             mesh,
             ssf.dimensions()/dimArea,
-            zeroGradientFvPatchField<GradType>::typeName
+            extrapolatedCalculatedFvPatchField<GradType>::typeName
         )
     );
     GeometricField<GradType, fvPatchField, volMesh>& reconField =

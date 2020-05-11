@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "gaussGrad.H"
-#include "zeroGradientFvPatchField.H"
+#include "extrapolatedCalculatedFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -75,7 +75,7 @@ gaussGrad<Type>::gradf
                 ssf.dimensions()/dimLength,
                 pTraits<GradType>::zero
             ),
-            zeroGradientFvPatchField<GradType>::typeName
+            extrapolatedCalculatedFvPatchField<GradType>::typeName
         )
     );
     GeometricField<GradType, fvPatchField, volMesh>& gGrad = tgGrad();

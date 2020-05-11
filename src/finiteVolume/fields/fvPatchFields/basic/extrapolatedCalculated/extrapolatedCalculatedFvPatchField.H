@@ -22,20 +22,35 @@ License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::calculatedFvPatchField
+    Foam::extrapolatedCalculatedFvPatchField
+
+Group
+    grpGenericBoundaryConditions
 
 Description
-    Foam::calculatedFvPatchField
+    This boundary condition applies a zero-gradient condition from the patch
+    internal field onto the patch faces when \c evaluated but may also be
+    assigned.  \c snGrad returns the patch gradient evaluated from the current
+    internal and patch field values rather than returning zero.
+
+Usage
+    Example of the boundary condition specification:
+    \verbatim
+    <patchName>
+    {
+        type            extrapolatedCalculated;
+    }
+    \endverbatim
 
 SourceFiles
-    calculatedFvPatchField.C
+    extrapolatedCalculatedFvPatchField.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef calculatedFvPatchField_H
-#define calculatedFvPatchField_H
+#ifndef extrapolatedCalculatedFvPatchField_H
+#define extrapolatedCalculatedFvPatchField_H
 
-#include "fvPatchField.H"
+#include "calculatedFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -43,32 +58,32 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                    Class calculatedFvPatchField Declaration
+              Class extrapolatedCalculatedFvPatchField Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
-class calculatedFvPatchField
+class extrapolatedCalculatedFvPatchField
 :
-    public fvPatchField<Type>
+    public calculatedFvPatchField<Type>
 {
 
 public:
 
     //- Runtime type information
-    TypeName("calculated");
+    TypeName("extrapolatedCalculated");
 
 
     // Constructors
 
         //- Construct from patch and internal field
-        calculatedFvPatchField
+        extrapolatedCalculatedFvPatchField
         (
             const fvPatch&,
             const DimensionedField<Type, volMesh>&
         );
 
         //- Construct from patch, internal field and dictionary
-        calculatedFvPatchField
+        extrapolatedCalculatedFvPatchField
         (
             const fvPatch&,
             const DimensionedField<Type, volMesh>&,
@@ -77,18 +92,18 @@ public:
         );
 
         //- Construct by mapping given patchField<Type> onto a new patch
-        calculatedFvPatchField
+        extrapolatedCalculatedFvPatchField
         (
-            const calculatedFvPatchField<Type>&,
+            const extrapolatedCalculatedFvPatchField<Type>&,
             const fvPatch&,
             const DimensionedField<Type, volMesh>&,
             const fvPatchFieldMapper&
         );
 
         //- Construct as copy
-        calculatedFvPatchField
+        extrapolatedCalculatedFvPatchField
         (
-            const calculatedFvPatchField<Type>&
+            const extrapolatedCalculatedFvPatchField<Type>&
         );
 
         //- Construct and return a clone
@@ -96,70 +111,37 @@ public:
         {
             return tmp<fvPatchField<Type> >
             (
-                new calculatedFvPatchField<Type>(*this)
+                new extrapolatedCalculatedFvPatchField<Type>(*this)
             );
         }
 
         //- Construct as copy setting internal field reference
-        calculatedFvPatchField
+        extrapolatedCalculatedFvPatchField
         (
-            const calculatedFvPatchField<Type>&,
+            const extrapolatedCalculatedFvPatchField<Type>&,
             const DimensionedField<Type, volMesh>&
         );
 
         //- Construct and return a clone setting internal field reference
-        virtual tmp<fvPatchField<Type> > clone
+        virtual tmp<fvPatchField<Type>> clone
         (
             const DimensionedField<Type, volMesh>& iF
         ) const
         {
-            return tmp<fvPatchField<Type> >
+            return tmp<fvPatchField<Type>>
             (
-                new calculatedFvPatchField<Type>(*this, iF)
+                new extrapolatedCalculatedFvPatchField<Type>(*this, iF)
             );
         }
 
 
     // Member functions
 
-        // Access
-
-            //- Return true if this patch field fixes a value.
-            //  Needed to check if a level has to be specified while solving
-            //  Poissons equations.
-            virtual bool fixesValue() const
-            {
-                return true;
-            }
-
-
-        // Evaluation functions
-
-            //- Return the matrix diagonal coefficients corresponding to the
-            //  evaluation of the value of this patchField with given weights
-            virtual tmp<Field<Type> > valueInternalCoeffs
-            (
-                const tmp<scalarField>&
-            ) const;
-
-            //- Return the matrix source coefficients corresponding to the
-            //  evaluation of the value of this patchField with given weights
-            virtual tmp<Field<Type> > valueBoundaryCoeffs
-            (
-                const tmp<scalarField>&
-            ) const;
-
-            //- Return the matrix diagonal coefficients corresponding to the
-            //  evaluation of the gradient of this patchField
-            tmp<Field<Type> > gradientInternalCoeffs() const;
-
-            //- Return the matrix source coefficients corresponding to the
-            //  evaluation of the gradient of this patchField
-            tmp<Field<Type> > gradientBoundaryCoeffs() const;
-
-
-        //- Write
-        virtual void write(Ostream&) const;
+        //- Evaluate the patch field
+        virtual void evaluate
+        (
+            const Pstream::commsTypes commsType = Pstream::blocking
+        );
 };
 
 
@@ -170,7 +152,7 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-#   include "calculatedFvPatchField.C"
+    #include "extrapolatedCalculatedFvPatchField.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

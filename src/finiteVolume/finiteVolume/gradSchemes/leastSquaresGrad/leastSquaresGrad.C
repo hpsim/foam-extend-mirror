@@ -30,7 +30,7 @@ License
 #include "volMesh.H"
 #include "surfaceMesh.H"
 #include "GeometricField.H"
-#include "zeroGradientFvPatchField.H"
+#include "extrapolatedCalculatedFvPatchFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -81,7 +81,7 @@ leastSquaresGrad<Type>::calcGrad
                 vsf.dimensions()/dimLength,
                 pTraits<GradType>::zero
             ),
-            zeroGradientFvPatchField<GradType>::typeName
+            extrapolatedCalculatedFvPatchField<GradType>::typeName
         )
     );
     GeometricField<GradType, fvPatchField, volMesh>& lsGrad = tlsGrad();
