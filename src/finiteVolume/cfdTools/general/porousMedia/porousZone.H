@@ -93,15 +93,14 @@ namespace Foam
 
 // Forward declaration of classes
 class fvMesh;
-
-// Forward declaration of friend functions and operators
 class porousZone;
 
+// Forward declaration of friend functions and operators
 Ostream& operator<<(Ostream&, const porousZone&);
 
 
 /*---------------------------------------------------------------------------*\
-                        Class porousZone Declaration
+                          Class porousZone Declaration
 \*---------------------------------------------------------------------------*/
 
 class porousZone
@@ -145,7 +144,7 @@ class porousZone
 
         //- Specific heat capacity of primary fluid
         scalar Cpri_;
-    
+
         //- Mass flow of aux fluid
         scalar Maux_;
 
