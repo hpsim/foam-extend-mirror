@@ -70,13 +70,13 @@ class regionCouplePolyPatch
         //- Interpolation zone name
         const word zoneName_;
 
-        //- Are the regions attached
+        //- Are the regions attached?
         mutable Switch attached_;
 
         //- Master side.  Defined by user, checked for consistency
         Switch master_;
 
-        //- Are the region attached walls
+        //- Is this a wall patch in detached state?
         Switch isWall_;
 
         //- Use bridging to fix overlap error in interpolation

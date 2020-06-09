@@ -40,7 +40,7 @@ Note
     is calculated for the cell even if no such intersection exists, eg there
     are only 1 or 2 faces protruding through the surface.
 
-    The reason for this is thta due to the Marooney Maneouvre correction,
+    The reason for this is that due to the Marooney Maneouvre correction,
     the cell cut status is determined based on the face cut status:
     if there are properly cut faces in the cell, a valid cell intersection
     needs to be provided.
