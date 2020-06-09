@@ -139,7 +139,7 @@ Foam::coupledSolverPerformance Foam::coupledSmoothSolver::solve
     solverPerf.initialResidual() = gSumMag(Ax)/normFactor;
     solverPerf.finalResidual() = solverPerf.initialResidual();
 
-    if (!solverPerf.checkConvergence(tolerance_, relTolerance_))
+    if (!stop(solverPerf))
     {
         autoPtr<coupledLduSmoother> smootherPtr =
             coupledLduSmoother::New

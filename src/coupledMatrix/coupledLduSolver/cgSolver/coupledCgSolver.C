@@ -128,7 +128,7 @@ Foam::coupledSolverPerformance Foam::coupledCgSolver::solve
     solverPerf.initialResidual() = gSumMag(rA)/normFactor;
     solverPerf.finalResidual() = solverPerf.initialResidual();
 
-    if (!solverPerf.checkConvergence(tolerance_, relTolerance_))
+    if (!stop(solverPerf))
     {
         scalar rho = matrix_[0].great_;
         scalar rhoOld = rho;
