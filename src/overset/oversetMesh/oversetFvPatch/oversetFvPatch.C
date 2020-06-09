@@ -55,6 +55,12 @@ void Foam::oversetFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 }
 
 
+void Foam::oversetFvPatch::makeMagLongDeltas(fvsPatchScalarField& dc) const
+{
+    fvPatch::makeMagLongDeltas(dc);
+}
+
+
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 Foam::tmp<Foam::vectorField> Foam::oversetFvPatch::delta() const

@@ -69,8 +69,11 @@ protected:
         //- Make patch weighting factors
         void makeWeights(fvsPatchScalarField&) const;
 
-        //- Make patch face - neighbour cell distances
+        //- Make patch face delta coeffs
         void makeDeltaCoeffs(fvsPatchScalarField&) const;
+
+        //- Make patch face long deltas
+        void makeMagLongDeltas(fvsPatchScalarField&) const;
 
 
 public:
