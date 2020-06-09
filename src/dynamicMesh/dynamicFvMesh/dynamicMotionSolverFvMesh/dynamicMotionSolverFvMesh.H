@@ -83,9 +83,8 @@ public:
         dynamicMotionSolverFvMesh(const IOobject& io);
 
 
-    // Destructor
-
-        virtual ~dynamicMotionSolverFvMesh();
+    //- Destructor
+    virtual ~dynamicMotionSolverFvMesh();
 
 
     // Member Functions

@@ -99,9 +99,8 @@ public:
         motionSolver(const polyMesh& mesh);
 
 
-    // Destructor
-
-        virtual ~motionSolver();
+    //- Destructor
+    virtual ~motionSolver();
 
 
     // Member Functions
