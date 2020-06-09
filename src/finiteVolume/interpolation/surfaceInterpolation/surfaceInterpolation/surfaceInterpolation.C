@@ -104,7 +104,7 @@ Foam::surfaceInterpolation::magLongDeltas() const
 {
     if (!magLongDeltasPtr_)
     {
-        makeLongDeltas();
+        makeMagLongDeltas();
     }
 
     return *magLongDeltasPtr_;
@@ -347,7 +347,7 @@ void Foam::surfaceInterpolation::makeMagLongDeltas() const
         mldIn[faceI] = (SfdOwn + SfdNei)/magSf[faceI];
     }
 
-    forAll (DeltaCoeffs.boundaryField(), patchi)
+    forAll (magLongDeltas.boundaryField(), patchi)
     {
         mesh_.boundary()[patchi].makeMagLongDeltas
         (
