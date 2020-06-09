@@ -180,7 +180,7 @@ void filterPatches(polyMesh& mesh)
     label nAllPatches = returnReduce(allPatches.size(), sumOp<label>());
     if (nAllPatches != nOldPatches)
     {
-        Info<< "Removing patches." << endl;
+        Info<< "Removing zero sizes patches." << endl;
         allPatches.shrink();
         mesh.removeBoundary();
         mesh.addPatches(allPatches);
@@ -518,6 +518,7 @@ void syncPoints
 int main(int argc, char *argv[])
 {
 #   include "addRegionOption.H"
+    argList::validOptions.insert("keepZeroSizedPatches", "");
     argList::validOptions.insert("overwrite", "");
 
 #   include "setRootCase.H"
@@ -528,6 +529,7 @@ int main(int argc, char *argv[])
     args.optionReadIfPresent("region", meshRegionName);
 
     const bool overwrite = args.optionFound("overwrite");
+    const bool keepZeroSizedPatches = args.optionFound("keepZeroSizedPatches");
 
     Info<< "Reading createPatchDict." << nl << endl;
 
@@ -892,9 +894,11 @@ int main(int argc, char *argv[])
     // 3. Remove zeros-sized patches
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    Info<< "Removing patches with no faces in them." << nl<< endl;
-    filterPatches(mesh);
-
+    if (!keepZeroSizedPatches)
+    {
+        Info<< "Removing patches with no faces in them." << nl<< endl;
+        filterPatches(mesh);
+    }
 
     dumpCyclicMatch("final_", mesh);
 
