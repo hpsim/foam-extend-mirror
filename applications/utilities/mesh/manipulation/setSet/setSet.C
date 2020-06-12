@@ -743,7 +743,7 @@ int main(int argc, char *argv[])
 #   include "addRegionOption.H"
 #   include "addTimeOptions.H"
 
-    argList::validOptions.insert("noVTK", "");
+    argList::validOptions.insert("noVTK", "Do not write VTK file");
     argList::validOptions.insert("batch", "file");
 
 #   include "setRootCase.H"
@@ -765,8 +765,6 @@ int main(int argc, char *argv[])
 
     // Print current sets
     printAllSets(mesh, Info);
-
-
 
     std::ifstream* fileStreamPtr(nullptr);
 
