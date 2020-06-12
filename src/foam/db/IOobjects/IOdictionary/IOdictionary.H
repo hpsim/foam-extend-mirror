@@ -41,6 +41,7 @@ SourceFiles
 
 #include "dictionary.H"
 #include "regIOobject.H"
+#include "infoSwitch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -58,8 +59,6 @@ class IOdictionary
 {
     // Private data
 
-        static bool writeDictionaries;
-
 
     // Private Member Functions
 
@@ -71,6 +70,8 @@ public:
 
     TypeName("dictionary");
 
+    //- If true, write IOdictionary to console
+    static debug::infoSwitch writeDictionaries;
 
     // Constructors
 

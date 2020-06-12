@@ -30,16 +30,18 @@ License
 #include "OSHA1stream.H"
 #include "DynamicList.H"
 
-/* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * */
 
 namespace Foam
 {
     defineTypeNameAndDebug(dictionary, 0);
     const dictionary dictionary::null;
 
-    bool dictionary::writeOptionalEntries
+    debug::infoSwitch
+    dictionary::writeOptionalEntries
     (
-        debug::infoSwitch("writeOptionalEntries", 0)
+        "writeOptionalEntries",
+        0
     );
 }
 

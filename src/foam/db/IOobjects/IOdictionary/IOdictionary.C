@@ -31,12 +31,14 @@ License
 
 namespace Foam
 {
-defineTypeNameAndDebug(IOdictionary, 0);
+    defineTypeNameAndDebug(IOdictionary, 0);
 
-bool IOdictionary::writeDictionaries
-(
-    debug::infoSwitch("writeDictionaries", 0)
-);
+    debug::infoSwitch
+    IOdictionary::writeDictionaries
+    (
+        "writeDictionaries",
+        0
+    );
 }
 
 
