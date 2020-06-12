@@ -31,3 +31,4 @@
 # --------------------------------------------------------------------------
 
 add_subdirectory(pimpleDyMIbFoam)
+add_subdirectory(sonicDyMIbFoam)
