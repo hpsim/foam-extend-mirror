@@ -75,7 +75,9 @@ Foam::BlockAMGSolver<Type>::solve
     Type norm = this->normFactor(x, b);
 
     // Calculate initial residual
-    solverPerf.initialResidual() = cmptDivide(gSum(cmptMag(amg_.residual(x, b))),norm);
+    solverPerf.initialResidual() =
+        cmptDivide(gSum(cmptMag(amg_.residual(x, b))),norm);
+
     solverPerf.finalResidual() = solverPerf.initialResidual();
 
     // Stop solver on divergence
@@ -92,6 +94,18 @@ Foam::BlockAMGSolver<Type>::solve
                   cmptDivide(gSum(cmptMag(amg_.residual(x, b))), norm);
 
             solverPerf.nIterations()++;
+
+            // AMG initialisation check
+            if (amg_.nLevels() < 2)
+            {
+                InfoInFunction
+                    << "AMG levels not initialised properly.  nLevels = "
+                        << amg_.nLevels()
+                        << endl;
+
+                // Do not cycle: AMG coarse level creation failed
+                break;
+            }
 
             // Divergence check
             if
