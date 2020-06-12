@@ -59,6 +59,11 @@ solvers
     }
 }
 
+potentialFlow
+{
+    nNonOrthogonalCorrectors 0;
+}
+
 SIMPLE
 {
     nNonOrthogonalCorrectors 0;
