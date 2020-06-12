@@ -44,8 +44,15 @@ SourceFiles
 namespace Foam
 {
 
+// Forward declaration of classes
+class interfaceThetaProps;
+
+// Forward declaration of friend functions and operators
+Istream& operator>>(Istream&, interfaceThetaProps&);
+Ostream& operator<<(Ostream&, const interfaceThetaProps&);
+
 /*---------------------------------------------------------------------------*\
-            Class multiphaseAlphaContactAngleFvPatch Declaration
+              Class multiphaseAlphaContactAngleFvPatch Declaration
 \*---------------------------------------------------------------------------*/
 
 class multiphaseAlphaContactAngleFvPatchScalarField
