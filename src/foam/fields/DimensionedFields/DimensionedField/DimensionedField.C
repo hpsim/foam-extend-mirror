@@ -379,7 +379,7 @@ dimensioned<Type> DimensionedField<Type, GeoMesh>::weightedAverage
     (
         dimensioned<Type>
         (
-            this->name() + ".weightedAverage(weights)",
+            this->name() + ".weightedAverage(" + weightField.name() + ")",
             this->dimensions(),
             gSum(weightField*field())/gSum(weightField)
         )
