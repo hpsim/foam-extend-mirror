@@ -439,12 +439,6 @@ Foam::solutionControl::solutionControl(fvMesh& mesh, const word& algorithmName)
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::solutionControl::~solutionControl()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void Foam::solutionControl::calcTransientConsistentFlux

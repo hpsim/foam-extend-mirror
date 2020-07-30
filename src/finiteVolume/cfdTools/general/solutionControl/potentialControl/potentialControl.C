@@ -47,7 +47,9 @@ bool Foam::potentialControl::criteriaSatisfied()
 Foam::potentialControl::potentialControl(fvMesh& mesh)
 :
     solutionControl(mesh, "potentialFlow")
-{}
+{
+    read();
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
