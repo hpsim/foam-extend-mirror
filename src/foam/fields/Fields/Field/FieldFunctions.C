@@ -421,7 +421,7 @@ scalar sumSqr(const UList<Type>& f)
     if (f.size())
     {
         scalar SumSqr = 0.0;
-        TFOR_ALL_S_OP_FUNC_F(scalar, SumSqr, +=, sqr, Type, f)
+        TFOR_ALL_S_OP_FUNC_F(scalar, SumSqr, +=, magSqr, Type, f)
         return SumSqr;
     }
     else
@@ -519,8 +519,8 @@ scalar gSumProd(const UList<Type>& f1, const UList<Type>& f2)
 template<class Type>
 Type gSumCmptProd(const UList<Type>& f1, const UList<Type>& f2)
 {
-    scalar SumProd = sumCmptProd(f1, f2);
-    reduce(SumProd, sumOp<scalar>());
+    Type SumProd = sumCmptProd(f1, f2);
+    reduce(SumProd, sumOp<Type>());
     return SumProd;
 }
 

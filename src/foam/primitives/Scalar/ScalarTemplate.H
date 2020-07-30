@@ -246,6 +246,12 @@ inline Scalar cmptMin(const Scalar s)
 }
 
 
+inline Scalar cmptSum(const Scalar s)
+{
+    return s;
+}
+
+
 inline Scalar cmptAv(const Scalar s)
 {
     return s;
