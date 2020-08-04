@@ -116,12 +116,12 @@ public:
 
 
     //- Destructor
-    virtual ~SIBS()
-    {}
+    virtual ~SIBS() = default;
 
 
     // Member Functions
 
+        //- Virtual solve: advance by 1 step
         virtual void solve
         (
             scalar& x,

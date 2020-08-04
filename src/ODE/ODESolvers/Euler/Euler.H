@@ -62,14 +62,13 @@ public:
         Euler(ODE& ode);
 
 
-    // Destructor
-
-        virtual ~Euler()
-        {}
+    //- Destructor
+    virtual ~Euler() = default;
 
 
     // Member Functions
 
+        //- Virtual solve: advance by 1 step
         virtual void solve
         (
             scalar& x,

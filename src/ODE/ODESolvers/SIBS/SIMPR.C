@@ -44,9 +44,9 @@ void Foam::SIBS::SIMPR
     const label nEqns = ode_.nEqns();
 
     scalarSquareMatrix a(nEqns);
-    for (label i=0; i<nEqns; i++)
+    for (label i = 0; i < nEqns; i++)
     {
-        for (label j=0; j<nEqns; j++)
+        for (label j = 0; j < nEqns; j++)
         {
             a[i][j] = -h*dfdy[i][j];
         }

@@ -55,10 +55,8 @@ public:
         {}
 
 
-    // Destructor
-
-        virtual ~ODE()
-        {}
+    //- Destructor
+    virtual ~ODE() = default;
 
 
     // Member Functions

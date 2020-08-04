@@ -100,14 +100,13 @@ public:
         RK(ODE& ode);
 
 
-    // Destructor
-
-        virtual ~RK()
-        {}
+    //- Destructor
+    virtual ~RK() = default;
 
 
     // Member Functions
 
+        //- Virtual solve: advance by 1 step
         virtual void solve
         (
             scalar& x,

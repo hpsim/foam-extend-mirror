@@ -66,7 +66,7 @@ void Foam::ODESolver::solve
     {
         ode_.derivatives(x, y, dydx_);
 
-        for (label i=0; i<nEqns; i++)
+        for (label i = 0; i < nEqns; i++)
         {
             yScale_[i] = mag(y[i]) + mag(dydx_[i]*h) + SMALL;
         }
@@ -91,12 +91,8 @@ void Foam::ODESolver::solve
         h = hNext;
     }
 
-    FatalErrorIn
-    (
-        "ODESolver::solve"
-        "(const scalar xStart, const scalar xEnd,"
-        "scalarField& yStart, const scalar eps, scalar& hEst) const"
-    )   << "Too many integration steps"
+    FatalErrorInFunction
+        << "Too many integration steps"
         << exit(FatalError);
 }
 

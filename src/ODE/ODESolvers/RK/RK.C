@@ -184,7 +184,7 @@ void Foam::RK::solve
 
         if (h < VSMALL)
         {
-            FatalErrorIn("RK::solve")
+            FatalErrorInFunction
                 << "stepsize underflow"
                 << exit(FatalError);
         }

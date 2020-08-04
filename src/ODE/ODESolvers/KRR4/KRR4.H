@@ -92,14 +92,13 @@ public:
         KRR4(ODE& ode);
 
 
-    // Destructor
-
-        virtual ~KRR4()
-        {}
+    //- Destructor
+    virtual ~KRR4() = default;
 
 
     // Member Functions
 
+        //- Virtual solve: advance by 1 step
         virtual void solve
         (
             scalar& x,

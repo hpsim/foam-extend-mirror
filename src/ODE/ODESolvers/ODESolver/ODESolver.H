@@ -115,6 +115,7 @@ public:
 
     // Member Functions
 
+        //- Advance solution by one ODE step.  Virtual interface for ODE solvers
         virtual void solve
         (
             scalar& x,
@@ -127,7 +128,7 @@ public:
             scalar& hNext
         ) const = 0;
 
-
+        //- Solve function for external use. (calling above)
         void solve
         (
             const scalar xStart,
