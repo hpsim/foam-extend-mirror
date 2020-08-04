@@ -121,9 +121,8 @@ public:
         inline autoPtr<Matrix<Form, Type> > clone() const;
 
 
-    // Destructor
-
-        ~Matrix();
+    //- Destructor
+    ~Matrix();
 
 
     // Member functions
