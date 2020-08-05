@@ -24,8 +24,6 @@ License
 Class
     scalarTransportPOD
 
-Description
-
 \*---------------------------------------------------------------------------*/
 
 #include "scalarTransportPOD.H"
@@ -53,10 +51,8 @@ void Foam::scalarTransportPOD::calcOrthoBase() const
 {
     if (orthoBasePtr_)
     {
-        FatalErrorIn
-        (
-            "scalarTransportPOD::calcOrthoBase()"
-        )   << "Orthogonal base already calculated"
+        FatalErrorInFunction
+            << "Orthogonal base already calculated"
             << abort(FatalError);
     }
 
@@ -71,6 +67,9 @@ void Foam::scalarTransportPOD::calcOrthoBase() const
 
     instantList Times = runTime.times();
 
+    // Assume no times are valid
+    boolList validTimes(Times.size(), false);
+
     // Create a list of snapshots
     PtrList<volScalarField> fields(Times.size());
 
@@ -78,7 +77,7 @@ void Foam::scalarTransportPOD::calcOrthoBase() const
 
     forAll (Times, i)
     {
-        if (Times[i].equal(0) )
+        if (Times[i].equal(0))
         {
             Info << "Skipping time " << Times[i] << endl;
 
@@ -87,29 +86,35 @@ void Foam::scalarTransportPOD::calcOrthoBase() const
 
         runTime.setTime(Times[i], i);
 
-        Info<< "Time = " << runTime.timeName() << endl;
+        // Both field and flux need to be read for the snapshot to be valid
+        // Check both
 
-        IOobject phiHeader
+        // Field header
+        IOobject fieldHeader
         (
-            phiName_,
+            fieldName_,
             runTime.timeName(),
             mesh(),
             IOobject::MUST_READ
         );
 
-        if (phiHeader.headerOk())
+        if (fieldHeader.headerOk())
         {
-            Info<< "    Reading " << phiName_ << endl;
+            // Record time as valid
+            validTimes[i] = true;
 
-            fields.set(nSnapshots, new volScalarField(phiHeader, mesh()));
+            Info<< "    Reading " << fieldName_ << " from time "
+                << runTime.timeName() << endl;
+
+            fields.set(nSnapshots, new volScalarField(fieldHeader, mesh()));
 
             // Rename the field
-            fields[nSnapshots].rename(phiName_ + name(i));
+            fields[nSnapshots].rename(fieldName_ + name(i));
             nSnapshots++;
         }
         else
         {
-            Info<< "    No " << phiName_ << endl;
+            Info<< "    No " << fieldName_ << " or " << phiName_ << endl;
         }
     }
 
@@ -119,10 +124,8 @@ void Foam::scalarTransportPOD::calcOrthoBase() const
     // Resize snapshots
     if (nSnapshots < 2)
     {
-        FatalErrorIn
-        (
-            "scalarTransportPOD::calcOrthoBase()"
-        )   << "Insufficient number of snapshots: " << nSnapshots
+        FatalErrorInFunction
+            << "Insufficient number of snapshots: " << nSnapshots
             << abort(FatalError);
     }
 
@@ -132,6 +135,61 @@ void Foam::scalarTransportPOD::calcOrthoBase() const
 
     // Create ortho-normal base for transported variable
     orthoBasePtr_ = new scalarPODOrthoNormalBase(fields, accuracy);
+
+    // Check orthogonality and magnitude of snapshots
+    orthoBasePtr_->checkBase();
+
+    Info<< "Write reconstructed snapshots: check" << endl;
+
+    // Reset counter
+    nSnapshots = 0;
+
+    forAll (validTimes, i)
+    {
+        if (validTimes[i])
+        {
+            runTime.setTime(Times[i], i);
+
+            Info<< "Time = " << runTime.timeName() << endl;
+
+            volScalarField reconField
+            (
+                IOobject
+                (
+                    "directRecon" + fieldName_,
+                    mesh().time().timeName(),
+                    mesh(),
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                mesh(),
+                dimensionedScalar
+                (
+                    "zero",
+                    orthoBase().orthoField(0).dimensions(),
+                    0
+                )
+            );
+
+            // Note: use raw pointer access to orthoBase,
+            // as it has just been calculated
+            for (label i = 0; i < orthoBasePtr_->baseSize(); i++)
+            {
+                reconField +=
+                    orthoBasePtr_->interpolationCoeffs()[nSnapshots][i]*
+                    orthoBasePtr_->orthoField(i);
+            }
+
+            // Internal field is set.  Correct boundary conditions
+            reconField.correctBoundaryConditions();
+            reconField.write();
+
+            nSnapshots++;
+        }
+    }
+
+    // Reset time index to initial state
+    runTime.setTime(Times[origTimeIndex], origTimeIndex);
 }
 
 
@@ -139,10 +197,8 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
 {
     if (derivativeMatrixPtr_)
     {
-        FatalErrorIn
-        (
-            "void scalarTransportPOD::calcDerivativeCoeffs() const"
-        )   << "Derivative matrix already calculated"
+        FatalErrorInFunction
+            << "Derivative matrix already calculated"
             << abort(FatalError);
     }
 
@@ -174,54 +230,54 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
         transportProperties.lookup("DT")
     );
 
-    // Find velocity field
-
-    word Uname(this->dict().lookup("velocity"));
+    // Read first available flux field.  Note: flux is fixed for
+    // scalar transport
 
     instantList Times = runTime.times();
 
-    volVectorField* Uptr = nullptr;
+    // Flux field
+    autoPtr<surfaceScalarField> phiPtr;
 
     forAll (Times, i)
     {
+        if (Times[i].equal(0))
+        {
+            Info << "Skipping time " << Times[i].name() << endl;
+
+            continue;
+        }
+
         runTime.setTime(Times[i], i);
 
-        Info<< "Time = " << runTime.timeName() << endl;
-
-        IOobject Uheader
+        IOobject phiHeader
         (
-            Uname,
+            phiName_,
             runTime.timeName(),
             this->mesh(),
             IOobject::MUST_READ
         );
 
-        if (Uheader.headerOk())
+        if (phiHeader.headerOk())
         {
-            Info<< "    Reading " << Uname << endl;
+            Info<< "    Reading " << phiName_ << " from time "
+                << runTime.timeName() << endl;
 
-            Uptr = new volVectorField(Uheader, this->mesh());
+            phiPtr.set(new surfaceScalarField(phiHeader, this->mesh()));
             break;
-        }
-        else
-        {
-            Info<< "    No " << Uname << endl;
         }
     }
 
     // Reset time index to initial state
     runTime.setTime(Times[origTimeIndex], origTimeIndex);
 
-    if (!Uptr)
+    if (!phiPtr.valid())
     {
-        FatalErrorIn
-        (
-            "void scalarTransportPOD::calcDerivativeCoeffs() const"
-        )   << "Cannot find velocity: " << Uname
+        FatalErrorInFunction
+            << "Cannot find flux field: " << phiName_
             << abort(FatalError);
     }
 
-    volVectorField& U = *Uptr;
+    const surfaceScalarField& phi = phiPtr();
 
     // Create derivative matrix
 
@@ -229,6 +285,10 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
 
     derivativeMatrixPtr_ = new scalarSquareMatrix(b.baseSize(), 0.0);
     scalarSquareMatrix& derivative = *derivativeMatrixPtr_;
+
+    // Calculate volume for scaling
+    const scalar V = gSum(mesh().V().field());
+    Info<< "V: " << V << endl;
 
     for (label i = 0; i < b.baseSize(); i++)
     {
@@ -238,14 +298,79 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
         {
             const volScalarField& snapJ = b.orthoField(j);
 
-            const tmp<volVectorField> gradSnapJ = fvc::grad(snapJ);
-
+            // Calculate derivative by moving equation terms to rhs
             derivative[i][j] =
-                DT.value()*POD::projection(fvc::div(gradSnapJ), snapI)
-              - POD::projection((U & gradSnapJ), snapI);
+                POD::projection
+                (
+                    fvc::laplacian
+                    (
+                        DT, snapJ,
+                        "laplacian(" + DT.name() + "," + fieldName_ + ")"
+                    )*V,
+                    snapI
+                )
+              - POD::projection
+                (
+                    fvc::div
+                    (
+                        phi, snapJ,
+                        "div(" + phiName_ + "," + fieldName_ + ")"
+                    )*V,
+                    snapI
+                );
         }
     }
+
+    Info<< "derivative: " << derivative << endl;
 }
+
+
+void Foam::scalarTransportPOD::updateFields() const
+{
+    if (fieldUpdateTimeIndex_ < mesh().time().timeIndex())
+    {
+        // Field update required.  Record update time index
+        fieldUpdateTimeIndex_ = mesh().time().timeIndex();
+
+        if (!reconFieldPtr_)
+        {
+            // Allocate field
+            reconFieldPtr_ =
+                new volScalarField
+                (
+                    IOobject
+                    (
+                        "recon" + fieldName_,
+                        mesh().time().timeName(),
+                        mesh(),
+                        IOobject::NO_READ,
+                        IOobject::NO_WRITE
+                    ),
+                    mesh(),
+                    dimensionedScalar
+                    (
+                        "zero",
+                        orthoBase().orthoField(0).dimensions(),
+                        0
+                    )
+                );
+        }
+
+        volScalarField& field = *reconFieldPtr_;
+
+        const scalarPODOrthoNormalBase& b = orthoBase();
+
+        field = dimensionedScalar("zero", b.orthoField(0).dimensions(), 0);
+        Info<< "coeffs: " << coeffs_ << endl;
+        forAll (coeffs_, i)
+        {
+            field += coeffs_[i]*b.orthoField(i);
+        }
+
+        field.correctBoundaryConditions();
+    }
+}
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -257,11 +382,13 @@ Foam::scalarTransportPOD::scalarTransportPOD
 )
 :
     PODODE(mesh, dict),
-    phiName_(dict.lookup("field")),
+    fieldName_(dict.lookup("field")),
+    phiName_(dict.lookup("flux")),
     coeffs_(),
     derivativeMatrixPtr_(nullptr),
     orthoBasePtr_(nullptr),
-    fieldPtr_(nullptr)
+    reconFieldPtr_(nullptr),
+    fieldUpdateTimeIndex_(-1)
 {
     // Grab coefficients from the first snapshot of the ortho-normal base
     coeffs_.setSize(orthoBase().baseSize());
@@ -273,6 +400,7 @@ Foam::scalarTransportPOD::scalarTransportPOD
     {
         coeffs_[i] = orthoBaseCoeffs[0][i];
     }
+    Info<< "Zero coeffs: " << coeffs_ << endl;
 }
 
 
@@ -281,9 +409,8 @@ Foam::scalarTransportPOD::scalarTransportPOD
 Foam::scalarTransportPOD::~scalarTransportPOD()
 {
     deleteDemandDrivenData(derivativeMatrixPtr_);
-
-    clearBase();
-    clearFields();
+    deleteDemandDrivenData(orthoBasePtr_);
+    deleteDemandDrivenData(reconFieldPtr_);
 }
 
 
@@ -342,7 +469,16 @@ void Foam::scalarTransportPOD::jacobian
 ) const
 {
     derivatives(x, y, dfdx);
-    dfdy = 0;
+
+    // Clear jacobian matrix
+    // Note: this needs to be done component-by-components
+    forAll (y, i)
+    {
+        forAll (y, j)
+        {
+            dfdy[i][j] = 0;
+        }
+    }
 }
 
 
@@ -358,65 +494,27 @@ Foam::scalarTransportPOD::orthoBase() const
 }
 
 
-void Foam::scalarTransportPOD::clearBase() const
+const Foam::volScalarField& Foam::scalarTransportPOD::reconField() const
 {
-    deleteDemandDrivenData(orthoBasePtr_);
-}
-
-
-const Foam::volScalarField& Foam::scalarTransportPOD::field() const
-{
-    if (!fieldPtr_)
+    if (!reconFieldPtr_)
     {
         updateFields();
     }
 
-    return *fieldPtr_;
+    return *reconFieldPtr_;
 }
 
 
-void Foam::scalarTransportPOD::updateFields() const
+void Foam::scalarTransportPOD::writeSnapshots() const
 {
-    if (!fieldPtr_)
-    {
-        // Allocate field
-        fieldPtr_ =
-            new volScalarField
-            (
-                IOobject
-                (
-                    phiName_ + "POD",
-                    mesh().time().timeName(),
-                    mesh(),
-                    IOobject::NO_READ,
-                    IOobject::NO_WRITE
-                ),
-                mesh(),
-                dimensionedScalar
-                (
-                    "zero",
-                    orthoBase().orthoField(0).dimensions(),
-                    0
-                )
-            );
-    }
-
-    volScalarField& phi = *fieldPtr_;
-
     const scalarPODOrthoNormalBase& b = orthoBase();
 
-    phi = dimensionedScalar("zero", b.orthoField(0).dimensions(), 0);
+    Info<< "Writing POD base for Time = " << mesh().time().timeName() << endl;
 
-    forAll (coeffs_, i)
+    for (label i = 0; i < b.baseSize(); i++)
     {
-        phi += coeffs_[i]*b.orthoField(i);
+        b.orthoField(i).write();
     }
-}
-
-
-void Foam::scalarTransportPOD::clearFields() const
-{
-    deleteDemandDrivenData(fieldPtr_);
 }
 
 
@@ -424,11 +522,8 @@ void Foam::scalarTransportPOD::write() const
 {
     // Recalculate field and force a write
     updateFields();
-    field().write();
+    reconField().write();
 }
-
-
-// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
 
 // ************************************************************************* //

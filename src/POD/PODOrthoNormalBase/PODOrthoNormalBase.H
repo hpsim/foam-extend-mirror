@@ -29,6 +29,10 @@ Description
     of fields. Size of ortho-normal base is calculated from the desired
     accuracy, e.g. 0.99-0.99999 (in energy terms)
 
+    Orho-normal base is defined on a list of snapshots.  If additional
+    non-defining fields are required, they follow the decomposition and weights
+    from defining snapshots
+
 Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved.
 
@@ -41,7 +45,8 @@ SourceFiles
 #define PODOrthoNormalBase_H
 
 #include "volFields.H"
-#include "RectangularMatrix.H"
+#include "scalarMatrices.H"
+#include "PODEigenBase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -49,7 +54,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                       Class PODOrthoNormalBase Declaration
+                     Class PODOrthoNormalBase Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
@@ -59,36 +64,31 @@ public:
 
     // Public typedefs
 
+        //- Defining snapshots field type
         typedef GeometricField<Type, fvPatchField, volMesh> GeoTypeField;
-
-        typedef Field<Type> TypeField;
 
 
 private:
 
     // Private data
 
-        //- List of ortho-normal fields
+        //- Defining eigen-base
+        const PODEigenBase<Type> eigenBase_;
+
+        //- List of defining ortho-normal fields
         PtrList<GeoTypeField> orthoFields_;
 
         //- Interpolation coefficients
-        RectangularMatrix<Type>* interpolationCoeffsPtr_;
+        scalarRectangularMatrix* interpolationCoeffsPtr_;
 
 
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        PODOrthoNormalBase(const PODOrthoNormalBase&);
+        PODOrthoNormalBase(const PODOrthoNormalBase&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const PODOrthoNormalBase&);
-
-        //- Calculate ortho-normal base
-        void calcOrthoBase
-        (
-            const PtrList<GeoTypeField>& snapshots,
-            const scalar accuracy
-        );
+        void operator=(const PODOrthoNormalBase&) = delete;
 
 
 public:
@@ -104,29 +104,48 @@ public:
 
 
     // Destructor
-
-        ~PODOrthoNormalBase();
+    ~PODOrthoNormalBase();
 
 
     // Member Functions
 
+        //- Return eigen-base
+        inline const PODEigenBase<Type>& eigenBase() const
+        {
+            return eigenBase_;
+        }
+
         //- Return base size
-        label baseSize() const
+        inline label baseSize() const
         {
             return orthoFields_.size();
         }
 
         //- Return n-th ortho-normal base field
-        const GeoTypeField& orthoField(const label n) const
+        inline const GeoTypeField& orthoField(const label n) const
         {
             return orthoFields_[n];
         }
 
         //- Return interpolation coefficients (snapshots x orthoVectors)
-        const RectangularMatrix<Type>& interpolationCoeffs() const
+        inline const scalarRectangularMatrix& interpolationCoeffs() const
         {
             return *interpolationCoeffsPtr_;
         }
+
+        //- Check ortho-normal base: orthogonality and magnitude of snapshots
+        void checkBase() const;
+
+        //- Calculate ortho-normal base and fill into orthoFields
+        //  Size of orthoFields defines the required size of decomposition
+        //  Function is used when further fields are carried on an existing
+        //  ortho-normal base
+        template<class GeoField>
+        void calcOrthoBase
+        (
+            const PtrList<GeoField>& snapshots,
+            PtrList<GeoField>& orthoFields
+        );
 };
 
 

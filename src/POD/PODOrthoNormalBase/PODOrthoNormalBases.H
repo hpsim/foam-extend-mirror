@@ -33,7 +33,7 @@ Author
 #define PODOrthoNormalBases_H
 
 #include "PODOrthoNormalBasesFwd.H"
-#include "scalarPODOrthoNormalBase.H"
+#include "PODOrthoNormalBase.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

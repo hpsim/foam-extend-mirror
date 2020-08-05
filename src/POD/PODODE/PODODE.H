@@ -66,10 +66,10 @@ class PODODE
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        PODODE(const PODODE&);
+        PODODE(const PODODE&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const PODODE&);
+        void operator=(const PODODE&) = delete;
 
 
 public:
@@ -117,10 +117,8 @@ public:
         {}
 
 
-    // Destructor
-
-        virtual ~PODODE()
-        {}
+    //- Destructor
+    virtual ~PODODE() = default;
 
 
     // Member Functions
@@ -146,15 +144,6 @@ public:
             //- Return reference to interpolation coefficients
             virtual const scalarField& coeffs() const = 0;
 
-            //- Clear ortho-normal base
-            virtual void clearBase() const = 0;
-
-            //- Update reconstructed fields
-            virtual void updateFields() const = 0;
-
-            //- Clear reconstructed field
-            virtual void clearFields() const = 0;
-
 
         // Update
 
@@ -163,8 +152,13 @@ public:
             {}
 
 
-        //- Write reconstructed fields
-        virtual void write() const = 0;
+        // Write
+
+            //- Write snapshots
+            virtual void writeSnapshots() const = 0;
+
+            //- Write reconstructed fields
+            virtual void write() const = 0;
 };
 
 

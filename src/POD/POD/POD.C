@@ -43,24 +43,26 @@ namespace POD
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 template<class Type>
-Type projection
+scalar projection
 (
     const GeometricField<Type, fvPatchField, volMesh>& a,
     const GeometricField<Type, fvPatchField, volMesh>& b
 )
 {
-    return sum(cmptMultiply(a.internalField(), b.internalField()));
+    return cmptSum(gSumCmptProd(a.internalField(), b.internalField()));
 }
 
 
 template<class Type>
-Type projection
+scalar projection
 (
     const tmp<GeometricField<Type, fvPatchField, volMesh> >& ta,
     const GeometricField<Type, fvPatchField, volMesh>& b
 )
 {
-    Type p = projection(ta(), b);
+    const GeometricField<Type, fvPatchField, volMesh>& a = ta();
+
+    scalar p = projection(a, b);
     ta.clear();
     return p;
 }

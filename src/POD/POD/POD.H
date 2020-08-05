@@ -31,7 +31,6 @@ Description
     Proper Orthogonal Decomposition of fields.
 
 SourceFiles
-    PODI.H
     POD.C
     PODIO.C
 
@@ -53,21 +52,20 @@ namespace Foam
 
 namespace POD
 {
-    //- Dot product of snapshots
+    //- Dot product of snapshots across all fields/components
     template<class Type>
-    Type projection
+    scalar projection
     (
         const GeometricField<Type, fvPatchField, volMesh>& a,
         const GeometricField<Type, fvPatchField, volMesh>& b
     );
 
     template<class Type>
-    Type projection
+    scalar projection
     (
         const tmp<GeometricField<Type, fvPatchField, volMesh> >& ta,
         const GeometricField<Type, fvPatchField, volMesh>& b
     );
-
 }
 
 

@@ -33,171 +33,48 @@ Description
 
 #include "PODOrthoNormalBase.H"
 #include "POD.H"
-#include "PODEigenBase.H"
 #include "IOmanip.H"
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
-void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
+Foam::PODOrthoNormalBase<Type>::PODOrthoNormalBase
 (
     const PtrList<GeometricField<Type, fvPatchField, volMesh> >& snapshots,
     const scalar accuracy
 )
+:
+    eigenBase_(snapshots),
+    orthoFields_(),
+    interpolationCoeffsPtr_(nullptr)
 {
-    // Calculate ortho-normal base for each component
-    PtrList<PODEigenBase> eigenBase(pTraits<Type>::nComponents);
-
-    const label nSnapshots = snapshots.size();
-
-    typename
-    powProduct<Vector<label>, pTraits<Type>::rank>::type validComponents
-    (
-        pow
-        (
-            snapshots[0].mesh().solutionD(),
-            pTraits
-            <
-                typename powProduct<Vector<label>,
-                pTraits<Type>::rank
-            >::type>::zero
-        )
-    );
-
-    label nValidCmpts = 0;
-
-    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
-    {
-        // Component not valid, skipping
-        if (validComponents[cmpt] == -1) continue;
-
-        // Create a list of snapshots
-        PtrList<volScalarField> sf(nSnapshots);
-
-        forAll (snapshots, i)
-        {
-            sf.set(i, new volScalarField(snapshots[i].component(cmpt)));
-        }
-
-        // Create eigen base
-        eigenBase.set(cmpt, new PODEigenBase(sf));
-
-        Info<< "Cumulative eigen-values for component " << cmpt
-            << ": " << setprecision(14)
-            << eigenBase[nValidCmpts].cumulativeEigenValues() << endl;
-
-        nValidCmpts++;
-    }
-
-    eigenBase.setSize(nValidCmpts);
-
-    Info << "Number of valid eigen components: " << nValidCmpts << endl;
-
     label baseSize = 0;
-    for (label snapI = 0; snapI < nSnapshots; snapI++)
+    
+    const scalarField& cumEigenValues = eigenBase_.cumulativeEigenValues();
+
+    forAll (cumEigenValues, i)
     {
         baseSize++;
 
-        // Get minimum cumulative eigen value for all valid components
-        scalar minCumEigen = 1.0;
-
-        nValidCmpts = 0;
-
-        for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
-        {
-            // Skip invalid components
-            if (validComponents[cmpt] != -1)
-            {
-                minCumEigen =
-                    Foam::min
-                    (
-                        minCumEigen,
-                        eigenBase[nValidCmpts].cumulativeEigenValues()[snapI]
-                    );
-
-                nValidCmpts++;
-            }
-        }
-
-        if (minCumEigen > accuracy)
+        if (cumEigenValues[i] > accuracy)
         {
             break;
         }
     }
 
-    Info << "Base size: " << baseSize << endl;
+    Info<< "Cumulative eigen-values: "
+        << setprecision(14) << cumEigenValues << nl
+        << "Base size: " << baseSize << endl;
 
     // Establish orthonormal base
     orthoFields_.setSize(baseSize);
 
-    for (label baseI = 0; baseI < baseSize; baseI++)
-    {
-        GeometricField<Type, fvPatchField, volMesh>* onBasePtr
-        (
-            new GeometricField<Type, fvPatchField, volMesh>
-            (
-                IOobject
-                (
-                    snapshots[0].name() + "POD" + name(baseI),
-                    snapshots[0].time().timeName(),
-                    snapshots[0].mesh(),
-                    IOobject::NO_READ,
-                    IOobject::NO_WRITE
-                ),
-                snapshots[0].mesh(),
-                dimensioned<Type>
-                (
-                    "zero",
-                    snapshots[0].dimensions(),
-                    pTraits<Type>::zero
-                )
-            )
-        );
-        GeometricField<Type, fvPatchField, volMesh>& onBase = *onBasePtr;
-
-        nValidCmpts = 0;
-
-        for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
-        {
-            if (validComponents[cmpt] != -1)
-            {
-                // Valid component, grab eigen-factors
-
-                const scalarField& eigenVector =
-                    eigenBase[nValidCmpts].eigenVectors()[baseI];
-                nValidCmpts++;
-
-                volScalarField onBaseCmpt = onBase.component(cmpt);
-
-                forAll (eigenVector, eigenI)
-                {
-                    onBaseCmpt +=
-                        eigenVector[eigenI]*snapshots[eigenI].component(cmpt);
-                }
-
-                // Re-normalise ortho-normal vector
-                onBaseCmpt /= Foam::sqrt(sumSqr(onBaseCmpt));
-
-                onBase.replace(cmpt, onBaseCmpt);
-            }
-            else
-            {
-                // Component invalid.  Grab first snapshot.
-                onBase.replace
-                (
-                    cmpt,
-                    snapshots[0].component(cmpt)
-                );
-            }
-        }
-
-        orthoFields_.set(baseI, onBasePtr);
-    }
+    calcOrthoBase(snapshots, orthoFields_);
 
     // Calculate interpolation coefficients
     interpolationCoeffsPtr_ =
-        new RectangularMatrix<Type>(snapshots.size(), orthoFields_.size());
-    RectangularMatrix<Type>& coeffs = *interpolationCoeffsPtr_;
+        new RectangularMatrix<scalar>(snapshots.size(), orthoFields_.size());
+    RectangularMatrix<scalar>& coeffs = *interpolationCoeffsPtr_;
 
     forAll (snapshots, snapshotI)
     {
@@ -214,23 +91,6 @@ void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
 }
 
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-// given list of snapshots and accuracy
-template<class Type>
-Foam::PODOrthoNormalBase<Type>::PODOrthoNormalBase
-(
-    const PtrList<GeometricField<Type, fvPatchField, volMesh> >& snapshots,
-    const scalar accuracy
-)
-:
-    orthoFields_(),
-    interpolationCoeffsPtr_(nullptr)
-{
-    calcOrthoBase(snapshots, accuracy);
-}
-
-
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class Type>
@@ -241,6 +101,93 @@ Foam::PODOrthoNormalBase<Type>::~PODOrthoNormalBase()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class Type>
+void Foam::PODOrthoNormalBase<Type>::checkBase() const
+{
+    // Check orthogonality and magnitude of snapshots
+    Info<< "Check orthogonal base: dot-products: " << baseSize() << endl;
+    for (label i = 0; i < baseSize(); i++)
+    {
+        for (label j = 0; j < baseSize(); j++)
+        {
+            Info<< "(" << i << ", " << j << ") = "
+                << POD::projection
+                   (
+                       orthoField(i),
+                       orthoField(j)
+                   )
+                << endl;
+        }
+    }
+}
+
+
+template<class Type>
+template<class GeoField>
+void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
+(
+    const PtrList<GeoField>& snapshots,
+    PtrList<GeoField>& orthoFields
+)
+{
+    // Check if there are less requested orthoFields than eigen vectors
+    if (orthoFields.size() > eigenBase_.eigenValues().size())
+    {
+        FatalErrorInFunction
+            << "Requested " << orthoFields.size()
+            << " orthogonal fields in snapshot size of "
+            << eigenBase_.eigenValues().size() << "(" << snapshots.size() << ")"
+            << abort(FatalError);
+    }
+
+    forAll (orthoFields, baseI)
+    {
+        const scalarField& eigenVector = eigenBase_.eigenVectors()[baseI];
+
+        // Reconsider boundary conditions on ortho-normal base.
+        // Construct from zeroth snapshot to carry patch types?
+        // HJ, 5/Aug/2020
+        
+        GeoField* onBasePtr
+        (
+            new GeoField
+            (
+                IOobject
+                (
+                    snapshots[0].name() + "POD" + name(baseI),
+                    snapshots[0].time().timeName(),
+                    snapshots[0].mesh(),
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                snapshots[0].mesh(),
+                dimensioned<typename GeoField::PrimitiveType>
+                (
+                    "zero",
+                    snapshots[0].dimensions(),
+                    pTraits<typename GeoField::PrimitiveType>::zero
+                )
+            )
+        );
+        GeoField& onBase = *onBasePtr;
+
+        forAll (eigenVector, eigenI)
+        {
+            onBase += eigenVector[eigenI]*snapshots[eigenI];
+        }
+
+        // Re-normalise ortho-normal vector
+        scalar magSumSquare = Foam::sqrt(sumSqr(onBase));
+        if (magSumSquare > SMALL)
+        {
+            onBase /= magSumSquare;
+            onBase.correctBoundaryConditions();
+        }
+
+        orthoFields.set(baseI, onBasePtr);
+    }
+}
 
 
 // ************************************************************************* //

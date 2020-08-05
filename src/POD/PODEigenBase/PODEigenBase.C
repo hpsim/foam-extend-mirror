@@ -24,8 +24,6 @@ License
 Class
     PODEigenBase
 
-Description
-
 \*---------------------------------------------------------------------------*/
 
 #include "PODEigenBase.H"
@@ -34,7 +32,11 @@ Description
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::PODEigenBase::calcEigenBase(const scalarSquareMatrix& orthMatrix)
+template<class Type>
+void Foam::PODEigenBase<Type>::calcEigenBase
+(
+    const scalarSquareMatrix& orthMatrix
+)
 {
     // Calculate eigen-values
 
@@ -53,7 +55,7 @@ void Foam::PODEigenBase::calcEigenBase(const scalarSquareMatrix& orthMatrix)
     sortedList.sort();
 
     label n = 0;
-    forAllReverse(sortedList, i)
+    forAllReverse (sortedList, i)
     {
         eigenValues_[n] = sortedList[i];
         eigenVectors_.set
@@ -104,7 +106,11 @@ void Foam::PODEigenBase::calcEigenBase(const scalarSquareMatrix& orthMatrix)
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 // Construct given a list of fields
-Foam::PODEigenBase::PODEigenBase(const PtrList<volScalarField>& snapshots)
+template<class Type>
+Foam::PODEigenBase<Type>::PODEigenBase
+(
+    const PtrList<GeometricField<Type, fvPatchField, volMesh> >& snapshots
+)
 :
     eigenValues_(snapshots.size()),
     cumEigenValues_(snapshots.size()),
@@ -144,7 +150,7 @@ Foam::PODEigenBase::PODEigenBase(const PtrList<volScalarField>& snapshots)
         }
     }
 
-    calcEigenBase(orthMatrix);
+    this->calcEigenBase(orthMatrix);
 }
 
 

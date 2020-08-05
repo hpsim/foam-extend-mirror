@@ -22,21 +22,22 @@ License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    scalarTransportPOD
+    velocityPOD
 
 Description
-    POD solver for a transport equation for a passive scalar
+    POD solver for laminar Navier-Stokes equations, based on
+    velocity decomposition
 
 Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved.
 
 SourceFiles
-    scalarTransportPOD.C
+    velocityPOD.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef scalarTransportPOD_H
-#define scalarTransportPOD_H
+#ifndef velocityPOD_H
+#define velocityPOD_H
 
 #include "PODODE.H"
 #include "PODOrthoNormalBases.H"
@@ -47,32 +48,53 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                      Class scalarTransportPOD Declaration
+                         Class velocityPOD Declaration
 \*---------------------------------------------------------------------------*/
 
-class scalarTransportPOD
+class velocityPOD
 :
     public PODODE
 {
     // Private data
 
-        //- Field name
-        word fieldName_;
+        //- Velocity field name
+        word UName_;
+
+        //- Pressure field name
+        word pName_;
 
         //- Flux field name
         word phiName_;
 
+        //- Transport properties
+        IOdictionary transportProperties_;
+
+        //- Kinematic viscosity
+        dimensionedScalar nu_;
+
         //- POD coefficients
         scalarField coeffs_;
 
-        //- Derivative coefficient matrix
-        mutable scalarSquareMatrix* derivativeMatrixPtr_;
+        //- Convection derivative coefficient matrix
+        mutable PtrList<scalarSquareMatrix>* convectionDerivativePtr_;
 
-        //- Ortho-normal base pointer
-        mutable scalarPODOrthoNormalBase* orthoBasePtr_;
+        //- Diffusion and pressure derivative coefficient matrix
+        mutable scalarSquareMatrix* derivativePtr_;
 
-        //- Reconstructed field pointer
-        mutable volScalarField* reconFieldPtr_;
+        //- Ortho-normal base pointer, carrying velocity fields
+        mutable vectorPODOrthoNormalBase* orthoBasePtr_;
+
+        //- Pressure field base
+        mutable PtrList<volScalarField>* pBasePtr_;
+
+        //- Flux field base
+        mutable PtrList<surfaceScalarField>* phiBasePtr_;
+
+        //- Reconstructed velocity field pointer
+        mutable volVectorField* reconUPtr_;
+
+        //- Reconstructed pressure field pointer
+        mutable volScalarField* reconPPtr_;
 
         //- Time index of current field update
         mutable label fieldUpdateTimeIndex_;
@@ -81,12 +103,13 @@ class scalarTransportPOD
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        scalarTransportPOD(const scalarTransportPOD&) = delete;
+        velocityPOD(const velocityPOD&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const scalarTransportPOD&) = delete;
+        void operator=(const velocityPOD&) = delete;
 
-        //- Calculate ortho-normal base
+
+        //- Calculate ortho-normal base for velocity
         void calcOrthoBase() const;
 
         //- Calculate coefficients
@@ -99,13 +122,13 @@ class scalarTransportPOD
 public:
 
     //- Runtime type information
-    TypeName("scalarTransport");
+    TypeName("velocity");
 
 
     // Constructors
 
         //- Construct from components
-        scalarTransportPOD
+        velocityPOD
         (
             const fvMesh& mesh,
             const dictionary& dict
@@ -113,7 +136,7 @@ public:
 
 
     //- Destructor
-    virtual ~scalarTransportPOD();
+    virtual ~velocityPOD();
 
 
     // Member Functions
@@ -146,14 +169,27 @@ public:
                 scalarSquareMatrix& dfdy
             ) const;
 
+            //- Update ODE after the solution, advancing by delta
+            virtual void update(const scalar delta);
+
 
     // Orthogonalisation and fields
 
-        //- Return ortho-normal base
-        const scalarPODOrthoNormalBase& orthoBase() const;
+        //- Return ortho-normal base: velocity fields
+        const vectorPODOrthoNormalBase& orthoBase() const;
 
-        //- Return reconstructed field
-        const volScalarField& reconField() const;
+        //- Return pressure field base
+        const PtrList<volScalarField>& pBase() const;
+
+        //- Return flux field base
+        const PtrList<surfaceScalarField>& phiBase() const;
+
+
+        //- Return reconstructed velocity field
+        const volVectorField& reconU() const;
+
+        //- Return reconstructed pressure field
+        const volScalarField& reconP() const;
 
 
     // Write
