@@ -49,7 +49,7 @@ Foam::PODOrthoNormalBase<Type>::PODOrthoNormalBase
     interpolationCoeffsPtr_(nullptr)
 {
     label baseSize = 0;
-    
+
     const scalarField& cumEigenValues = eigenBase_.cumulativeEigenValues();
 
     forAll (cumEigenValues, i)
@@ -145,10 +145,7 @@ void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
     {
         const scalarField& eigenVector = eigenBase_.eigenVectors()[baseI];
 
-        // Reconsider boundary conditions on ortho-normal base.
-        // Construct from zeroth snapshot to carry patch types?
-        // HJ, 5/Aug/2020
-        
+        // Use calculated boundary conditions on the eigenbase
         GeoField* onBasePtr
         (
             new GeoField
@@ -179,6 +176,7 @@ void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
 
         // Re-normalise ortho-normal vector
         scalar magSumSquare = Foam::sqrt(sumSqr(onBase));
+
         if (magSumSquare > SMALL)
         {
             onBase /= magSumSquare;

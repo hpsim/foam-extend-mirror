@@ -21,14 +21,17 @@ License
     You should have received a copy of the GNU General Public License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
+Namespace
     POD
 
 Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved.
 
 Description
-    Proper Orthogonal Decomposition of fields.
+    Proper Orthogonal Decomposition of fields: helper functions
+
+    Note: projection of volFields can be weighted with V/gSum(V)
+    but I cannot prove it makes a difference in practical cases.
 
 SourceFiles
     POD.C
@@ -52,6 +55,10 @@ namespace Foam
 
 namespace POD
 {
+    //- Dot product of snapshots across all fields/components
+    template<class Type>
+    scalar projection(const Field<Type>& a, const Field<Type>& b);
+
     //- Dot product of snapshots across all fields/components
     template<class Type>
     scalar projection

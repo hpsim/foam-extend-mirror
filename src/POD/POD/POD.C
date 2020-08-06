@@ -42,6 +42,15 @@ namespace POD
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+// Note: Consider weighting projection with cell volumes
+    
+template<class Type>
+scalar projection(const Field<Type>& a, const Field<Type>& b)
+{
+    return cmptSum(gSumCmptProd(a, b));
+}
+
+
 template<class Type>
 scalar projection
 (
@@ -49,7 +58,7 @@ scalar projection
     const GeometricField<Type, fvPatchField, volMesh>& b
 )
 {
-    return cmptSum(gSumCmptProd(a.internalField(), b.internalField()));
+    return projection(a.internalField(), b.internalField());
 }
 
 

@@ -78,28 +78,6 @@ void Foam::PODEigenBase<Type>::calcEigenBase
 
     // Renormalise
     cumEigenValues_ /= sum(eigenValues_);
-
-//     // Check products
-//     for (label i = 0; i < orthMatrix.m(); i++)
-//     {
-//         const scalarField& eVector = eigenVectors_[i];
-
-//         Info<< "Scalar product: "
-//             << eigenValues_[i]*eVector
-//             << endl;
-
-//         scalarField vp(orthMatrix.m(), 0);
-
-//         forAll (vp, i)
-//         {
-//             forAll (vp, j)
-//             {
-//                 vp[i] += orthMatrix[i][j]*eVector[j];
-//             }
-//         }
-
-//         Info << "Vector product: " << vp << nl << endl;
-//     }
 }
 
 
@@ -136,16 +114,6 @@ Foam::PODEigenBase<Type>::PODEigenBase
             if (snapI != snapJ)
             {
                 orthMatrix[snapJ][snapI] = orthMatrix[snapI][snapJ];
-
-//                 Info << "Product: " << orthMatrix[snapI][snapJ]
-//                     << " relative: "
-//                     <<
-//                     orthMatrix[snapI][snapJ]/
-//                     (
-//                         Foam::sqrt(sumSqr(snapshots[snapI]))*
-//                         Foam::sqrt(sumSqr(snapshots[snapJ]))
-//                       + SMALL
-//                     ) << endl;
             }
         }
     }
