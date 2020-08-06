@@ -72,6 +72,9 @@ class incompressibleFlowPOD
         //- Kinematic viscosity
         dimensionedScalar nu_;
 
+        //- Lagrange multiplier pre-factor
+        scalar beta_;
+
         //- POD coefficients
         scalarField coeffs_;
 
@@ -80,6 +83,12 @@ class incompressibleFlowPOD
 
         //- Diffusion and pressure derivative coefficient matrix
         mutable scalarSquareMatrix* derivativePtr_;
+
+        //- Lagrange multiplier derivative (enforcing boundary conditions)
+        mutable scalarField* lagrangeDerPtr_;
+
+        //- Lagrange multiplier source (enforcing boundary conditions)
+        mutable scalarField* lagrangeSrcPtr_;
 
         //- Ortho-normal base pointer
         mutable PODOrthoNormalBase<vector4>* orthoBasePtr_;

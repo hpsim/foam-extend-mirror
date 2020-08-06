@@ -240,7 +240,7 @@ void Foam::velocityPOD::calcOrthoBase() const
 
             directReconU =
                 dimensionedVector("zero", reconU.dimensions(), vector::zero);
-        
+
             directReconP =
                 dimensionedScalar("zero", reconP.dimensions(), scalar(0));
 
@@ -278,7 +278,13 @@ void Foam::velocityPOD::calcOrthoBase() const
 
 void Foam::velocityPOD::calcDerivativeCoeffs() const
 {
-    if (convectionDerivativePtr_ || derivativePtr_)
+    if
+    (
+        convectionDerivativePtr_
+     || derivativePtr_
+     || lagrangeDerPtr_
+     || lagrangeSrcPtr_
+    )
     {
         FatalErrorInFunction
             << "Derivative matrix already calculated"
@@ -289,7 +295,7 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
 
     // Get bases.  Note: velocity base is in ortho base
     const vectorPODOrthoNormalBase& b = orthoBase();
-    
+
     // Pressure field base
     const PtrList<volScalarField>& pb = pBase();
 
@@ -316,15 +322,26 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
     derivativePtr_ = new scalarSquareMatrix(b.baseSize(), scalar(0));
     scalarSquareMatrix& derivative = *derivativePtr_;
 
+    // Lagrange multiplier derivative
+    lagrangeDerPtr_ = new scalarField(b.baseSize(), scalar(0));
+    scalarField& lagrangeDer = *lagrangeDerPtr_;
+
+    // Lagrange multiplier source
+    lagrangeSrcPtr_ = new scalarField(b.baseSize(), scalar(0));
+    scalarField& lagrangeSrc = *lagrangeSrcPtr_;
+
+    // Get solution field four boundary conditions.  Force raw access without
+    // checking
+    const volVectorField& U = *reconUPtr_;
+
     // i = equation number (normal basis in dot-product)
     // j = summation over all bases
     // k = second summation for convection term
 
     // Calculate derivative by moving equation terms to rhs
 
-    // Calculate volume for scaling
-    const scalar V = gSum(mesh().V().field());
-    Info<< "V: " << V << endl;
+    // Calculate volume for scaling - THIS IS WRONG!!! HJ, HERE!!!
+    const scalar V = 0.2*gSum(mesh().V().field());
 
     // Derivatives assembly loop
     for (label i = 0; i < b.baseSize(); i++)
@@ -364,11 +381,38 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
                         snapUI
                     )*V;
             }
+
+            // Lagrange multiplier is calculated on boundaries where
+            // reconU fixes value
+            forAll (U.boundaryField(), patchI)
+            {
+                if (U.boundaryField()[patchI].fixesValue())
+                {
+                    // Note pre-multiplication by beta and signs
+                    // of derivative and source.  Su-Sp treatment
+                    lagrangeDer[i] += -beta_*
+                        POD::projection
+                        (
+                            snapUJ.boundaryField()[patchI],
+                            snapUI.boundaryField()[patchI]
+                        );
+
+                    lagrangeSrc[i] += beta_*
+                        POD::projection
+                        (
+                            U.boundaryField()[patchI],
+                            snapUI.boundaryField()[patchI]
+                        );
+                }
+            }
+
         }
     }
 
-    Info<< "derivative: " << derivative << endl;
-    Info<< "convectionDerivative: " << convectionDerivative << endl;
+    Info<< "convectionDerivative: " << convectionDerivative << nl
+        << "derivative: " << derivative << nl
+        << "lagrangeDer: " << lagrangeDer << nl
+        << "lagrangeSrc: " << lagrangeSrc << endl;
 }
 
 
@@ -391,7 +435,7 @@ void Foam::velocityPOD::updateFields() const
 
         reconU = dimensionedVector("zero", reconU.dimensions(), vector::zero);
         reconP = dimensionedScalar("zero", reconP.dimensions(), scalar(0));
-        
+
         vectorField& reconUIn = reconU.internalField();
         scalarField& reconPIn = reconP.internalField();
 
@@ -403,6 +447,8 @@ void Foam::velocityPOD::updateFields() const
         {
             // Update velocity
             reconUIn += coeffs_[i]*b.orthoField(i);
+
+            // Update pressure
             reconPIn += coeffs_[i]*pB[i];
         }
 
@@ -438,9 +484,12 @@ Foam::velocityPOD::velocityPOD
         )
     ),
     nu_(transportProperties_.lookup("nu")),
+    beta_(readScalar(dict.lookup("beta"))),
     coeffs_(),
     convectionDerivativePtr_(nullptr),
     derivativePtr_(nullptr),
+    lagrangeDerPtr_(nullptr),
+    lagrangeSrcPtr_(nullptr),
     orthoBasePtr_(nullptr),
     pBasePtr_(nullptr),
     phiBasePtr_(nullptr),
@@ -448,6 +497,14 @@ Foam::velocityPOD::velocityPOD
     reconPPtr_(nullptr),
     fieldUpdateTimeIndex_(-1)
 {
+    // Check beta
+    if (beta_ < 0)
+    {
+        FatalErrorInFunction
+            << "Negative beta: " << beta_
+            << abort(FatalError);
+    }
+
     // Grab coefficients from the first snapshot of the ortho-normal base
     coeffs_.setSize(orthoBase().baseSize());
 
@@ -468,6 +525,8 @@ Foam::velocityPOD::~velocityPOD()
 {
     deleteDemandDrivenData(convectionDerivativePtr_);
     deleteDemandDrivenData(derivativePtr_);
+    deleteDemandDrivenData(lagrangeDerPtr_);
+    deleteDemandDrivenData(lagrangeSrcPtr_);
 
     deleteDemandDrivenData(orthoBasePtr_);
     deleteDemandDrivenData(pBasePtr_);
@@ -505,7 +564,13 @@ void Foam::velocityPOD::derivatives
     scalarField& dydx
 ) const
 {
-    if (!convectionDerivativePtr_ || !derivativePtr_)
+    if
+    (
+        !convectionDerivativePtr_
+     || !derivativePtr_
+     || !lagrangeDerPtr_
+     || !lagrangeSrcPtr_
+    )
     {
         calcDerivativeCoeffs();
     }
@@ -517,13 +582,20 @@ void Foam::velocityPOD::derivatives
     // Diffusion and pressure derivative
     const scalarSquareMatrix& derivative = *derivativePtr_;
 
+    // Lagrange multiplier derivative, boundary conditions
+    const scalarField& lagrangeDer = *lagrangeDerPtr_;
+
+    // Lagrange multiplier source, boundary conditions
+    const scalarField& lagrangeSrc = *lagrangeSrcPtr_;
+
     forAll (dydx, i)
     {
         dydx[i] = 0;
+        dydx[i] = lagrangeSrc[i];
 
         forAll (y, j)
         {
-            dydx[i] += derivative[i][j]*y[j];
+            dydx[i] += derivative[i][j]*y[j] + lagrangeDer[i]*y[j];
 
             forAll (y, k)
             {
@@ -554,6 +626,9 @@ void Foam::velocityPOD::jacobian
     // Diffusion and pressure derivative
     const scalarSquareMatrix& derivative = *derivativePtr_;
 
+    // Lagrange multiplier derivative, boundary conditions
+    const scalarField& lagrangeDer = *lagrangeDerPtr_;
+
     // Must calculate derivatives
     derivatives(x, y, dfdx);
 
@@ -570,7 +645,7 @@ void Foam::velocityPOD::jacobian
     {
         forAll (y, j)
         {
-            dfdy[i][j] = derivative[i][j];
+            dfdy[i][j] = derivative[i][j] + lagrangeDer[i];
 
             forAll (y, k)
             {
