@@ -49,7 +49,14 @@ namespace Foam
 
 void Foam::velocityPOD::calcOrthoBase() const
 {
-    if (orthoBasePtr_ || pBasePtr_ || phiBasePtr_)
+    if
+    (
+        orthoBasePtr_
+     || pBasePtr_
+     || phiBasePtr_
+     || reconUPtr_
+     || reconPPtr_
+    )
     {
         FatalErrorInFunction
             << "Orthogonal base already calculated"
@@ -64,6 +71,7 @@ void Foam::velocityPOD::calcOrthoBase() const
 
     // Remember time index to restore it after the scan
     label origTimeIndex = runTime.timeIndex();
+    label firstReadTimeIndex = -1;
 
     instantList Times = runTime.times();
 
@@ -119,6 +127,11 @@ void Foam::velocityPOD::calcOrthoBase() const
         {
             // Record time as valid
             validTimes[i] = true;
+
+            if (firstReadTimeIndex == -1)
+            {
+                firstReadTimeIndex = i;
+            }
 
             Info<< "Reading snapshots from time = "
                 << runTime.timeName() << endl;
@@ -179,7 +192,7 @@ void Foam::velocityPOD::calcOrthoBase() const
     }
 
     // Reset time index to initial state
-    runTime.setTime(Times[origTimeIndex], origTimeIndex);
+    runTime.setTime(Times[firstReadTimeIndex], firstReadTimeIndex);
 
     // Resize snapshots
     if (nSnapshots < 2)

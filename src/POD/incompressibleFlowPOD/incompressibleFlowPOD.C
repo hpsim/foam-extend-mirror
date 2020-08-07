@@ -380,9 +380,8 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
 
     // Calculate derivative by moving equation terms to rhs
 
-    // Calculate volume for scaling
-    const scalar V = gSum(mesh().V().field());
-    Info<< "V: " << V << endl;
+    // Calculate volume for scaling - THIS IS WRONG!!! HJ, HERE!!!
+    const scalar V = 0.2*gSum(mesh().V().field());
 
     // Derivatives assembly loop
     for (label i = 0; i < b.baseSize(); i++)
