@@ -69,6 +69,7 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
 
     // Assume no times are valid
     boolList validTimes(Times.size(), false);
+    label firstReadTimeIndex = -1;
 
     // Create a list of snapshots
     PtrList<volVector4Field> UpFields(Times.size());
@@ -121,6 +122,11 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
         {
             // Record time as valid
             validTimes[i] = true;
+
+            if (firstReadTimeIndex == -1)
+            {
+                firstReadTimeIndex = i;
+            }
 
             Info<< "Reading snapshots from time = "
                 << runTime.timeName() << endl;
@@ -211,7 +217,7 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
     }
 
     // Reset time index to initial state
-    runTime.setTime(Times[origTimeIndex], origTimeIndex);
+    runTime.setTime(Times[firstReadTimeIndex], firstReadTimeIndex);
 
     // Resize snapshots
     if (nSnapshots < 2)
@@ -445,7 +451,6 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
                         );
                 }
             }
-
         }
     }
 

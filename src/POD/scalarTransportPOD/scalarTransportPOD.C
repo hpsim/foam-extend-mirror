@@ -64,6 +64,7 @@ void Foam::scalarTransportPOD::calcOrthoBase() const
 
     // Remember time index to restore it after the scan
     label origTimeIndex = runTime.timeIndex();
+    label firstReadTimeIndex = -1;
 
     instantList Times = runTime.times();
 
@@ -98,28 +99,49 @@ void Foam::scalarTransportPOD::calcOrthoBase() const
             IOobject::MUST_READ
         );
 
-        if (fieldHeader.headerOk())
+        // Flux header
+        IOobject phiHeader
+        (
+            phiName_,
+            runTime.timeName(),
+            this->mesh(),
+            IOobject::MUST_READ
+        );
+
+        if (fieldHeader.headerOk() && phiHeader.headerOk())
         {
             // Record time as valid
             validTimes[i] = true;
+
+            if (firstReadTimeIndex == -1)
+            {
+                firstReadTimeIndex = i;
+            }
 
             Info<< "    Reading " << fieldName_ << " from time "
                 << runTime.timeName() << endl;
 
             fields.set(nSnapshots, new volScalarField(fieldHeader, mesh()));
 
-            // Rename the field
             fields[nSnapshots].rename(fieldName_ + name(i));
+
+            if (!reconFieldPtr_)
+            {
+                Info<< "Reading " << "recon" << fieldName_ << endl;
+                reconFieldPtr_ =
+                    new volScalarField
+                    (
+                        "recon" + fieldName_,
+                        fields[nSnapshots]
+                    );
+            }
+
             nSnapshots++;
-        }
-        else
-        {
-            Info<< "    No " << fieldName_ << " or " << phiName_ << endl;
         }
     }
 
     // Reset time index to initial state
-    runTime.setTime(Times[origTimeIndex], origTimeIndex);
+    runTime.setTime(Times[firstReadTimeIndex], firstReadTimeIndex);
 
     // Resize snapshots
     if (nSnapshots < 2)
@@ -195,7 +217,7 @@ void Foam::scalarTransportPOD::calcOrthoBase() const
 
 void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
 {
-    if (derivativeMatrixPtr_)
+    if (derivativePtr_ || lagrangeDerPtr_ || lagrangeSrcPtr_)
     {
         FatalErrorInFunction
             << "Derivative matrix already calculated"
@@ -249,6 +271,16 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
 
         runTime.setTime(Times[i], i);
 
+        // Field header
+        IOobject fieldHeader
+        (
+            fieldName_,
+            runTime.timeName(),
+            mesh(),
+            IOobject::MUST_READ
+        );
+
+        // Flux header
         IOobject phiHeader
         (
             phiName_,
@@ -257,7 +289,7 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
             IOobject::MUST_READ
         );
 
-        if (phiHeader.headerOk())
+        if (fieldHeader.headerOk() && phiHeader.headerOk())
         {
             Info<< "    Reading " << phiName_ << " from time "
                 << runTime.timeName() << endl;
@@ -283,12 +315,21 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
 
     const scalarPODOrthoNormalBase& b = orthoBase();
 
-    derivativeMatrixPtr_ = new scalarSquareMatrix(b.baseSize(), 0.0);
-    scalarSquareMatrix& derivative = *derivativeMatrixPtr_;
+    // Derivative
+    derivativePtr_ = new scalarSquareMatrix(b.baseSize(), 0.0);
+    scalarSquareMatrix& derivative = *derivativePtr_;
 
-    // Calculate volume for scaling
-    const scalar V = gSum(mesh().V().field());
-    Info<< "V: " << V << endl;
+    // Lagrange multiplier derivative
+    lagrangeDerPtr_ = new scalarField(b.baseSize(), scalar(0));
+    scalarField& lagrangeDer = *lagrangeDerPtr_;
+
+    // Lagrange multiplier source
+    lagrangeSrcPtr_ = new scalarField(b.baseSize(), scalar(0));
+    scalarField& lagrangeSrc = *lagrangeSrcPtr_;
+
+    const volScalarField& field = *reconFieldPtr_;
+
+    // Possible scaling error: reconsider.  HJ, 5/Aug/2020
 
     for (label i = 0; i < b.baseSize(); i++)
     {
@@ -306,7 +347,7 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
                     (
                         DT, snapJ,
                         "laplacian(" + DT.name() + "," + fieldName_ + ")"
-                    )*V,
+                    ),
                     snapI
                 )
               - POD::projection
@@ -315,13 +356,39 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
                     (
                         phi, snapJ,
                         "div(" + phiName_ + "," + fieldName_ + ")"
-                    )*V,
+                    ),
                     snapI
                 );
+
+            // Lagrange multiplier is calculated on boundaries where
+            // reconU fixes value
+            forAll (field.boundaryField(), patchI)
+            {
+                if (field.boundaryField()[patchI].fixesValue())
+                {
+                    // Note pre-multiplication by beta and signs
+                    // of derivative and source.  Su-Sp treatment
+                    lagrangeDer[i] += -beta_*
+                        POD::projection
+                        (
+                            snapJ.boundaryField()[patchI],
+                            snapI.boundaryField()[patchI]
+                        );
+
+                    lagrangeSrc[i] += beta_*
+                        POD::projection
+                        (
+                            field.boundaryField()[patchI],
+                            snapI.boundaryField()[patchI]
+                        );
+                }
+            }
         }
     }
 
-    Info<< "derivative: " << derivative << endl;
+    Info<< "derivative: " << derivative << nl
+        << "lagrangeDer: " << lagrangeDer << nl
+        << "lagrangeSrc: " << lagrangeSrc << endl;
 }
 
 
@@ -334,26 +401,9 @@ void Foam::scalarTransportPOD::updateFields() const
 
         if (!reconFieldPtr_)
         {
-            // Allocate field
-            reconFieldPtr_ =
-                new volScalarField
-                (
-                    IOobject
-                    (
-                        "recon" + fieldName_,
-                        mesh().time().timeName(),
-                        mesh(),
-                        IOobject::NO_READ,
-                        IOobject::NO_WRITE
-                    ),
-                    mesh(),
-                    dimensionedScalar
-                    (
-                        "zero",
-                        orthoBase().orthoField(0).dimensions(),
-                        0
-                    )
-                );
+            FatalErrorInFunction
+                << "Reconstructed field not allocated"
+                << abort(FatalError);
         }
 
         volScalarField& field = *reconFieldPtr_;
@@ -384,12 +434,23 @@ Foam::scalarTransportPOD::scalarTransportPOD
     PODODE(mesh, dict),
     fieldName_(dict.lookup("field")),
     phiName_(dict.lookup("flux")),
+    beta_(readScalar(dict.lookup("beta"))),
     coeffs_(),
-    derivativeMatrixPtr_(nullptr),
+    derivativePtr_(nullptr),
+    lagrangeDerPtr_(nullptr),
+    lagrangeSrcPtr_(nullptr),
     orthoBasePtr_(nullptr),
     reconFieldPtr_(nullptr),
     fieldUpdateTimeIndex_(-1)
 {
+    // Check beta
+    if (beta_ < 0)
+    {
+        FatalErrorInFunction
+            << "Negative beta: " << beta_
+            << abort(FatalError);
+    }
+
     // Grab coefficients from the first snapshot of the ortho-normal base
     coeffs_.setSize(orthoBase().baseSize());
 
@@ -408,8 +469,12 @@ Foam::scalarTransportPOD::scalarTransportPOD
 
 Foam::scalarTransportPOD::~scalarTransportPOD()
 {
-    deleteDemandDrivenData(derivativeMatrixPtr_);
+    deleteDemandDrivenData(derivativePtr_);
+    deleteDemandDrivenData(lagrangeDerPtr_);
+    deleteDemandDrivenData(lagrangeSrcPtr_);
+
     deleteDemandDrivenData(orthoBasePtr_);
+
     deleteDemandDrivenData(reconFieldPtr_);
 }
 
@@ -441,20 +506,27 @@ void Foam::scalarTransportPOD::derivatives
     scalarField& dydx
 ) const
 {
-    if (!derivativeMatrixPtr_)
+    if (!derivativePtr_ || !lagrangeDerPtr_ || !lagrangeSrcPtr_)
     {
         calcDerivativeCoeffs();
     }
 
-   const scalarSquareMatrix& derivative = *derivativeMatrixPtr_;
+   const scalarSquareMatrix& derivative = *derivativePtr_;
+
+    // Lagrange multiplier derivative, boundary conditions
+    const scalarField& lagrangeDer = *lagrangeDerPtr_;
+
+    // Lagrange multiplier source, boundary conditions
+    const scalarField& lagrangeSrc = *lagrangeSrcPtr_;
 
     forAll (dydx, i)
     {
         dydx[i] = 0;
+        dydx[i] = lagrangeSrc[i];
 
         forAll (y, j)
         {
-            dydx[i] += derivative[i][j]*y[j];
+            dydx[i] += derivative[i][j]*y[j] + lagrangeDer[i]*y[j];
         }
     }
 }
@@ -496,10 +568,7 @@ Foam::scalarTransportPOD::orthoBase() const
 
 const Foam::volScalarField& Foam::scalarTransportPOD::reconField() const
 {
-    if (!reconFieldPtr_)
-    {
-        updateFields();
-    }
+    updateFields();
 
     return *reconFieldPtr_;
 }

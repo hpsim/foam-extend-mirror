@@ -62,11 +62,20 @@ class scalarTransportPOD
         //- Flux field name
         word phiName_;
 
+        //- Lagrange multiplier pre-factor
+        scalar beta_;
+
         //- POD coefficients
         scalarField coeffs_;
 
         //- Derivative coefficient matrix
-        mutable scalarSquareMatrix* derivativeMatrixPtr_;
+        mutable scalarSquareMatrix* derivativePtr_;
+
+        //- Lagrange multiplier derivative (enforcing boundary conditions)
+        mutable scalarField* lagrangeDerPtr_;
+
+        //- Lagrange multiplier source (enforcing boundary conditions)
+        mutable scalarField* lagrangeSrcPtr_;
 
         //- Ortho-normal base pointer
         mutable scalarPODOrthoNormalBase* orthoBasePtr_;
