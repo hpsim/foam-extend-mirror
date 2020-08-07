@@ -14,19 +14,19 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-type       scalarTransport;
+type scalarTransport;
 
-//solver     RK;
-solver     Euler;
+solver KRR4;
 
-eps        0.0001;
+eps 0.0001;
 
 scalarTransportCoeffs
 {
-    field      T;
-    accuracy   0.9999;
-
-    velocity   U;
+    field T;
+    flux phi;
+    
+    accuracy 0.999;
+    beta 1;
 }
 
 

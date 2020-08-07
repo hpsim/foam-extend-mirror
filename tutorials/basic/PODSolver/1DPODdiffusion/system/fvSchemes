@@ -26,9 +26,10 @@ gradSchemes
 
 divSchemes
 {
-    default         Gauss linear;
+    default         none;
 
-    div(phi,T)      Gauss Gamma01 0.5;
+    div(phi,T)      Gauss linear;
+//    div(phi,T)      Gauss Gamma01 0.5;
 }
 
 laplacianSchemes
