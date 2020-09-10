@@ -20,26 +20,26 @@
     U = rAU*HUEqn().H();
     HUEqn.clear();
 
-     phi = fvc::interpolate(U) & mesh.Sf();
-     mrfZones.relativeFlux(phi);
-     adjustPhi(phi, U, p);
+    phi = fvc::interpolate(U) & mesh.Sf();
+    mrfZones.relativeFlux(phi);
+    adjustPhi(phi, U, p);
 
-     // Non-orthogonal pressure corrector loop
-     while (simple.correctNonOrthogonal())
-     {
-         fvScalarMatrix pEqn
-         (
-             fvm::laplacian(rAU, p) == fvc::div(phi)
-         );
+    // Non-orthogonal pressure corrector loop
+    while (simple.correctNonOrthogonal())
+    {
+        fvScalarMatrix pEqn
+        (
+            fvm::laplacian(rAU, p) == fvc::div(phi)
+        );
 
-         pEqn.setReference(pRefCell, pRefValue);
-         pEqn.solve();
+        pEqn.setReference(pRefCell, pRefValue);
+        pEqn.solve();
 
-         if (simple.finalNonOrthogonalIter())
-         {
-             phi -= pEqn.flux();
-         }
-     }
+        if (simple.finalNonOrthogonalIter())
+        {
+            phi -= pEqn.flux();
+        }
+    }
 
 #   include "continuityErrs.H"
 
