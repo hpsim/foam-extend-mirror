@@ -178,7 +178,9 @@ lduSolverPerformance faMatrix<Type>::solve()
 template<class Type>
 tmp<Field<Type> > faMatrix<Type>::residual() const
 {
-    tmp<Field<Type> > tres(source_);
+    // Bug fix: Creating a tmp out of a const reference will change the field
+    // HJ, 15/Apr/2011 and Petr Vita, Mark Olesen, 10/Sep/2020
+    tmp<Field<Type> > tres(new Field<Type>(source_));
     Field<Type>& res = tres();
 
     addBoundarySource(res);
