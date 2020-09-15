@@ -256,7 +256,7 @@ void Foam::MRFZone::calcMeshVelocity() const
 
     if (meshVelocityPtr_)
     {
-        FatalErrorIn("void MRFZone::calcMeshVelocity() const")
+        FatalErrorInFunction
             << "Mesh velocity for zone " << name_
             << " already calculated"
             << abort(FatalError);
@@ -328,7 +328,7 @@ void Foam::MRFZone::calcMeshVelocity() const
     }
     else
     {
-        FatalErrorIn("void MRFZone::calcMeshVelocity() const")
+        FatalErrorInFunction
             << "Cannot transpose axis: " << axis_.value()
             << " for MRF zone " << name_
             << abort(FatalError);
@@ -363,7 +363,8 @@ void Foam::MRFZone::calcMeshVelocity() const
         cs.globalPosition
         (
             cs.localPosition(p)
-          + vector(0, mag(Omega())*deltaT*sign(omega_.value()), 0)*movingPointsMask
+          + vector(0, mag(Omega())*deltaT*sign(omega_.value()), 0)*
+            movingPointsMask
         );
 
     // Calculate mesh velocity for all moving faces
@@ -429,7 +430,7 @@ Foam::MRFZone::MRFZone(const fvMesh& mesh, Istream& is)
 {
     if (dict_.found("patches"))
     {
-        WarningIn("MRFZone(const fvMesh&, Istream&)")
+        WarningInFunction
             << "Ignoring entry 'patches'\n"
             << "    By default all patches within the rotating region rotate."
             << nl << "    Optionally supply excluded patches using "
@@ -441,7 +442,7 @@ Foam::MRFZone::MRFZone(const fvMesh& mesh, Istream& is)
 
     if (mag(axis_.value()) < SMALL)
     {
-        FatalErrorIn("MRFZone(const fvMesh&, Istream&)")
+        FatalErrorInFunction
             << "Axis vector has zero magnitude: " << axis_
             << ".  This is not allowed"
             << abort(FatalError);
@@ -457,10 +458,8 @@ Foam::MRFZone::MRFZone(const fvMesh& mesh, Istream& is)
 
         if (excludedPatchLabels_[i] == -1)
         {
-            FatalErrorIn
-            (
-                "Foam::MRFZone::MRFZone(const fvMesh&, Istream&)"
-            )   << "cannot find MRF patch " << excludedPatchNames_[i]
+            FatalErrorInFunction
+               << "cannot find MRF patch " << excludedPatchNames_[i]
                 << exit(FatalError);
         }
     }
@@ -470,10 +469,8 @@ Foam::MRFZone::MRFZone(const fvMesh& mesh, Istream& is)
 
     if (!cellZoneFound)
     {
-        FatalErrorIn
-        (
-            "Foam::MRFZone::MRFZone(const fvMesh&, Istream&)"
-        )   << "cannot find MRF cellZone " << name_
+        FatalErrorInFunction
+            << "cannot find MRF cellZone " << name_
             << exit(FatalError);
     }
 
