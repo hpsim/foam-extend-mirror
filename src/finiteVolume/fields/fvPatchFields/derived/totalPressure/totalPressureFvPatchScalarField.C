@@ -250,7 +250,19 @@ void Foam::totalPressureFvPatchScalarField::updateCoeffs(const vectorField& Up)
 
 void Foam::totalPressureFvPatchScalarField::updateCoeffs()
 {
-    updateCoeffs(lookupPatchField<volVectorField, vector>(UName_));
+    if (this->db().objectRegistry::found(UName_))
+    {
+        updateCoeffs(lookupPatchField<volVectorField, vector>(UName_));
+    }
+    else
+    {
+#ifdef FULLDEBUG
+        InfoInFunction
+            << "Cannot find U.  Performing simple update" << endl;
+#endif
+
+        fixedValueFvPatchScalarField::updateCoeffs();
+    }
 }
 
 
