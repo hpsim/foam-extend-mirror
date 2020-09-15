@@ -180,6 +180,7 @@ void pressureInletOutletVelocityFvPatchVectorField::updateCoeffs()
             lookupPatchField<surfaceScalarField, scalar>(phiName_);
 
         valueFraction() = neg(phip)*(I - sqr(patch().nf()));
+        directionMixedFvPatchVectorField::updateCoeffs();
     }
     else
     {
@@ -188,10 +189,11 @@ void pressureInletOutletVelocityFvPatchVectorField::updateCoeffs()
             "pressureInletOutletVelocityFvPatchVectorField::updateCoeffs()"
         )   << "Cannot find phi.  Return" << endl;
 
-        valueFraction() = symmTensor::one;
-    }
+        valueFraction() = (I - sqr(patch().nf()));
 
-    directionMixedFvPatchVectorField::updateCoeffs();
+        vectorField::operator=(patchInternalField());
+        fvPatchVectorField::updateCoeffs();
+    }
 }
 
 
@@ -202,10 +204,12 @@ void pressureInletOutletVelocityFvPatchVectorField::write(Ostream& os) const
     {
         os.writeKeyword("phi") << phiName_ << token::END_STATEMENT << nl;
     }
+
     if (tangentialVelocity_.size())
     {
         tangentialVelocity_.writeEntry("tangentialVelocity", os);
     }
+
     writeEntry("value", os);
 }
 
