@@ -32,6 +32,7 @@ Author
 
 SourceFiles
     regionCouplePolyPatch.C
+    regionCouplePolyPatchTemplates.C
 
 \*---------------------------------------------------------------------------*/
 
