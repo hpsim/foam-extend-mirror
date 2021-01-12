@@ -42,6 +42,7 @@ SourceFiles
 #include "HashSet.H"
 #include "labelBits.H"
 #include "PackedList.H"
+#include "volumeType.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -74,18 +75,7 @@ public:
 
     // Data types
 
-        //- volume types
-        enum volumeType
-        {
-            UNKNOWN = 0,
-            MIXED = 1,
-            INSIDE = 2,
-            OUTSIDE = 3
-        };
-
-
-    // Tree node. Has up pointer and down pointers.
-
+        //- Tree node. Has up pointer and down pointers.
         class node
         {
         public:

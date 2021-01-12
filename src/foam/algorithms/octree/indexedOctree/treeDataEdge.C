@@ -95,7 +95,7 @@ Foam::label Foam::treeDataEdge::getVolumeType
     const point& sample
 ) const
 {
-    return indexedOctree<treeDataEdge>::UNKNOWN;
+    return volumeType::UNKNOWN;
 }
 
 

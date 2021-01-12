@@ -397,7 +397,7 @@ Foam::label Foam::treeDataFace::getVolumeType
     // - tolerances are wrong. (if e.g. face has zero area)
     // - or (more likely) surface is not closed.
 
-    return indexedOctree<treeDataFace>::UNKNOWN;
+    return volumeType::UNKNOWN;
 }
 
 
