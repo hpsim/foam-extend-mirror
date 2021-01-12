@@ -119,17 +119,20 @@ Foam::tensor Foam::RodriguesRotation2
     const scalar k3 = k[2];
 
     // [k]_x
-    const tensor rotationT (
-          0, -k3,  k2,
-         k3,   0, -k1,
-        -k2,  k1,   0
+    const tensor rotationT
+    (
+        0, -k3,  k2,
+       k3,   0, -k1,
+      -k2,  k1,   0
     );
 
     // kk' - I
-    const tensor projectionT (
+    const tensor projectionT
+    (
         k1*k1 - 1.0, k1*k2,       k1*k3,
         k2*k1,       k2*k2 - 1.0, k2*k3,
-        k3*k1,       k3*k2,       k3*k3 - 1.0);
+        k3*k1,       k3*k2,       k3*k3 - 1.0
+    );
 
     const scalar cosTheta = cos(theta);
     const scalar sinTheta = sin(theta);
@@ -221,17 +224,20 @@ Foam::tensorField Foam::RodriguesRotation
     const scalar k3 = k[2];
 
     // [k]_x
-    const tensor rotationT (
-          0, -k3,  k2,
-         k3,   0, -k1,
-        -k2,  k1,   0
+    const tensor rotationT
+    (
+        0, -k3,  k2,
+       k3,   0, -k1,
+      -k2,  k1,   0
     );
 
     // kk' - I
-    const tensor projectionT (
+    const tensor projectionT
+    (
         k1*k1 - 1.0, k1*k2,       k1*k3,
         k2*k1,       k2*k2 - 1.0, k2*k3,
-        k3*k1,       k3*k2,       k3*k3 - 1.0);
+        k3*k1,       k3*k2,       k3*k3 - 1.0
+    );
 
     // Project both vectors onto the plane defined by the rotation axis
     vectorField nvi = -(projectionT & vi);
