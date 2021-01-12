@@ -671,6 +671,7 @@ $(octree)/treeLeafName.C
 $(octree)/pointIndexHitIOList.C
 
 indexedOctree = algorithms/octree/indexedOctree
+$(indexedOctree)/volumeType.C
 $(indexedOctree)/indexedOctreeName.C
 $(indexedOctree)/treeDataCell.C
 $(indexedOctree)/treeDataEdge.C
