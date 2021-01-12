@@ -288,7 +288,7 @@ void Foam::ggiPolyPatch::calcReconFaceCellCentres() const
         const label shadowID = shadowIndex();
 
         // Get interpolated shadow face centre to face cell centre vectors
-        tmp<vectorField> tdf = interpolate
+        vectorField df = interpolate
         (
             boundaryMesh()[shadowID].faceCellCentres()
           - boundaryMesh()[shadowID].faceCentres()
@@ -306,14 +306,14 @@ void Foam::ggiPolyPatch::calcReconFaceCellCentres() const
             const vectorField uncoveredDeltas(cf - ccf);
 
             // Set uncovered deltas to fully uncovered faces
-            setUncoveredFaces(uncoveredDeltas, tdf());
+            setUncoveredFaces(uncoveredDeltas, df);
 
             // Scale partially overlapping faces
-            scalePartialFaces(tdf());
+            scalePartialFaces(df);
         }
 
         // Calculate the reconstructed cell centres
-        reconFaceCellCentresPtr_ = new vectorField(tdf() + cf);
+        reconFaceCellCentresPtr_ = new vectorField(df + cf);
     }
     else
     {
