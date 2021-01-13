@@ -406,12 +406,6 @@ write(Ostream& os) const
 }
 
 
-// Specify data associated with VectorN<scalar, 5> type is contiguous
-// Hacked by Henrik Rusche???  Remove?  HJ, 11/May/2020
-template<>
-inline bool Foam::contiguous<Foam::VectorN<Foam::scalar, 5> >() {return true;}
-
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
