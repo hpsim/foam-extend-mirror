@@ -48,7 +48,7 @@ Foam::OPstream::~OPstream()
         )
     )
     {
-        FatalErrorIn("OPstream::~OPstream()")
+        FatalErrorInFunction
             << "MPI_Bsend cannot send outgoing message"
             << Foam::abort(FatalError);
     }
@@ -160,11 +160,9 @@ bool Foam::OPstream::write
     }
     else
     {
-        FatalErrorIn
-        (
-            "OPstream::write"
-            "(const int fromProcNo, char* buf, std::streamsize bufSize)"
-        )   << "Unsupported communications type " << commsType
+        FatalErrorInFunction
+            << "Unsupported communications type "
+            << Pstream::commsTypeNames[commsType]
             << Foam::abort(FatalError);
     }
 

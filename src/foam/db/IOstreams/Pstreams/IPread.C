@@ -84,11 +84,8 @@ Foam::IPstream::IPstream
 
     if (!messageSize_)
     {
-        FatalErrorIn
-        (
-            "IPstream::IPstream(const int fromProcNo, "
-            "const label bufSize, streamFormat format, versionNumber version)"
-        )   << "read failed"
+        FatalErrorInFunction
+            << "read failed"
             << Foam::abort(FatalError);
     }
 }
@@ -144,11 +141,8 @@ Foam::label Foam::IPstream::read
             )
         )
         {
-            FatalErrorIn
-            (
-                "IPstream::read"
-                "(const int fromProcNo, char* buf, std::streamsize bufSize)"
-            )   << "MPI_Recv cannot receive incomming message"
+            FatalErrorInFunction
+                << "MPI_Recv cannot receive incomming message"
                 << Foam::abort(FatalError);
 
             return 0;
@@ -162,11 +156,8 @@ Foam::label Foam::IPstream::read
 
         if (messageSize > bufSize)
         {
-            FatalErrorIn
-            (
-                "IPstream::read"
-                "(const int fromProcNo, char* buf, std::streamsize bufSize)"
-            )   << "buffer (" << label(bufSize)
+            FatalErrorInFunction
+                << "buffer (" << label(bufSize)
                 << ") not large enough for incomming message ("
                 << messageSize << ')'
                 << Foam::abort(FatalError);
@@ -192,11 +183,8 @@ Foam::label Foam::IPstream::read
             )
         )
         {
-            FatalErrorIn
-            (
-                "IPstream::read"
-                "(const int fromProcNo, char* buf, std::streamsize bufSize)"
-            )   << "MPI_Recv cannot start non-blocking receive"
+            FatalErrorInFunction
+                << "MPI_Recv cannot start non-blocking receive"
                 << Foam::abort(FatalError);
 
             return 0;
@@ -218,11 +206,9 @@ Foam::label Foam::IPstream::read
     }
     else
     {
-        FatalErrorIn
-        (
-            "IPstream::read"
-            "(const int fromProcNo, char* buf, std::streamsize bufSize)"
-        )   << "Unsupported communications type " << commsType
+        FatalErrorInFunction
+            << "Unsupported communications type "
+            << Pstream::commsTypeNames[commsType]
             << Foam::abort(FatalError);
 
         return 0;

@@ -669,7 +669,7 @@ void Foam::Pstream::exit(int errnum)
         label n = PstreamGlobals::outstandingRequests_.size();
         PstreamGlobals::outstandingRequests_.clear();
 
-        WarningIn("Pstream::exit(int)")
+        WarningInFunction
             << "There are still " << n << " outstanding MPI_Requests." << endl
             << "This means that your code exited before doing a"
             << " Pstream::waitRequests()." << endl
@@ -724,7 +724,7 @@ void Foam::Pstream::waitRequests(const label start)
     if (debug)
     {
         Pout<< "Pstream::waitRequests : starting wait for "
-            << PstreamGlobals::outstandingRequests_.size()-start
+            << PstreamGlobals::outstandingRequests_.size() - start
             << " outstanding requests starting at " << start << endl;
     }
 
@@ -771,11 +771,9 @@ void Foam::Pstream::waitRequest(const label i)
 
     if (i >= PstreamGlobals::outstandingRequests_.size())
     {
-        FatalErrorIn
-        (
-            "Pstream::waitRequest(const label)"
-        )   << "There are " << PstreamGlobals::outstandingRequests_.size()
-            << " outstanding send requests and you are asking for i=" << i
+        FatalErrorInFunction
+            << "There are " << PstreamGlobals::outstandingRequests_.size()
+            << " outstanding send requests and you are asking for i =" << i
             << nl
             << "Maybe you are mixing blocking/non-blocking comms?"
             << Foam::abort(FatalError);
@@ -790,10 +788,8 @@ void Foam::Pstream::waitRequest(const label i)
         )
     )
     {
-        FatalErrorIn
-        (
-            "Pstream::waitRequest()"
-        )   << "MPI_Wait returned with error" << Foam::endl;
+        FatalErrorInFunction
+            << "MPI_Wait returned with error" << Foam::endl;
     }
 
     if (debug)
@@ -814,10 +810,8 @@ bool Foam::Pstream::finishedRequest(const label i)
 
     if (i >= PstreamGlobals::outstandingRequests_.size())
     {
-        FatalErrorIn
-        (
-            "Pstream::finishedRequest(const label)"
-        )   << "There are " << PstreamGlobals::outstandingRequests_.size()
+        FatalErrorInFunction
+            << "There are " << PstreamGlobals::outstandingRequests_.size()
             << " outstanding send requests and you are asking for i=" << i
             << nl
             << "Maybe you are mixing blocking/non-blocking comms?"
