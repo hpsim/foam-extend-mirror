@@ -44,7 +44,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class motionDiffusivity Declaration
+                      Class motionDiffusivity Declaration
 \*---------------------------------------------------------------------------*/
 
 class motionDiffusivity
@@ -92,8 +92,7 @@ public:
 
 
     // Destructor
-
-        virtual ~motionDiffusivity();
+    virtual ~motionDiffusivity() = default;
 
 
     // Member Functions

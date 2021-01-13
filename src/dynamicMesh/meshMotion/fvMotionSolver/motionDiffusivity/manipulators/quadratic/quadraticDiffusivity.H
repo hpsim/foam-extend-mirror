@@ -44,7 +44,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class quadraticDiffusivity Declaration
+                     Class quadraticDiffusivity Declaration
 \*---------------------------------------------------------------------------*/
 
 class quadraticDiffusivity
@@ -59,10 +59,10 @@ class quadraticDiffusivity
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        quadraticDiffusivity(const quadraticDiffusivity&);
+        quadraticDiffusivity(const quadraticDiffusivity&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const quadraticDiffusivity&);
+        void operator=(const quadraticDiffusivity&) = delete;
 
 
 public:
@@ -82,8 +82,7 @@ public:
 
 
     // Destructor
-
-        virtual ~quadraticDiffusivity();
+    virtual ~quadraticDiffusivity() = default;
 
 
     // Member Functions

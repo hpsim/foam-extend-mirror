@@ -75,10 +75,4 @@ Foam::autoPtr<Foam::motionDiffusivity> Foam::motionDiffusivity::New
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::motionDiffusivity::~motionDiffusivity()
-{}
-
-
 // ************************************************************************* //

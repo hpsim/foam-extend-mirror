@@ -43,7 +43,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-        Class displacementFvMotionSolver Declaration
+                 Class displacementFvMotionSolver Declaration
 \*---------------------------------------------------------------------------*/
 
 class displacementFvMotionSolver

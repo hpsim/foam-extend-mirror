@@ -55,12 +55,6 @@ Foam::quadraticDiffusivity::quadraticDiffusivity
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::quadraticDiffusivity::~quadraticDiffusivity()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::tmp<Foam::surfaceScalarField>
