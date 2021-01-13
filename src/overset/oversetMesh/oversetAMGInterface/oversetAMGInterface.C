@@ -323,11 +323,17 @@ Foam::oversetAMGInterface::oversetAMGInterface
     // list
 
     // I will know coarse donor index and I need its location in the list
-    labelList coarseDonorIndex(max(donorCells_) + 1);
+    labelList coarseDonorIndex;
 
-    forAll (donorCells_, dcI)
+    // Bugfix: Avoid the case of empty donor cells.  HJ, 13/Jan/2021
+    if (!donorCells_.empty())
     {
-        coarseDonorIndex[donorCells_[dcI]] = dcI;
+        coarseDonorIndex.setSize(max(donorCells_) + 1);
+    
+        forAll (donorCells_, dcI)
+        {
+            coarseDonorIndex[donorCells_[dcI]] = dcI;
+        }
     }
 
     // Make a list across fine level, where each fine donor records
