@@ -97,9 +97,7 @@ public:
 
 
     // Destructor
-
-        virtual ~twoPhaseMixture()
-        {}
+    virtual ~twoPhaseMixture() = default;
 
 
     // Member Functions
