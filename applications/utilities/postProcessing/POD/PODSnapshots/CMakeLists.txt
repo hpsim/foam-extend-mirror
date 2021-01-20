@@ -30,4 +30,17 @@
 #
 # --------------------------------------------------------------------------
 
-add_subdirectory({PODSnapshots)
+list(APPEND SOURCES
+  PODSnapshots.C
+)
+
+# Set minimal environment for external compilation
+if(NOT FOAM_FOUND)
+  cmake_minimum_required(VERSION 2.8)
+  find_package(FOAM REQUIRED)
+endif()
+
+add_foam_executable(PODSnapshots
+  DEPENDS POD
+  SOURCES ${SOURCES}
+)
