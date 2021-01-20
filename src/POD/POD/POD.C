@@ -43,7 +43,7 @@ namespace POD
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // Note: Consider weighting projection with cell volumes
-    
+
 template<class Type>
 scalar projection(const Field<Type>& a, const Field<Type>& b)
 {
@@ -73,6 +73,41 @@ scalar projection
 
     scalar p = projection(a, b);
     ta.clear();
+
+    return p;
+}
+
+
+template<class Type>
+scalar projection
+(
+    const GeometricField<Type, fvPatchField, volMesh>& a,
+    const tmp<GeometricField<Type, fvPatchField, volMesh> >& tb
+)
+{
+    const GeometricField<Type, fvPatchField, volMesh>& b = tb();
+
+    scalar p = projection(a, b);
+    tb.clear();
+
+    return p;
+}
+
+
+template<class Type>
+scalar projection
+(
+    const tmp<GeometricField<Type, fvPatchField, volMesh> >& ta,
+    const tmp<GeometricField<Type, fvPatchField, volMesh> >& tb
+)
+{
+    const GeometricField<Type, fvPatchField, volMesh>& a = ta();
+    const GeometricField<Type, fvPatchField, volMesh>& b = tb();
+
+    scalar p = projection(a, b);
+    ta.clear();
+    tb.clear();
+
     return p;
 }
 

@@ -73,6 +73,20 @@ namespace POD
         const tmp<GeometricField<Type, fvPatchField, volMesh> >& ta,
         const GeometricField<Type, fvPatchField, volMesh>& b
     );
+
+    template<class Type>
+    scalar projection
+    (
+        const GeometricField<Type, fvPatchField, volMesh>& a,
+        const tmp<GeometricField<Type, fvPatchField, volMesh> >& tb
+    );
+
+    template<class Type>
+    scalar projection
+    (
+        const tmp<GeometricField<Type, fvPatchField, volMesh> >& ta,
+        const tmp<GeometricField<Type, fvPatchField, volMesh> >& tb
+    );
 }
 
 
