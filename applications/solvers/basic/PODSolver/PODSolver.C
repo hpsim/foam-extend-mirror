@@ -38,13 +38,16 @@ Description
 
 int main(int argc, char *argv[])
 {
-
 #   include "setRootCase.H"
 
 #   include "createTime.H"
 #   include "createMesh.H"
 
     Info<< "Reading PODsolverDict\n" << endl;
+
+    // Note: reading directories corrupts deltaT from file
+    // Remember and restore it
+    const scalar dt = runTime.deltaT().value();
 
     IOdictionary PODsolverDict
     (
@@ -75,9 +78,12 @@ int main(int argc, char *argv[])
     // Read required accuracy
     scalar eps = readScalar(PODsolverDict.lookup("eps"));
 
-    Info<< "\nStarting time loop\n" << endl;
+    runTime.setDeltaT(dt);
 
-    for (runTime++; !runTime.end(); runTime++)
+    Info<< "\nStarting time loop.  deltaT = "
+        << runTime.deltaT().value() << nl << endl;
+
+    while (runTime.loop())
     {
         Info<< "Time = " << runTime.timeName() << nl << endl;
 
