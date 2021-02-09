@@ -65,8 +65,13 @@ int main(int argc, char *argv[])
 #       include "readFieldBounds.H"
 
 #       include "UEqn.H"
+
+        UTheta == mrfZones.calcMagUTheta(U);
+
 #       include "pEqn.H"
 
+        // Switch could be added here to solve enthalpy eqn for MRF cases with
+        // no ggi (therefore no jump is possible)
 // #       include "hEqn.H"
         // Solving for rothalpy
 #       include "iEqn.H"

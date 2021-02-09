@@ -97,7 +97,11 @@ void Foam::MRFZone::setMRFFaces()
     {
         const polyPatch& pp = patches[patchI];
 
-        if (pp.isWall() && !excludedPatches.found(patchI))
+        if
+        (
+            (pp.isWall() && !excludedPatches.found(patchI))
+         || pp.coupled()
+        )
         {
             forAll (pp, i)
             {
@@ -833,5 +837,102 @@ void Foam::MRFZone::Su
     }
 }
 
+
+void Foam::MRFZone::calcMagUTheta
+(
+    const volVectorField& U,
+    volScalarField& cumulativeUTheta
+)
+{
+    volScalarField includedExcludedMask
+    (
+        IOobject
+        (
+            "includedExcludedMask",
+            mesh_.time().timeName(),
+            mesh_,
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        mesh_,
+        dimensionedScalar("zero", dimless, 0.0)
+    );
+
+    // Mark internal cells
+    const labelList& cells = mesh_.cellZones()[cellZoneID_];
+
+    forAll (cells, i)
+    {
+        const label cellI = cells[i];
+        includedExcludedMask[cellI] = 1.0;
+    }
+
+    // Included patches
+    forAll (includedFaces_, patchI)
+    {
+        forAll (includedFaces_[patchI], i)
+        {
+            label patchFaceI = includedFaces_[patchI][i];
+
+            includedExcludedMask.boundaryField()[patchI][patchFaceI] = 1.0;
+        }
+    }
+
+    // Excluded patches
+    forAll (excludedFaces_, patchI)
+    {
+        forAll (excludedFaces_[patchI], i)
+        {
+            label patchFaceI = excludedFaces_[patchI][i];
+
+            includedExcludedMask.boundaryField()[patchI][patchFaceI] = 1.0;
+        }
+    }
+
+    vector dir;
+
+    if (mag(axis_.value().x()) > SMALL || mag(axis_.value().y()) > SMALL)
+    {
+        dir = vector(axis_.value().y(), axis_.value().x(), axis_.value().z());
+    }
+    else if (mag(axis_.value().z()) > SMALL)
+    {
+        dir = vector(axis_.value().x(), axis_.value().z(), axis_.value().y());
+    }
+
+    cylindricalCS cs
+    (
+        "cs",
+        origin_.value(),
+        axis_.value(),
+        dir,
+        false
+    );
+
+    volVectorField ULocalCS("ULocalCS", U);
+
+    const vectorField newPin =
+        cs.globalPosition
+        (
+            cs.localPosition(ULocalCS.internalField())
+        );
+
+    ULocalCS.internalField() = newPin;
+
+    forAll (ULocalCS.boundaryField(), patchI)
+    {
+        const vectorField newPp =
+            cs.globalPosition
+            (
+                cs.localPosition(ULocalCS.boundaryField()[patchI])
+            );
+
+        ULocalCS.boundaryField()[patchI] = newPp;
+    }
+
+    // Vector::Y is tangential component of velocity in cylindrical CS
+    cumulativeUTheta ==
+        cumulativeUTheta + ULocalCS.component(vector::Y)*includedExcludedMask;
+}
 
 // ************************************************************************* //

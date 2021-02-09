@@ -146,6 +146,10 @@ public:
 
         //- Compute source term for volVectorFields
         tmp<volVectorField> Su(const volVectorField& phi) const;
+
+        //- Calculate the magnitude of tangential component of velocity in MRF
+        //  zones
+        tmp<volScalarField> calcMagUTheta(const volVectorField& U);
 };
 
 

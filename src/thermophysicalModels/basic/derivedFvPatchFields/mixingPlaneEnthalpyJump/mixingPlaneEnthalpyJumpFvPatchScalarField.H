@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     4.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -22,29 +22,31 @@ License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::overlapGgiEnthalpyJumpFvPatchField
+    Foam::mixingPlaneEnthalpyJumpFvPatchScalarField
 
 Description
-    Foam::overlapGgiEnthalpyJumpFvPatchField
+    Foam::mixingPlaneEnthalpyJumpFvPatchScalarField
 
 Author
     Ilaria De Dominicis, General Electric Power, (March 2016)
 
 Contributor
-    Hrvoje Jasak, Wikki Ltd.
     Gregor Cvijetic, FMENA Zagreb.
+    Hrvoje Jasak, Wikki Ltd.
 
 GE CONFIDENTIAL INFORMATION 2016 General Electric Company. All Rights Reserved
 
 SourceFiles
-    overlapGgiEnthalpyJumpFvPatchField.C
+    mixingPlaneEnthalpyJumpFvPatchScalarField.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef overlapGgiEnthalpyJumpFvPatchField_H
-#define overlapGgiEnthalpyJumpFvPatchField_H
+#ifndef mixingPlaneEnthalpyJumpFvPatchScalarField_H
+#define mixingPlaneEnthalpyJumpFvPatchScalarField_H
 
-#include "jumpOverlapGgiFvPatchField.H"
+#include "jumpMixingPlaneFvPatchField.H"
+#include "fvPatchField.H"
+#include "fieldTypes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -52,13 +54,12 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-             Class overlapGgiEnthalpyJumpFvPatchField Declaration
+             Class mixingPlaneEnthalpyJumpFvPatchScalarField Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type>
-class overlapGgiEnthalpyJumpFvPatchField
+class mixingPlaneEnthalpyJumpFvPatchScalarField
 :
-    public jumpOverlapGgiFvPatchField<Type>
+    public jumpMixingPlaneFvPatchField<scalar>
 {
     // Private data
 
@@ -66,67 +67,67 @@ class overlapGgiEnthalpyJumpFvPatchField
         Switch rotating_;
 
         //- "jump" field
-        Field<Type> jump_;
+        Field<scalar> jump_;
 
 
 public:
 
     //- Runtime type information
-    TypeName("overlapGgiEnthalpyJump");
+    TypeName("mixingPlaneEnthalpyJump");
 
 
 // Constructors
 
         //- Construct from patch and internal field
-        overlapGgiEnthalpyJumpFvPatchField
+        mixingPlaneEnthalpyJumpFvPatchScalarField
         (
             const fvPatch&,
-            const DimensionedField<Type, volMesh>&
+            const DimensionedField<scalar, volMesh>&
         );
 
         //- Construct from patch, internal field and dictionary
-        overlapGgiEnthalpyJumpFvPatchField
+        mixingPlaneEnthalpyJumpFvPatchScalarField
         (
             const fvPatch&,
-            const DimensionedField<Type, volMesh>&,
+            const DimensionedField<scalar, volMesh>&,
             const dictionary&
         );
 
-        //- Construct by mapping given overlapGgiEnthalpyJumpFvPatchField
+        //- Construct by mapping given mixingPlaneEnthalpyJumpFvPatchScalarField
         //  onto a new patch
-        overlapGgiEnthalpyJumpFvPatchField
+        mixingPlaneEnthalpyJumpFvPatchScalarField
         (
-            const overlapGgiEnthalpyJumpFvPatchField<Type>&,
+            const mixingPlaneEnthalpyJumpFvPatchScalarField&,
             const fvPatch&,
-            const DimensionedField<Type, volMesh>&,
+            const DimensionedField<scalar, volMesh>&,
             const fvPatchFieldMapper&
         );
 
         //- Construct as copy setting internal field reference
-        overlapGgiEnthalpyJumpFvPatchField
+        mixingPlaneEnthalpyJumpFvPatchScalarField
         (
-            const overlapGgiEnthalpyJumpFvPatchField<Type>&,
-            const DimensionedField<Type, volMesh>&
+            const mixingPlaneEnthalpyJumpFvPatchScalarField&,
+            const DimensionedField<scalar, volMesh>&
         );
 
         //- Construct and return a clone
-        virtual tmp<fvPatchField<Type> > clone() const
+        virtual tmp<fvPatchField<scalar> > clone() const
         {
-            return tmp<fvPatchField<Type> >
+            return tmp<fvPatchField<scalar> >
             (
-                new overlapGgiEnthalpyJumpFvPatchField<Type>(*this)
+                new mixingPlaneEnthalpyJumpFvPatchScalarField(*this)
             );
         }
 
         //- Construct and return a clone setting internal field reference
-        virtual tmp<fvPatchField<Type> > clone
+        virtual tmp<fvPatchField<scalar> > clone
         (
-            const DimensionedField<Type, volMesh>& iF
+            const DimensionedField<scalar, volMesh>& iF
         ) const
         {
-            return tmp<fvPatchField<Type> >
+            return tmp<fvPatchField<scalar> >
             (
-                new overlapGgiEnthalpyJumpFvPatchField<Type>(*this, iF)
+                new mixingPlaneEnthalpyJumpFvPatchScalarField(*this, iF)
             );
         }
 
@@ -142,7 +143,7 @@ public:
             }
 
             //- Return the "jump" across the patch as a "half" field
-            virtual tmp<Field<Type> > jump() const
+            virtual tmp<Field<scalar> > jump() const
             {
                 return jump_;
             }
@@ -159,7 +160,7 @@ public:
             //- Reverse map the given fvPatchField onto this fvPatchField
             virtual void rmap
             (
-                const fvPatchField<Type>&,
+                const fvPatchField<scalar>&,
                 const labelList&
             );
 
@@ -174,20 +175,9 @@ public:
 };
 
 
-//- Specialisation of the jump-condition for the enthalpy
-template<>
-void overlapGgiEnthalpyJumpFvPatchField<scalar>::updateCoeffs();
-
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-#   include "overlapGgiEnthalpyJumpFvPatchField.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

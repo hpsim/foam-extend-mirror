@@ -1,3 +1,7 @@
+    // Added due to error during simulation start?
+    U.storePrevIter();
+    URel.storePrevIter();
+
     fvVectorMatrix UEqn
     (
         fvm::div(phi, U)

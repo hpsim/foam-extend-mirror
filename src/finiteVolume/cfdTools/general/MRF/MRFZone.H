@@ -313,6 +313,14 @@ public:
             volVectorField& source
         ) const;
 
+        //- Calculate magnitude of tangential component of velocity
+        void calcMagUTheta
+        (
+            const volVectorField& U,
+            volScalarField& UTheta
+        );
+
+
     // Ostream Operator
 
         friend Ostream& operator<<(Ostream& os, const MRFZone&)

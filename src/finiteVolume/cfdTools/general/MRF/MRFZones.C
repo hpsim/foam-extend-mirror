@@ -313,4 +313,35 @@ Foam::tmp<Foam::volVectorField> Foam::MRFZones::Su
 }
 
 
+Foam::tmp<Foam::volScalarField> Foam::MRFZones::calcMagUTheta
+(
+    const volVectorField& U
+)
+{
+    tmp<volScalarField> tMRFZonesUTheta
+    (
+        new volScalarField
+        (
+            IOobject
+            (
+                "MRFZonesUTheta",
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh_,
+            dimensionedScalar("zero", dimVelocity, 0.0)
+        )
+    );
+    volScalarField& MRFZonesUTheta = tMRFZonesUTheta();
+
+    forAll (*this, i)
+    {
+        operator[](i).calcMagUTheta(U, MRFZonesUTheta);
+    }
+
+    return tMRFZonesUTheta;
+}
+
 // ************************************************************************* //

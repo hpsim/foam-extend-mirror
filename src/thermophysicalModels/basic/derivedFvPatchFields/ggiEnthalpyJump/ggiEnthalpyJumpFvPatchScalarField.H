@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     4.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -22,29 +22,30 @@ License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::mixingPlaneEnthalpyJumpFvPatchField
+    Foam::ggiEnthalpyJumpFvPatchScalarField
 
 Description
-    Foam::mixingPlaneEnthalpyJumpFvPatchField
+    Foam::ggiEnthalpyJumpFvPatchScalarField
 
 Author
     Ilaria De Dominicis, General Electric Power, (March 2016)
 
 Contributor
-    Hrvoje Jasak, Wikki Ltd.
     Gregor Cvijetic, FMENA Zagreb.
+    Hrvoje Jasak, Wikki Ltd.
 
 GE CONFIDENTIAL INFORMATION 2016 General Electric Company. All Rights Reserved
 
 SourceFiles
-    mixingPlaneEnthalpyJumpFvPatchField.C
+    ggiEnthalpyJumpFvPatchScalarField.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef mixingPlaneEnthalpyJumpFvPatchField_H
-#define mixingPlaneEnthalpyJumpFvPatchField_H
+#ifndef ggiEnthalpyJumpFvPatchScalarField_H
+#define ggiEnthalpyJumpFvPatchScalarField_H
 
-#include "jumpMixingPlaneFvPatchField.H"
+#include "jumpGgiFvPatchFields.H"
+#include "fieldTypes.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -52,13 +53,12 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-             Class mixingPlaneEnthalpyJumpFvPatchField Declaration
+                 Class ggiEnthalpyJumpFvPatchScalarField Declaration
 \*---------------------------------------------------------------------------*/
 
-template<class Type>
-class mixingPlaneEnthalpyJumpFvPatchField
+class ggiEnthalpyJumpFvPatchScalarField
 :
-    public jumpMixingPlaneFvPatchField<Type>
+    public jumpGgiFvPatchScalarField
 {
     // Private data
 
@@ -66,67 +66,67 @@ class mixingPlaneEnthalpyJumpFvPatchField
         Switch rotating_;
 
         //- "jump" field
-        Field<Type> jump_;
+        scalarField jump_;
 
 
 public:
 
     //- Runtime type information
-    TypeName("mixingPlaneEnthalpyJump");
+    TypeName("ggiEnthalpyJump");
 
 
 // Constructors
 
         //- Construct from patch and internal field
-        mixingPlaneEnthalpyJumpFvPatchField
+        ggiEnthalpyJumpFvPatchScalarField
         (
             const fvPatch&,
-            const DimensionedField<Type, volMesh>&
+            const DimensionedField<scalar, volMesh>&
         );
 
         //- Construct from patch, internal field and dictionary
-        mixingPlaneEnthalpyJumpFvPatchField
+        ggiEnthalpyJumpFvPatchScalarField
         (
             const fvPatch&,
-            const DimensionedField<Type, volMesh>&,
+            const DimensionedField<scalar, volMesh>&,
             const dictionary&
         );
 
-        //- Construct by mapping given mixingPlaneEnthalpyJumpFvPatchField
+        //- Construct by mapping given ggiEnthalpyJumpFvPatchScalarField
         //  onto a new patch
-        mixingPlaneEnthalpyJumpFvPatchField
+        ggiEnthalpyJumpFvPatchScalarField
         (
-            const mixingPlaneEnthalpyJumpFvPatchField<Type>&,
+            const ggiEnthalpyJumpFvPatchScalarField&,
             const fvPatch&,
-            const DimensionedField<Type, volMesh>&,
+            const DimensionedField<scalar, volMesh>&,
             const fvPatchFieldMapper&
         );
 
         //- Construct as copy setting internal field reference
-        mixingPlaneEnthalpyJumpFvPatchField
+        ggiEnthalpyJumpFvPatchScalarField
         (
-            const mixingPlaneEnthalpyJumpFvPatchField<Type>&,
-            const DimensionedField<Type, volMesh>&
+            const ggiEnthalpyJumpFvPatchScalarField&,
+            const DimensionedField<scalar, volMesh>&
         );
 
         //- Construct and return a clone
-        virtual tmp<fvPatchField<Type> > clone() const
+        virtual tmp<fvPatchScalarField> clone() const
         {
-            return tmp<fvPatchField<Type> >
+            return tmp<fvPatchScalarField>
             (
-                new mixingPlaneEnthalpyJumpFvPatchField<Type>(*this)
+                new ggiEnthalpyJumpFvPatchScalarField(*this)
             );
         }
 
         //- Construct and return a clone setting internal field reference
-        virtual tmp<fvPatchField<Type> > clone
+        virtual tmp<fvPatchScalarField> clone
         (
-            const DimensionedField<Type, volMesh>& iF
+            const DimensionedField<scalar, volMesh>& iF
         ) const
         {
-            return tmp<fvPatchField<Type> >
+            return tmp<fvPatchScalarField>
             (
-                new mixingPlaneEnthalpyJumpFvPatchField<Type>(*this, iF)
+                new ggiEnthalpyJumpFvPatchScalarField(*this, iF)
             );
         }
 
@@ -142,7 +142,7 @@ public:
             }
 
             //- Return the "jump" across the patch as a "half" field
-            virtual tmp<Field<Type> > jump() const
+            virtual tmp<scalarField> jump() const
             {
                 return jump_;
             }
@@ -159,9 +159,10 @@ public:
             //- Reverse map the given fvPatchField onto this fvPatchField
             virtual void rmap
             (
-                const fvPatchField<Type>&,
+                const fvPatchScalarField&,
                 const labelList&
             );
+
 
         // Evaluation functions
 
@@ -173,21 +174,9 @@ public:
         virtual void write(Ostream&) const;
 };
 
-
-//- Specialisation of the jump-condition for the enthalpy
-template<>
-void mixingPlaneEnthalpyJumpFvPatchField<scalar>::updateCoeffs();
-
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-#ifdef NoRepository
-#   include "mixingPlaneEnthalpyJumpFvPatchField.C"
-#endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

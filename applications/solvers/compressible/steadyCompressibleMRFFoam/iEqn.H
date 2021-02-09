@@ -2,28 +2,31 @@
     // Solve the rothalpy equation
 
     // Create relative velocity
-    Urel == U;
-    mrfZones.relativeVelocity(Urel);
+    URel == U;
+    mrfZones.relativeVelocity(URel);
 
     // Bound the relative velocity to preserve the i to h conversion bound
     // HJ, 22/Mar/2017
-    volScalarField magUrel = mag(Urel);
+    volScalarField magURel = mag(URel);
 
-    if (max(magUrel) > UMax)
+    if (max(magURel) > UMax)
     {
-        volScalarField UrelLimiter = pos(magUrel - UMax)*UMax/(magUrel + smallU)
-            + neg(magUrel - UMax);
-        UrelLimiter.max(scalar(0));
-        UrelLimiter.min(scalar(1));
+        volScalarField URelLimiter = pos(magURel - UMax)*UMax/(magURel + smallU)
+            + neg(magURel - UMax);
+        URelLimiter.max(scalar(0));
+        URelLimiter.min(scalar(1));
 
-        Urel *= UrelLimiter;
-        Urel.correctBoundaryConditions();
+        URel *= URelLimiter;
+        URel.correctBoundaryConditions();
     }
 
     // Create rotational velocity (= omega x r)
-    Urot == U - Urel;
+    URot = U - URel;
 
     T.storePrevIter();
+
+    i == h + 0.5*magSqr(U) - mag(UTheta)*mag(URot);
+    i.correctBoundaryConditions();
 
     fvScalarMatrix iEqn
     (
@@ -32,14 +35,14 @@
       - fvm::laplacian(turbulence->alphaEff(), i)
      ==
         // Viscous heating: note sign (devRhoReff has a minus in it)
-      - (turbulence->devRhoReff() && fvc::grad(Urel))
+      - (turbulence->devRhoReff() && fvc::grad(URel))
     );
 
     iEqn.relax();
     iEqn.solve();
 
     // Calculate enthalpy out of rothalpy
-    h = i + 0.5*(magSqr(Urot) - magSqr(Urel));
+    h == i - 0.5*magSqr(U) + mag(UTheta)*mag(URot);
     h.correctBoundaryConditions();
 
     thermo.correct();
