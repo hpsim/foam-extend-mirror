@@ -329,7 +329,7 @@ void Foam::shellSurfaces::findHigherLevel
         candidateMap.setSize(candidateI);
 
         // Do the expensive nearest test only for the candidate points.
-        List<searchableSurface::volumeType> volType;
+        List<volumeType> volType;
         allGeometry_[shells_[shellI]].getVolumeType(candidates, volType);
 
         forAll(volType, i)
@@ -340,11 +340,11 @@ void Foam::shellSurfaces::findHigherLevel
             (
                 (
                     modes_[shellI] == INSIDE
-                 && volType[i] == searchableSurface::INSIDE
+                 && volType[i] == volumeType::INSIDE
                 )
              || (
                     modes_[shellI] == OUTSIDE
-                 && volType[i] == searchableSurface::OUTSIDE
+                 && volType[i] == volumeType::OUTSIDE
                 )
             )
             {
