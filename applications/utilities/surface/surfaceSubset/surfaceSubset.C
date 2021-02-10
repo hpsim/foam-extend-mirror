@@ -265,16 +265,16 @@ int main(int argc, char *argv[])
             {
                 const point fc(surf1[faceI].centre(surf1.points()));
 
-                indexedOctree<treeDataTriSurface>::volumeType t =
+                volumeType::type t =
                     selectTree.getVolumeType(fc);
 
-                if (t == indexedOctree<treeDataTriSurface>::INSIDE && !outside)
+                if (t == volumeType::INSIDE && !outside)
                 {
                     facesToSubset[faceI] = true;
                 }
                 else if
                 (
-                    t == indexedOctree<treeDataTriSurface>::OUTSIDE
+                    t == volumeType::OUTSIDE
                  && outside
                 )
                 {
