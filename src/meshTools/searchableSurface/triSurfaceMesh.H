@@ -162,8 +162,7 @@ public:
 
 
     // Destructor
-
-        virtual ~triSurfaceMesh();
+    virtual ~triSurfaceMesh();
 
         //- Clear storage
         void clearOut();
@@ -196,7 +195,7 @@ public:
 
             //- Get representative set of element coordinates
             //  Usually the element centres (should be of length size()).
-            virtual pointField coordinates() const;
+            virtual tmp<pointField> coordinates() const;
 
             virtual void findNearest
             (

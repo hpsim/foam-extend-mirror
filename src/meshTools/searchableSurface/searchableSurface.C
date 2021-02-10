@@ -29,13 +29,13 @@ License
 
 namespace Foam
 {
+    defineTypeNameAndDebug(searchableSurface, 0);
+    defineRunTimeSelectionTable(searchableSurface, dict);
+}
 
-defineTypeNameAndDebug(searchableSurface, 0);
-defineRunTimeSelectionTable(searchableSurface, dict);
 
 
-// Construct named object from dictionary
-autoPtr<searchableSurface> searchableSurface::New
+Foam::autoPtr<Foam::searchableSurface> Foam::searchableSurface::New
 (
     const word& searchableSurfaceType,
     const IOobject& io,
@@ -43,16 +43,12 @@ autoPtr<searchableSurface> searchableSurface::New
 )
 {
     dictConstructorTable::iterator cstrIter =
-        dictConstructorTablePtr_
-            ->find(searchableSurfaceType);
+        dictConstructorTablePtr_->find(searchableSurfaceType);
 
     if (cstrIter == dictConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "searchableSurface::New(const word&, const word&"
-            ", const IOobject&, const dictionary&)"
-        )   << "Unknown searchableSurface type " << searchableSurfaceType
+        FatalErrorInFunction
+            << "Unknown searchableSurface type " << searchableSurfaceType
             << endl << endl
             << "Valid searchableSurface types : " << endl
             << dictConstructorTablePtr_->sortedToc()
@@ -69,15 +65,6 @@ Foam::searchableSurface::searchableSurface(const IOobject& io)
 :
     regIOobject(io)
 {}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::searchableSurface::~searchableSurface()
-{}
-
-
-} // End namespace Foam
 
 
 // ************************************************************************* //

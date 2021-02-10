@@ -23,10 +23,11 @@ License
 
 \*----------------------------------------------------------------------------*/
 
+#include "foamTime.H"
+#include "boundBox.H"
+#include "ListOps.H"
 #include "searchableSurfaces.H"
 #include "searchableSurfacesQueries.H"
-#include "ListOps.H"
-#include "foamTime.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -322,25 +323,6 @@ void Foam::searchableSurfaces::findNearest
         nearestDistSqr,
         nearestSurfaces,
         nearestInfo
-    );
-}
-
-
-//- Calculate point which is on a set of surfaces.
-Foam::pointIndexHit Foam::searchableSurfaces::facesIntersection
-(
-    const scalar initDistSqr,
-    const scalar convergenceDistSqr,
-    const point& start
-) const
-{
-    return searchableSurfacesQueries::facesIntersection
-    (
-        *this,
-        allSurfaces_,
-        initDistSqr,
-        convergenceDistSqr,
-        start
     );
 }
 

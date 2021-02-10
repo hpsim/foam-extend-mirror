@@ -90,8 +90,7 @@ bool triSurfaceSearch::calcInside(const point& p) const
     }
     else if
     (
-        tree().getVolumeType(p)
-     == indexedOctree<treeDataTriSurface>::INSIDE
+        tree().getVolumeType(p) == volumeType::INSIDE
     )
     {
         return true;

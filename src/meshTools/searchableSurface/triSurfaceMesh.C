@@ -276,7 +276,11 @@ Foam::triSurfaceMesh::triSurfaceMesh(const IOobject& io, const triSurface& s)
     tolerance_(indexedOctree<treeDataTriSurface>::perturbTol()),
     maxTreeDepth_(10),
     surfaceClosed_(-1)
-{}
+{
+    const pointField& pts = triSurface::points();
+
+    bounds() = boundBox(pts);
+}
 
 
 Foam::triSurfaceMesh::triSurfaceMesh(const IOobject& io)
@@ -307,7 +311,11 @@ Foam::triSurfaceMesh::triSurfaceMesh(const IOobject& io)
     tolerance_(indexedOctree<treeDataTriSurface>::perturbTol()),
     maxTreeDepth_(10),
     surfaceClosed_(-1)
-{}
+{
+    const pointField& pts = triSurface::points();
+
+    bounds() = boundBox(pts);
+}
 
 
 Foam::triSurfaceMesh::triSurfaceMesh
@@ -389,14 +397,19 @@ void Foam::triSurfaceMesh::clearOut()
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-Foam::pointField Foam::triSurfaceMesh::coordinates() const
+Foam::tmp<Foam::pointField> Foam::triSurfaceMesh::coordinates() const
 {
+    tmp<pointField> tPts(new pointField(8));
+    pointField& pt = tPts();
+
     // Use copy to calculate face centres so they don't get stored
-    return PrimitivePatch<labelledTri, SubList, const pointField&>
+    pt = PrimitivePatch<labelledTri, SubList, const pointField&>
     (
         SubList<labelledTri>(*this, triSurface::size()),
         triSurface::points()
     ).faceCentres();
+
+    return tPts;
 }
 
 

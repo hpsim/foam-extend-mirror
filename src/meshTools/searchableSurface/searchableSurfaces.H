@@ -162,18 +162,6 @@ public:
                 labelList& surfaces,
                 List<pointIndexHit>&
             ) const;
-
-
-        // Single point queries
-
-            //- Calculate point which is on a set of surfaces.
-            pointIndexHit facesIntersection
-            (
-                const scalar initialDistSqr,
-                const scalar convergenceDistSqr,
-                const point& start
-            ) const;
-
 };
 
 

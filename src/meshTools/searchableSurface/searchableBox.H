@@ -105,9 +105,8 @@ public:
             const dictionary& dict
         );
 
-    // Destructor
-
-        virtual ~searchableBox();
+    //- Destructor
+    virtual ~searchableBox();
 
 
     // Member Functions
@@ -128,7 +127,7 @@ public:
 
         //- Get representative set of element coordinates
         //  Usually the element centres (should be of length size()).
-        virtual pointField coordinates() const;
+        virtual tmp<pointField> coordinates() const;
 
         // Single point queries.
 

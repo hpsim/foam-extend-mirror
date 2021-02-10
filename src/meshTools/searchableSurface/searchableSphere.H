@@ -46,7 +46,7 @@ namespace Foam
 // Forward declaration of classes
 
 /*---------------------------------------------------------------------------*\
-                           Class searchableSphere Declaration
+                       Class searchableSphere Declaration
 \*---------------------------------------------------------------------------*/
 
 class searchableSphere
@@ -134,9 +134,9 @@ public:
 
         //- Get representative set of element coordinates
         //  Usually the element centres (should be of length size()).
-        virtual pointField coordinates() const
+        virtual tmp<pointField> coordinates() const
         {
-            return pointField(1, centre_);
+            return tmp<pointField>(new pointField(1, centre_));
         }
 
 

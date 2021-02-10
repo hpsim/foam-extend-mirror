@@ -63,10 +63,10 @@ private:
         //- 'right' point
         const point point2_;
 
-        //- length of vector point2-point1
+        //- Length of vector point2-point1
         const scalar magDir_;
 
-        //- normalised vector point2-point1
+        //- Normalised vector point2-point1
         const vector unitDir_;
 
         //- Radius squared
@@ -96,6 +96,8 @@ private:
             pointIndexHit& far
         ) const;
 
+        //- Return the boundBox of the cylinder
+        boundBox calcBounds() const;
 
         //- Disallow default bitwise copy construct
         searchableCylinder(const searchableCylinder&);
@@ -128,9 +130,8 @@ public:
             const dictionary& dict
         );
 
-    // Destructor
-
-        virtual ~searchableCylinder();
+    //- Destructor
+    virtual ~searchableCylinder();
 
 
     // Member Functions
@@ -151,7 +152,7 @@ public:
 
         //- Get representative set of element coordinates
         //  Usually the element centres (should be of length size()).
-        virtual pointField coordinates() const;
+        virtual tmp<pointField> coordinates() const;
 
 
         // Multiple point queries.
@@ -212,7 +213,7 @@ public:
 
             bool writeData(Ostream&) const
             {
-                notImplemented("searchableCylinder::writeData(Ostream&) const");
+                NotImplemented;
                 return false;
             }
 

@@ -36,6 +36,7 @@ SourceFiles
 #define treeDataTriSurface_H
 
 #include "triSurface.H"
+#include "volumeType.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,7 +49,7 @@ class treeDataTriSurface;
 template<class Type> class indexedOctree;
 
 /*---------------------------------------------------------------------------*\
-                           Class treeDataTriSurface Declaration
+                      Class treeDataTriSurface Declaration
 \*---------------------------------------------------------------------------*/
 
 class treeDataTriSurface
@@ -111,7 +112,7 @@ public:
             //- Get type (inside, outside, mixed, unknown) of point
             //  with respect to a surface.
             //  Only makes sense for closed surfaces.
-            label getVolumeType
+            volumeType getVolumeType
             (
                 const indexedOctree<treeDataTriSurface>&,
                 const point&

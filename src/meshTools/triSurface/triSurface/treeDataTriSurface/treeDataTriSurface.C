@@ -202,7 +202,7 @@ Foam::pointField Foam::treeDataTriSurface::points() const
 
 
 //- Get type of sample (inside/outside/mixed) w.r.t. surface.
-Foam::label Foam::treeDataTriSurface::getVolumeType
+Foam::volumeType Foam::treeDataTriSurface::getVolumeType
 (
     const indexedOctree<treeDataTriSurface>& tree,
     const point& sample
@@ -241,21 +241,21 @@ Foam::label Foam::treeDataTriSurface::getVolumeType
 
     if (t == triSurfaceTools::UNKNOWN)
     {
-        return indexedOctree<treeDataTriSurface>::UNKNOWN;
+        return volumeType::UNKNOWN;
     }
     else if (t == triSurfaceTools::INSIDE)
     {
-        return indexedOctree<treeDataTriSurface>::INSIDE;
+        return volumeType::INSIDE;
     }
     else if (t == triSurfaceTools::OUTSIDE)
     {
-        return indexedOctree<treeDataTriSurface>::OUTSIDE;
+        return volumeType::OUTSIDE;
     }
     else
     {
-        FatalErrorIn("treeDataTriSurface::getVolumeType(..)")
+        FatalErrorInFunction
             << "problem" << abort(FatalError);
-        return indexedOctree<treeDataTriSurface>::UNKNOWN;
+        return volumeType::UNKNOWN;
     }
 }
 

@@ -63,10 +63,10 @@ private:
 
         // Per instance data
 
-            //- instance name
+            //- Instance name
             wordList instance_;
 
-            //- scaling vector
+            //- Scaling vector
             vectorField scale_;
 
             //- transformation
@@ -76,12 +76,13 @@ private:
 
             Switch mergeSubRegions_;
 
-            //- offsets for indices coming from different surfaces
+            //- Offsets for indices coming from different surfaces
             //  (sized with size() of each surface)
             labelList indexOffset_;
 
         //- Region names
         mutable wordList regions_;
+
         //- From individual regions to collection regions
         mutable labelList regionOffset_;
 
@@ -131,8 +132,7 @@ public:
         );
 
     // Destructor
-
-        virtual ~searchableSurfaceCollection();
+    virtual ~searchableSurfaceCollection();
 
 
     // Member Functions
@@ -150,7 +150,7 @@ public:
 
         //- Get representative set of element coordinates
         //  Usually the element centres (should be of length size()).
-        virtual pointField coordinates() const;
+        virtual tmp<pointField> coordinates() const;
 
 
         // Multiple point queries.
@@ -232,13 +232,9 @@ public:
 
             bool writeData(Ostream&) const
             {
-                notImplemented
-                (
-                    "searchableSurfaceCollection::writeData(Ostream&) const"
-                );
+                NotImplemented;
                 return false;
             }
-
 };
 
 

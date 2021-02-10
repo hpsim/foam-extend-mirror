@@ -65,7 +65,7 @@ private:
 
     // Private Member Data
 
-        //- Gap size in meter
+        //- Gap size in metre
         const scalar gap_;
 
         //- Underlying geometry (size 1)
@@ -121,8 +121,7 @@ public:
         );
 
     // Destructor
-
-        virtual ~searchableSurfaceWithGaps();
+    virtual ~searchableSurfaceWithGaps();
 
 
     // Member Functions
@@ -152,7 +151,7 @@ public:
 
         //- Get representative set of element coordinates
         //  Usually the element centres (should be of length size()).
-        virtual pointField coordinates() const
+        virtual tmp<pointField> coordinates() const
         {
             return surface().coordinates();
         }

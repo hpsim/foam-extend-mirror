@@ -43,6 +43,7 @@ SourceFiles
 
 #include "pointField.H"
 #include "typeInfo.H"
+#include "boundBox.H"
 #include "runTimeSelectionTables.H"
 #include "pointIndexHit.H"
 #include "linePointRef.H"
@@ -54,37 +55,26 @@ namespace Foam
 {
 
 // Forward declaration of classes
+class volumeType;
 class objectRegistry;
 class mapDistribute;
 class treeBoundBox;
 
 /*---------------------------------------------------------------------------*\
-                           Class searchableSurface Declaration
+                      Class searchableSurface Declaration
 \*---------------------------------------------------------------------------*/
 
 class searchableSurface
 :
     public regIOobject
 {
-public:
-
-    // Data types
-
-        //- volume types
-        enum volumeType
-        {
-            UNKNOWN = 0,
-            MIXED = 1,      // not used. only here to maintain consistency with
-                            // indexedOctree volumeType.
-            INSIDE = 2,
-            OUTSIDE = 3
-        };
-
-private:
-
     // Private data
 
+        //- Name of surface
         const word name_;
+
+        //- Bounding box
+        boundBox bounds_;
 
 
     // Private Member Functions
@@ -150,7 +140,7 @@ public:
         //- Clone
         virtual autoPtr<searchableSurface> clone() const
         {
-            notImplemented("autoPtr<searchableSurface> clone() const");
+            NotImplemented;
             return autoPtr<searchableSurface>(nullptr);
         }
 
@@ -166,24 +156,34 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~searchableSurface();
+    //- Destructor
+    virtual ~searchableSurface() = default;
 
 
     // Member Functions
 
+        //- Return const reference to boundBox
+        const boundBox& bounds() const
+        {
+            return bounds_;
+        }
 
-        //- Names of regions.
+        //- Return non-const access to the boundBox to allow it to be set.
+        boundBox& bounds()
+        {
+            return bounds_;
+        }
+
+        //- Names of regions
         virtual const wordList& regions() const = 0;
 
-        //- Whether supports volume type below.
+        //- Whether supports volume type below
         virtual bool hasVolumeType() const = 0;
 
-        //- Range of local indices that can be returned.
+        //- Range of local indices that can be returned
         virtual label size() const = 0;
 
-        //- Range of global indices that can be returned.
+        //- Range of global indices that can be returned
         virtual label globalSize() const
         {
             return size();
@@ -191,7 +191,7 @@ public:
 
         //- Get representative set of element coordinates
         //  Usually the element centres (should be of length size()).
-        virtual pointField coordinates() const = 0;
+        virtual tmp<pointField> coordinates() const = 0;
 
 
         // Single point queries.
@@ -201,7 +201,7 @@ public:
             ////  - label: relevant index in surface
             ////  - label: region in surface
             ////  - point: actual nearest point found
-            //virtual pointIndexHit findNearest
+            // virtual pointIndexHit findNearest
             //(
             //    const point& sample,
             //    const scalar nearestDistSqr
@@ -212,7 +212,7 @@ public:
             ////  - label: relevant index in surface
             ////  - label: region in surface
             ////  - point: actual nearest point found
-            //virtual pointIndexHit findNearestOnEdge
+            // virtual pointIndexHit findNearestOnEdge
             //(
             //    const point& sample,
             //    const scalar nearestDistSqr
@@ -226,7 +226,7 @@ public:
             ////  sets:
             ////  - tightest  : bounding box
             ////  - linePoint : corresponding nearest point on line
-            //virtual pointIndexHit findNearest
+            // virtual pointIndexHit findNearest
             //(
             //    const linePointRef& ln,
             //    treeBoundBox& tightest,
@@ -234,14 +234,14 @@ public:
             //) const = 0;
             //
             ////- Find nearest intersection of line between start and end.
-            //virtual pointIndexHit findLine
+            // virtual pointIndexHit findLine
             //(
             //    const point& start,
             //    const point& end
             //) const = 0;
             //
             ////- Find any intersection of line between start and end.
-            //virtual pointIndexHit findLineAny
+            // virtual pointIndexHit findLineAny
             //(
             //    const point& start,
             //    const point& end
@@ -334,7 +334,6 @@ public:
             {
                 values.clear();
             }
-
 };
 
 
