@@ -97,10 +97,17 @@ void Foam::MRFZone::setMRFFaces()
     {
         const polyPatch& pp = patches[patchI];
 
+        // Note: coupled patches should be rotated.
+        // However, sometimes it is difficult to create a mesh with the
+        // GGI sitting properly on a cylinder or a sphere.  In such cases
+        // planar/cylindrical GGIs can be excluded, and cyclic GGIs can
+        // be preserved.  I am not happy about this, but if left uncorrected
+        // it causes a massive conservation issue on rotating GGI pairs
+        // HJ, 16/Feb/2021
         if
         (
             (pp.isWall() && !excludedPatches.found(patchI))
-         || pp.coupled()
+         || (pp.coupled() && !excludedPatches.found(patchI))
         )
         {
             forAll (pp, i)
