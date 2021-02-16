@@ -110,10 +110,10 @@
             "i",
             runTime.timeName(),
             mesh,
-            IOobject::NO_READ,
+            IOobject::MUST_READ,
             IOobject::AUTO_WRITE
         ),
-        h
+        mesh
     );
 
     i == h + 0.5*magSqr(U) - mag(UTheta)*mag(URot);
