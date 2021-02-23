@@ -24,7 +24,8 @@
         {
             fvScalarMatrix pEqn
             (
-                fvm::div(phid, p)
+	        fvm::ddt(psis, p)
+              + fvm::div(phid, p)
               + fvc::div(phid2)
               - fvm::laplacian(rho*rUrelA, p)
             );
