@@ -47,51 +47,34 @@ namespace Foam
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::velocityPOD::calcOrthoBase() const
+void Foam::velocityPOD::calcValidTimes() const
 {
-    if
-    (
-        orthoBasePtr_
-     || pBasePtr_
-     || phiBasePtr_
-     || reconUPtr_
-     || reconPPtr_
-    )
+    if (validTimesPtr_)
     {
         FatalErrorInFunction
-            << "Orthogonal base already calculated"
+            << "Valid times already calculated"
             << abort(FatalError);
     }
-
-    // Create ortho-normal base
-    scalar accuracy = readScalar(dict().lookup("accuracy"));
 
     // Get times list
     Time& runTime = const_cast<Time&>(mesh().time());
 
     // Remember time index to restore it after the scan
     label origTimeIndex = runTime.timeIndex();
-    label firstReadTimeIndex = -1;
 
     instantList Times = runTime.times();
 
-    // Assume no times are valid
-    boolList validTimes(Times.size(), false);
+    validTimesPtr_ = new instantList(Times.size());
+    instantList& vt = *validTimesPtr_;
 
-    // Create a list of snapshots
-    PtrList<volVectorField> UFields(Times.size());
-
-    PtrList<volScalarField> pFields(Times.size());
-
-    PtrList<surfaceScalarField> phiFields(Times.size());
-
-    label nSnapshots = 0;
+    label nValidTimes = 0;
 
     forAll (Times, i)
     {
-        if (Times[i].equal(0))
+        // Check if zero field should be used
+        if (Times[i].equal(0)  && !useZeroField_)
         {
-            Info << "Skipping time " << Times[i].name() << endl;
+            Info << "Skipping time " << Times[i] << endl;
 
             continue;
         }
@@ -126,93 +109,174 @@ void Foam::velocityPOD::calcOrthoBase() const
         if (UHeader.headerOk() && pHeader.headerOk() && phiHeader.headerOk())
         {
             // Record time as valid
-            validTimes[i] = true;
-
-            if (firstReadTimeIndex == -1)
-            {
-                firstReadTimeIndex = i;
-            }
-
-            Info<< "Reading snapshots from time = "
-                << runTime.timeName() << endl;
-
-            // Get velocity snapshot
-            UFields.set
-            (
-                nSnapshots,
-                new volVectorField(UHeader, this->mesh())
-            );
-
-            UFields[nSnapshots].rename(UName_ + name(i));
-
-            // Get pressure snapshot
-            pFields.set
-            (
-                nSnapshots,
-                new volScalarField(pHeader, this->mesh())
-            );
-
-            pFields[nSnapshots].rename(pName_ + name(i));
-
-            // Get flux snapshot
-            phiFields.set
-            (
-                nSnapshots,
-                new surfaceScalarField(phiHeader, this->mesh())
-            );
-
-            phiFields[nSnapshots].rename(phiName_ + name(i));
-
-            // Read the first time into reconU and reconP for
-            // boundary conditions and general reconstruction settings
-            if (!reconUPtr_)
-            {
-                Info<< "Reading " << "recon" << UName_ << endl;
-                reconUPtr_ =
-                    new volVectorField
-                    (
-                        "recon" + UName_,
-                        UFields[nSnapshots]
-                    );
-            }
-
-            if (!reconPPtr_)
-            {
-                Info<< "Reading " << "recon" << pName_ << endl;
-                reconPPtr_ =
-                    new volScalarField
-                    (
-                        "recon" + pName_,
-                        pFields[nSnapshots]
-                    );
-            }
-
-            nSnapshots++;
+            vt[nValidTimes] = Times[i];
+            nValidTimes++;
         }
     }
 
     // Reset time index to initial state
-    runTime.setTime(Times[firstReadTimeIndex], firstReadTimeIndex);
+    runTime.setTime(Times[origTimeIndex], origTimeIndex);
 
-    // Resize snapshots
-    if (nSnapshots < 2)
+    // Check snapshots
+    if (nValidTimes < 2)
     {
         FatalErrorInFunction
-            << "Insufficient number of snapshots: " << nSnapshots
+            << "Insufficient number of snapshots (validTimes): "
+            << nValidTimes
             << abort(FatalError);
     }
 
-    Info << "Number of snapshots: " << nSnapshots << endl;
+    // Reset the list of times
+    Info<< "Number of valid snapshots: " << nValidTimes << endl;
+    vt.setSize(nValidTimes);
+}
 
-    UFields.setSize(nSnapshots);
-    pFields.setSize(nSnapshots);
-    phiFields.setSize(nSnapshots);
+
+const Foam::instantList& Foam::velocityPOD::validTimes() const
+{
+    if (!validTimesPtr_)
+    {
+        calcValidTimes();
+    }
+
+    return *validTimesPtr_;
+}
+
+
+void Foam::velocityPOD::calcOrthoBase() const
+{
+    if
+    (
+        orthoBasePtr_
+     || pBasePtr_
+     || phiBasePtr_
+     || reconUPtr_
+     || reconPPtr_
+    )
+    {
+        FatalErrorInFunction
+            << "Orthogonal base already calculated"
+            << abort(FatalError);
+    }
+
+    // Create ortho-normal base
+    scalar accuracy = readScalar(dict().lookup("accuracy"));
+
+    // Get times list
+    Time& runTime = const_cast<Time&>(mesh().time());
+
+    // Remember time index to restore it after the scan
+    label origTimeIndex = runTime.timeIndex();
+
+    const instantList& valTimes = validTimes();
+
+    // Create a list of snapshots
+    PtrList<volVectorField> UFields(valTimes.size());
+
+    PtrList<volScalarField> pFields(valTimes.size());
+
+    PtrList<surfaceScalarField> phiFields(valTimes.size());
+
+    forAll (valTimes, i)
+    {
+        runTime.setTime(valTimes[i], i);
+
+        Info<< "Reading snapshots from time = " << runTime.timeName() << endl;
+
+        // Get velocity snapshot
+        UFields.set
+        (
+            i,
+            new volVectorField
+            (
+                IOobject
+                (
+                    UName_,
+                    runTime.timeName(),
+                    mesh(),
+                    IOobject::MUST_READ,
+                    IOobject::NO_WRITE
+                ),
+                this->mesh()
+            )
+        );
+
+        UFields[i].rename(UName_ + name(i));
+
+        // Get pressure snapshot
+        pFields.set
+        (
+            i,
+            new volScalarField
+            (
+                IOobject
+                (
+                    pName_,
+                    runTime.timeName(),
+                    mesh(),
+                    IOobject::MUST_READ
+                ),
+                this->mesh()
+            )
+        );
+
+        pFields[i].rename(pName_ + name(i));
+
+        // Get flux snapshot
+        phiFields.set
+        (
+            i,
+            new surfaceScalarField
+            (
+                IOobject
+                (
+                    phiName_,
+                    runTime.timeName(),
+                    mesh(),
+                    IOobject::MUST_READ
+                ),
+                this->mesh()
+            )
+        );
+
+        phiFields[i].rename(phiName_ + name(i));
+
+        // Read the first time into reconU and reconP for
+        // boundary conditions and general reconstruction settings
+        if (!reconUPtr_)
+        {
+            Info<< "Reading " << "recon" << UName_ << endl;
+            reconUPtr_ =
+                new volVectorField
+                (
+                    "recon" + UName_,
+                    UFields[i]
+                );
+        }
+
+        if (!reconPPtr_)
+        {
+            Info<< "Reading " << "recon" << pName_ << endl;
+            reconPPtr_ =
+                new volScalarField
+                (
+                    "recon" + pName_,
+                    pFields[i]
+                );
+        }
+    }
+
+    // Reset time index to initial state
+    runTime.setTime(valTimes[0], 0);
 
     // Create ortho-normal base for velocity
     orthoBasePtr_ = new vectorPODOrthoNormalBase(UFields, accuracy);
 
     // Check orthogonality and magnitude of snapshots
-    orthoBasePtr_->checkBase();
+    if (debug)
+    {
+        orthoBasePtr_->checkBase();
+    }
 
     // Collect pressure field base
     pBasePtr_ = new PtrList<volScalarField>(orthoBasePtr_->baseSize());
@@ -222,17 +286,13 @@ void Foam::velocityPOD::calcOrthoBase() const
     phiBasePtr_ = new PtrList<surfaceScalarField>(orthoBasePtr_->baseSize());
     orthoBasePtr_->calcOrthoBase(phiFields, *phiBasePtr_);
 
-
-    Info<< "Write reconstructed snapshots: check" << endl;
-
-    // Reset counter
-    nSnapshots = 0;
-
-    forAll (validTimes, i)
+    // Write snapshots
+    if (debug)
     {
-        if (validTimes[i])
+        Info<< "Write reconstructed snapshots: check" << endl;
+        forAll (valTimes, i)
         {
-            runTime.setTime(Times[i], i);
+            runTime.setTime(valTimes[i], i);
 
             Info<< "Time = " << runTime.timeName() << endl;
 
@@ -252,7 +312,12 @@ void Foam::velocityPOD::calcOrthoBase() const
             );
 
             directReconU =
-                dimensionedVector("zero", reconU.dimensions(), vector::zero);
+                dimensionedVector
+                (
+                    "zero",
+                    reconU.dimensions(),
+                    vector::zero
+                );
 
             directReconP =
                 dimensionedScalar("zero", reconP.dimensions(), scalar(0));
@@ -260,17 +325,18 @@ void Foam::velocityPOD::calcOrthoBase() const
             vectorField& UIn = directReconU.internalField();
             scalarField& pIn = directReconP.internalField();
 
-            for (label i = 0; i < orthoBasePtr_->baseSize(); i++)
+            for (label obpI = 0; obpI < orthoBasePtr_->baseSize(); obpI++)
             {
                 // Update velocity
                 UIn +=
-                    orthoBasePtr_->interpolationCoeffs()[nSnapshots][i]*
-                    orthoBasePtr_->orthoField(i);
+                    orthoBasePtr_->interpolationCoeffs()[i][obpI]*
+                    orthoBasePtr_->orthoField(obpI);
 
                 // Update pressure
-                pIn +=
-                    orthoBasePtr_->interpolationCoeffs()[nSnapshots][i]*
-                    pBasePtr_->operator[](i);
+                // pIn +=
+                //     pBasePtr_->interpolationCoeffs()[i][obpI]*
+                //     pBasePtr_->operator[](obpI);
+                //HJ, HERE!!!
             }
 
             // Internal field is set.  Correct boundary conditions
@@ -279,13 +345,11 @@ void Foam::velocityPOD::calcOrthoBase() const
 
             directReconP.correctBoundaryConditions();
             directReconP.write();
-
-            nSnapshots++;
         }
     }
 
     // Reset time index to initial state
-    runTime.setTime(Times[origTimeIndex], origTimeIndex);
+    runTime.setTime(runTime.times()[origTimeIndex], origTimeIndex);
 }
 
 
@@ -343,7 +407,7 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
     lagrangeSrcPtr_ = new scalarField(b.baseSize(), scalar(0));
     scalarField& lagrangeSrc = *lagrangeSrcPtr_;
 
-    // Get solution field four boundary conditions.  Force raw access without
+    // Get solution field for boundary conditions.  Force raw access without
     // checking
     const volVectorField& U = *reconUPtr_;
 
@@ -366,6 +430,8 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
             const volVectorField& snapUJ = b.orthoField(j);
 
             const volScalarField& snapPJ = pb[j];
+
+            // Note: volume scaling on all terms!
 
             derivative[i][j] =
                 POD::projection
@@ -418,14 +484,13 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
                         );
                 }
             }
-
         }
     }
 
-    Info<< "convectionDerivative: " << convectionDerivative << nl
-        << "derivative: " << derivative << nl
-        << "lagrangeDer: " << lagrangeDer << nl
-        << "lagrangeSrc: " << lagrangeSrc << endl;
+    // Info<< "convectionDerivative: " << convectionDerivative << nl
+    //     << "derivative: " << derivative << nl
+    //     << "lagrangeDer: " << lagrangeDer << nl
+    //     << "lagrangeSrc: " << lagrangeSrc << endl;
 }
 
 
@@ -439,7 +504,7 @@ void Foam::velocityPOD::updateFields() const
         if (!reconUPtr_ || !reconPPtr_)
         {
             FatalErrorInFunction
-                << "Reconstructed field not allocated"
+                << "Reconstructed fields not allocated"
                 << abort(FatalError);
         }
 
@@ -455,7 +520,7 @@ void Foam::velocityPOD::updateFields() const
         const vectorPODOrthoNormalBase& b = orthoBase();
 
         const PtrList<volScalarField>& pB = pBase();
-
+        Info<< "coeffs_: " << coeffs_ << endl;
         forAll (coeffs_, i)
         {
             // Update velocity
@@ -498,7 +563,9 @@ Foam::velocityPOD::velocityPOD
     ),
     nu_(transportProperties_.lookup("nu")),
     beta_(readScalar(dict.lookup("beta"))),
+    useZeroField_(dict.lookup("useZeroField")),
     coeffs_(),
+    validTimesPtr_(nullptr),
     convectionDerivativePtr_(nullptr),
     derivativePtr_(nullptr),
     lagrangeDerPtr_(nullptr),
@@ -536,6 +603,7 @@ Foam::velocityPOD::velocityPOD
 
 Foam::velocityPOD::~velocityPOD()
 {
+    deleteDemandDrivenData(validTimesPtr_);
     deleteDemandDrivenData(convectionDerivativePtr_);
     deleteDemandDrivenData(derivativePtr_);
     deleteDemandDrivenData(lagrangeDerPtr_);

@@ -65,8 +65,15 @@ class scalarTransportPOD
         //- Lagrange multiplier pre-factor
         scalar beta_;
 
+        //- Use zero field as snapshot
+        Switch useZeroField_;
+
         //- POD coefficients
         scalarField coeffs_;
+
+
+        //- List of valid times for snapshots
+        mutable instantList* validTimesPtr_;
 
         //- Derivative coefficient matrix
         mutable scalarSquareMatrix* derivativePtr_;
@@ -94,6 +101,12 @@ class scalarTransportPOD
 
         //- Disallow default bitwise assignment
         void operator=(const scalarTransportPOD&) = delete;
+
+        //- Calculated list valid times for snapshots
+        void calcValidTimes() const;
+
+        //- Return valid times
+        const instantList& validTimes() const;
 
         //- Calculate ortho-normal base
         void calcOrthoBase() const;
