@@ -333,10 +333,9 @@ void Foam::velocityPOD::calcOrthoBase() const
                     orthoBasePtr_->orthoField(obpI);
 
                 // Update pressure
-                // pIn +=
-                //     pBasePtr_->interpolationCoeffs()[i][obpI]*
-                //     pBasePtr_->operator[](obpI);
-                //HJ, HERE!!!
+                pIn +=
+                    orthoBasePtr_->interpolationCoeffs()[i][obpI]*
+                    pBasePtr_->operator[](obpI);
             }
 
             // Internal field is set.  Correct boundary conditions
