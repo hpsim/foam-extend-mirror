@@ -62,8 +62,9 @@ Foam::PODOrthoNormalBase<Type>::PODOrthoNormalBase
         }
     }
 
-    Info<< "Cumulative eigen-values: "
-        << setprecision(14) << cumEigenValues << nl
+    Info<< setprecision(14)
+        << "Eigen-values: " << eigenBase_.eigenValues() << nl
+        << "Cumulative eigen-values: " << cumEigenValues << nl
         << "Base size: " << baseSize << endl;
 
     // Establish orthonormal base
@@ -131,8 +132,11 @@ void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
     PtrList<GeoField>& orthoFields
 )
 {
+    // Get eigenvalues
+    const scalarField& eigenValues = eigenBase_.eigenValues();
+
     // Check if there are less requested orthoFields than eigen vectors
-    if (orthoFields.size() > eigenBase_.eigenValues().size())
+    if (orthoFields.size() > eigenValues.size())
     {
         FatalErrorInFunction
             << "Requested " << orthoFields.size()
@@ -143,6 +147,7 @@ void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
 
     forAll (orthoFields, baseI)
     {
+        // Scale the eigenvector before establishing the ortho-normal base
         const scalarField& eigenVector = eigenBase_.eigenVectors()[baseI];
 
         // Use calculated boundary conditions on the eigenbase
@@ -185,6 +190,8 @@ void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
 
         orthoFields.set(baseI, onBasePtr);
     }
+
+    // checkBase();
 }
 
 

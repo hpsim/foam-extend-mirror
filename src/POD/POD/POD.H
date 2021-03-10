@@ -59,6 +59,16 @@ namespace POD
     template<class Type>
     scalar projection(const Field<Type>& a, const Field<Type>& b);
 
+    template<class Type>
+    scalar projection(const tmp<Field<Type> >& ta, const Field<Type>& b);
+
+    template<class Type>
+    scalar projection(const Field<Type>& a, const tmp<Field<Type> >& tb);
+
+    template<class Type>
+    scalar projection(const tmp<Field<Type> >& ta, const tmp<Field<Type> >& tb);
+
+
     //- Dot product of snapshots across all fields/components
     template<class Type>
     scalar projection
