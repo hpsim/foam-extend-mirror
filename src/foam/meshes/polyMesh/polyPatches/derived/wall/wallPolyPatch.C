@@ -47,7 +47,8 @@ Foam::wallPolyPatch::wallPolyPatch
     const polyBoundaryMesh& bm
 )
 :
-    polyPatch(name, size, start, index, bm)
+    polyPatch(name, size, start, index, bm),
+    closedSolidBodyMotion_(false)
 {}
 
 
@@ -59,7 +60,11 @@ Foam::wallPolyPatch::wallPolyPatch
     const polyBoundaryMesh& bm
 )
 :
-    polyPatch(name, dict, index, bm)
+    polyPatch(name, dict, index, bm),
+    closedSolidBodyMotion_
+    (
+        dict.lookupOrDefault<Switch>("closedSolidBodyMotion", false)
+    )
 {}
 
 
@@ -72,7 +77,8 @@ Foam::wallPolyPatch::wallPolyPatch
     const label newStart
 )
 :
-    polyPatch(pp, bm, index, newSize, newStart)
+    polyPatch(pp, bm, index, newSize, newStart),
+    closedSolidBodyMotion_(pp.closedSolidBodyMotion_)
 {}
 
 
@@ -81,7 +87,8 @@ Foam::wallPolyPatch::wallPolyPatch
     const wallPolyPatch& pp
 )
 :
-    polyPatch(pp)
+    polyPatch(pp),
+    closedSolidBodyMotion_(pp.closedSolidBodyMotion_)
 {}
 
 
@@ -91,8 +98,17 @@ Foam::wallPolyPatch::wallPolyPatch
     const polyBoundaryMesh& bm
 )
 :
-    polyPatch(pp, bm)
+    polyPatch(pp, bm),
+    closedSolidBodyMotion_(pp.closedSolidBodyMotion_)
 {}
+
+
+void Foam::wallPolyPatch::write(Ostream& os) const
+{
+    polyPatch::write(os);
+    os.writeKeyword("closedSolidBodyMotion") << closedSolidBodyMotion_
+        << token::END_STATEMENT << nl;
+}
 
 
 // ************************************************************************* //
