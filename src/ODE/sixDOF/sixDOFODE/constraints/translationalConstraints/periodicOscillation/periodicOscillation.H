@@ -102,9 +102,8 @@ public:
         virtual autoPtr<translationalConstraint> clone() const;
 
 
-    // Destructor
-
-        virtual ~periodicOscillation();
+    //- Destructor
+    virtual ~periodicOscillation() = default;
 
 
     // Member Functions

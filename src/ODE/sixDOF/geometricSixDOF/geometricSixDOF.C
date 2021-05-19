@@ -412,12 +412,6 @@ Foam::autoPtr<Foam::sixDOFODE> Foam::geometricSixDOF::clone
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::geometricSixDOF::~geometricSixDOF()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 const Foam::dimensionedVector& Foam::geometricSixDOF::Xrel() const
