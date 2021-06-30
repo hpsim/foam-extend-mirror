@@ -50,12 +50,6 @@ Foam::solidBodyMotionFunction::solidBodyMotionFunction
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::solidBodyMotionFunction::~solidBodyMotionFunction()
-{}
-
-
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 bool Foam::solidBodyMotionFunction::read(const dictionary& SBMFCoeffs)

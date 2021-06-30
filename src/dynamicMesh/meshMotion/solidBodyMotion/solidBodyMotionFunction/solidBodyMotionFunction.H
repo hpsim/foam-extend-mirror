@@ -76,10 +76,10 @@ private:
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        solidBodyMotionFunction(const solidBodyMotionFunction&);
+        solidBodyMotionFunction(const solidBodyMotionFunction&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const solidBodyMotionFunction&);
+        void operator=(const solidBodyMotionFunction&) = delete;
 
 
 public:
@@ -121,7 +121,7 @@ public:
 
 
     //- Destructor
-    virtual ~solidBodyMotionFunction();
+    virtual ~solidBodyMotionFunction() = default;
 
 
     // Member Functions
