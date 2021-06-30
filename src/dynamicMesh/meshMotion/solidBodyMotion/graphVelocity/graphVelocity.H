@@ -35,6 +35,9 @@ SourceFiles
 Author
     Vuko Vukcevic, FMENA Zagreb.  All rights reserved.
 
+Contributors
+    Bug fixes by Hrvoje Jasak
+
 \*---------------------------------------------------------------------------*/
 
 #ifndef graphVelocity_H
@@ -109,16 +112,19 @@ class graphVelocity
             Switch inDegrees_;
 
 
-        //- Member functions
+    //- Private member functions
 
-            //- Return translational velocity vector
-            vector translationalVelocity() const;
+        //- Integrate motion to start time
+        void integrateMotionToStartTime();
 
-            // -Return rotational velocity vector
-            vector rotationalVelocity() const;
+        //- Return translational velocity vector
+        vector translationalVelocity() const;
 
-            //- Calculate transformation septernion
-            septernion calcTransformation() const;
+        // -Return rotational velocity vector
+        vector rotationalVelocity() const;
+
+        //- Calculate transformation septernion
+        septernion calcTransformation() const;
 
 
 public:
@@ -138,8 +144,7 @@ public:
 
 
     //- Destructor
-    virtual ~graphVelocity()
-    {}
+    virtual ~graphVelocity() = default;
 
 
     // Member Functions
