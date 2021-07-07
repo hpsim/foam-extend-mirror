@@ -182,16 +182,16 @@ void Foam::pressureVelocityPOD::calcOrthoBase() const
 
     PtrList<surfaceScalarField> phiFields(valTimes.size());
 
-    forAll (valTimes, i)
+    forAll (valTimes, timeI)
     {
-        runTime.setTime(valTimes[i], i);
+        runTime.setTime(valTimes[timeI], timeI);
 
         Info<< "Reading snapshots from time = " << runTime.timeName() << endl;
 
         // Get velocity snapshot
         UFields.set
         (
-            i,
+            timeI,
             new volVectorField
             (
                 IOobject
@@ -206,12 +206,12 @@ void Foam::pressureVelocityPOD::calcOrthoBase() const
             )
         );
 
-        UFields[i].rename(UName_ + name(i));
+        UFields[timeI].rename(UName_ + name(timeI));
 
         // Get pressure snapshot
         pFields.set
         (
-            i,
+            timeI,
             new volScalarField
             (
                 IOobject
@@ -225,12 +225,12 @@ void Foam::pressureVelocityPOD::calcOrthoBase() const
             )
         );
 
-        pFields[i].rename(pName_ + name(i));
+        pFields[timeI].rename(pName_ + name(timeI));
 
         // Get flux snapshot
         phiFields.set
         (
-            i,
+            timeI,
             new surfaceScalarField
             (
                 IOobject
@@ -244,7 +244,7 @@ void Foam::pressureVelocityPOD::calcOrthoBase() const
             )
         );
 
-        phiFields[i].rename(phiName_ + name(i));
+        phiFields[timeI].rename(phiName_ + name(timeI));
 
         // Read the first time into reconU and reconP for
         // boundary conditions and general reconstruction settings
@@ -255,7 +255,7 @@ void Foam::pressureVelocityPOD::calcOrthoBase() const
                 new volVectorField
                 (
                     "recon" + UName_,
-                    UFields[i]
+                    UFields[timeI]
                 );
         }
 
@@ -266,7 +266,7 @@ void Foam::pressureVelocityPOD::calcOrthoBase() const
                 new volScalarField
                 (
                     "recon" + pName_,
-                    pFields[i]
+                    pFields[timeI]
                 );
         }
     }
@@ -571,7 +571,7 @@ void Foam::pressureVelocityPOD::calcDerivativeCoeffs() const
                         "laplacian(" + pName_ + ")"
                     ),
                     snapPI
-                );
+                )*V;
         }
 
         volVectorField gradSnapPI = fvc::grad(snapPI);
@@ -588,7 +588,7 @@ void Foam::pressureVelocityPOD::calcDerivativeCoeffs() const
                 (
                     fvc::div(snapUJ + deltaT*gradSnapPI, "div(U)"),
                     snapPI
-                );
+                )*V;
         }
     }
 
@@ -603,8 +603,6 @@ void Foam::pressureVelocityPOD::calcDerivativeCoeffs() const
         {
             pressureLaplaceDerivative[pI][pJ] /= diagCoeff;
         }
-
-        Info<< "Check diag coeff: " << pressureLaplaceDerivative[pI][pI] << endl;
 
         // Divergence of velocity in the pressure equation
         for (label uJ = 0; uJ < Ub.baseSize(); uJ++)
@@ -833,6 +831,9 @@ void Foam::pressureVelocityPOD::derivatives
 
     const label pOffset = UBase().baseSize();
 
+    // Clear derivatives matrix
+    dydx = 0;
+
     // Insert momentum equation
     {
         // Convection derivative
@@ -891,20 +892,24 @@ void Foam::pressureVelocityPOD::derivatives
         const scalarRectangularMatrix& pressureSourceDerivative =
             *pressureSourceDerivativePtr_;
 
-        // for (label pI = 0; pI < pBase().baseSize(); pI++)
-        // {
-        //     dydx[pI + pOffset] = 0;
+        for (label pI = 0; pI < pBase().baseSize(); pI++)
+        {
+            dydx[pI + pOffset] = 0;
 
-        //     // Pressure laplacian
-        //     for (label pJ = 0; pJ < pBase().baseSize(); pJ++)
-        //     {
-        //         dydx[pI + pOffset] +=
-        //             pressureLaplaceDerivative[pI][pJ]*y[pJ + pOffset];
-        //     }
+            // Pressure laplacian
+            for (label pJ = 0; pJ < pBase().baseSize(); pJ++)
+            {
+                dydx[pI + pOffset] +=
+                    pressureLaplaceDerivative[pI][pJ]*y[pJ + pOffset];
+            }
 
-        //     // Pressure source
-
-        // }
+            // Pressure source
+            for (label uJ = 0; uJ < UBase().baseSize(); uJ++)
+            {
+                dydx[pI + pOffset] +=
+                    pressureSourceDerivative[pI][uJ]*y[uJ];
+            }
+        }
     }
 }
 
@@ -917,18 +922,6 @@ void Foam::pressureVelocityPOD::jacobian
     scalarSquareMatrix& dfdy
 ) const
 {
-    // Must calculate derivatives
-    derivatives(x, y, dfdx);
-
-    // Clear jacobian matrix
-    forAll (y, i)
-    {
-        forAll (y, j)
-        {
-            dfdy[i][j] = 0;
-        }
-    }
-
     if
     (
         !convectionDerivativePtr_
@@ -941,6 +934,18 @@ void Foam::pressureVelocityPOD::jacobian
     )
     {
         calcDerivativeCoeffs();
+    }
+
+    // Must calculate derivatives
+    derivatives(x, y, dfdx);
+
+    // Clear jacobian matrix
+    forAll (y, i)
+    {
+        forAll (y, j)
+        {
+            dfdy[i][j] = 0;
+        }
     }
 
     // Notes:
@@ -959,15 +964,12 @@ void Foam::pressureVelocityPOD::jacobian
         const scalarSquareMatrix& diffusionDerivative =
             *diffusionDerivativePtr_;
 
-        // Pressure gradient derivative
-        const scalarRectangularMatrix& pressureGradDerivative =
-            *pressureGradDerivativePtr_;
+        // // Pressure gradient derivative
+        // const scalarRectangularMatrix& pressureGradDerivative =
+        //     *pressureGradDerivativePtr_;
 
         // Lagrange multiplier derivative, boundary conditions
         const scalarField& lagrangeDer = *lagrangeDerPtr_;
-
-        // Lagrange multiplier source, boundary conditions
-        const scalarField& lagrangeSrc = *lagrangeSrcPtr_;
 
         for (label uI = 0; uI < UBase().baseSize(); uI++)
         {
@@ -980,7 +982,7 @@ void Foam::pressureVelocityPOD::jacobian
                 }
 
                 // Diffusion
-                dfdy[uI][uJ] =
+                dfdy[uI][uJ] +=
                     diffusionDerivative[uI][uJ]
                   + lagrangeDer[uI];
             }
@@ -992,7 +994,7 @@ void Foam::pressureVelocityPOD::jacobian
             // }
         }
     }
-
+    //HJ: INCOMPLETE!!!
     // Insert pressure equation.  Note the manipulation because of the
     // lack of ddt term
     // {
