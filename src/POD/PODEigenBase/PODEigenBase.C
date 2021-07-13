@@ -128,8 +128,6 @@ Foam::PODEigenBase<Type>::PODEigenBase
     // Calculate the snapshot products of the field with all available fields
     label nSnapshots = snapshots.size();
 
-    const fvMesh& mesh = snapshots[0].mesh();
-
     scalarSquareMatrix orthMatrix(nSnapshots);
 
     for (label snapI = 0; snapI < nSnapshots; snapI++)
@@ -143,7 +141,7 @@ Foam::PODEigenBase<Type>::PODEigenBase
                 1.0/nSnapshots*
                 POD::projection
                 (
-                    snapshots[snapI].internalField()*mesh.V().field(),
+                    snapshots[snapI].internalField(),
                     snapshots[snapJ].internalField()
                 );
 
