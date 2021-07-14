@@ -25,7 +25,9 @@ scalarTransportCoeffs
     field T;
     flux phi;
     
-    accuracy 0.999;
+    useZeroField yes;
+
+    accuracy 0.999999;
     beta 1;
 }
 
