@@ -1,5 +1,3 @@
-    Info<< "Reading thermophysical properties\n" << endl;
-
     Info<< "Reading field T\n" << endl;
     volScalarField T
     (
@@ -42,9 +40,9 @@
         mesh
     );
 
-    #include "createPhi.H"
+#   include "createPhi.H"
 
-    #include "readTransportProperties.H"
+#   include "readTransportProperties.H"
 
     Info<< "Creating turbulence model\n" << endl;
     autoPtr<incompressible::turbulenceModel> turbulence
@@ -56,7 +54,6 @@
     scalar pRefValue = 0.0;
     setRefCell(p, piso.dict(), pRefCell, pRefValue);
     mesh.schemesDict().setFluxRequired(p.name());
-
 
     // Kinematic density for buoyancy force
     volScalarField rhok
