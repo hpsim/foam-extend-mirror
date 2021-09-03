@@ -139,18 +139,18 @@ public:
 
         // Mapping functions
 
-            // //- Map (and resize as needed) from self given a mapping object
-            // virtual void autoMap
-            // (
-            //     const fvPatchFieldMapper&
-            // );
+            //- Map (and resize as needed) from self given a mapping object
+            virtual void autoMap
+            (
+                const fvPatchFieldMapper&
+            );
 
-            // //- Reverse map the given fvPatchField onto this fvPatchField
-            // virtual void rmap
-            // (
-            //     const fvPatchField<Type>&,
-            //     const labelList&
-            // );
+            //- Reverse map the given fvPatchField onto this fvPatchField
+            virtual void rmap
+            (
+                const fvPatchField<Type>&,
+                const labelList&
+            );
 
             //- Update on mesh motion
             virtual void updateOnMotion();

@@ -170,34 +170,27 @@ zeroGradientIbFvPatchField<Type>::zeroGradientIbFvPatchField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-// template<class Type>
-// void zeroGradientIbFvPatchField<Type>::autoMap
-// (
-//     const fvPatchFieldMapper& m
-// )
-// {
-//     // Base fields do not map: re-interpolate them from tri data
-//     this->updateIbValues();
-// }
+template<class Type>
+void zeroGradientIbFvPatchField<Type>::autoMap
+(
+    const fvPatchFieldMapper& m
+)
+{
+    // Base fields do not map: re-interpolate them from tri data
+    this->updateIbValues();
+}
 
 
-// template<class Type>
-// void zeroGradientIbFvPatchField<Type>::rmap
-// (
-//     const fvPatchField<Type>& ptf,
-//     const labelList&
-// )
-// {
-//     // Base fields do not rmap: re-interpolate them from tri data
-
-//     const zeroGradientIbFvPatchField<Type>& mptf =
-//         refCast<const zeroGradientIbFvPatchField<Type> >(ptf);
-
-//     // Set rmap tri data
-//     triValue_ = mptf.triValue_;
-
-//     this->updateIbValues();
-// }
+template<class Type>
+void zeroGradientIbFvPatchField<Type>::rmap
+(
+    const fvPatchField<Type>& ptf,
+    const labelList&
+)
+{
+    // Base fields do not rmap: re-interpolate them from tri data
+    this->updateIbValues();
+}
 
 
 template<class Type>
