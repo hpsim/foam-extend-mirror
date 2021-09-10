@@ -110,7 +110,7 @@ private:
         Istream& readStream();
 
         //- Dissallow assignment
-        void operator=(const regIOobject&);
+        void operator=(const regIOobject&) = delete;
 
 
 public:

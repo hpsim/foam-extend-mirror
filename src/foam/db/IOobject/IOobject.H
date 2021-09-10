@@ -262,7 +262,7 @@ public:
 
 
     //- Destructor
-    virtual ~IOobject();
+    virtual ~IOobject() = default;
 
 
     // Member Functions

@@ -67,7 +67,7 @@ template<class T, class BaseType> Ostream& operator<<
 
 
 /*---------------------------------------------------------------------------*\
-                           Class CompactIOList Declaration
+                        Class CompactIOList Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class T, class BaseType>
@@ -103,7 +103,7 @@ public:
 
 
     //- Destructor
-    virtual ~CompactIOList();
+    virtual ~CompactIOList() = default;
 
 
     // Member functions
