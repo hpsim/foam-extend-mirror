@@ -79,7 +79,7 @@ void Foam::processorLduInterface::send
     }
     else
     {
-        FatalErrorIn("processorLduInterface::send")
+        FatalErrorInFunction
             << "Unsupported communications type " << commsType
             << exit(FatalError);
     }
@@ -111,7 +111,7 @@ void Foam::processorLduInterface::receive
     }
     else
     {
-        FatalErrorIn("processorLduInterface::receive")
+        FatalErrorInFunction
             << "Unsupported communications type " << commsType
             << exit(FatalError);
     }
