@@ -44,6 +44,14 @@ SourceFiles
 namespace Foam
 {
 
+// Forward declaration of classes
+class interfaceThetaProps;
+
+// Forward declaration of friend functions and operators
+Istream& operator>>(Istream&, interfaceThetaProps&);
+Ostream& operator<<(Ostream&, const interfaceThetaProps&);
+
+
 /*---------------------------------------------------------------------------*\
                      Class interfaceThetaProps Declaration
 \*---------------------------------------------------------------------------*/
@@ -66,6 +74,7 @@ class interfaceThetaProps
 public:
 
     // Constructors
+
         interfaceThetaProps()
         {}
 
@@ -88,14 +97,14 @@ public:
         }
 
         //- Return the limiting advancing contact angle
-        scalar thetaA(bool matched=true) const
+        scalar thetaA(bool matched = true) const
         {
             if (matched) return thetaA_;
             else return 180.0 - thetaA_;
         }
 
         //- Return the limiting receeding contact angle
-        scalar thetaR(bool matched=true) const
+        scalar thetaR(bool matched = true) const
         {
             if (matched) return thetaR_;
             else return 180.0 - thetaR_;
