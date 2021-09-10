@@ -180,10 +180,13 @@ private:
     // Private member functions
 
         //- Disallow construct as copy
-        polyMesh(const polyMesh&);
+        polyMesh(const polyMesh&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const polyMesh&);
+        void operator=(const polyMesh&) = delete;
+
+        //- Read face list, either in list or compact list format
+        faceList readFaces(const fileName& facesInst) const;
 
         //- Initialise the polyMesh from the primitive data
         void initMesh();

@@ -30,6 +30,29 @@ License
 #include "meshObjectBase.H"
 #include "mapPolyMesh.H"
 
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+// Note: return type should be changed to avoid a copy.  Move constructor?
+Foam::faceList Foam::polyMesh::readFaces(const fileName& facesInst) const
+{
+    faceCompactIOList f
+    (
+        IOobject
+        (
+            "faces",
+            facesInst,
+            meshSubDir,
+            *this,
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE,
+            false
+        )
+    );
+
+    return f;
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::polyMesh::polyMesh
@@ -173,16 +196,8 @@ Foam::polyMesh::polyMesh
 
         if (min(curFace) < 0 || max(curFace) > allPoints_.size())
         {
-            FatalErrorIn
-            (
-                "polyMesh::polyMesh\n"
-                "(\n"
-                "    const IOobject& io,\n"
-                "    const pointField& points,\n"
-                "    const faceList& faces,\n"
-                "    const cellList& cells\n"
-                ")\n"
-            )   << "Face " << faceI << "contains vertex labels out of range: "
+            FatalErrorInFunction
+                << "Face " << faceI << "contains vertex labels out of range: "
                 << curFace << " Max point index = " << allPoints_.size()
                 << abort(FatalError);
         }
@@ -307,10 +322,11 @@ Foam::polyMesh::readUpdateState Foam::polyMesh::readUpdate()
                 facesInst,
                 meshSubDir,
                 *this,
-                IOobject::MUST_READ,
+                IOobject::NO_READ,  // Note: read is done by readFaces
                 IOobject::NO_WRITE,
                 false
-            )
+            ),
+            readFaces(facesInst)
         );
 
         owner_ = labelIOList

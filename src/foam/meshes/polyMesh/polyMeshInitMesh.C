@@ -31,7 +31,7 @@ void Foam::polyMesh::initMesh()
 {
     if (debug)
     {
-        Info<< "void polyMesh::initMesh() : "
+        InfoInFunction
             << "initialising primitiveMesh" << endl;
     }
 
@@ -53,7 +53,7 @@ void Foam::polyMesh::initMesh()
             }
         }
 
-        InfoIn("void polyMesh::initMesh()")
+        InfoInFunction
             << "Truncating owner list at " << nActiveFaces
             << " for backward compatibility" << endl;
 
@@ -163,7 +163,7 @@ void Foam::polyMesh::initMesh()
             {
                 if (usedPoints[i])
                 {
-                    FatalErrorIn("void polyMesh::initMesh()")
+                    FatalErrorInFunction
                         << "Error in point ordering: mixed used and unused "
                         << "points at the end of point list." << nl
                         << "Last used point: " << nUsedPoints
@@ -291,7 +291,7 @@ void Foam::polyMesh::initMesh(cellList& c)
     {
         if (debug)
         {
-            Info<< "void polyMesh::initMesh(cellList& c) : "
+            InfoInFunction
                 << "unused faces detected.  "
                 << "Number of used faces: " << nUsedFaces
                 << ".  Total number of faces: " << owner_.size() << endl;
@@ -301,7 +301,7 @@ void Foam::polyMesh::initMesh(cellList& c)
         {
             if (owner_[i] >= 0)
             {
-                FatalErrorIn("void polyMesh::initMesh(cellList& c)")
+                FatalErrorInFunction
                     << "Error in face ordering: mixed used and unused "
                     << "faces at the end of face list." << nl
                     << "Number of used faces: " << nUsedFaces
@@ -349,7 +349,7 @@ void Foam::polyMesh::initMesh(cellList& c)
             {
                 if (usedPoints[i])
                 {
-                    FatalErrorIn("void polyMesh::initMesh(cellList& c)")
+                    FatalErrorInFunction
                         << "Error in point ordering: mixed used and unused "
                         << "points at the end of point list." << nl
                         << "Number of used points: " << nUsedPoints

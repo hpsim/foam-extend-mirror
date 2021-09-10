@@ -34,12 +34,14 @@ Description
 
 #include "face.H"
 #include "IOList.H"
+#include "CompactIOList.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
     typedef IOList<face> faceIOList;
+    typedef CompactIOList<face, label> faceCompactIOList;
 }
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
