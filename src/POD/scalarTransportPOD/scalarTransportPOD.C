@@ -256,15 +256,16 @@ void Foam::scalarTransportPOD::calcOrthoBase() const
                 *reconFieldPtr_
             );
 
-            directRecon =
+            // Reset entire field, including boundary conditions
+            directRecon ==
                 dimensionedScalar("zero", directRecon.dimensions(), 0);
 
             // Note: use raw pointer access to orthoBase,
             // as it has just been calculated
             for (label obpI = 0; obpI < orthoBasePtr_->baseSize(); obpI++)
             {
-                directRecon +=
-                    orthoBasePtr_->interpolationCoeffs()[i][obpI]*
+                directRecon == directRecon
+                  + orthoBasePtr_->interpolationCoeffs()[i][obpI]*
                     orthoBasePtr_->orthoField(obpI);
             }
 
@@ -348,13 +349,10 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
     lagrangeDerPtr_ = new scalarField(b.baseSize(), scalar(0));
     scalarField& lagrangeDer = *lagrangeDerPtr_;
 
-    // Lagrange multiplier source
+    // Lagrange multiplier source.  Currently disabled
     lagrangeSrcPtr_ = new scalarField(b.baseSize(), scalar(0));
-    scalarField& lagrangeSrc = *lagrangeSrcPtr_;
 
     const volScalarField& field = *reconFieldPtr_;
-
-    // Possible scaling error: reconsider.  HJ, 5/Aug/2020
 
     for (label i = 0; i < b.baseSize(); i++)
     {
@@ -396,33 +394,72 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
 
             // Lagrange multiplier is calculated on boundaries where
             // reconField fixes value
+            // Changed form of enforcement of boundary conditions
+            // using ddt(bc) = 0
+            // HJ, 14/Jul/2021
             forAll (field.boundaryField(), patchI)
             {
                 if (field.boundaryField()[patchI].fixesValue())
                 {
                     // Note pre-multiplication by beta and signs
-                    // of derivative and source.  Su-Sp treatment
-                    lagrangeDer[i] += -beta_*
+                    // of derivative and source.  New formulation
+                    // HJ, 14/Jul/2021
+                    lagrangeDer[i] += beta_*
                         POD::projection
                         (
                             snapJ.boundaryField()[patchI],
                             snapI.boundaryField()[patchI]
                         );
 
-                    lagrangeSrc[i] += beta_*
-                        POD::projection
-                        (
-                            field.boundaryField()[patchI],
-                            snapI.boundaryField()[patchI]
-                        );
+                    // lagrangeSrc[i] += beta_*
+                    //     POD::projection
+                    //     (
+                    //         field.boundaryField()[patchI],
+                    //         snapI.boundaryField()[patchI]
+                    //     );
                 }
             }
         }
     }
 
-    Info<< "derivative: " << derivative << nl
-        << "lagrangeDer: " << lagrangeDer << nl
-        << "lagrangeSrc: " << lagrangeSrc << endl;
+    // Assemble temporal coefficient
+    // Note: under normal circumstances, the temporal matrix will be the
+    // Cronecker delta.  However, if the field is taken out of the larger
+    // POD base, this is no longer the case.
+    //
+    // Note 2: changing the way the drift in the boundary condition is specified
+    // via the ddt(b.c.) = 0 condition.  This changes the diagonal matrix
+    // of the ddt term and all relevant matrices are re-scaled
+    // HJ, 13/Jul/2021
+    {
+        scalarField diagScale(b.baseSize(), scalar(0));
+
+        for (label i = 0; i < b.baseSize(); i++)
+        {
+            const volScalarField& snapI = b.orthoField(i);
+
+            // Add the sqr(snapUI) in case it is not zero
+            // Since the POD decomposition is the velocity field itself,
+            // this is not strictly needed.  However, for other cases, this
+            // is needed.  HJ, 13/Jul/2021
+            diagScale[i] = POD::projection(snapI, snapI) + lagrangeDer[i];
+        }
+
+        Info<< "diagScale: " << diagScale << endl;
+
+        // Re-scale the derivatives
+        for (label i = 0; i < b.baseSize(); i++)
+        {
+            const scalar curScale = diagScale[i];
+
+            for (label j = 0; j < b.baseSize(); j++)
+            {
+                derivative[i][j] /= curScale;
+            }
+        }
+    }
+
+    Info<< "derivative: " << derivative << endl;
 }
 
 
@@ -440,18 +477,20 @@ void Foam::scalarTransportPOD::updateFields() const
                 << abort(FatalError);
         }
 
-        volScalarField& field = *reconFieldPtr_;
+        volScalarField& recon = *reconFieldPtr_;
 
         const scalarPODOrthoNormalBase& b = orthoBase();
 
-        field = dimensionedScalar("zero", b.orthoField(0).dimensions(), 0);
+        // Reset entire field, including boundary conditions
+        recon == dimensionedScalar("zero", b.orthoField(0).dimensions(), 0);
 
         forAll (coeffs_, i)
         {
-            field += coeffs_[i]*b.orthoField(i);
+            // Update field
+            recon == recon + coeffs_[i]*b.orthoField(i);
         }
 
-        field.correctBoundaryConditions();
+        recon.correctBoundaryConditions();
     }
 }
 
@@ -553,20 +592,13 @@ void Foam::scalarTransportPOD::derivatives
 
    const scalarSquareMatrix& derivative = *derivativePtr_;
 
-    // Lagrange multiplier derivative, boundary conditions
-    const scalarField& lagrangeDer = *lagrangeDerPtr_;
-
-    // Lagrange multiplier source, boundary conditions
-    const scalarField& lagrangeSrc = *lagrangeSrcPtr_;
-
     forAll (dydx, i)
     {
         dydx[i] = 0;
-        dydx[i] = lagrangeSrc[i];
 
         forAll (y, j)
         {
-            dydx[i] += derivative[i][j]*y[j] + lagrangeDer[i]*y[j];
+            dydx[i] += derivative[i][j]*y[j];
         }
     }
 }
@@ -631,7 +663,7 @@ void Foam::scalarTransportPOD::write() const
 {
     // Recalculate field and force a write
     updateFields();
-    Info<< "reconField name: " << reconField().name() << endl;
+
     reconField().write();
 }
 

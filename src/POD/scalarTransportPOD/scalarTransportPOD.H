@@ -79,9 +79,11 @@ class scalarTransportPOD
         mutable scalarSquareMatrix* derivativePtr_;
 
         //- Lagrange multiplier derivative (enforcing boundary conditions)
+        //  (new formulation)
         mutable scalarField* lagrangeDerPtr_;
 
         //- Lagrange multiplier source (enforcing boundary conditions)
+        //  (new formulation)
         mutable scalarField* lagrangeSrcPtr_;
 
         //- Ortho-normal base pointer

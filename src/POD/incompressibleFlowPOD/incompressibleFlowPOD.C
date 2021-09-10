@@ -263,16 +263,11 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
         );
 
         // Insert U and p into shapshot
-        const vectorField& Uin = UFields[i].internalField();
-        const scalarField& pIn = pFields[i].internalField();
+        UpFields[i].replace(0, UFields[i].component(vector::X));
+        UpFields[i].replace(1, UFields[i].component(vector::Y));
+        UpFields[i].replace(2, UFields[i].component(vector::Z));
 
-        vector4Field& UpIn = UpFields[i].internalField();
-
-        UpIn.replace(0, Uin.component(vector::X));
-        UpIn.replace(1, Uin.component(vector::Y));
-        UpIn.replace(2, Uin.component(vector::Z));
-
-        UpIn.replace(3, pIn);
+        UpFields[i].replace(3, pFields[i]);
 
         // Read the first time into reconU and reconP for
         // boundary conditions and general reconstruction settings
@@ -311,13 +306,74 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
         orthoBasePtr_->checkBase();
     }
 
-    // Collect pressure field base
+    // Collect velocity field base
     UBasePtr_ = new PtrList<volVectorField>(orthoBasePtr_->baseSize());
-    orthoBasePtr_->calcOrthoBase(UFields, *UBasePtr_);
+    PtrList<volVectorField>& UBase = *UBasePtr_;
 
     // Collect pressure field base
     pBasePtr_ = new PtrList<volScalarField>(orthoBasePtr_->baseSize());
-    orthoBasePtr_->calcOrthoBase(pFields, *pBasePtr_);
+    PtrList<volScalarField>& pBase = *pBasePtr_;
+
+    for (label obpI = 0; obpI < orthoBasePtr_->baseSize(); obpI++)
+    {
+        // Set U and p pointers
+        // Reconsider what to do with fluxes...
+        UBase.set
+        (
+            obpI,
+            new volVectorField
+            (
+                IOobject
+                (
+                    UFields[0].name() + "POD" + name(obpI),
+                    UFields[0].time().timeName(),
+                    mesh(),
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                mesh(),
+                dimensionedVector("zero", dimless, vector::zero)
+            )
+        );
+
+        UBase[obpI].replace
+        (
+            vector::X,
+            orthoBasePtr_->orthoField(obpI).component(0)
+        );
+
+        UBase[obpI].replace
+        (
+            vector::Y,
+            orthoBasePtr_->orthoField(obpI).component(1)
+        );
+
+        UBase[obpI].replace
+        (
+            vector::Z,
+            orthoBasePtr_->orthoField(obpI).component(2)
+        );
+
+        pBase.set
+        (
+            obpI,
+            new volScalarField
+            (
+                IOobject
+                (
+                    pFields[0].name() + "POD" + name(obpI),
+                    pFields[0].time().timeName(),
+                    mesh(),
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                mesh(),
+                dimensionedScalar("zero", dimless, scalar(0))
+            )
+        );
+
+        pBase[obpI] == orthoBasePtr_->orthoField(obpI).component(3);
+    }
 
     // Collect flux field base
     phiBasePtr_ = new PtrList<surfaceScalarField>(orthoBasePtr_->baseSize());
@@ -327,9 +383,10 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
     if (debug)
     {
         Info<< "Write reconstructed snapshots: check" << endl;
-        forAll (valTimes, i)
+
+        forAll (valTimes, timeI)
         {
-            runTime.setTime(valTimes[i], i);
+            runTime.setTime(valTimes[timeI], timeI);
 
             Info<< "Time = " << runTime.timeName() << endl;
 
@@ -348,7 +405,8 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
                 reconP
             );
 
-            directReconU =
+            // Reset entire field, including boundary conditions
+            directReconU ==
                 dimensionedVector
                 (
                     "zero",
@@ -356,22 +414,22 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
                     vector::zero
                 );
 
-            directReconP =
+            // Reset entire field, including boundary conditions
+            directReconP ==
                 dimensionedScalar("zero", reconP.dimensions(), scalar(0));
-
-            vectorField& UIn = directReconU.internalField();
-            scalarField& pIn = directReconP.internalField();
 
             for (label obpI = 0; obpI < orthoBasePtr_->baseSize(); obpI++)
             {
                 // Update velocity
-                UIn +=
-                    orthoBasePtr_->interpolationCoeffs()[i][obpI]*
+                directReconU ==
+                    directReconU
+                  + orthoBasePtr_->interpolationCoeffs()[timeI][obpI]*
                     UBasePtr_->operator[](obpI);
 
                 // Update pressure
-                pIn +=
-                    orthoBasePtr_->interpolationCoeffs()[i][obpI]*
+                directReconP ==
+                    directReconP
+                  + orthoBasePtr_->interpolationCoeffs()[timeI][obpI]*
                     pBasePtr_->operator[](obpI);
             }
 
@@ -444,9 +502,9 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
 
     // Lagrange multiplier source
     lagrangeSrcPtr_ = new scalarField(b.baseSize(), scalar(0));
-    scalarField& lagrangeSrc = *lagrangeSrcPtr_;
+    // scalarField& lagrangeSrc = *lagrangeSrcPtr_;
 
-    // Get solution field four boundary conditions.  Force raw access without
+    // Get solution field for boundary conditions.  Force raw access without
     // checking
     const volVectorField& U = *reconUPtr_;
 
@@ -457,8 +515,7 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
     // Calculate derivative by moving equation terms to rhs
 
     // Calculate volume for scaling - THIS IS WRONG!!! HJ, HERE!!!
-    const scalar V = 0.2*gSum(mesh().V().field());
-    // const scalar V = 1;
+    const scalar V = 0.5*gSum(mesh().V().field());
 
     // Derivatives assembly loop
     for (label i = 0; i < b.baseSize(); i++)
@@ -473,6 +530,32 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
 
             // Note: volume scaling on all terms!
 
+            // Convection derivative
+            for (label k = 0; k < b.baseSize(); k++)
+            {
+                // const surfaceScalarField& snapPhiK = phib[k];
+
+                const volVectorField& snapUK = Ub[k];
+
+                // convectionDerivative[i][j][k] =
+                //    -POD::projection
+                //     (
+                //         fvc::div
+                //         (
+                //             snapPhiK, snapUJ,
+                //             "div(" + phiName_ + "," + UName_ + ")"
+                //         ),
+                //         snapUI
+                //     )*V;
+
+                convectionDerivative[i][j][k] =
+                   -POD::projection
+                    (
+                        (snapUK & fvc::grad(snapUJ)),
+                        snapUI
+                    )*V;
+            }
+
             derivative[i][j] =
                 POD::projection
                 (
@@ -483,54 +566,88 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
                     ),
                     snapUI
                 )*V
+                // Pressure derivative
               - POD::projection(fvc::grad(snapPJ, "grad(p)"), snapUI)*V;
-
-            for (label k = 0; k < b.baseSize(); k++)
-            {
-                const surfaceScalarField& snapPhiK = phib[k];
-
-                convectionDerivative[i][j][k] =
-                   -POD::projection
-                    (
-                        fvc::div
-                        (
-                            snapPhiK, snapUJ,
-                            "div(" + phiName_ + "," + UName_ + ")"
-                        ),
-                        snapUI
-                    )*V;
-            }
 
             // Lagrange multiplier is calculated on boundaries where
             // reconU fixes value
+            // Changed form of enforcement of boundary conditions
+            // using ddt(bc) = 0
+            // HJ, 14/Jul/2021
             forAll (U.boundaryField(), patchI)
             {
                 if (U.boundaryField()[patchI].fixesValue())
                 {
                     // Note pre-multiplication by beta and signs
                     // of derivative and source.  Su-Sp treatment
-                    lagrangeDer[i] += -beta_*
+                    lagrangeDer[i] += beta_*
                         POD::projection
                         (
                             snapUJ.boundaryField()[patchI],
                             snapUI.boundaryField()[patchI]
                         );
 
-                    lagrangeSrc[i] += beta_*
-                        POD::projection
-                        (
-                            U.boundaryField()[patchI],
-                            snapUI.boundaryField()[patchI]
-                        );
+                    // lagrangeSrc[i] += beta_*
+                    //     POD::projection
+                    //     (
+                    //         U.boundaryField()[patchI],
+                    //         snapUI.boundaryField()[patchI]
+                    //     );
                 }
             }
         }
     }
 
-    Info<< "convectionDerivative: " << convectionDerivative << nl
-        << "derivative: " << derivative << nl
-        << "lagrangeDer: " << lagrangeDer << nl
-        << "lagrangeSrc: " << lagrangeSrc << endl;
+    // Assemble temporal coefficient
+    // Note: under normal circumstances, the temporal matrix will be the
+    // Cronecker delta.  However, if U is taken out of the larger POD base,
+    // this is no longer the case.
+    //
+    // Note 2: changing the way the drift in the boundary condition is specified
+    // via the ddt(b.c.) = 0 condition.  This changes the diagonal matrix
+    // of the ddt term and all relevant matrices are re-scaled
+    // HJ, 13/Jul/2021
+    {
+        scalarField diagScale(b.baseSize(), scalar(0));
+
+        for (label i = 0; i < b.baseSize(); i++)
+        {
+            const volVectorField& snapUI = Ub[i];
+
+            // Add the sqr(snapUI) in case it is not zero
+            // Since the POD decomposition is the velocity field itself,
+            // this is not strictly needed.  However, for other cases, this
+            // is needed.  HJ, 13/Jul/2021
+            diagScale[i] = POD::projection(snapUI, snapUI) + lagrangeDer[i];
+
+            Info<< "diagScale " << i << POD::projection(snapUI, snapUI)
+                << endl;
+        }
+
+        Info<< "diagScale: " << diagScale << endl;
+
+        // Re-scale the derivatives
+        for (label i = 0; i < b.baseSize(); i++)
+        {
+            const scalar curScale = diagScale[i];
+
+            for (label j = 0; j < b.baseSize(); j++)
+            {
+                derivative[i][j] /= curScale;
+
+                for (label k = 0; k < b.baseSize(); k++)
+                {
+                    convectionDerivative[i][j][k] /= curScale;
+                }
+            }
+        }
+    }
+
+    Info
+     // << "convectionDerivative: " << convectionDerivative << nl
+     // << "derivative: " << derivative << nl
+        << "lagrangeDer: " << lagrangeDer << endl;
+    //     << "lagrangeSrc: " << lagrangeSrc << endl;
 }
 
 
@@ -551,11 +668,9 @@ void Foam::incompressibleFlowPOD::updateFields() const
         volVectorField& reconU = *reconUPtr_;
         volScalarField& reconP = *reconPPtr_;
 
-        reconU = dimensionedVector("zero", reconU.dimensions(), vector::zero);
-        reconP = dimensionedScalar("zero", reconP.dimensions(), scalar(0));
-
-        vectorField& reconUIn = reconU.internalField();
-        scalarField& reconPIn = reconP.internalField();
+        // Reset entire field, including boundary conditions
+        reconU == dimensionedVector("zero", reconU.dimensions(), vector::zero);
+        reconP == dimensionedScalar("zero", reconP.dimensions(), scalar(0));
 
         // Velocity field base
         const PtrList<volVectorField>& Ub = UBase();
@@ -566,15 +681,24 @@ void Foam::incompressibleFlowPOD::updateFields() const
         forAll (coeffs_, i)
         {
             // Update velocity
-            reconUIn += coeffs_[i]*Ub[i];
+            reconU == reconU + coeffs_[i]*Ub[i];
 
             // Update pressure
-            reconPIn += coeffs_[i]*pb[i];
+            reconP == reconP + coeffs_[i]*pb[i];
         }
 
         // Internal field is set.  Correct boundary conditions
         reconU.correctBoundaryConditions();
         reconP.correctBoundaryConditions();
+
+            // Hack test, HJ HERE!!!
+            const scalar fluxZero =
+                gSum(reconU.boundaryField()[0] & mesh().Sf().boundaryField()[0]);
+
+            Info<< "Testing flux in: "
+                << fluxZero << " velocity "
+                << fluxZero/gSum(mesh().magSf().boundaryField()[0])
+                << endl;
     }
 }
 
@@ -707,20 +831,16 @@ void Foam::incompressibleFlowPOD::derivatives
     // Diffusion and pressure derivative
     const scalarSquareMatrix& derivative = *derivativePtr_;
 
-    // Lagrange multiplier derivative, boundary conditions
-    const scalarField& lagrangeDer = *lagrangeDerPtr_;
-
-    // Lagrange multiplier source, boundary conditions
-    const scalarField& lagrangeSrc = *lagrangeSrcPtr_;
+    // Clear derivatives matrix
+    dydx = 0;
 
     forAll (dydx, i)
     {
-        dydx[i] = 0;
-        dydx[i] = lagrangeSrc[i];
+        // dydx[i] = lagrangeSrc[i];
 
         forAll (y, j)
         {
-            dydx[i] += derivative[i][j]*y[j] + lagrangeDer[i]*y[j];
+            dydx[i] += derivative[i][j]*y[j];
 
             forAll (y, k)
             {
@@ -751,9 +871,6 @@ void Foam::incompressibleFlowPOD::jacobian
     // Diffusion and pressure derivative
     const scalarSquareMatrix& derivative = *derivativePtr_;
 
-    // Lagrange multiplier derivative, boundary conditions
-    const scalarField& lagrangeDer = *lagrangeDerPtr_;
-
     // Must calculate derivatives
     derivatives(x, y, dfdx);
 
@@ -770,12 +887,14 @@ void Foam::incompressibleFlowPOD::jacobian
     {
         forAll (y, j)
         {
-            dfdy[i][j] = derivative[i][j] + lagrangeDer[i];
-
+            // Convection
             forAll (y, k)
             {
                 dfdy[i][j] += convectionDerivative[i][j][k]*y[k];
             }
+
+            // Diffusion
+            dfdy[i][j] += derivative[i][j];
         }
     }
 }

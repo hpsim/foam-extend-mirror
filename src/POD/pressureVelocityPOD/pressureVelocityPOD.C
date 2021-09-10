@@ -502,7 +502,7 @@ void Foam::pressureVelocityPOD::calcDerivativeCoeffs() const
                             "div(" + phiName_ + "," + UName_ + ")"
                         ),
                         snapUI
-                    )*V;
+                    );
             }
 
             // Diffusion derivative
@@ -515,7 +515,7 @@ void Foam::pressureVelocityPOD::calcDerivativeCoeffs() const
                         "laplacian(" + nu_.name() + "," + UName_ + ")"
                     ),
                     snapUI
-                )*V;
+                );
 
             // Lagrange multiplier is calculated on boundaries where
             // reconU fixes value
@@ -571,7 +571,7 @@ void Foam::pressureVelocityPOD::calcDerivativeCoeffs() const
                         "laplacian(" + pName_ + ")"
                     ),
                     snapPI
-                )*V;
+                );
         }
 
         volVectorField gradSnapPI = fvc::grad(snapPI);
@@ -588,7 +588,7 @@ void Foam::pressureVelocityPOD::calcDerivativeCoeffs() const
                 (
                     fvc::div(snapUJ + deltaT*gradSnapPI, "div(U)"),
                     snapPI
-                )*V;
+                );
         }
     }
 
@@ -644,27 +644,36 @@ void Foam::pressureVelocityPOD::updateFields() const
         {
             volVectorField& reconU = *reconUPtr_;
 
-            reconU =
+            // Reset entire field, including boundary conditions
+            reconU ==
                 dimensionedVector("zero", reconU.dimensions(), vector::zero);
-
-            vectorField& reconUIn = reconU.internalField();
 
             const vectorPODOrthoNormalBase& Ub = UBase();
 
             for (label uI = 0; uI < Ub.baseSize(); uI++)
             {
-                reconUIn += coeffs_[uI]*Ub.orthoField(uI);
+                reconU == reconU + coeffs_[uI]*Ub.orthoField(uI);
             }
 
             // Internal field is set.  Correct boundary conditions
             reconU.correctBoundaryConditions();
+
+            // Hack test, HJ HERE!!!
+            const scalar fluxZero =
+                gSum(reconU.boundaryField()[0] & mesh().Sf().boundaryField()[0]);
+
+            Info<< "Testing flux in: "
+                << fluxZero << " velocity "
+                << fluxZero/gSum(mesh().magSf().boundaryField()[0])
+                << endl;
         }
 
         // Reconstruct pressure
         {
             volScalarField& reconP = *reconPPtr_;
+
+            // Reset entire field, including boundary conditions
             reconP = dimensionedScalar("zero", reconP.dimensions(), scalar(0));
-            scalarField& reconPIn = reconP.internalField();
 
             const scalarPODOrthoNormalBase& pb = pBase();
 
@@ -673,8 +682,7 @@ void Foam::pressureVelocityPOD::updateFields() const
             for (label pI = 0; pI < pb.baseSize(); pI++)
             {
                 // Update pressure
-                reconPIn +=
-                    coeffs_[pI + pOffset]*pb.orthoField(pI);
+                reconP == reconP + coeffs_[pI + pOffset]*pb.orthoField(pI);
             }
 
             // Internal field is set.  Correct boundary conditions
