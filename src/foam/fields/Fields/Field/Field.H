@@ -116,11 +116,11 @@ public:
 
         //- Construct null
         //  Used for temporary fields which are initialised after construction
-        Field();
+        inline Field();
 
         //- Construct given size
         //  Used for temporary fields which are initialised after construction
-        explicit Field(const label);
+        inline explicit Field(const label);
 
         //- Construct given size and initial value
         Field(const label, const Type&);
