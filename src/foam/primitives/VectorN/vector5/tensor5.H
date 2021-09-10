@@ -21,12 +21,22 @@ License
     You should have received a copy of the GNU General Public License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
+Type
+    tensor5
+
+Description
+    TensorN of 5 scalars.
+
 \*---------------------------------------------------------------------------*/
 
-#ifndef faePatchVectorNFieldsFwd_H
-#define faePatchVectorNFieldsFwd_H
+#ifndef tensor5_H
+#define tensor5_H
 
-#include "VectorNFieldTypes.H"
+#include "TensorN.H"
+#include "vector5.H"
+#include "sphericalTensor5.H"
+#include "diagTensor5.H"
+#include "contiguous.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -35,35 +45,12 @@ namespace Foam
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-template<class Type> class faePatchField;
+typedef TensorN<scalar, 5> tensor5;
 
-typedef faePatchField<vector2> faePatchVector2Field;
-typedef faePatchField<vector3> faePatchVector3Field;
-typedef faePatchField<vector4> faePatchVector4Field;
-typedef faePatchField<vector5> faePatchVector5Field;
-typedef faePatchField<vector6> faePatchVector6Field;
-typedef faePatchField<vector8> faePatchVector8Field;
+//- Specify data associated with tensor5 type is contiguous
+template<>
+inline bool contiguous<tensor5>() {return true;}
 
-typedef faePatchField<tensor2> faePatchTensor2Field;
-typedef faePatchField<tensor3> faePatchTensor3Field;
-typedef faePatchField<tensor4> faePatchTensor4Field;
-typedef faePatchField<tensor5> faePatchTensor5Field;
-typedef faePatchField<tensor6> faePatchTensor6Field;
-typedef faePatchField<tensor8> faePatchTensor8Field;
-
-typedef faePatchField<diagTensor2> faePatchDiagTensor2Field;
-typedef faePatchField<diagTensor3> faePatchDiagTensor3Field;
-typedef faePatchField<diagTensor4> faePatchDiagTensor4Field;
-typedef faePatchField<diagTensor5> faePatchDiagTensor5Field;
-typedef faePatchField<diagTensor6> faePatchDiagTensor6Field;
-typedef faePatchField<diagTensor8> faePatchDiagTensor8Field;
-
-typedef faePatchField<sphericalTensor2> faePatchSphericalTensor2Field;
-typedef faePatchField<sphericalTensor3> faePatchSphericalTensor3Field;
-typedef faePatchField<sphericalTensor4> faePatchSphericalTensor4Field;
-typedef faePatchField<sphericalTensor5> faePatchSphericalTensor5Field;
-typedef faePatchField<sphericalTensor6> faePatchSphericalTensor6Field;
-typedef faePatchField<sphericalTensor8> faePatchSphericalTensor8Field;
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
