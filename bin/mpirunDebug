@@ -159,7 +159,7 @@ do
     geom="-geometry 120x20+$xpos+$ypos"
     node=""
 
-    if [ .$WM_MPLIB = .OPENMPI ]; then
+    if [ .$WM_MPLIB = .OPENMPI ] | [ .$WM_MPLIB = .SYSTEMOPENMPI ]; then
         node="-np 1 "
     fi
 
@@ -209,9 +209,9 @@ do
 done
 
 cmd=""
-if [ .$WM_MPLIB = .OPENMPI ]; then
+if [ .$WM_MPLIB = .OPENMPI ] | [ .$WM_MPLIB = .SYSTEMOPENMPI ]; then
     cmd="mpirun -app $PWD/mpirun.schema </dev/null"
-elif [ .$WM_MPLIB = .MPICH ]; then
+elif [ .$WM_MPLIB = .MPICH ] |  .$WM_MPLIB = .SYSTEMMPICH ]; then
     cmd="mpiexec"
     for ((proc=0; proc<$nProcs; proc++))
     do
