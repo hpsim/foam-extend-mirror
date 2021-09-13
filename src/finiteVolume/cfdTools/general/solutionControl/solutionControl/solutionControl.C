@@ -87,11 +87,8 @@ void Foam::solutionControl::read(const bool absTolOnly)
                 }
                 else
                 {
-                    FatalErrorIn
-                    (
-                        "void Foam::solutionControl::read"
-                        "(const bool absTolOnly)"
-                    )   << "Residual data for " << iter().keyword()
+                    FatalErrorInFunction
+                        << "Residual data for " << iter().keyword()
                         << " must be specified as a dictionary"
                         << exit(FatalError);
                 }
@@ -506,16 +503,8 @@ void Foam::solutionControl::calcTransientConsistentFlux
         }
         else if (!aCoeffPtrs_.set(i) || !faceUPtrs_.set(i))
         {
-            FatalErrorIn
-            (
-                "void solutionControl::calcTransientConsistentFlux"
-                "\n("
-                "\n    surfaceScalarField& phi,"
-                "\n    const volVectorField& U,"
-                "\n    const volScalarField& rAU,"
-                "\n    const fvVectorMatrix& ddtUEqn"
-                "\n)"
-            )   << "Either aCoeff or faceU is allocated for field " << UName
+            FatalErrorInFunction
+                << "Either aCoeff or faceU is allocated for field " << UName
                 << " while the other is not." << nl
                 << " This must not happen in transient simulation. Make sure"
                 << " that functions aiding consistency are called in the right"
@@ -529,35 +518,19 @@ void Foam::solutionControl::calcTransientConsistentFlux
         // well. Check and report an error if they are not allocated
         if (!aCoeffPtrs_.set(indices_[UName]))
         {
-            FatalErrorIn
-            (
-                "void solutionControl::calcTransientConsistentFlux"
-                "\n("
-                "\n    surfaceScalarField& phi,"
-                "\n    const volVectorField& U,"
-                "\n    const volScalarField& rAU,"
-                "\n    const fvVectorMatrix& ddtUEqn"
-                "\n)"
-            )   << "Index is set, but the aCoeff field is not allocated for "
+            FatalErrorInFunction
+                << "Index is set, but the aCoeff field is not allocated for "
                 << UName << "." << nl
-                << "This should not happen for transient simulation." << nl
+                << "This should not happen for a transient simulation." << nl
                 << "Something went wrong."
                 << exit(FatalError);
         }
         else if (!faceUPtrs_.set(indices_[UName]))
         {
-            FatalErrorIn
-            (
-                "void solutionControl::calcTransientConsistentFlux"
-                "\n("
-                "\n    surfaceScalarField& phi,"
-                "\n    const volVectorField& U,"
-                "\n    const volScalarField& rAU,"
-                "\n    const fvVectorMatrix& ddtUEqn"
-                "\n)"
-            )   << "Index is set, but the faceU field is not allocated for "
+            FatalErrorInFunction
+                << "Index is set, but the faceU field is not allocated for "
                 << UName << "." << nl
-                << "This should not happen for transient simulation." << nl
+                << "This should not happen for a transient simulation." << nl
                 << "Something went wrong."
                 << exit(FatalError);
         }
@@ -813,11 +786,6 @@ void Foam::solutionControl::calcSteadyConsistentFlux
 
     // Calculate the ordinary part of the flux (H/A)
     phi = (fvc::interpolate(U) & mesh_.Sf()) - meshPhi;
-
-//    surfaceScalarField meshPhi("meshPhi", phi);
-//    mrfZones.relativeFlux(phi);
-
-//    meshPhi -= phi;
 
     // Initialize aCoeff to 1
     aCoeff = dimensionedScalar("one", dimless, 1.0);
