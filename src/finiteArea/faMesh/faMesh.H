@@ -190,10 +190,10 @@ class faMesh
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        faMesh(const faMesh&);
+        faMesh(const faMesh&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const faMesh&);
+        void operator=(const faMesh&) = delete;
 
 
         //- Set primitive mesh data
