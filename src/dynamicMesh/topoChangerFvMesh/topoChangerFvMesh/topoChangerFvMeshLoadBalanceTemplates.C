@@ -224,16 +224,8 @@ void Foam::topoChangerFvMesh::rebuildFields
 
         if (!nameOk)
         {
-            FatalErrorIn
-            (
-                "topoChangerFvMesh::rebuildFields\n"
-                "(\n"
-                "    const HashTable<const GeoField*>& geoFields,\n"
-                "    const Reconstructor& reconstructor,\n"
-                "    const List<PtrList<GeoField> >& receivedFields,\n"
-                "    const mapPolyMesh& meshMap,\n"
-                ") const"
-            )   << "Name mismatch when rebuilding field " << masterField.name()
+            FatalErrorInFunction
+                << "Name mismatch when rebuilding field " << masterField.name()
                 << abort(FatalError);
         }
 
@@ -243,16 +235,8 @@ void Foam::topoChangerFvMesh::rebuildFields
          != masterField.mesh().boundary().size()
         )
         {
-            FatalErrorIn
-            (
-                "topoChangerFvMesh::rebuildFields\n"
-                "(\n"
-                "    const HashTable<const GeoField*>& geoFields,\n"
-                "    const Reconstructor& reconstructor,\n"
-                "    const List<PtrList<GeoField> >& receivedFields,\n"
-                "    const mapPolyMesh& meshMap,\n"
-                ") const"
-            )   << "Bad size of patches to replace.  Boundary: "
+            FatalErrorInFunction
+                << "Bad size of patches to replace.  Boundary: "
                 << masterField.mesh().boundary().size()
                 << " resetPatchFlag: " << meshMap.resetPatchFlag().size()
                 << abort(FatalError);
@@ -375,7 +359,7 @@ void Foam::topoChangerFvMesh::rebuildFields
     // HR 14.12.18: We create new processor boundary faces from internal
     // faces. The values on these faces could be initialised by interpolation.
     // Instead we choose to fix the values by evaluating the boundaries.
-    // I tried to execute evaluateCoupled() at the end of
+    // I tried to execute updateCoupledPatchFields() at the end of
     // fvFieldReconstructor::reconstructField, but this fails in a strange way.
     forAllConstIter
     (
@@ -385,7 +369,7 @@ void Foam::topoChangerFvMesh::rebuildFields
     )
     {
         GeoField& masterField = const_cast<GeoField&>(*iter());
-        masterField.boundaryField().evaluateCoupled();
+        masterField.boundaryField().updateCoupledPatchFields();
     }
 }
 
