@@ -30,27 +30,23 @@ License
 #include "demandDrivenData.H"
 #include "transformField.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
-
 // * * * * * * * * * * * * * * * * Constructors * * * * * * * * * * * * * * //
 
 template<class Type>
-processorFaPatchField<Type>::processorFaPatchField
+Foam::processorFaPatchField<Type>::processorFaPatchField
 (
     const faPatch& p,
     const DimensionedField<Type, areaMesh>& iF
 )
 :
     coupledFaPatchField<Type>(p, iF),
-    procPatch_(refCast<const processorFaPatch>(p))
+    procPatch_(refCast<const processorFaPatch>(p)),
+    pnf_()
 {}
 
 
 template<class Type>
-processorFaPatchField<Type>::processorFaPatchField
+Foam::processorFaPatchField<Type>::processorFaPatchField
 (
     const faPatch& p,
     const DimensionedField<Type, areaMesh>& iF,
@@ -58,13 +54,14 @@ processorFaPatchField<Type>::processorFaPatchField
 )
 :
     coupledFaPatchField<Type>(p, iF, f),
-    procPatch_(refCast<const processorFaPatch>(p))
+    procPatch_(refCast<const processorFaPatch>(p)),
+    pnf_()
 {}
 
 
 // Construct by mapping given processorFaPatchField<Type>
 template<class Type>
-processorFaPatchField<Type>::processorFaPatchField
+Foam::processorFaPatchField<Type>::processorFaPatchField
 (
     const processorFaPatchField<Type>& ptf,
     const faPatch& p,
@@ -73,20 +70,13 @@ processorFaPatchField<Type>::processorFaPatchField
 )
 :
     coupledFaPatchField<Type>(ptf, p, iF, mapper),
-    procPatch_(refCast<const processorFaPatch>(p))
+    procPatch_(refCast<const processorFaPatch>(p)),
+    pnf_()
 {
     if (!isType<processorFaPatch>(this->patch()))
     {
-        FatalErrorIn
-        (
-            "processorFaPatchField<Type>::processorFaPatchField\n"
-            "(\n"
-            "    const processorFaPatchField<Type>& ptf,\n"
-            "    const faPatch& p,\n"
-            "    const DimensionedField<Type, areaMesh>& iF,\n"
-            "    const faPatchFieldMapper& mapper\n"
-            ")\n"
-        )   << "\n    patch type '" << p.type()
+        FatalErrorInFunction
+            << "\n    patch type '" << p.type()
             << "' not constraint type '" << typeName << "'"
             << "\n    for patch " << p.name()
             << " of field " << this->dimensionedInternalField().name()
@@ -97,7 +87,7 @@ processorFaPatchField<Type>::processorFaPatchField
 
 
 template<class Type>
-processorFaPatchField<Type>::processorFaPatchField
+Foam::processorFaPatchField<Type>::processorFaPatchField
 (
     const faPatch& p,
     const DimensionedField<Type, areaMesh>& iF,
@@ -105,20 +95,13 @@ processorFaPatchField<Type>::processorFaPatchField
 )
 :
     coupledFaPatchField<Type>(p, iF, dict),
-    procPatch_(refCast<const processorFaPatch>(p))
+    procPatch_(refCast<const processorFaPatch>(p)),
+    pnf_()
 {
     if (!isType<processorFaPatch>(p))
     {
-        FatalIOErrorIn
-        (
-            "processorFaPatchField<Type>::processorFaPatchField\n"
-            "(\n"
-            "    const faPatch& p,\n"
-            "    const Field<Type>& field,\n"
-            "    const dictionary& dict\n"
-            ")\n",
-            dict
-        )   << "\n    patch type '" << p.type()
+        FatalIOErrorInFunction(dict)
+            << "\n    patch type '" << p.type()
             << "' not constraint type '" << typeName << "'"
             << "\n    for patch " << p.name()
             << " of field " << this->dimensionedInternalField().name()
@@ -129,47 +112,60 @@ processorFaPatchField<Type>::processorFaPatchField
 
 
 template<class Type>
-processorFaPatchField<Type>::processorFaPatchField
+Foam::processorFaPatchField<Type>::processorFaPatchField
 (
     const processorFaPatchField<Type>& ptf
 )
 :
     processorLduInterfaceField(),
     coupledFaPatchField<Type>(ptf),
-    procPatch_(refCast<const processorFaPatch>(ptf.patch()))
+    procPatch_(refCast<const processorFaPatch>(ptf.patch())),
+    pnf_()
 {}
 
 
 template<class Type>
-processorFaPatchField<Type>::processorFaPatchField
+Foam::processorFaPatchField<Type>::processorFaPatchField
 (
     const processorFaPatchField<Type>& ptf,
     const DimensionedField<Type, areaMesh>& iF
 )
 :
     coupledFaPatchField<Type>(ptf, iF),
-    procPatch_(refCast<const processorFaPatch>(ptf.patch()))
-{}
-
-
-// * * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * //
-
-template<class Type>
-processorFaPatchField<Type>::~processorFaPatchField()
+    procPatch_(refCast<const processorFaPatch>(ptf.patch())),
+    pnf_()
 {}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-tmp<Field<Type> > processorFaPatchField<Type>::patchNeighbourField() const
+Foam::tmp<Foam::Field<Type> >
+Foam::processorFaPatchField<Type>::patchNeighbourField() const
 {
-    return *this;
+    if (Pstream::parRun())
+    {
+        if (pnf_.empty())
+        {
+            FatalErrorInFunction
+                << "Processor patchNeighbourField not ready"
+                << abort(FatalError);
+        }
+    }
+    else
+    {
+        FatalErrorInFunction
+            << "Attempting to access processor patchNeighbourField "
+            << "in a serial run"
+            << abort(FatalError);
+    }
+
+    return pnf_;
 }
 
 
 template<class Type>
-void processorFaPatchField<Type>::initEvaluate
+void Foam::processorFaPatchField<Type>::initEvaluate
 (
     const Pstream::commsTypes commsType
 )
@@ -182,32 +178,45 @@ void processorFaPatchField<Type>::initEvaluate
 
 
 template<class Type>
-void processorFaPatchField<Type>::evaluate
+void Foam::processorFaPatchField<Type>::evaluate
 (
     const Pstream::commsTypes commsType
 )
 {
     if (Pstream::parRun())
     {
-        procPatch_.receive<Type>(commsType, *this);
+        pnf_.setSize(this->size());
+
+        procPatch_.receive<Type>(commsType, pnf_);
 
         if (doTransform())
         {
-            transform(*this, procPatch_.forwardT(), *this);
+            transform(*this, procPatch_.forwardT(), pnf_);
         }
     }
+
+    // Evaluate patch field to carry interpolated values
+    Field<Type>::operator=
+    (
+        this->patch().weights()*this->patchInternalField()
+      + (1 - this->patch().weights())*pnf_
+    );
+
+    // Signal completion
+    faPatchField<Type>::evaluate(commsType);
 }
 
 
 template<class Type>
-tmp<Field<Type> > processorFaPatchField<Type>::snGrad() const
+Foam::tmp<Foam::Field<Type> >
+Foam::processorFaPatchField<Type>::snGrad() const
 {
     return this->patch().deltaCoeffs()*(*this - this->patchInternalField());
 }
 
 
 template<class Type>
-void processorFaPatchField<Type>::initInterfaceMatrixUpdate
+void Foam::processorFaPatchField<Type>::initInterfaceMatrixUpdate
 (
     const scalarField& psiInternal,
     scalarField&,
@@ -227,7 +236,7 @@ void processorFaPatchField<Type>::initInterfaceMatrixUpdate
 
 
 template<class Type>
-void processorFaPatchField<Type>::updateInterfaceMatrix
+void Foam::processorFaPatchField<Type>::updateInterfaceMatrix
 (
     const scalarField&,
     scalarField& result,
@@ -267,8 +276,211 @@ void processorFaPatchField<Type>::updateInterfaceMatrix
 }
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
-} // End namespace Foam
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator=
+(
+    const UList<Type>& ul
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator=(ul);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator=
+(
+    const faPatchField<Type>& ptf
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator+=
+(
+    const faPatchField<Type>& ptf
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator+=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator-=
+(
+    const faPatchField<Type>& ptf
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator-=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator*=
+(
+    const faPatchField<scalar>& ptf
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator*=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator/=
+(
+    const faPatchField<scalar>& ptf
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator/=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator+=
+(
+    const Field<Type>& tf
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator+=(tf);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator-=
+(
+    const Field<Type>& tf
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator-=(tf);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator*=
+(
+    const scalarField& tf
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator*=(tf);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator/=
+(
+    const scalarField& tf
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator/=(tf);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator=
+(
+    const Type& t
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator=(t);
+}
+
+
+// Note: it is possible to manipulate pnf_ in operations with primitive
+// types, but I am currently avoiding this because this assumes synchronised
+// field functions across multiple processors
+// HJ, 8/Sep/2021
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator+=
+(
+    const Type& t
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator+=(t);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator-=
+(
+    const Type& t
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator-=(t);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator*=
+(
+    const scalar s
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator*=(s);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator/=
+(
+    const scalar s
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator/=(s);
+}
+
+
+// Force an assignment, overriding fixedValue status
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator==
+(
+    const faPatchField<Type>& ptf
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator==
+(
+    const Field<Type>& tf
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator=(tf);
+}
+
+
+template<class Type>
+void Foam::processorFaPatchField<Type>::operator==
+(
+    const Type& t
+)
+{
+    pnf_.clear();
+    faPatchField<Type>::operator=(t);
+}
+
 
 // ************************************************************************* //
