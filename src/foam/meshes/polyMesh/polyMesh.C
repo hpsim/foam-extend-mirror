@@ -362,20 +362,18 @@ Foam::polyMesh::polyMesh(const IOobject& io)
     }
 
     // Calculate topology for the patches (processor-processor comms etc.)
+    // updateMesh calls calcGeometry
     boundary_.updateMesh();
-
-    // Calculate the geometry for the patches (transformation tensors etc.)
-    boundary_.calcGeometry();
 
     // Warn if global empty mesh (constructs globalData!)
     if (globalData().nTotalPoints() == 0)
     {
-        WarningIn("polyMesh(const IOobject&)")
+        WarningInFunction
             << "no points in mesh" << endl;
     }
     if (globalData().nTotalCells() == 0)
     {
-        WarningIn("polyMesh(const IOobject&)")
+        WarningInFunction
             << "no cells in mesh" << endl;
     }
 }
@@ -806,10 +804,9 @@ void Foam::polyMesh::resetPrimitives
         // processor-processor comms.
 
         // Calculate topology for the patches (processor-processor comms etc.)
-        boundary_.updateMesh();
-
         // Calculate the geometry for the patches (transformation tensors etc.)
-        boundary_.calcGeometry();
+        // updateMesh calls calcGeometry
+        boundary_.updateMesh();
 
         // Warn if global empty mesh (constructs globalData!)
         if
@@ -957,10 +954,9 @@ void Foam::polyMesh::addPatches
     if (validBoundary)
     {
         // Calculate topology for the patches (processor-processor comms etc.)
-        boundary_.updateMesh();
-
         // Calculate the geometry for the patches (transformation tensors etc.)
-        boundary_.calcGeometry();
+        // updateMesh calls calcGeometry
+        boundary_.updateMesh();
 
         boundary_.checkDefinition();
     }
@@ -1114,7 +1110,7 @@ const Foam::pointField& Foam::polyMesh::oldAllPoints() const
     {
         if (debug)
         {
-            WarningIn("const pointField& polyMesh::oldAllPoints() const")
+            WarningInFunction
                 << "Old points not available.  Forcing storage of old points"
                 << endl;
         }
@@ -1146,7 +1142,7 @@ Foam::tmp<Foam::scalarField> Foam::polyMesh::movePoints
 {
     if (!syncPar_)
     {
-        Info<< "tmp<scalarField> polyMesh::movePoints"
+        InfoInFunction
             << "(const pointField&) : "
             << "Moving the mesh for the mesh with syncPar invalidated.  "
             << "Mesh motion should not be executed." << endl;
@@ -1154,7 +1150,7 @@ Foam::tmp<Foam::scalarField> Foam::polyMesh::movePoints
 
     if (debug)
     {
-        Info<< "tmp<scalarField> polyMesh::movePoints(const pointField&) : "
+        InfoInFunction
             << " Moving points for time " << time().value()
             << " index " << time().timeIndex() << endl;
     }
@@ -1178,7 +1174,7 @@ Foam::tmp<Foam::scalarField> Foam::polyMesh::movePoints
         // Check mesh motion
         if (primitiveMesh::checkMeshMotion(allPoints_, true))
         {
-            Info<< "tmp<scalarField> polyMesh::movePoints"
+            InfoInFunction
                 << "(const pointField&) : "
                 << "Moving the mesh with given points will "
                 << "invalidate the mesh." << nl
