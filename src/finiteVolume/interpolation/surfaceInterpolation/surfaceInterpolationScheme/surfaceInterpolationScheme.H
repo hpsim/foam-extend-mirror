@@ -66,10 +66,10 @@ class surfaceInterpolationScheme
     // Private Member Functions
 
         //- Disallow copy construct
-        surfaceInterpolationScheme(const surfaceInterpolationScheme&);
+        surfaceInterpolationScheme(const surfaceInterpolationScheme&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const surfaceInterpolationScheme&);
+        void operator=(const surfaceInterpolationScheme&) = delete;
 
 
 public:
@@ -134,7 +134,7 @@ public:
 
 
     //- Destructor
-    virtual ~surfaceInterpolationScheme();
+    virtual ~surfaceInterpolationScheme() = default;
 
 
     // Member Functions
@@ -183,7 +183,8 @@ public:
         virtual tmp<GeometricField<Type, fvsPatchField, surfaceMesh> >
         correction(const GeometricField<Type, fvPatchField, volMesh>&) const
         {
-            return tmp<GeometricField<Type, fvsPatchField, surfaceMesh> >(nullptr);
+            return tmp<GeometricField<Type, fvsPatchField, surfaceMesh> >
+                (GeometricField<Type, fvsPatchField, surfaceMesh>::null());
         }
 
         //- Return the face-interpolate of the given cell field
