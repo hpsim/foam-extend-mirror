@@ -188,6 +188,9 @@ public:
             );
         }
 
+    //- Destructor
+    ~timeVaryingMappedFixedValueFvPatchField() = default;
+    
 
     // Member functions
 
