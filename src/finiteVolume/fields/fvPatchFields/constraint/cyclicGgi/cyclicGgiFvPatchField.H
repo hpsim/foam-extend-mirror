@@ -140,6 +140,13 @@ public:
 
         // Evaluation functions
 
+            //- Return true if this coupled patch fields are updated
+            //  patchNeighbourField calculated on demand
+            virtual bool couplesUpdated() const
+            {
+                return true;
+            }
+    
             //- Return neighbour field
             virtual tmp<Field<Type> > patchNeighbourField() const;
 

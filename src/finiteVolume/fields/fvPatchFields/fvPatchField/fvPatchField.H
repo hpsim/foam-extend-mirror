@@ -277,8 +277,7 @@ public:
 
 
     //- Destructor
-    virtual ~fvPatchField<Type>()
-    {}
+    virtual ~fvPatchField<Type>() = default;
 
 
     // Member functions
@@ -349,6 +348,13 @@ public:
             virtual bool blockCoupled() const
             {
                 return false;
+            }
+
+            //- Return true if this coupled patch fields are updated
+            virtual bool couplesUpdated() const
+            {
+                notImplemented(type() + "::couplesUpdated()");
+                return true;
             }
 
             //- Return true if the boundary condition has already been updated

@@ -194,7 +194,14 @@ public:
 
         // Evaluation functions
 
-            //- Return neighbour field given internal cell data
+            //- Return true if this coupled patch fields are updated
+            //  patchNeighbourField calculated on demand
+            virtual bool couplesUpdated() const
+            {
+                return true;
+            }
+    
+            //- Return patch neighbour field
             virtual tmp<Field<Type> > patchNeighbourField() const;
 
             //- Return named neighbour field given internal cell data

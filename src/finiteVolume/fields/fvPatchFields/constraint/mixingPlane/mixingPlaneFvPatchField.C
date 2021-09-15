@@ -70,11 +70,8 @@ void mixingPlaneFvPatchField<Type>::readMixingType() const
     }
     else
     {
-        FatalIOErrorIn
-        (
-            "void mixingPlaneFvPatchField<Type>::readMixingType() const",
-            dict
-        )   << "Cannot find mixing type for field "
+        FatalIOErrorInFunction(dict)
+            << "Cannot find mixing type for field "
             <<  this->dimensionedInternalField().name() << nl
             << "Please specify in fvSchemes in mixingPlane, "
             << "under field name " << nl
@@ -228,16 +225,8 @@ mixingPlaneFvPatchField<Type>::mixingPlaneFvPatchField
 {
     if (!isType<mixingPlaneFvPatch>(p))
     {
-        FatalIOErrorIn
-        (
-            "mixingPlaneFvPatchField<Type>::mixingPlaneFvPatchField\n"
-            "(\n"
-            "    const fvPatch& p,\n"
-            "    const DimensionedField<Type, volMesh>& iF,\n"
-            "    const dictionary& dict\n"
-            ")\n",
-            dict
-        )   << "patch " << this->patch().index() << " not mixingPlane type. "
+        FatalIOErrorInFunction(dict)
+            << "patch " << this->patch().index() << " not mixingPlane type. "
             << "Patch type = " << p.type()
             << exit(FatalIOError);
     }
@@ -271,16 +260,8 @@ mixingPlaneFvPatchField<Type>::mixingPlaneFvPatchField
 {
     if (!isType<mixingPlaneFvPatch>(this->patch()))
     {
-        FatalErrorIn
-        (
-            "mixingPlaneFvPatchField<Type>::mixingPlaneFvPatchField\n"
-            "(\n"
-            "    const mixingPlaneFvPatchField<Type>& ptf,\n"
-            "    const fvPatch& p,\n"
-            "    const DimensionedField<Type, volMesh>& iF,\n"
-            "    const fvPatchFieldMapper& mapper\n"
-            ")\n"
-        )   << "Field type does not correspond to patch type for patch "
+        FatalErrorInFunction
+            << "Field type does not correspond to patch type for patch "
             << this->patch().index() << "." << endl
             << "Field type: " << typeName << endl
             << "Patch type: " << this->patch().type()
@@ -446,11 +427,8 @@ tmp<Field<Type> > mixingPlaneFvPatchField<Type>::patchNeighbourField() const
     }
     else
     {
-        FatalErrorIn
-        (
-            "tmp<Field<Type> > mixingPlaneFvPatchField<Type>::"
-            "patchNeighbourField() const"
-        )   << "Unknown mixing type for patch " << this->patch().name()
+        FatalErrorInFunction
+            << "Unknown mixing type for patch " << this->patch().name()
             << " for field "
             <<  this->dimensionedInternalField().name()
             << abort(FatalError);
@@ -490,8 +468,6 @@ mixingPlaneFvPatchField<Type>::untransformedInterpolate
     //     // Flux averaging
     //     // - for outgoing flux, use zero gradient condition
     //     // - for incoming flux, use interpolated flux-weighted value
-
-    //     //HJ, HERE:!!!
     // }
     // else if (mixing_ == mixingPlaneInterpolation::ZERO_GRADIENT)
     // {
@@ -499,11 +475,8 @@ mixingPlaneFvPatchField<Type>::untransformedInterpolate
     // }
     // else
     // {
-    //     FatalErrorIn
-    //     (
-    //         "tmp<scalarField> mixingPlaneFvPatchField<Type>::"
-    //         "untransformedInterpolate(const direction cmpt) const"
-    //     )   << "Unknown mixing type for patch " << this->patch().name()
+    //     FatalErrorInFunction
+    //         << "Unknown mixing type for patch " << this->patch().name()
     //         << " for field "
     //         <<  this->dimensionedInternalField().name()
     //         << abort(FatalError);
@@ -555,13 +528,8 @@ void mixingPlaneFvPatchField<Type>::initEvaluate
     }
     else
     {
-        FatalErrorIn
-        (
-            "void mixingPlaneFvPatchField<Type>::initEvaluate\n"
-            "(\n"
-            "    const Pstream::commsTypes commsType\n"
-            ")"
-        )   << "Unknown mixing type for patch " << this->patch().name()
+        FatalErrorInFunction
+            << "Unknown mixing type for patch " << this->patch().name()
             << " for field "
             <<  this->dimensionedInternalField().name()
             << abort(FatalError);
@@ -620,13 +588,8 @@ tmp<Field<Type> > mixingPlaneFvPatchField<Type>::valueInternalCoeffs
     }
     else
     {
-        FatalErrorIn
-        (
-            "void mixingPlaneFvPatchField<Type>::valueInternalCoeffs\n"
-            "(\n"
-            "    const tmp<scalarField>& w\n"
-            ") const"
-        )   << "Unknown mixing type for patch " << this->patch().name()
+        FatalErrorInFunction
+            << "Unknown mixing type for patch " << this->patch().name()
             << " for field "
             <<  this->dimensionedInternalField().name()
             << abort(FatalError);
@@ -674,13 +637,8 @@ tmp<Field<Type> > mixingPlaneFvPatchField<Type>::valueBoundaryCoeffs
     }
     else
     {
-        FatalErrorIn
-        (
-            "void mixingPlaneFvPatchField<Type>::valueBoundaryCoeffs\n"
-            "(\n"
-            "    const tmp<scalarField>& w\n"
-            ") const"
-        )   << "Unknown mixing type for patch " << this->patch().name()
+        FatalErrorInFunction
+            << "Unknown mixing type for patch " << this->patch().name()
             << " for field "
             <<  this->dimensionedInternalField().name()
             << abort(FatalError);
@@ -721,11 +679,8 @@ tmp<Field<Type> > mixingPlaneFvPatchField<Type>::valueBoundaryCoeffs
 //     }
 //     else
 //     {
-//         FatalErrorIn
-//         (
-//             "void mixingPlaneFvPatchField<Type>::gradientInternalCoeffs"
-//             "gradientInternalCoeffs() const"
-//         )   << "Unknown mixing type for patch " << this->patch().name()
+//         FatalErrorInFunction
+//             << "Unknown mixing type for patch " << this->patch().name()
 //             << " for field "
 //             <<  this->dimensionedInternalField().name()
 //             << abort(FatalError);
@@ -766,11 +721,8 @@ tmp<Field<Type> > mixingPlaneFvPatchField<Type>::valueBoundaryCoeffs
 //     }
 //     else
 //     {
-//         FatalErrorIn
-//         (
-//             "void mixingPlaneFvPatchField<Type>::gradientBoundaryCoeffs"
-//             "gradientBoundaryCoeffs() const"
-//         )   << "Unknown mixing type for patch " << this->patch().name()
+//         FatalErrorInFunction
+//             << "Unknown mixing type for patch " << this->patch().name()
 //             << " for field "
 //             <<  this->dimensionedInternalField().name()
 //             << abort(FatalError);
@@ -822,14 +774,8 @@ void mixingPlaneFvPatchField<Type>::patchInterpolate
     }
     else
     {
-        FatalErrorIn
-        (
-            "void mixingPlaneFvPatchField<Type>::patchInterpolate\n"
-            "(\n"
-            "    GeometricField<Type, fvsPatchField, surfaceMesh>& fField,\n"
-            "    const scalarField& pL\n"
-            ") const"
-        )   << "Unknown mixing type for patch " << this->patch().name()
+        FatalErrorInFunction
+            << "Unknown mixing type for patch " << this->patch().name()
             << " for field "
             <<  this->dimensionedInternalField().name()
             << abort(FatalError);
@@ -876,15 +822,8 @@ void mixingPlaneFvPatchField<Type>::patchInterpolate
     }
     else
     {
-        FatalErrorIn
-        (
-            "void mixingPlaneFvPatchField<Type>::patchInterpolate\n"
-            "(\n"
-            "    GeometricField<Type, fvsPatchField, surfaceMesh>& fField,\n"
-            "    const scalarField& pL,\n"
-            "    const scalarField& pY\n"
-            ") const"
-        )   << "Unknown mixing type for patch " << this->patch().name()
+        FatalErrorInFunction
+            << "Unknown mixing type for patch " << this->patch().name()
             << " for field "
             <<  this->dimensionedInternalField().name()
             << abort(FatalError);
@@ -950,14 +889,8 @@ void mixingPlaneFvPatchField<Type>::patchFlux
     }
     else
     {
-        FatalErrorIn
-        (
-            "void mixingPlaneFvPatchField<Type>::patchFlux\n"
-            "(\n"
-            "    GeometricField<Type, fvsPatchField, surfaceMesh>& fField,\n"
-            "    const fvMatrix<Type>& matrix\n"
-            ") const"
-        )   << "Unknown mixing type for patch " << this->patch().name()
+        FatalErrorInFunction
+            << "Unknown mixing type for patch " << this->patch().name()
             << " for field "
             <<  this->dimensionedInternalField().name()
             << abort(FatalError);
@@ -1029,19 +962,8 @@ void mixingPlaneFvPatchField<Type>::initInterfaceMatrixUpdate
     }
     else
     {
-        FatalErrorIn
-        (
-            "void mixingPlaneFvPatchField<Type>::initInterfaceMatrixUpdate\n"
-            "(\n"
-            "    const scalarField& psiInternal,\n"
-            "    scalarField& result,\n"
-            "    const lduMatrix&,\n"
-            "    const scalarField& coeffs,\n"
-            "    const direction cmpt,\n"
-            "    const Pstream::commsTypes commsType,\n"
-            "    const bool switchToLhs\n"
-            ") const"
-        )   << "Unknown mixing type for patch " << this->patch().name()
+        FatalErrorInFunction
+            << "Unknown mixing type for patch " << this->patch().name()
             << " for field "
             <<  this->dimensionedInternalField().name()
             << abort(FatalError);

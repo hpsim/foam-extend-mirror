@@ -137,10 +137,14 @@ public:
 
         // Evaluation functions
 
+            //- Return true if this coupled patch fields are updated
+            //  patchNeighbourField calculated on demand
+            virtual bool couplesUpdated() const
+            {
+                return true;
+            }
+    
             //- Return neighbour field given internal cell data
-            //  This is a dummy function: returning patch values
-            //  due to scheduling issues in parallel communication.
-            //  See processofFvPatchField for details HJ, 11/May/2009
             virtual tmp<Field<Type> > patchNeighbourField() const;
 
             //- Return neighbour field of internal field, untransformed

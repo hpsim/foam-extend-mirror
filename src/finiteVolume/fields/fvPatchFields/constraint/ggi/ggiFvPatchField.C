@@ -211,6 +211,11 @@ void ggiFvPatchField<Type>::initEvaluate
         this->updateCoeffs();
     }
 
+    // Note
+    // All communication happens in patchNeighbourField, which can potentially
+    // be cached to reduce communication
+    // HJ, 10/Sep/2021
+    
     Field<Type> pf
     (
         this->patch().weights()*this->patchInternalField()
