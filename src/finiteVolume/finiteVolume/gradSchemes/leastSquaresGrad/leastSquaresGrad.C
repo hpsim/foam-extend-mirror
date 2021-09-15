@@ -95,6 +95,12 @@ leastSquaresGrad<Type>::calcGrad
     const unallocLabelList& own = mesh.owner();
     const unallocLabelList& nei = mesh.neighbour();
 
+    // updateCoupledPatchFields for patchNeighbourField update
+    // HJ, 10/Sep/2021
+    GeometricField<Type, fvPatchField, volMesh>& cvsf =
+        const_cast<GeometricField<Type, fvPatchField, volMesh>&>(vsf);
+    cvsf.boundaryField().updateCoupledPatchFields();
+
     // Get access to internal field
 
     const Field<Type>& vsfIn = vsf.internalField();

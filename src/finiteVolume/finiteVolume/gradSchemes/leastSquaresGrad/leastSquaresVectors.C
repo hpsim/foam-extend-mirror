@@ -166,7 +166,7 @@ void Foam::leastSquaresVectors::makeLeastSquaresVectors() const
 
     // Evaluate coupled to exchange coupled neighbour field data
     // across coupled boundaries.  HJ, 18/Mar/2015
-    volInvDd.boundaryField().evaluateCoupled();
+    volInvDd.boundaryField().updateCoupledPatchFields();
 
     // Revisit all faces and calculate the lsP and lsN vectors
     vectorField& lsPIn = lsP.internalField();
@@ -310,7 +310,7 @@ void Foam::leastSquaresVectors::makeLeastSquaresVectors() const
 
     // Update boundary conditions for coupled boundaries.  This synchronises
     // the Gauss grad indication field
-    useGaussGrad.boundaryField().evaluateCoupled();
+    useGaussGrad.boundaryField().updateCoupledPatchFields();
 
     // Replace least square vectors with weighted Gauss gradient vectors
     // for marked cells
@@ -334,7 +334,7 @@ void Foam::leastSquaresVectors::makeLeastSquaresVectors() const
 
     // Evaluate coupled to exchange coupled neighbour field data
     // across coupled boundaries.  HJ, 18/Mar/2015
-    cellV.boundaryField().evaluateCoupled();
+    cellV.boundaryField().updateCoupledPatchFields();
 
     const scalarField& cellVIn = cellV.internalField();
 
