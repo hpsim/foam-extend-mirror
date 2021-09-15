@@ -469,7 +469,7 @@ Foam::fvMatrix<Type>::~fvMatrix()
 {
     if (debug)
     {
-        Info<< "fvMatrix<Type>::~fvMatrix<Type>() : "
+        InfoInFunction
             << "destroying fvMatrix<Type> for field " << psi_.name()
             << endl;
     }

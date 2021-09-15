@@ -222,9 +222,8 @@ public:
         }
 
 
-    // Destructor
-
-        virtual ~fvMatrix();
+    //- Destructor
+    virtual ~fvMatrix();
 
 
     // Member functions
