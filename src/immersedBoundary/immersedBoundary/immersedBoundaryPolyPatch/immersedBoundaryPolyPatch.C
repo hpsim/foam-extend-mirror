@@ -93,7 +93,7 @@ void Foam::immersedBoundaryPolyPatch::calcTriSurfSearch() const
 {
     if (debug)
     {
-        InfoIn("void immersedBoundaryPolyPatch::calcTriSurfSearch() const")
+        InfoInFunction
             << "creating triSurface search algorithm"
             << endl;
     }
@@ -102,10 +102,8 @@ void Foam::immersedBoundaryPolyPatch::calcTriSurfSearch() const
     // if the pointer is already
     if (triSurfSearchPtr_)
     {
-        FatalErrorIn
-        (
-            "void immersedBoundaryPolyPatch::calcTriSurfSearch() const"
-        )   << "triSurface search algorithm already exist"
+        FatalErrorInFunction
+            << "triSurface search algorithm already exist"
             << abort(FatalError);
     }
 
@@ -117,7 +115,7 @@ void Foam::immersedBoundaryPolyPatch::calcImmersedBoundary() const
 {
     if (debug)
     {
-        InfoIn("void immersedBoundaryPolyPatch::calcImmersedBoundary() const")
+        InfoInFunction
             << "Calculating geometry"
             << endl;
     }
@@ -138,7 +136,7 @@ void Foam::immersedBoundaryPolyPatch::calcImmersedBoundary() const
      || deadFacesPtr_
     )
     {
-        FatalErrorIn("immersedBoundaryPolyPatch::calcImmersedBoundary() const")
+        FatalErrorInFunction
             << "Geometry already calculated"
             << abort(FatalError);
     }
@@ -326,10 +324,7 @@ void Foam::immersedBoundaryPolyPatch::calcImmersedBoundary() const
                 // strange arrangaments.
                 // Issue a warning, mark CUT and hope for the best.
                 // (IG 22/Nov/2018)
-                WarningIn
-                (
-                    "immersedBoundaryPolyPatch::calcImmersedBoundary() const"
-                )
+                WarningInFunction
                     << "Cannot find wet or dry neigbours! Cell C:"
                     << C[cellI]
                     << " Neighbours: WET:" << foundWetNei
@@ -620,11 +615,8 @@ void Foam::immersedBoundaryPolyPatch::calcImmersedBoundary() const
                 // Possible code missing: reconsider Immersed boundary
                 // cutting non-matching coupled patches.
                 // HJ and HN, 20/Mar/2020
-                // WarningIn
-                // (
-                //     "void immersedBoundaryPolyPatch::"
-                //     "calcImmersedBoundary() const"
-                // )   << "Non-processor coupled patch detected for "
+                // WarningInFunction
+                //     << "Non-processor coupled patch detected for "
                 //     << "immersed boundary.  "
                 //     << "Direct face cut may not be detected"
                 //     << endl;
@@ -1194,11 +1186,11 @@ void Foam::immersedBoundaryPolyPatch::calcImmersedBoundary() const
 
     // Reduce is not allowed in parallel load balancing
     // HJ, 24/Oct/2018
-    // if (debug)
+    if (debug)
     {
         // reduce(totalIbCount, sumOp<List<label> >());
 
-        Info<< "Immersed boundary " << name() << " info: "
+        Pout<< "Immersed boundary " << name() << " info: "
             << "nIbCells: " << totalIbCount[0]
             << " nDeadCells: " << totalIbCount[1]
             << " nIbFaces: " << totalIbCount[2]
@@ -1212,34 +1204,37 @@ void Foam::immersedBoundaryPolyPatch::calcCorrectedGeometry() const
 {
     if (debug)
     {
-        InfoIn
-        (
-            "void immersedBoundaryPolyPatch::calcCorrectedGeometry() const"
-        )   << "Calculating corrected geometry"
+        InfoInFunction
+            << "Calculating corrected geometry"
             << endl;
     }
 
-    if
-    (
-        correctedIbPatchFaceAreasPtr_
-    )
+    // Corrected patch face areas are in a separate storage per patch
+    // Use it to signal if the function has been called
+    if (correctedIbPatchFaceAreasPtr_)
     {
-        FatalErrorIn
-        (
-            "void immersedBoundaryPolyPatch::calcCorrectedGeometry() const"
-        )   << "Corrected geometry already calculated"
+        FatalErrorInFunction
+            << "Corrected geometry already calculated"
             << abort(FatalError);
     }
 
     // Get mesh reference
     const polyMesh& mesh = boundaryMesh().mesh();
 
-    // Get mesh geometry references from the MeshObject
-    vectorField& C = correctedFields_.correctedCellCentres();
-    vectorField& Cf = correctedFields_.correctedFaceCentres();
-    scalarField& V = correctedFields_.correctedCellVolumes();
-    vectorField& Sf = correctedFields_.correctedFaceAreas();
+    // Get mesh geometry from polyMesh.  It will be modified
+    vectorField& C =
+        const_cast<vectorField&>(boundaryMesh().mesh().cellCentres());
 
+    vectorField& Cf =
+        const_cast<vectorField&>(boundaryMesh().mesh().faceCentres());
+
+    scalarField& V =
+        const_cast<scalarField&>(boundaryMesh().mesh().cellVolumes());
+
+    vectorField& Sf =
+        const_cast<vectorField&>(boundaryMesh().mesh().faceAreas());
+    
+    
     // Initialise IB patch face areas with the areas of the stand-alone patch
     // They will be corrected using the Marooney Maneouvre
     correctedIbPatchFaceAreasPtr_ = new vectorField(ibPatch().areas());
@@ -1370,10 +1365,8 @@ void Foam::immersedBoundaryPolyPatch::calcCorrectedGeometry() const
     {
         if (nMarooneyCells > 0)
         {
-            InfoIn
-            (
-                "void immersedBoundaryPolyPatch::calcCorrectedGeometry() const"
-            )   << "Marooney Maneouvre used for " << nMarooneyCells
+            InfoInFunction
+                << "Marooney Maneouvre used for " << nMarooneyCells
                 << " out of " << cutCells.size()
                 << endl;
         }
@@ -1392,15 +1385,18 @@ void Foam::immersedBoundaryPolyPatch::calcCorrectedGeometry() const
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
+void Foam::immersedBoundaryPolyPatch::initGeometry()
+{
+    calcCorrectedGeometry();
+}
+
+
 void Foam::immersedBoundaryPolyPatch::movePoints(const pointField& p)
 {
     if (debug)
     {
-        InfoIn
-        (
-            "void immersedBoundaryPolyPatch::"
-            "movePoints(const pointField&) const"
-        )   << "Moving mesh: immersedBoundary update"
+        InfoInFunction
+            << "Moving mesh: immersedBoundary update"
             << endl;
     }
 
@@ -1456,9 +1452,7 @@ Foam::immersedBoundaryPolyPatch::immersedBoundaryPolyPatch
     nearestTriPtr_(nullptr),
     deadCellsPtr_(nullptr),
     deadFacesPtr_(nullptr),
-    correctedFields_(immersedBoundaryCorrectedMeshFields::New(bm.mesh())),
     correctedIbPatchFaceAreasPtr_(nullptr),
-    topoChangeIndex_(-1),
     oldIbPointsPtr_(nullptr)
 {}
 
@@ -1499,24 +1493,13 @@ Foam::immersedBoundaryPolyPatch::immersedBoundaryPolyPatch
     nearestTriPtr_(nullptr),
     deadCellsPtr_(nullptr),
     deadFacesPtr_(nullptr),
-    correctedFields_(immersedBoundaryCorrectedMeshFields::New(bm.mesh())),
     correctedIbPatchFaceAreasPtr_(nullptr),
-    topoChangeIndex_(-1),
     oldIbPointsPtr_(nullptr)
 {
     if (size() > 0)
     {
-        FatalIOErrorIn
-        (
-            "immersedBoundaryPolyPatch::immersedBoundaryPolyPatch\n"
-            "(\n"
-            "    const word& name,\n"
-            "    const dictionary& dict,\n"
-            "    const label index,\n"
-            "    const polyBoundaryMesh& bm\n"
-            ")",
-            dict
-        )   << "Faces detected in the immersedBoundaryPolyPatch.  "
+        FatalIOErrorInFunction(dict)
+            << "Faces detected in the immersedBoundaryPolyPatch.  "
             << "This is not allowed: please make sure that the patch size "
             << "equals zero."
             << abort(FatalIOError);
@@ -1562,9 +1545,7 @@ Foam::immersedBoundaryPolyPatch::immersedBoundaryPolyPatch
     nearestTriPtr_(nullptr),
     deadCellsPtr_(nullptr),
     deadFacesPtr_(nullptr),
-    correctedFields_(immersedBoundaryCorrectedMeshFields::New(bm.mesh())),
     correctedIbPatchFaceAreasPtr_(nullptr),
-    topoChangeIndex_(-1),
     oldIbPointsPtr_(nullptr)
 {}
 
@@ -1603,15 +1584,7 @@ Foam::immersedBoundaryPolyPatch::immersedBoundaryPolyPatch
     nearestTriPtr_(nullptr),
     deadCellsPtr_(nullptr),
     deadFacesPtr_(nullptr),
-    correctedFields_
-    (
-        immersedBoundaryCorrectedMeshFields::New
-        (
-            pp.boundaryMesh().mesh()
-        )
-    ),
     correctedIbPatchFaceAreasPtr_(nullptr),
-    topoChangeIndex_(-1),
     oldIbPointsPtr_(nullptr)
 {}
 
@@ -1651,9 +1624,7 @@ Foam::immersedBoundaryPolyPatch::immersedBoundaryPolyPatch
     nearestTriPtr_(nullptr),
     deadCellsPtr_(nullptr),
     deadFacesPtr_(nullptr),
-    correctedFields_(immersedBoundaryCorrectedMeshFields::New(bm.mesh())),
     correctedIbPatchFaceAreasPtr_(nullptr),
-    topoChangeIndex_(-1),
     oldIbPointsPtr_(nullptr)
 {}
 
@@ -1802,54 +1773,6 @@ Foam::immersedBoundaryPolyPatch::deadFaces() const
 
 
 const Foam::vectorField&
-Foam::immersedBoundaryPolyPatch::correctedCellCentres() const
-{
-    if (!correctedIbPatchFaceAreasPtr_)
-    {
-        calcCorrectedGeometry();
-    }
-
-    return correctedFields_.correctedCellCentres();
-}
-
-
-const Foam::vectorField&
-Foam::immersedBoundaryPolyPatch::correctedFaceCentres() const
-{
-    if (!correctedIbPatchFaceAreasPtr_)
-    {
-        calcCorrectedGeometry();
-    }
-
-    return correctedFields_.correctedFaceCentres();
-}
-
-
-const Foam::scalarField&
-Foam::immersedBoundaryPolyPatch::correctedCellVolumes() const
-{
-    if (!correctedIbPatchFaceAreasPtr_)
-    {
-        calcCorrectedGeometry();
-    }
-
-    return correctedFields_.correctedCellVolumes();
-}
-
-
-const Foam::vectorField&
-Foam::immersedBoundaryPolyPatch::correctedFaceAreas() const
-{
-    if (!correctedIbPatchFaceAreasPtr_)
-    {
-        calcCorrectedGeometry();
-    }
-
-    return correctedFields_.correctedFaceAreas();
-}
-
-
-const Foam::vectorField&
 Foam::immersedBoundaryPolyPatch::correctedIbPatchFaceAreas() const
 {
     if (!correctedIbPatchFaceAreasPtr_)
@@ -1915,13 +1838,8 @@ void Foam::immersedBoundaryPolyPatch::moveTriSurfacePoints
 
     if (oldPoints.size() != p.size())
     {
-        FatalErrorIn
-        (
-            "void immersedBoundaryPolyPatch::moveTriSurfacePoints\n"
-            "(\n"
-            "    const pointField& p\n"
-            ")"
-        )   << "Incorrect size of motion points for patch " << name()
+        FatalErrorInFunction
+            << "Incorrect size of motion points for patch " << name()
             << ".  oldPoints = "
             << oldPoints.size() << " p = " << p.size()
             << abort(FatalError);
@@ -1982,7 +1900,7 @@ void Foam::immersedBoundaryPolyPatch::clearOut() const
 {
     if (debug)
     {
-        InfoIn("void immersedBoundaryPolyPatch::clearOut() const")
+        InfoInFunction
             << "Clear immersed boundary polyPatch"
             << endl;
     }
@@ -2001,12 +1919,6 @@ void Foam::immersedBoundaryPolyPatch::clearOut() const
     deleteDemandDrivenData(deadFacesPtr_);
 
     deleteDemandDrivenData(correctedIbPatchFaceAreasPtr_);
-
-    // Update topo change index
-    topoChangeIndex_++;
-
-    // Clear global data MeshObject
-    correctedFields_.clearOut(topoChangeIndex_);
 
     // Cannot delete old motion points.  HJ, 10/Dec/2017
 }

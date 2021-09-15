@@ -147,8 +147,7 @@ public:
 
 
     //- Destructor
-    virtual ~immersedBoundaryFvPatch()
-    {}
+    virtual ~immersedBoundaryFvPatch() = default;
 
 
     // Member Functions

@@ -632,7 +632,8 @@ Foam::ImmersedCell<Distance>::ImmersedCell
         const face& newFace = enrichedFaces[oldFaceI];
 
         // Calculate old face area locally to avoid triggering polyMesh
-        const scalar oldFaceArea = mag(mesh_.faceAreas()[origCell[oldFaceI]]);
+        const scalar oldFaceArea =
+            mesh_.faces()[origCell[oldFaceI]].mag(mesh_.points());
 
         // If a face has been modified, it will have extra points
         if (newFace.size() != oldFace.size())
@@ -781,7 +782,8 @@ Foam::ImmersedCell<Distance>::ImmersedCell
         << "depth: " << depth_ << endl;
 #   endif
 
-    const scalar oldCellVolume = mesh_.cellVolumes()[cellID_];
+    const scalar oldCellVolume =
+        mesh_.cells()[cellID_].mag(mesh_.points(), mesh_.faces());
 
     // Note: is it legal to cut a zero volume cell?  HJ, 11/Mar/2019
 

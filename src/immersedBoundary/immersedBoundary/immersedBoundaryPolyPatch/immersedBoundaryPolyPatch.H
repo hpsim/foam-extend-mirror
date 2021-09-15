@@ -50,7 +50,6 @@ SourceFiles
 #include "standAlonePatch.H"
 #include "Switch.H"
 #include "volFields.H"
-#include "immersedBoundaryCorrectedMeshFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -139,17 +138,8 @@ class immersedBoundaryPolyPatch
 
         // Corrected mesh geometry
 
-            // MeshObject derived object that holds corrected global field data
-            const immersedBoundaryCorrectedMeshFields& correctedFields_;
-
             //- Corrected face areas for the immersed boundary patch
             mutable vectorField* correctedIbPatchFaceAreasPtr_;
-
-            //- Topo change index, used to update the corrected fields
-            //  MeshObject consistently.
-            //  NOTE: time index cannot be used since multiple topo changes per
-            //  time-step are possible (IG 28/OCT/2018)
-            mutable label topoChangeIndex_;
 
 
         // Immersed boundary motion
@@ -179,6 +169,10 @@ class immersedBoundaryPolyPatch
 protected:
 
     // Protected Member Functions
+
+        //- Calculate the patch geometry.  Contains init-loop comms
+        //  so it needs to be called at init level
+        virtual void initGeometry();
 
         //- Correct patch after moving points
         virtual void movePoints(const pointField& p);
@@ -345,21 +339,6 @@ public:
 
             //- Return dead faces
             const labelList& deadFaces() const;
-
-
-        // Corrected mesh geometry
-
-            //- Corrected cell centres
-            const vectorField& correctedCellCentres() const;
-
-            //- Corrected face centres
-            const vectorField& correctedFaceCentres() const;
-
-            //- Corrected cell volumes
-            const scalarField& correctedCellVolumes() const;
-
-            //- Corrected face areas
-            const vectorField& correctedFaceAreas() const;
 
 
         // Corrected immersed patch geometry

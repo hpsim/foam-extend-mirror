@@ -39,6 +39,30 @@ Description
 
 void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
 {
+    // Calculate raw volumes and areas
+
+    const pointField& points = mesh.points();
+    const faceList& faces = mesh.faces();
+    const cellList& cells = mesh.cells();
+
+    // Calculate raw cell volumes
+    scalarField rawVolumes(mesh.nCells());
+
+    forAll (cells, cellI)
+    {
+        rawVolumes[cellI] = cells[cellI].mag(points, faces);
+    }
+
+    // Calculate raw face areas and magnitudes
+    vectorField rawFaceAreas(mesh.nFaces());
+    scalarField magRawFaceAreas(mesh.nFaces());
+
+    forAll (faces, faceI)
+    {
+        rawFaceAreas[faceI] = faces[faceI].normal(points);
+        magRawFaceAreas[faceI] = mag(rawFaceAreas[faceI]);
+    }
+
     Info<< nl << "Calculating gamma" << endl;
     volScalarField gamma
     (
@@ -53,7 +77,7 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
         mesh,
         dimensionedScalar("one", dimless, 1)
     );
-    gamma.internalField() = mesh.V()/mesh.cellVolumes();
+    gamma.internalField() = mesh.cellVolumes()/rawVolumes;
 
     // Report minimal live cell volume
     scalar minLiveGamma = GREAT;
@@ -62,7 +86,7 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
 
     // Collect dead cells
     labelHashSet deadCellsHash;
-    
+
     forAll (mesh.boundary(), patchI)
     {
         if (isA<immersedBoundaryFvPatch>(mesh.boundary()[patchI]))
@@ -109,11 +133,10 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
     );
 
     const surfaceScalarField& magSf = mesh.magSf();
-    const scalarField magFaceAreas = mag(mesh.faceAreas());
 
     sGamma.internalField() =
         magSf.internalField()/
-        scalarField::subField(magFaceAreas, mesh.nInternalFaces());
+        scalarField::subField(magRawFaceAreas, mesh.nInternalFaces());
 
     forAll (mesh.boundary(), patchI)
     {
@@ -121,7 +144,7 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
         {
             sGamma.boundaryField()[patchI] =
                 magSf.boundaryField()[patchI]/
-                mesh.boundary()[patchI].patchSlice(magFaceAreas);
+                mesh.boundary()[patchI].patchSlice(magRawFaceAreas);
 
             gamma.boundaryField()[patchI] =
                 sGamma.boundaryField()[patchI];
@@ -141,7 +164,7 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
             deadCellsHash
         ).write();
     }
-    
+
     // Check consistency of face area vectors
 
     Info<< nl << "Calculating divSf" << endl;
@@ -163,7 +186,7 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
 
     if (max(magDivSf) > primitiveMesh::closedThreshold_)
     {
-        WarningIn("writeIbMasks")
+        WarningInFunction
             << "Possible problem with immersed boundary face area vectors: "
             << max(magDivSf)
             << endl;
@@ -194,7 +217,7 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
 
         vectorField openFaceAreas
         (
-            IndirectList<vector>(mesh.faceAreas(), openCellFaces)()
+            IndirectList<vector>(rawFaceAreas, openCellFaces)()
         );
 
         vectorField adjustedFaceAreas(openCellFaces.size());
