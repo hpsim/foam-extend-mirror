@@ -127,8 +127,8 @@ void Foam::primitiveMesh::clearGeom()
 {
     if (debug)
     {
-        Pout<< "primitiveMesh::clearGeom() : "
-            << "clearing geometric data"
+        InfoInFunction
+            << "Clearing geometric data"
             << endl;
     }
 
@@ -143,8 +143,8 @@ void Foam::primitiveMesh::clearAddressing()
 {
     if (debug)
     {
-        Pout<< "primitiveMesh::clearAddressing() : "
-            << "clearing topology"
+        InfoInFunction
+            << "Clearing topology"
             << endl;
     }
 

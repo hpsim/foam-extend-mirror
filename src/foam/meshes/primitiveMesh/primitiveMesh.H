@@ -174,10 +174,10 @@ class primitiveMesh
     // Private member functions
 
         //- Disallow construct as copy
-        primitiveMesh(const primitiveMesh&);
+        primitiveMesh(const primitiveMesh&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const primitiveMesh&);
+        void operator=(const primitiveMesh&) = delete;
 
 
         // Topological calculations
@@ -349,9 +349,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~primitiveMesh();
+    //- Destructor
+    virtual ~primitiveMesh();
 
 
     // Member Functions
