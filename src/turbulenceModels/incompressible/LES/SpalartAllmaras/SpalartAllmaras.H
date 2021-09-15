@@ -61,9 +61,11 @@ class SpalartAllmaras
         //- Update sub-grid scale fields
         void updateSubGridScaleFields();
 
-        // Disallow default bitwise copy construct and assignment
-        SpalartAllmaras(const SpalartAllmaras&);
-        SpalartAllmaras& operator=(const SpalartAllmaras&);
+        //- Disallow default bitwise copy construct
+        SpalartAllmaras(const SpalartAllmaras&) = delete;
+
+        //- Disallow default bitwise assignment
+        SpalartAllmaras& operator=(const SpalartAllmaras&) = delete;
 
 
 protected:
@@ -144,8 +146,7 @@ public:
 
 
     //- Destructor
-    virtual ~SpalartAllmaras()
-    {}
+    virtual ~SpalartAllmaras() = default;
 
 
     // Member Functions
