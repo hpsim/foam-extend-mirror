@@ -298,7 +298,7 @@ Foam::polyBoundaryMesh::neighbourEdges() const
 
         if (pointsToEdge.size())
         {
-            FatalErrorIn("polyBoundaryMesh::neighbourEdges() const")
+            FatalErrorInFunction
                 << "Not all boundary edges of patches match up." << nl
                 << "Is the outside of your mesh multiply connected?"
                 << abort(FatalError);
@@ -319,7 +319,7 @@ Foam::polyBoundaryMesh::neighbourEdges() const
                     label edgeI = pp.nInternalEdges() + i;
                     const edge& e = pp.edges()[edgeI];
 
-                    FatalErrorIn("polyBoundaryMesh::neighbourEdges() const")
+                    FatalErrorInFunction
                         << "Not all boundary edges of patches match up." << nl
                         << "Edge " << edgeI << " on patch " << pp.name()
                         << " end points " << pp.localPoints()[e[0]] << ' '
@@ -653,10 +653,8 @@ Foam::label Foam::polyBoundaryMesh::whichPatch(const label faceIndex) const
     // if it is off the end of the list, abort
     if (faceIndex >= mesh().nFaces())
     {
-        FatalErrorIn
-        (
-            "polyBoundaryMesh::whichPatch(const label faceIndex) const"
-        )   << "given label greater than the number of geometric faces"
+        FatalErrorInFunction
+            << "given label greater than the number of geometric faces"
             << abort(FatalError);
     }
 
@@ -980,26 +978,7 @@ void Foam::polyBoundaryMesh::updateMesh()
 
     // Calculation of addressing, with communication
     // HJ, 12/Jun/2011
-    forAll(*this, patchi)
-    {
-        operator[](patchi).initAddressing();
-    }
-
-    forAll(*this, patchi)
-    {
-        operator[](patchi).calcAddressing();
-    }
-
-    // Calculation of geometry with communications
-    forAll(*this, patchi)
-    {
-        operator[](patchi).initGeometry();
-    }
-
-    forAll(*this, patchi)
-    {
-        operator[](patchi).calcGeometry();
-    }
+    calcGeometry();
 }
 
 
@@ -1066,10 +1045,8 @@ const Foam::polyPatch& Foam::polyBoundaryMesh::operator[]
 
     if (patchI < 0)
     {
-        FatalErrorIn
-        (
-            "polyBoundaryMesh::operator[](const word&) const"
-        )   << "Patch named " << patchName << " not found." << nl
+        FatalErrorInFunction
+            << "Patch named " << patchName << " not found." << nl
             << "Available patch names: " << names() << endl
             << abort(FatalError);
     }
@@ -1087,10 +1064,8 @@ Foam::polyPatch& Foam::polyBoundaryMesh::operator[]
 
     if (patchI < 0)
     {
-        FatalErrorIn
-        (
-            "polyBoundaryMesh::operator[](const word&)"
-        )   << "Patch named " << patchName << " not found." << nl
+        FatalErrorInFunction
+            << "Patch named " << patchName << " not found." << nl
             << "Available patch names: " << names() << endl
             << abort(FatalError);
     }
