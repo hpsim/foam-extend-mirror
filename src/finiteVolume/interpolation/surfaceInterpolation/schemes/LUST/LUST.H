@@ -60,10 +60,10 @@ class LUST
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        LUST(const LUST&);
+        LUST(const LUST&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const LUST&);
+        void operator=(const LUST&) = delete;
 
 
 public:
@@ -94,6 +94,10 @@ public:
         :
             linearUpwind<Type>(mesh, faceFlux, schemeData)
         {}
+
+
+    //- Destructor
+    ~LUST() = default;
 
 
     // Member Functions
