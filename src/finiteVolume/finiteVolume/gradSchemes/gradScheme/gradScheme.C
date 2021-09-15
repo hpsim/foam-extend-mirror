@@ -297,9 +297,9 @@ void gradScheme<Type>::correctBoundaryConditions
     }
 
     // Note: coupled boundaries provide patchNeighbourField, which is only
-    // updated on correct boundary conditions.  Therefore, evaluateCoupled()
+    // updated on correct boundary conditions.  Therefore, updateCoupledPatchFields()
     // should be called here. HJ, Apr/2013
-    gGrad.boundaryField().evaluateCoupled();
+    gGrad.boundaryField().updateCoupledPatchFields();
 }
 
 
