@@ -80,12 +80,12 @@ void Foam::processorFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
     {
         vectorField d = delta();
 
-        // NOT stabilised for bad meshes.  HJ, 11/May/2020
+        // Stabilised for bad meshes.  HJ, 11/May/2020
         dc = 1.0/max((nf() & d), 0.05*mag(d));
     }
     else
     {
-        // NOT stabilised for bad meshes.  HJ, 11/May/2020
+        // Not stabilised for bad meshes.  HJ, 11/May/2020
         dc = 1.0/(nf() & fvPatch::delta());
     }
 }
@@ -110,7 +110,7 @@ Foam::tmp<Foam::vectorField> Foam::processorFvPatch::delta() const
 {
     if (Pstream::parRun())
     {
-        // To the transformation if necessary
+        // Do the transformation if necessary
         if (parallel())
         {
             return
