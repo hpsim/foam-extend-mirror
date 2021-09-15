@@ -247,10 +247,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~fvsPatchField<Type>()
-        {}
+    //- Destructor
+    virtual ~fvsPatchField<Type>() = default;
 
 
     // Member functions
@@ -307,6 +305,16 @@ public:
             virtual bool coupled() const
             {
                 return false;
+            }
+
+            //- Return true if this coupled patch fields are updated
+            //  Since fvsPatchField does not have a patchNeighbourField,
+            //  this function is dummy.
+            //  HJ, 13/Sep/2021
+            virtual bool couplesUpdated() const
+            {
+                notImplemented(type() + "::couplesUpdated()");
+                return true;
             }
 
 

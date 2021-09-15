@@ -131,7 +131,7 @@ public:
 
 
     //- Destructor
-    virtual ~processorFvsPatchField();
+    virtual ~processorFvsPatchField() = default;
 
 
     // Member functions

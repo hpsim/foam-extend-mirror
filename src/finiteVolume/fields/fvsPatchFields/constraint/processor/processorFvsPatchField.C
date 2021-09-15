@@ -142,13 +142,6 @@ processorFvsPatchField<Type>::processorFvsPatchField
 {}
 
 
-// * * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * //
-
-template<class Type>
-processorFvsPatchField<Type>::~processorFvsPatchField()
-{}
-
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
