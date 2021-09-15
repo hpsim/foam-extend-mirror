@@ -238,6 +238,12 @@ public:
                 return conservativeCorrection_;
             }
 
+            //- Return true if this coupled patch fields are updated.  Dummy
+            virtual bool couplesUpdated() const
+            {
+                return true;
+            }
+
             //- Return neighbour field.  Dummy
             virtual tmp<Field<Type> > patchNeighbourField() const;
 

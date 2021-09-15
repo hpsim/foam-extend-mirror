@@ -49,7 +49,8 @@ void Foam::layeredOverlapFringe::evaluateNonOversetBoundaries
     volScalarField::GeometricBoundaryField& psib
 )
 {
-    // Code practically copy/pasted from GeometricBoundaryField::evaluateCoupled
+    // Code practically copy/pasted from
+    // GeometricBoundaryField::updateCoupledPatchFields
     // GeometricBoundaryField should be redesigned to accomodate for such needs
     if
     (
@@ -119,7 +120,7 @@ void Foam::layeredOverlapFringe::evaluateNonOversetBoundaries
     }
     else
     {
-        FatalErrorIn("layeredOverlapFringe::evaluateNonOversetBoundaries()")
+        FatalErrorInFunction
             << "Unsuported communications type "
             << Pstream::commsTypeNames[Pstream::defaultCommsType()]
             << exit(FatalError);
@@ -133,7 +134,7 @@ void Foam::layeredOverlapFringe::calcAddressing() const
 {
     if (fringeHolesPtr_ || acceptorsPtr_)
     {
-        FatalErrorIn("void layeredOverlapFringe::calcAddressing() const")
+        FatalErrorInFunction
             << "Fringe addressing already calculated"
             << abort(FatalError);
     }
@@ -296,10 +297,8 @@ void Foam::layeredOverlapFringe::calcAddressing() const
     // Issue an error if no acceptors have been found for initial guess
     if (returnReduce(candidateAcceptors.size(), sumOp<label>()) == 0)
     {
-        FatalErrorIn
-        (
-            "void adaptiveOverlapFringe::calcAddressing() const"
-        )   << "Did not find any acceptors to begin with."
+        FatalErrorInFunction
+            << "Did not find any acceptors to begin with."
             << "Check definition of adaptiveOverlap in oversetMeshDict"
             << " for region: " << this->region().name() << nl
             << "More specifically, check definition of:" << nl
@@ -346,16 +345,8 @@ Foam::layeredOverlapFringe::layeredOverlapFringe
     // Sanity check
     if (nLayers_ < 1)
     {
-        FatalIOErrorIn
-        (
-            "layeredOverlapFringe::layeredOverlapFringe\n"
-            "(\n"
-            "    const fvMesh& mesh,\n"
-            "    const oversetRegion& region,\n"
-            "    const dictionary& dict,\n"
-            ")\n",
-            dict
-        )   << "Invalid number of layers specified. "
+        FatalIOErrorInFunction(dict)
+            << "Invalid number of layers specified. "
             << nl
             << "Please specify value above 1."
             << exit(FatalIOError);
@@ -380,7 +371,7 @@ bool Foam::layeredOverlapFringe::updateIteration
 {
     if (!fringeHolesPtr_ || !acceptorsPtr_)
     {
-        FatalErrorIn("layeredOverlapFringe::updateIteration()")
+        FatalErrorInFunction
             << "fringeHolesPtr_ or acceptorsPtr_ is not allocated. "
             << "Make sure you have called acceptors() or fringeHoles() to "
             << "calculate the initial set of donor/acceptors before "
@@ -390,7 +381,7 @@ bool Foam::layeredOverlapFringe::updateIteration
 
     if (finalDonorAcceptorsPtr_)
     {
-        FatalErrorIn("layeredOverlapFringe::updateIteration()")
+        FatalErrorInFunction
             << "Called iteration update with finalDonorAcceptorsPtr_ "
             << "allocated. This means that the final overlap has been "
             << "achieved, prohibiting calls to updateIteration."
@@ -439,7 +430,7 @@ Foam::donorAcceptorList& Foam::layeredOverlapFringe::finalDonorAcceptors() const
 {
     if (!finalDonorAcceptorsPtr_)
     {
-        FatalErrorIn("layeredOverlapFringe::finalDonorAcceptors()")
+        FatalErrorInFunction
             << "finalDonorAcceptorPtr_ not allocated. Make sure you have "
             << "called layeredOverlapFringe::updateIteration() before asking for "
             << "final set of donor/acceptor pairs."
@@ -448,7 +439,7 @@ Foam::donorAcceptorList& Foam::layeredOverlapFringe::finalDonorAcceptors() const
 
     if (!foundSuitableOverlap())
     {
-        FatalErrorIn("layeredOverlapFringe::finalDonorAcceptors()")
+        FatalErrorInFunction
             << "Attemted to access finalDonorAcceptors but suitable overlap "
             << "has not been found. This is not allowed. "
             << abort(FatalError);

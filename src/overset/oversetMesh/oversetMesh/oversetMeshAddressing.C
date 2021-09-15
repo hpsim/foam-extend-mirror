@@ -36,7 +36,7 @@ void Foam::oversetMesh::calcCellClassification() const
 {
     if (acceptorCellsPtr_ || donorCellsPtr_ || donorCellsPtr_ || holeCellsPtr_)
     {
-        FatalErrorIn("void oversetMesh::calcCellClassification() const")
+        FatalErrorInFunction
             << "Cell classification already calculated"
             << abort(FatalError);
     }
@@ -134,7 +134,7 @@ void Foam::oversetMesh::calcDomainMarkup() const
 {
     if (oversetTypesPtr_ || regionIDPtr_)
     {
-        FatalErrorIn("void oversetMesh::calcDomainMarkup() const")
+        FatalErrorInFunction
             << "Domain markup already calculated"
             << abort(FatalError);
     }
@@ -239,7 +239,7 @@ void Foam::oversetMesh::calcDomainMarkup() const
     // Check regions
     if (min(regionID).value() < 0)
     {
-        FatalErrorIn("void oversetMesh::calcDomainMarkup() const")
+        FatalErrorInFunction
             << "Found cells without region ID.  Please check overset setup"
             << abort(FatalError);
     }
@@ -250,7 +250,7 @@ void Foam::oversetMesh::calcGamma() const
 {
     if (gammaPtr_ || gammaExtPtr_ || sGammaPtr_)
     {
-        FatalErrorIn("void oversetMesh::calcGamma() const")
+        FatalErrorInFunction
             << "Markup fields already calculated"
             << abort(FatalError);
     }
@@ -319,7 +319,7 @@ void Foam::oversetMesh::calcGamma() const
     // Not allowed to call correctBoundaryConditions.  HJ, 16/Apr/2012
     // Evaluate coupled boundaries and copy out the uncoupled ones
 
-    g.boundaryField().evaluateCoupled();
+    g.boundaryField().updateCoupledPatchFields();
 
     forAll (g.boundaryField(), patchI)
     {
@@ -330,7 +330,7 @@ void Foam::oversetMesh::calcGamma() const
         }
     }
 
-    gExt.boundaryField().evaluateCoupled();
+    gExt.boundaryField().updateCoupledPatchFields();
 
     forAll (gExt.boundaryField(), patchI)
     {
@@ -377,7 +377,7 @@ void Foam::oversetMesh::calcGamma() const
 
     // Remove faces where both owner and neighbour are acceptors
     volScalarField gAcc = gExt - g;
-    gAcc.boundaryField().evaluateCoupled();
+    gAcc.boundaryField().updateCoupledPatchFields();
 
     const scalarField& gAccIn = gAcc.internalField();
 
@@ -480,7 +480,7 @@ void Foam::oversetMesh::calcFringeFaces() const
      || acceptorInternalFacesPtr_
     )
     {
-        FatalErrorIn("void oversetMesh::calcFringeFaces() const")
+        FatalErrorInFunction
             << "Face masks already calculated"
             << abort(FatalError);
     }
@@ -665,7 +665,7 @@ void Foam::oversetMesh::calcHoleFaces() const
      || holeInternalFacesPtr_
     )
     {
-        FatalErrorIn("void oversetMesh::calcHoleFaces() const")
+        FatalErrorInFunction
             << "Face masks already calculated"
             << abort(FatalError);
     }
@@ -831,7 +831,7 @@ void Foam::oversetMesh::calcInterpolationMap() const
 {
     if (mapPtr_ || remoteDonorToLocalAcceptorAddrPtr_)
     {
-        FatalErrorIn("void oversetMesh::calcInterpolationMap() const")
+        FatalErrorInFunction
             << "Fringe addressing already calculated"
             << abort(FatalError);
     }
@@ -1049,7 +1049,7 @@ void Foam::oversetMesh::calcInterpolationMap() const
     // Sanity check whether all donorIDs that have been sent to me are valid
     if (min(donorIDs) < 0)
     {
-        FatalErrorIn("void oversetMesh::calcInterpolationMap() const")
+        FatalErrorInFunction
             << "Found invalid donor index after distribution." << nl
             << "Something has seriously gone wrong..."
             << abort(FatalError);
