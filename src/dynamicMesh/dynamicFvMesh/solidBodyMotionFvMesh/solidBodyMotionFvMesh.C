@@ -72,7 +72,10 @@ Foam::solidBodyMotionFvMesh::solidBodyMotionFvMesh(const IOobject& io)
             IOobject::NO_WRITE
         )
     )
-{}
+{
+    Info<< "Update mesh to start position" << endl;
+    update();
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //

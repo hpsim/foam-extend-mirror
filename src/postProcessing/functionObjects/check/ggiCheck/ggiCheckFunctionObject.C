@@ -234,7 +234,7 @@ bool Foam::ggiCheckFunctionObject::execute(const bool forceWrite)
                     << mag(localArea - shadowArea)/
                        (Foam::max(localArea, shadowArea) + SMALL)*100
                     << " % " << nl
-                    << "Flux: " << localFluxMag << " " << shadowFluxMag
+                    << "Flux: " << localFlux << " " << shadowFlux
                     << " Diff = " << localFlux + shadowFlux << " or "
                     << mag(localFlux + shadowFlux)/
                        (localFluxMag + SMALL)*100

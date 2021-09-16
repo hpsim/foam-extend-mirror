@@ -112,10 +112,23 @@ bool Foam::adjustPhi
         // to be taken into account.
         if (phi.mesh().moving())
         {
-            dimensionedScalar Vdiff =
-                sum(phi.mesh().V()) - sum(phi.mesh().V0());
+            // Changed the way domain volume is handled to avoid accumulation
+            // of the round-off error.  HJ, 6/Apr/2021
 
-            fixedMassOut += Vdiff.value()/phi.time().deltaT().value();
+            // Calculate total volume
+            dimensionedScalar Vtot = sum(phi.mesh().V());
+
+            // Calculate difference in total volume
+            dimensionedScalar Vdiff =
+                sum(phi.mesh().V() - phi.mesh().V0());
+
+            // Recognise solid body motion by the small change in volume
+            // Cannot use SMALL, due to accumulation of round-off errors)
+            // HJ, 6/Apr/2021
+            if (mag(Vdiff) > closedDomainTol()*Vtot)
+            {
+                fixedMassOut += Vdiff.value()/phi.time().deltaT().value();
+            }
         }
 
         reduce(massIn, sumOp<scalar>());
@@ -139,15 +152,8 @@ bool Foam::adjustPhi
             p.write();
 
             // Cannot adjust
-            FatalErrorIn
-            (
-                "adjustPhi\n"
-                "(\n"
-                "    surfaceScalarField& phi,\n"
-                "    const volVectorField& U,\n"
-                "    const volScalarField& p\n"
-                ")"
-            )   << "Continuity error cannot be removed by adjusting the"
+            FatalErrorInFunction
+                << "Continuity error cannot be removed by adjusting the"
                 " outflow.\nPlease check the velocity boundary conditions"
                 " and/or run potentialFoam to initialise the outflow." << nl
                 << "Specified mass inflow   : " << massIn << nl

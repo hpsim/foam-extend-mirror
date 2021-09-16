@@ -34,22 +34,39 @@ Description
 namespace Foam
 {
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 defineTypeNameAndDebug(wallFvPatch, 0);
 addToRunTimeSelectionTable(fvPatch, wallFvPatch, polyPatch);
+
+} // End namespace Foam
 
 
 // * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * * //
 
-void wallFvPatch::makeCorrVecs(fvsPatchVectorField& cv) const
+void Foam::wallFvPatch::makeCorrVecs(fvsPatchVectorField& cv) const
 {
     cv = vector::zero;
 }
 
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+void Foam::wallFvPatch::updatePhi
+(
+    DimensionedField<scalar, volMesh>& V,
+    DimensionedField<scalar, volMesh>& V0,
+    surfaceScalarField& phi
+) const
+{
+    if (wallPolyPatch_.closedSolidBodyMotion())
+    {
+        const scalar phiAvg = gAverage(phi.boundaryField()[index()]);
 
-} // End namespace Foam
+        phi.boundaryField()[index()] -= phiAvg;
+
+        Info<< "wallFvPatch::updatePhi updating average for closed wall: "
+            << phiAvg << " corrected: "
+            << gAverage(phi.boundaryField()[index()])
+            << endl;
+    }
+}
+
 
 // ************************************************************************* //

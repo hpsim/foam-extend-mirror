@@ -389,8 +389,7 @@ void Foam::MRFZone::calcMeshVelocity() const
         meshVelIn[faceI] = f[faceI].sweptVol(p, newP)/deltaT;
     }
 
-    // Included patches
-
+    // Included faces
     forAll (includedFaces_, patchI)
     {
         const label patchStart = mesh_.boundaryMesh()[patchI].start();
@@ -404,7 +403,7 @@ void Foam::MRFZone::calcMeshVelocity() const
         }
     }
 
-    // Excluded patches
+    // Excluded faces - same as included patches
     forAll (excludedFaces_, patchI)
     {
         const label patchStart = mesh_.boundaryMesh()[patchI].start();
@@ -540,7 +539,7 @@ Foam::vector Foam::MRFZone::Omega() const
         // Ramping
         const scalar t = mesh_.time().value();
         const scalar ramp = sin(2*pi/(4*rampTime_)*Foam::min(rampTime_, t));
-        Info<< "ramp: " << ramp << endl;
+        Info<< "ramp: " << ramp << " Omega: " << ramp*omega_.value() << endl;
         return ramp*omega_.value()*axis_.value();
     }
 }
@@ -624,10 +623,24 @@ void Foam::MRFZone::relativeVelocity(volVectorField& U) const
     // Included faces
     forAll (includedFaces_, patchI)
     {
-        forAll (includedFaces_[patchI], i)
+        if (mesh_.boundaryMesh()[patchI].coupled())
         {
-            label patchFaceI = includedFaces_[patchI][i];
-            U.boundaryField()[patchI][patchFaceI] = vector::zero;
+            // Coupled patch.  Subtract rotation
+            forAll (includedFaces_[patchI], i)
+            {
+                label patchFaceI = includedFaces_[patchI][i];
+                U.boundaryField()[patchI][patchFaceI] -=
+                    (rotVel ^ (C.boundaryField()[patchI][patchFaceI] - origin));
+            }
+        }
+        else
+        {
+            // Regular patch.  Set relative velocity to zero
+            forAll (includedFaces_[patchI], i)
+            {
+                label patchFaceI = includedFaces_[patchI][i];
+                U.boundaryField()[patchI][patchFaceI] = vector::zero;
+            }
         }
     }
 
@@ -669,20 +682,34 @@ void Foam::MRFZone::absoluteVelocity(volVectorField& U) const
     // Included faces
     forAll (includedFaces_, patchI)
     {
-        vectorField n = mesh_.boundary()[patchI].nf();
-
-        forAll (includedFaces_[patchI], i)
+        if (mesh_.boundaryMesh()[patchI].coupled())
         {
-            label patchFaceI = includedFaces_[patchI][i];
+            // Correct velocity for coupled patches
+            forAll (excludedFaces_[patchI], i)
+            {
+                label patchFaceI = excludedFaces_[patchI][i];
+                U.boundaryField()[patchI][patchFaceI] +=
+                    (rotVel ^ (C.boundaryField()[patchI][patchFaceI] - origin));
+            }
+        }
+        else
+        {
+            // Correct velocity for non-coupled patches
+            vectorField n = mesh_.boundary()[patchI].nf();
 
-            vector Up =
-                rotVel ^ (C.boundaryField()[patchI][patchFaceI] - origin);
+            forAll (includedFaces_[patchI], i)
+            {
+                label patchFaceI = includedFaces_[patchI][i];
 
-            scalar Un = meshVel.boundaryField()[patchI][patchFaceI]/
-                magSf.boundaryField()[patchI][patchFaceI];
+                vector Up =
+                    rotVel ^ (C.boundaryField()[patchI][patchFaceI] - origin);
 
-            U.boundaryField()[patchI][patchFaceI] =
-                (Up + n[patchFaceI]*(Un - (n[patchFaceI] & Up)));
+                scalar Un = meshVel.boundaryField()[patchI][patchFaceI]/
+                    magSf.boundaryField()[patchI][patchFaceI];
+
+                U.boundaryField()[patchI][patchFaceI] =
+                    (Up + n[patchFaceI]*(Un - (n[patchFaceI] & Up)));
+            }
         }
     }
 
@@ -749,8 +776,7 @@ void Foam::MRFZone::meshPhi
         phiIn[faceI] = meshVelIn[faceI];
     }
 
-    // Included patches
-
+    // Included faces
     forAll (includedFaces_, patchI)
     {
         forAll (includedFaces_[patchI], i)
@@ -762,7 +788,7 @@ void Foam::MRFZone::meshPhi
         }
     }
 
-    // Excluded patches
+    // Excluded faces - same as included patches
     forAll (excludedFaces_, patchI)
     {
         forAll (excludedFaces_[patchI], i)
@@ -790,14 +816,18 @@ void Foam::MRFZone::correctBoundaryVelocity(volVectorField& U) const
 
         vectorField pfld(U.boundaryField()[patchI]);
 
-        forAll (includedFaces_[patchI], i)
+        // Correct velocity for non-coupled patches
+        if (!mesh_.boundaryMesh()[patchI].coupled())
         {
-            patchFaceI = includedFaces_[patchI][i];
+            forAll (includedFaces_[patchI], i)
+            {
+                patchFaceI = includedFaces_[patchI][i];
 
-            pfld[patchFaceI] = (rotVel ^ (patchC[patchFaceI] - origin));
+                pfld[patchFaceI] = (rotVel ^ (patchC[patchFaceI] - origin));
+            }
+
+            U.boundaryField()[patchI] == pfld;
         }
-
-        U.boundaryField()[patchI] == pfld;
     }
 }
 
@@ -859,7 +889,7 @@ void Foam::MRFZone::calcMagUTheta
             mesh_.time().timeName(),
             mesh_,
             IOobject::NO_READ,
-            IOobject::AUTO_WRITE
+            IOobject::NO_WRITE
         ),
         mesh_,
         dimensionedScalar("zero", dimless, 0.0)
@@ -874,7 +904,7 @@ void Foam::MRFZone::calcMagUTheta
         includedExcludedMask[cellI] = 1.0;
     }
 
-    // Included patches
+    // Included faces
     forAll (includedFaces_, patchI)
     {
         forAll (includedFaces_[patchI], i)
@@ -885,7 +915,7 @@ void Foam::MRFZone::calcMagUTheta
         }
     }
 
-    // Excluded patches
+    // Excluded faces - same as included faces
     forAll (excludedFaces_, patchI)
     {
         forAll (excludedFaces_[patchI], i)
