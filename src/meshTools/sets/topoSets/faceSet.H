@@ -58,7 +58,6 @@ public:
 
     // Constructors
 
-
         //- Construct from IOobject
         faceSet(const IOobject& obj);
 
@@ -99,9 +98,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~faceSet();
+    //- Destructor
+    virtual ~faceSet();
 
 
     // Member functions
