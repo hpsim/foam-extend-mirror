@@ -8,8 +8,8 @@ application="pimpleDyMIbFoam"
 runApplication blockMesh
 \cp save/boundary constant/polyMesh/
 
-mkdir 0
-\cp -f 0_org/* 0/
+\rm -rf 0
+\cp -r 0_org 0
 
 runApplication potentialFoam
 runApplication writeIbMasks

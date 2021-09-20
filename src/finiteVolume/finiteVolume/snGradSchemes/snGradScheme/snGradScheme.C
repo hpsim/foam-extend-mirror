@@ -129,6 +129,9 @@ snGradScheme<Type>::snGrad
     );
     GeometricField<Type, fvsPatchField, surfaceMesh>& ssf = tssf();
 
+    // Update coupled interfaces
+    vf.boundaryField().updateCoupledPatchFields();
+    
     // set reference to difference factors array
     const scalarField& deltaCoeffs = tdeltaCoeffs().internalField();
 

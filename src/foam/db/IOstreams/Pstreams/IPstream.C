@@ -80,7 +80,6 @@ Foam::IPstream::~IPstream()
 {}
 
 
-
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 Foam::Istream& Foam::IPstream::read(token& t)

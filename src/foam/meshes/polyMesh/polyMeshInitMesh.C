@@ -121,8 +121,8 @@ void Foam::polyMesh::initMesh()
     {
         if (debug)
         {
-            Info<< "void polyMesh::initMesh() : "
-                << "unused faces detected.  "
+            InfoInFunction
+                << "Unused faces detected.  "
                 << "Number of used faces: " << nUsedFaces
                 << ".  Total number of faces: " << allFaces_.size() << endl;
         }
@@ -153,8 +153,8 @@ void Foam::polyMesh::initMesh()
         {
             if (debug)
             {
-                Info<< "void polyMesh::initMesh() : unused points "
-                    << "detected.  Number of used points: "
+                InfoInFunction
+                    << "Unused points detected.  Number of used points: "
                     << nUsedPoints << ". Total number of points: "
                     << allPoints_.size() << endl;
             }
@@ -234,7 +234,7 @@ void Foam::polyMesh::initMesh(cellList& c)
 {
     if (debug)
     {
-        Info<< "void polyMesh::initMesh(cellList& c) : "
+        InfoInFunction
             << "calculating owner-neighbour arrays" << endl;
     }
 
@@ -339,8 +339,8 @@ void Foam::polyMesh::initMesh(cellList& c)
         {
             if (debug)
             {
-                Info<< "void polyMesh::initMesh(cellList& c) : unused points "
-                    << "detected.  Number of used points: "
+                InfoInFunction
+                    << "Unused points detected.  Number of used points: "
                     << nUsedPoints << ". Total number of points: "
                     << allPoints_.size() << endl;
             }

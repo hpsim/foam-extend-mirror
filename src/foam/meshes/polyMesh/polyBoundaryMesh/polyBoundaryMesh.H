@@ -83,6 +83,9 @@ class polyBoundaryMesh
         //- Create identity map
         static labelList ident(const label len);
 
+        //- Calculate the addressing for the patches,
+        void calcAddressing();
+
         //- Calculate the geometry for the patches,
         //  eg transformation tensors etc.
         //  Enhanced for parallel addressing calculations

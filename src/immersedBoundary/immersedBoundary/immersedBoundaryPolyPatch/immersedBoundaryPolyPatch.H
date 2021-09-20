@@ -170,8 +170,12 @@ protected:
 
     // Protected Member Functions
 
-        //- Calculate the patch geometry.  Contains init-loop comms
-        //  so it needs to be called at init level
+        //- Init addressing
+        virtual void initAddressing();
+
+        //- Calculate the patch geometry.  Needs to be at init level
+        //  because IB cuts faces of other patches
+        //  HJ, 17/Sep/2021
         virtual void initGeometry();
 
         //- Correct patch after moving points

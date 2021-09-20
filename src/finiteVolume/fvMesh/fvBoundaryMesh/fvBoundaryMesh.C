@@ -99,6 +99,11 @@ Foam::fvBoundaryMesh::fvBoundaryMesh
 
 void Foam::fvBoundaryMesh::movePoints()
 {
+    // Note:
+    // movePoints() currently does not perform communications and therefore
+    // the comms protection is not needed.
+    // HJ, 17/Sep/2021
+
     forAll(*this, patchi)
     {
         operator[](patchi).initMovePoints();

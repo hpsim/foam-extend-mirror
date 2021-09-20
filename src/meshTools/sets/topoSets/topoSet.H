@@ -64,6 +64,12 @@ class topoSet
     public regIOobject,
     public labelHashSet
 {
+    // Private Member Functions
+
+        //- Disallow default bitwise copy construct
+        topoSet(const topoSet&) = delete;
+
+
 protected:
 
     // Protected Member Functions
@@ -102,10 +108,6 @@ protected:
             const pointField& coords,
             const label maxLen
         ) const;
-
-
-        //- Disallow default bitwise copy construct
-        topoSet(const topoSet&);
 
 public:
 
@@ -169,7 +171,6 @@ public:
 
     // Constructors
 
-
         //- Construct from IOobject as explicitly passed type.
         //  Can't use typeName info here since subclasses not yet instantiated
         topoSet(const IOobject&, const word& wantedType);
@@ -207,7 +208,6 @@ public:
 
         //- Construct from IOobject and labelHashSet
         topoSet(const IOobject&, const labelHashSet&);
-
 
 
         //- Clone
@@ -250,9 +250,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~topoSet();
+    //- Destructor
+    virtual ~topoSet();
 
 
     // Member functions

@@ -296,7 +296,7 @@ public:
             {
                 if
                 (
-                    Pstream::defaultCommsType() == Pstream::nonBlocking
+                    Pstream::defaultComms() == Pstream::nonBlocking
                  && contiguous<T>()
                 )
                 {
@@ -310,7 +310,7 @@ public:
                         fld
                     );
                 }
-                else if (Pstream::defaultCommsType() == Pstream::scheduled)
+                else if (Pstream::defaultComms() == Pstream::scheduled)
                 {
                     distribute
                     (
