@@ -124,6 +124,7 @@ class velocityPOD
         //- Disallow default bitwise assignment
         void operator=(const velocityPOD&) = delete;
 
+
         //- Calculated list valid times for snapshots
         void calcValidTimes() const;
 

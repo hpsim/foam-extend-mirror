@@ -75,6 +75,9 @@ private:
         //- Defining eigen-base
         const PODEigenBase<Type> eigenBase_;
 
+        //- List of scaled eigen-vectors
+        FieldField<Field, scalar> scaledEigenVectors_;
+
         //- List of defining ortho-normal fields
         PtrList<GeoTypeField> orthoFields_;
 
@@ -90,6 +93,17 @@ private:
         //- Disallow default bitwise assignment
         void operator=(const PODOrthoNormalBase&) = delete;
 
+        //- Calculate ortho-normal base and fill into orthoFields
+        //  Size of orthoFields defines the required size of decomposition
+        //  Function is used when further fields are carried on an existing
+        //  ortho-normal base
+        template<class GeoField>
+        static void calcOrthoBase
+        (
+            const FieldField<Field, scalar> eigenVectors,
+            const PtrList<GeoField>& snapshots,
+            PtrList<GeoField>& orthoFields
+        );
 
 public:
 
@@ -121,6 +135,11 @@ public:
             return orthoFields_.size();
         }
 
+        //- Return scaled eigen-vectors
+        const FieldField<Field, scalar>& scaledEigenVectors() const
+        {
+            return scaledEigenVectors_;
+        }
         //- Return n-th ortho-normal base field
         inline const GeoTypeField& orthoField(const label n) const
         {
@@ -141,11 +160,11 @@ public:
         //  Function is used when further fields are carried on an existing
         //  ortho-normal base
         template<class GeoField>
-        void calcOrthoBase
+        void getOrthoBase
         (
             const PtrList<GeoField>& snapshots,
             PtrList<GeoField>& orthoFields
-        );
+        ) const;
 };
 
 

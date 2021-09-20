@@ -275,11 +275,11 @@ void Foam::velocityPOD::calcOrthoBase() const
 
     // Collect pressure field base
     pBasePtr_ = new PtrList<volScalarField>(orthoBasePtr_->baseSize());
-    orthoBasePtr_->calcOrthoBase(pFields, *pBasePtr_);
+    orthoBasePtr_->getOrthoBase(pFields, *pBasePtr_);
 
     // Collect flux field base
     phiBasePtr_ = new PtrList<surfaceScalarField>(orthoBasePtr_->baseSize());
-    orthoBasePtr_->calcOrthoBase(phiFields, *phiBasePtr_);
+    orthoBasePtr_->getOrthoBase(phiFields, *phiBasePtr_);
 
     // Check orthogonality and magnitude of snapshots
     if (debug)
@@ -408,7 +408,7 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
 
     // Lagrange multiplier source
     lagrangeSrcPtr_ = new scalarField(b.baseSize(), scalar(0));
-    // scalarField& lagrangeSrc = *lagrangeSrcPtr_;
+    scalarField& lagrangeSrc = *lagrangeSrcPtr_;
 
     // Get solution field for boundary conditions.  Force raw access without
     // checking
@@ -419,9 +419,6 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
     // k = second summation for convection term
 
     // Calculate derivative by moving equation terms to rhs
-
-    // Calculate volume for scaling - THIS IS WRONG!!! HJ, HERE!!!
-    const scalar V = 0.2*gSum(mesh().V().field());
 
     // Derivatives assembly loop
     for (label i = 0; i < b.baseSize(); i++)
@@ -441,6 +438,7 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
             {
                 const surfaceScalarField& snapPhiK = phib[k];
 
+                // Convection derivative, velocity formulation
                 convectionDerivative[i][j][k] =
                    -POD::projection
                     (
@@ -450,7 +448,17 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
                             "div(" + phiName_ + "," + UName_ + ")"
                         ),
                         snapUI
-                    )*V;
+                    );
+
+                // Convection derivative, velocity formulation
+                // const volVectorField& snapUK = Ub[k];
+
+                // convectionDerivative[i][j][k] =
+                //    -POD::projection
+                //     (
+                //         (snapUK & fvc::grad(snapUJ)),
+                //         snapUI
+                //     );
             }
 
             // Diffusion derivative
@@ -463,9 +471,9 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
                         "laplacian(" + nu_.name() + "," + UName_ + ")"
                     ),
                     snapUI
-                )*V
+                )
                 // Pressure derivative
-              - POD::projection(fvc::grad(snapPJ, "grad(p)"), snapUI)*V;
+              - POD::projection(fvc::grad(snapPJ, "grad(p)"), snapUI);
 
             // Lagrange multiplier is calculated on boundaries where
             // reconU fixes value
@@ -485,12 +493,12 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
                             snapUI.boundaryField()[patchI]
                         );
 
-                    // lagrangeSrc[i] += beta_*
-                    //     POD::projection
-                    //     (
-                    //         U.boundaryField()[patchI],
-                    //         snapUI.boundaryField()[patchI]
-                    //     );
+                    lagrangeSrc[i] += beta_*
+                        POD::projection
+                        (
+                            U.boundaryField()[patchI],
+                            snapUI.boundaryField()[patchI]
+                        );
                 }
             }
         }
@@ -519,8 +527,6 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
             diagScale[i] = POD::projection(snapUI, snapUI) + lagrangeDer[i];
         }
 
-        Info<< "diagScale: " << diagScale << endl;
-
         // Re-scale the derivatives
         for (label i = 0; i < b.baseSize(); i++)
         {
@@ -537,12 +543,6 @@ void Foam::velocityPOD::calcDerivativeCoeffs() const
             }
         }
     }
-
-    Info
-     // << "convectionDerivative: " << convectionDerivative << nl
-     // << "derivative: " << derivative << nl
-        << "lagrangeDer: " << lagrangeDer << endl;
-    //     << "lagrangeSrc: " << lagrangeSrc << endl;
 }
 
 
@@ -570,7 +570,7 @@ void Foam::velocityPOD::updateFields() const
         const vectorPODOrthoNormalBase& b = orthoBase();
 
         const PtrList<volScalarField>& pB = pBase();
-        Info<< "coeffs_: " << coeffs_ << endl;
+
         forAll (coeffs_, i)
         {
             // Update velocity
@@ -724,12 +724,15 @@ void Foam::velocityPOD::derivatives
     // Diffusion and pressure derivative
     const scalarSquareMatrix& derivative = *derivativePtr_;
 
+    // Lagrange multiplier source
+    const scalarField& lagrangeSrc = *lagrangeSrcPtr_;
+    
     // Clear derivatives matrix
     dydx = 0;
 
     forAll (dydx, i)
     {
-        // dydx[i] = lagrangeSrc[i];
+        dydx[i] = lagrangeSrc[i];
 
         forAll (y, j)
         {

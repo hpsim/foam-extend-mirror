@@ -282,7 +282,7 @@ void Foam::pressureVelocityPOD::calcOrthoBase() const
 
     // Collect flux field base, consistent with velocity decomposition
     phiBasePtr_ = new PtrList<surfaceScalarField>(UBasePtr_->baseSize());
-    UBasePtr_->calcOrthoBase(phiFields, *phiBasePtr_);
+    UBasePtr_->getOrthoBase(phiFields, *phiBasePtr_);
 
     // Check orthogonality and magnitude of snapshots
     if (debug)

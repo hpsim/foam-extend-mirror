@@ -180,16 +180,16 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
 
     PtrList<surfaceScalarField> phiFields(valTimes.size());
 
-    forAll (valTimes, i)
+    forAll (valTimes, timeI)
     {
-        runTime.setTime(valTimes[i], i);
+        runTime.setTime(valTimes[timeI], timeI);
 
         Info<< "Reading snapshots from time = " << runTime.timeName() << endl;
 
         // Get velocity snapshot
         UFields.set
         (
-            i,
+            timeI,
             new volVectorField
             (
                 IOobject
@@ -204,12 +204,12 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
             )
         );
 
-        UFields[i].rename(UName_ + name(i));
+        UFields[timeI].rename(UName_ + name(timeI));
 
         // Get pressure snapshot
         pFields.set
         (
-            i,
+            timeI,
             new volScalarField
             (
                 IOobject
@@ -223,12 +223,12 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
             )
         );
 
-        pFields[i].rename(pName_ + name(i));
+        pFields[timeI].rename(pName_ + name(timeI));
 
         // Get flux snapshot
         phiFields.set
         (
-            i,
+            timeI,
             new surfaceScalarField
             (
                 IOobject
@@ -242,16 +242,16 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
             )
         );
 
-        phiFields[i].rename(phiName_ + name(i));
+        phiFields[timeI].rename(phiName_ + name(timeI));
 
         UpFields.set
         (
-            i,
+            timeI,
             new volVector4Field
             (
                 IOobject
                 (
-                    "Up" + name(i),
+                    "Up" + name(timeI),
                     runTime.timeName(),
                     mesh(),
                     IOobject::NO_READ,
@@ -263,11 +263,11 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
         );
 
         // Insert U and p into shapshot
-        UpFields[i].replace(0, UFields[i].component(vector::X));
-        UpFields[i].replace(1, UFields[i].component(vector::Y));
-        UpFields[i].replace(2, UFields[i].component(vector::Z));
+        UpFields[timeI].replace(0, UFields[timeI].component(vector::X));
+        UpFields[timeI].replace(1, UFields[timeI].component(vector::Y));
+        UpFields[timeI].replace(2, UFields[timeI].component(vector::Z));
 
-        UpFields[i].replace(3, pFields[i]);
+        UpFields[timeI].replace(3, pFields[timeI]);
 
         // Read the first time into reconU and reconP for
         // boundary conditions and general reconstruction settings
@@ -278,7 +278,7 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
                 new volVectorField
                 (
                     "recon" + UName_,
-                    UFields[i]
+                    UFields[timeI]
                 );
         }
 
@@ -289,7 +289,7 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
                 new volScalarField
                 (
                     "recon" + pName_,
-                    pFields[i]
+                    pFields[timeI]
                 );
         }
     }
@@ -332,7 +332,7 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
                     IOobject::NO_WRITE
                 ),
                 mesh(),
-                dimensionedVector("zero", dimless, vector::zero)
+                dimensionedVector("zero", dimVelocity, vector::zero)
             )
         );
 
@@ -368,16 +368,21 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
                     IOobject::NO_WRITE
                 ),
                 mesh(),
-                dimensionedScalar("zero", dimless, scalar(0))
+                dimensionedScalar("zero", dimPressure/dimDensity, scalar(0))
             )
         );
 
-        pBase[obpI] == orthoBasePtr_->orthoField(obpI).component(3);
+        // Get pressure snapshot and reset dimensions before asigning
+        volScalarField pSnap = orthoBasePtr_->orthoField(obpI).component(3);
+        pSnap.dimensions().reset(dimPressure/dimDensity);
+
+        pBase[obpI] == pSnap;
     }
 
-    // Collect flux field base
+    // Collect flux field base.  Velocity interpolation (scaled eigen vectors)
+    // are used
     phiBasePtr_ = new PtrList<surfaceScalarField>(orthoBasePtr_->baseSize());
-    orthoBasePtr_->calcOrthoBase(phiFields, *phiBasePtr_);
+    orthoBasePtr_->getOrthoBase(phiFields, *phiBasePtr_);
 
     // Write snapshots
     if (debug)
@@ -502,7 +507,7 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
 
     // Lagrange multiplier source
     lagrangeSrcPtr_ = new scalarField(b.baseSize(), scalar(0));
-    // scalarField& lagrangeSrc = *lagrangeSrcPtr_;
+    scalarField& lagrangeSrc = *lagrangeSrcPtr_;
 
     // Get solution field for boundary conditions.  Force raw access without
     // checking
@@ -513,9 +518,6 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
     // k = second summation for convection term
 
     // Calculate derivative by moving equation terms to rhs
-
-    // Calculate volume for scaling - THIS IS WRONG!!! HJ, HERE!!!
-    const scalar V = 0.5*gSum(mesh().V().field());
 
     // Derivatives assembly loop
     for (label i = 0; i < b.baseSize(); i++)
@@ -533,29 +535,32 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
             // Convection derivative
             for (label k = 0; k < b.baseSize(); k++)
             {
-                // const surfaceScalarField& snapPhiK = phib[k];
-
-                const volVectorField& snapUK = Ub[k];
-
-                // convectionDerivative[i][j][k] =
-                //    -POD::projection
-                //     (
-                //         fvc::div
-                //         (
-                //             snapPhiK, snapUJ,
-                //             "div(" + phiName_ + "," + UName_ + ")"
-                //         ),
-                //         snapUI
-                //     )*V;
+                // Convection derivative, flux formulation
+                const surfaceScalarField& snapPhiK = phib[k];
 
                 convectionDerivative[i][j][k] =
                    -POD::projection
                     (
-                        (snapUK & fvc::grad(snapUJ)),
+                        fvc::div
+                        (
+                            snapPhiK, snapUJ,
+                            "div(" + phiName_ + "," + UName_ + ")"
+                        ),
                         snapUI
-                    )*V;
+                    );
+
+                // Convection derivative, velocity formulation
+                // const volVectorField& snapUK = Ub[k];
+
+                // convectionDerivative[i][j][k] =
+                //    -POD::projection
+                //     (
+                //         (snapUK & fvc::grad(snapUJ)),
+                //         snapUI
+                //     );
             }
 
+            // Diffusion derivative
             derivative[i][j] =
                 POD::projection
                 (
@@ -565,9 +570,9 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
                         "laplacian(" + nu_.name() + "," + UName_ + ")"
                     ),
                     snapUI
-                )*V
+                )
                 // Pressure derivative
-              - POD::projection(fvc::grad(snapPJ, "grad(p)"), snapUI)*V;
+              - POD::projection(fvc::grad(snapPJ, "grad(p)"), snapUI);
 
             // Lagrange multiplier is calculated on boundaries where
             // reconU fixes value
@@ -587,12 +592,12 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
                             snapUI.boundaryField()[patchI]
                         );
 
-                    // lagrangeSrc[i] += beta_*
-                    //     POD::projection
-                    //     (
-                    //         U.boundaryField()[patchI],
-                    //         snapUI.boundaryField()[patchI]
-                    //     );
+                    lagrangeSrc[i] += beta_*
+                        POD::projection
+                        (
+                            U.boundaryField()[patchI],
+                            snapUI.boundaryField()[patchI]
+                        );
                 }
             }
         }
@@ -619,12 +624,7 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
             // this is not strictly needed.  However, for other cases, this
             // is needed.  HJ, 13/Jul/2021
             diagScale[i] = POD::projection(snapUI, snapUI) + lagrangeDer[i];
-
-            Info<< "diagScale " << i << POD::projection(snapUI, snapUI)
-                << endl;
         }
-
-        Info<< "diagScale: " << diagScale << endl;
 
         // Re-scale the derivatives
         for (label i = 0; i < b.baseSize(); i++)
@@ -642,12 +642,6 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
             }
         }
     }
-
-    Info
-     // << "convectionDerivative: " << convectionDerivative << nl
-     // << "derivative: " << derivative << nl
-        << "lagrangeDer: " << lagrangeDer << endl;
-    //     << "lagrangeSrc: " << lagrangeSrc << endl;
 }
 
 
@@ -831,12 +825,15 @@ void Foam::incompressibleFlowPOD::derivatives
     // Diffusion and pressure derivative
     const scalarSquareMatrix& derivative = *derivativePtr_;
 
+    // Lagrange multiplier source
+    const scalarField& lagrangeSrc = *lagrangeSrcPtr_;
+    
     // Clear derivatives matrix
     dydx = 0;
 
     forAll (dydx, i)
     {
-        // dydx[i] = lagrangeSrc[i];
+        dydx[i] = lagrangeSrc[i];
 
         forAll (y, j)
         {
