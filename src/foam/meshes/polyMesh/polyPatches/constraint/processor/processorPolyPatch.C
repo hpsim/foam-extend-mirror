@@ -220,7 +220,6 @@ void Foam::processorPolyPatch::calcGeometry()
         // Calculate normals from areas and check
 
         // Cache face areas
-        // const vectorField::subField localFaceAreas = faceAreas();
         const vectorField::subField localFaceAreas = faceAreas();
 
         forAll (faceNormals, facei)
