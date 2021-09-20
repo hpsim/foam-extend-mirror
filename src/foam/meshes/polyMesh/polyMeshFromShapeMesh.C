@@ -939,9 +939,6 @@ Foam::polyMesh::polyMesh
     {
         // Calculate topology for the patches (processor-processor comms etc.)
         boundary_.updateMesh();
-
-        // Calculate the geometry for the patches (transformation tensors etc.)
-        boundary_.calcGeometry();
     }
 
     if (debug)
