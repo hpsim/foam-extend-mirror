@@ -1385,6 +1385,18 @@ void Foam::immersedBoundaryPolyPatch::calcCorrectedGeometry() const
 
 // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
 
+void Foam::immersedBoundaryPolyPatch::initAddressing()
+{
+    // Force calculation of mesh directions before comms
+    // This is needed in immersed boundary calculation and should not
+    // interfere with other comms
+    // HJ, 17/Sep/2021
+    boundaryMesh().mesh().geometricD();
+    
+    calcImmersedBoundary();
+}
+
+
 void Foam::immersedBoundaryPolyPatch::initGeometry()
 {
     calcCorrectedGeometry();
