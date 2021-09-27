@@ -33,6 +33,7 @@ Description
 Authors
     Klas Jareteg, Chalmers University of Technology,
     Vuko Vukcevic, FMENA Zagreb.
+    Hrvoje Jasak, Wikki Ltd.
 
 \*---------------------------------------------------------------------------*/
 
@@ -45,7 +46,6 @@ Authors
 
 int main(int argc, char *argv[])
 {
-
 #   include "setRootCase.H"
 #   include "createTime.H"
 #   include "createMesh.H"
@@ -54,14 +54,13 @@ int main(int argc, char *argv[])
 #   include "initConvergenceCheck.H"
 
     Info<< "\nStarting time loop\n" << endl;
+
     while (runTime.loop())
     {
 #       include "readBlockSolverControls.H"
 #       include "readFieldBounds.H"
 
         Info<< "Time = " << runTime.timeName() << nl << endl;
-
-        p.storePrevIter();
 
         // Initialize the Up block system (matrix, source and reference to Up)
         fvBlockMatrix<vector4> UpEqn(Up);
@@ -90,8 +89,6 @@ int main(int argc, char *argv[])
 #       include "continuityErrs.H"
 
 #       include "boundPU.H"
-
-        p.relax();
 
         turbulence->correct();
         runTime.write();
