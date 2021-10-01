@@ -1,0 +1,79 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      thermalProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+thermal
+{
+    type multiMaterialZones;
+
+    laws
+    (
+        backBread
+        {
+            type constant;
+            rho rho [1 -3  0  0 0 0 0] 800;
+            C C   [0  2 -2 -1 0 0 0] 900;
+            k k   [1  1 -3 -1 0 0 0] 20;
+            alpha alpha [0 0 0 -1 0 0 0] 0;
+            T0 T0 [0 0 0 1 0 0 0] 273;
+
+            zones ( backBread );
+        }
+        ham
+        {
+            type constant;
+            rho rho [1 -3  0  0 0 0 0] 1200;
+            C C   [0  2 -2 -1 0 0 0] 500;
+            k k   [1  1 -3 -1 0 0 0] 100;
+            alpha alpha [0 0 0 -1 0 0 0] 0;
+            T0 T0 [0 0 0 1 0 0 0] 273;
+
+            zones ( ham );
+        }
+        frontBread
+        {
+            type constant;
+            rho rho [1 -3  0  0 0 0 0] 800;
+            C C   [0  2 -2 -1 0 0 0] 900;
+            k k   [1  1 -3 -1 0 0 0] 20;
+            alpha alpha [0 0 0 -1 0 0 0] 0;
+            T0 T0 [0 0 0 1 0 0 0] 273;
+
+            zones ( frontBread );
+        }
+    );
+
+    gaps
+    (
+        hamToFront
+        {
+            type constantResistance;
+            R R [1 2 -3 -1 0 0 0] 1000;
+            zones ( hamToFront );
+        }
+    );
+
+    sources
+    (
+        ham
+        {
+            type            constant;
+            S               S [1 -2 -3 0 0 0 0] 40;
+            zones           ( ham );
+        }
+    );
+}
+
+// ************************************************************************* //

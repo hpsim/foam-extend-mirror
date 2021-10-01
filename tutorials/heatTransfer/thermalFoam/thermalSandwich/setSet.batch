@@ -1,0 +1,6 @@
+cellSet backBread new boxToCell (0 0 0) (0.1 0.1 0.01)
+cellSet ham new boxToCell (0 0 0.01) (0.1 0.1 0.03)
+cellSet frontBread new boxToCell (0 0 0.03) (0.1 0.1 0.04)
+faceSet hamToFront new cellToFace frontBread all
+faceSet hamToFront subset cellToFace ham all
+quit
