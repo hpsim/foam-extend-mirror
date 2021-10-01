@@ -1,0 +1,12 @@
+#!/bin/sh
+
+currDir=`pwd`
+application=`basename $currDir`
+
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+runApplication blockMesh
+runApplication setSet -batch setSet.batch
+\rm -f constant/polyMesh/sets/*_old constant/polyMesh/sets/*_old.gz
+runApplication setsToZones
+runApplication thermalFoam
