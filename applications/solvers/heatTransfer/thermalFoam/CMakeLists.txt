@@ -25,17 +25,21 @@
 #     CMakeLists.txt file for libraries and applications
 #
 # Author
-#     Henrik Rusche, Wikki GmbH, 2017. All rights reserved
 #     Hrvoje Jasak, Wikki Ltd.
+#
 #
 # --------------------------------------------------------------------------
 
-add_subdirectory(buoyantBoussinesqSimpleFoam)
-add_subdirectory(chtMultiRegionFoam)
-add_subdirectory(boussinesqBuoyantFoam)
-add_subdirectory(buoyantBoussinesqPisoFoam)
-add_subdirectory(buoyantSimpleFoam)
-add_subdirectory(buoyantSimpleRadiationFoam)
-add_subdirectory(chtMultiRegionSimpleFoam)
-add_subdirectory(buoyantPisoFoam)
-add_subdirectory(thermalFoam)
+list(APPEND SOURCES
+  thermalFoam.C
+)
+
+# Set minimal environment for external compilation
+if(NOT FOAM_FOUND)
+  cmake_minimum_required(VERSION 2.8)
+  find_package(FOAM REQUIRED)
+endif()
+
+add_foam_executable(thermalFoam
+  SOURCES ${SOURCES}
+)

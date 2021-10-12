@@ -29,6 +29,7 @@ Description
 
 Author
     Henrik Rusche, Wikki GmbH, All rights reserved.
+    Hrvoje Jasak, Wikki Ltd.
 
 SourceFiles
     thermalGap.C
@@ -69,11 +70,10 @@ class thermalGap
     // Private Member Functions
 
         //- Disallow copy construct
-        thermalGap(const thermalGap&);
+        thermalGap(const thermalGap&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const thermalGap&);
-
+        void operator=(const thermalGap&) = delete;
 
 protected:
 
@@ -127,10 +127,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~thermalGap()
-        {}
+    //- Destructor
+    virtual ~thermalGap() = default;
 
 
     // Member Functions

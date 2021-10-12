@@ -21,52 +21,67 @@ License
     You should have received a copy of the GNU General Public License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
-    thermalGap
+Application
+    thermalFoam
+
+Description
+    Steady-State solver for complex heat conduction
 
 \*---------------------------------------------------------------------------*/
 
-#include "thermalGap.H"
-#include "volFields.H"
-#include "surfaceFields.H"
+#include "fvCFD.H"
+#include "thermalModel.H"
+#include "simpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-namespace Foam
+int main(int argc, char *argv[])
 {
+#   include "setRootCase.H"
+#   include "createTime.H"
+#   include "createMesh.H"
+
+    simpleControl simple(mesh);
+
+#   include "createFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-autoPtr<thermalGap> thermalGap::New
-(
-    const word& name,
-    const volScalarField& T,
-    const dictionary& dict
-)
-{
-    word tgTypeName = dict.lookup("type");
+    Info<< "\nStarting time loop\n" << endl;
 
-    Info<< "Selecting thermal gap model " << tgTypeName << endl;
-
-    dictionaryConstructorTable::iterator cstrIter =
-        dictionaryConstructorTablePtr_->find(tgTypeName);
-
-    if (cstrIter == dictionaryConstructorTablePtr_->end())
+    while (simple.loop())
     {
-        FatalIOErrorInFunction(dict)
-            << "Unknown thermalGap type "
-            << tgTypeName << endl << endl
-            << "Valid  thermalGaps are : " << endl
-            << dictionaryConstructorTablePtr_->toc()
-            << exit(FatalIOError);
+        Info<< "Time = " << runTime.timeName() << nl << endl;
+
+        // Update thermal conductivity in the solid
+        solidThermo.correct();
+        k = solidThermo.k();
+        k.correctBoundaryConditions();
+
+        rhoCp = solidThermo.rho()*solidThermo.C();
+
+        // Interpolate to the faces and add thermal resistance
+        surfaceScalarField kf = fvc::interpolate(k);
+        solidThermo.modifyResistance(kf);
+
+        solve
+        (
+            fvm::ddt(rhoCp, T)
+          - fvm::laplacian(kf, T, "laplacian(k,T)")
+          + fvm::SuSp(-solidThermo.S()/T, T)
+        );
+
+        runTime.write();
+
+        Info<< "ExecutionTime = "
+            << runTime.elapsedCpuTime()
+            << " s\n\n" << endl;
     }
 
-    return autoPtr<thermalGap>(cstrIter()(name, T, dict));
+    Info<< "End\n" << endl;
+
+    return(0);
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //
