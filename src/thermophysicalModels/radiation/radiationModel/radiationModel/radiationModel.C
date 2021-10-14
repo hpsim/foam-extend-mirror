@@ -78,6 +78,7 @@ Foam::radiation::radiationModel::radiationModel(const volScalarField& T)
     radiation_(false),
     coeffs_(dictionary::null),
     solverFreq_(0),
+    firstIter_(true),
     absorptionEmission_(nullptr),
     scatter_(nullptr)
 {}
@@ -106,6 +107,7 @@ Foam::radiation::radiationModel::radiationModel
     radiation_(lookup("radiation")),
     coeffs_(subDict(type + "Coeffs")),
     solverFreq_(readLabel(lookup("solverFreq"))),
+    firstIter_(true),
     absorptionEmission_(nullptr),
     scatter_(scatterModel::New(*this, mesh_))
 {
