@@ -552,7 +552,7 @@ void Foam::radiation::fvDOM::calculate()
                             neg(incomingAngle)*curPatch*(-incomingAngle);
                     }
 
-                    Info << "Patch " << Qem_[lambdaI][patchI].patch().name()
+                    Info<< "Patch " << Qem_[lambdaI][patchI].patch().name()
                         << " band " << lambdaI
                         << ": Radiation incoming "
                         << sum(Qin_[lambdaI][patchI])
