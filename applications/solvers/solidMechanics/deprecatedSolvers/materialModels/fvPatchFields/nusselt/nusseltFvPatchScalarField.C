@@ -44,12 +44,12 @@ nusseltFvPatchScalarField::nusseltFvPatchScalarField
 :
     mixedFvPatchScalarField(p, iF),
     DTName_("undefined"),
-    Tinf_(0.0),
-    alpha_(p.size(), 0.0)
+    Tinf_(scalar(0)),
+    alpha_(p.size(), scalar(0))
 {
-    refValue() = 0.0;
-    refGrad() = 0.0;
-    valueFraction() = 0.0;
+    refValue() = 0;
+    refGrad() = 0;
+    valueFraction() = 0;
 }
 
 
@@ -83,31 +83,15 @@ nusseltFvPatchScalarField::nusseltFvPatchScalarField
 
     if (Tinf_ < SMALL)
     {
-        FatalIOErrorIn
-        (
-            "nusseltFvPatchScalarField::nusseltFvPatchScalarField\n"
-            "(\n"
-            "    const fvPatch&,\n"
-            "    const DimensionedField<scalar, volMesh>&,\n"
-            "    const dictionary&\n"
-            ")",
-            dict
-        )   << "unphysical Tinf specified (Tinf = 0 or negative)"
+        FatalIOErrorInFunction(dict)
+            << "unphysical Tinf specified (Tinf = 0 or negative)"
             << exit(FatalError);
     }
 
     if (min(alpha_) < -SMALL)
     {
-        FatalIOErrorIn
-        (
-            "nusseltFvPatchScalarField::nusseltFvPatchScalarField\n"
-            "(\n"
-            "    const fvPatch&,\n"
-            "    const DimensionedField<scalar, volMesh>&,\n"
-            "    const dictionary&\n"
-            ")",
-            dict
-        )   << "unphysical alpha specified (alpha = 0 or negative)" << endl
+        FatalIOErrorInFunction(dict)
+            << "unphysical alpha specified (alpha = 0 or negative)" << endl
             << exit(FatalError);
     }
 }
@@ -124,7 +108,7 @@ nusseltFvPatchScalarField::nusseltFvPatchScalarField
     mixedFvPatchScalarField(ptf, p, iF, mapper),
     DTName_(ptf.DTName_),
     Tinf_(ptf.Tinf_),
-    alpha_(ptf.alpha_)
+    alpha_(ptf.alpha_, mapper)
 {}
 
 
