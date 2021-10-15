@@ -34,6 +34,7 @@ License
 
 defineTypeNameAndDebug(Foam::heatFlux, 0);
 
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::heatFlux::heatFlux
@@ -72,20 +73,16 @@ Foam::heatFlux::heatFlux
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::heatFlux::~heatFlux()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void Foam::heatFlux::calcAndPrint()
 {
     const volScalarField& T =
         obr_.lookupObject<volScalarField>("T");
+    
     const volScalarField& kappaEff =
         obr_.lookupObject<volScalarField>(Kfluid_);
+    
     //const surfaceScalarField& kappaEff =
     //    obr_.lookupObject<surfaceScalarField>(Kfluid_);
 
@@ -110,69 +107,69 @@ void Foam::heatFlux::calcAndPrint()
     scalar sumRadiation = 0.0;
 
     Info<< "\nWall heat fluxes [W]" << endl;
-    forAll(patchHeatFluxD, patchi)
+    forAll(patchHeatFluxD, patchI)
     {
-        if(isA<processorFvPatchScalarField>(T.boundaryField()[patchi]))
+        if (isA<processorFvPatchScalarField>(T.boundaryField()[patchI]))
         {
             continue;
         }
 
         scalar conduction = gSum
         (
-            mesh.magSf().boundaryField()[patchi]
-           *heatFluxD.boundaryField()[patchi]
+            mesh.magSf().boundaryField()[patchI]
+           *heatFluxD.boundaryField()[patchI]
         );
 
         // Account for heat sources at region couple BCs
-        if(isA<chtRcTemperatureFvPatchScalarField>(T.boundaryField()[patchi]))
+        if (isA<chtRcTemperatureFvPatchScalarField>(T.boundaryField()[patchI]))
         {
             const chtRcTemperatureFvPatchScalarField& pT =
                 dynamic_cast<const chtRcTemperatureFvPatchScalarField&>
                 (
-                    T.boundaryField()[patchi]
+                    T.boundaryField()[patchI]
                 );
 
             conduction -= gSum
             (
-                pT.source()*mesh.magSf().boundaryField()[patchi]
+                pT.source()*mesh.magSf().boundaryField()[patchI]
             );
         }
 
         scalar convection = 0.0;
         scalar radiation = 0.0;
 
-        if(obr_.foundObject<surfaceScalarField>("phi"))
+        if (obr_.foundObject<surfaceScalarField>("phi"))
         {
             const surfaceScalarField& phi =
                 obr_.lookupObject<surfaceScalarField>("phi");
 
             convection = gSum
             (
-                 rho*Cp*T.boundaryField()[patchi]
-                *phi.boundaryField()[patchi]
+                 rho*Cp*T.boundaryField()[patchI]*
+                 phi.boundaryField()[patchI]
             );
         }
 
-        if(obr_.foundObject<volScalarField>("Qr"))
+        if (obr_.foundObject<volScalarField>("Qr"))
         {
             const volScalarField& Qr =
                 obr_.lookupObject<volScalarField>("Qr");
 
             radiation = gSum
             (
-                 Qr.boundaryField()[patchi]
-                *mesh.magSf().boundaryField()[patchi]
+                 Qr.boundaryField()[patchI]*
+                 mesh.magSf().boundaryField()[patchI]
             );
         }
 
-        Info<< mesh.boundary()[patchi].name()
-            << " "
+        Info<< mesh.boundary()[patchI].name()
+            << " conduction = "
             << conduction
-            << " "
+            << " convection = "
             << convection
-            << " "
+            << " radiation = "
             << radiation
-            << " "
+            << " total = "
             << conduction + convection + radiation
             << endl;
 
@@ -181,13 +178,13 @@ void Foam::heatFlux::calcAndPrint()
         sumRadiation += radiation;
     }
 
-    Info<< "sum "
+    Info<< "sum conduction ="
         << sumConduction
-        << " "
+        << " sum convection = "
         << sumConvection
-        << " "
+        << " sum radiation = "
         << sumRadiation
-        << " "
+        << " sum total = "
         << sumConduction + sumConvection + sumRadiation
         << nl << endl;
 }
