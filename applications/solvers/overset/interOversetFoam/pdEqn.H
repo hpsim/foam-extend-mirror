@@ -50,12 +50,6 @@
         oversetFvPatchScalarField::oversetInterpolate(p);
     }
 
-    // Explicitly relax pressure for momentum corrector
-    if (!pimple.finalIter())
-    {
-        p.relax();
-    }
-
     U += rAU*fvc::reconstruct((phi - phiU)/rAUf);
     U.correctBoundaryConditions();
     oversetFvPatchVectorField::oversetInterpolate(U); // Overset update
