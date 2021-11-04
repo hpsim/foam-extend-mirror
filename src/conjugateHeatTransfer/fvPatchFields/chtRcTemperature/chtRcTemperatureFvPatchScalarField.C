@@ -99,10 +99,8 @@ Foam::chtRcTemperatureFvPatchScalarField::shadowPatchField() const
         )
     )
     {
-        FatalErrorIn
-        (
-            "chtRcTemperatureFvPatchScalarField::shadowPatchField() const"
-        )   << "Incorrect shadow patch type for patch " << this->patch().name()
+        FatalErrorInFunction
+            << "Incorrect shadow patch type for patch " << this->patch().name()
             << " of field " << this->dimensionedInternalField().name()
             << " Should be chtRcTemperatureFvPatchScalarField.  Actual type "
             << regionCouplingFvPatchScalarField::shadowPatchField().type()
@@ -154,13 +152,8 @@ void Foam::chtRcTemperatureFvPatchScalarField::initEvaluate
 
     if (!isA<chtRegionCoupleBase>(kpf))
     {
-        FatalErrorIn
-        (
-            "void chtRcTemperatureFvPatchScalarField::initEvaluate\n"
-            "(\n"
-            "    const Pstream::commsTypes commsType\n"
-            ")"
-        )   << "Incorrect shadow patch type for patch " << this->patch().name()
+        FatalErrorInFunction
+            << "Incorrect shadow patch type for patch " << this->patch().name()
             << " of field " << dimensionedInternalField().name()
             << ".  Should be derived from chtRegionCoupleBase.  Actual type "
             << kpf.type()
