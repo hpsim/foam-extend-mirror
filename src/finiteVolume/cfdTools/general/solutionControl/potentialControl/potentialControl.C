@@ -52,12 +52,6 @@ Foam::potentialControl::potentialControl(fvMesh& mesh)
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::potentialControl::~potentialControl()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool Foam::potentialControl::loop()

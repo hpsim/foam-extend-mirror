@@ -41,10 +41,4 @@ Foam::pisoControl::pisoControl(fvMesh& mesh, const word& dictName)
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::pisoControl::~pisoControl()
-{}
-
-
 // ************************************************************************* //

@@ -54,10 +54,10 @@ class pimpleControl
     // Private member functions
 
         //- Disallow default bitwise copy construct
-        pimpleControl(const pimpleControl&);
+        pimpleControl(const pimpleControl&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const pimpleControl&);
+        void operator=(const pimpleControl&) = delete;
 
 
 protected:
@@ -111,11 +111,11 @@ public:
     // Constructors
 
         //- Construct from mesh and the name of control sub-dictionary
-        pimpleControl(fvMesh& mesh, const word& dictName="PIMPLE");
+        pimpleControl(fvMesh& mesh, const word& dictName = "PIMPLE");
 
 
     //- Destructor
-    virtual ~pimpleControl();
+    virtual ~pimpleControl() = default;
 
 
     // Member Functions

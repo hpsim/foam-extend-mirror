@@ -66,14 +66,13 @@ protected:
         virtual bool criteriaSatisfied();
 
         //- Disallow default bitwise copy construct
-        simpleControl(const simpleControl&);
+        simpleControl(const simpleControl&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const simpleControl&);
+        void operator=(const simpleControl&) = delete;
 
 
 public:
-
 
     // Static Data Members
 
@@ -88,8 +87,7 @@ public:
 
 
     //- Destructor
-    virtual ~simpleControl();
-
+    virtual ~simpleControl() = default;
 
 
     // Member Functions

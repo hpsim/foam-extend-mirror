@@ -50,10 +50,10 @@ class pisoControl
     // Private member functions
 
         //- Disallow default bitwise copy construct
-        pisoControl(const pisoControl&);
+        pisoControl(const pisoControl&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const pisoControl&);
+        void operator=(const pisoControl&) = delete;
 
 
 public:
@@ -67,11 +67,11 @@ public:
     // Constructors
 
         //- Construct from mesh and the name of control sub-dictionary
-        pisoControl(fvMesh& mesh, const word& dictName="PISO");
+        pisoControl(fvMesh& mesh, const word& dictName = "PISO");
 
 
     //- Destructor
-    virtual ~pisoControl();
+    virtual ~pisoControl() = default;
 
 
     // Member Functions

@@ -51,10 +51,10 @@ class potentialControl
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        potentialControl(const potentialControl&);
+        potentialControl(const potentialControl&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const potentialControl&);
+        void operator=(const potentialControl&) = delete;
 
 
     // Protected Member Functions
@@ -79,7 +79,7 @@ public:
 
 
     //- Destructor
-    virtual ~potentialControl();
+    virtual ~potentialControl() = default;
 
 
     // Member Functions

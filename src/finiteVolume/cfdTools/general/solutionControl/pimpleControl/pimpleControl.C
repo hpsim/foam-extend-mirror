@@ -162,12 +162,6 @@ Foam::pimpleControl::pimpleControl(fvMesh& mesh, const word& dictName)
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::pimpleControl::~pimpleControl()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 const Foam::dimensionedScalar Foam::pimpleControl::relaxFactor

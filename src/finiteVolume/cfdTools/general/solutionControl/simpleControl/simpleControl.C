@@ -115,12 +115,6 @@ Foam::simpleControl::simpleControl(fvMesh& mesh)
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::simpleControl::~simpleControl()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool Foam::simpleControl::loop()
