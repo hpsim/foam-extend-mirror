@@ -55,3 +55,4 @@ volScalarField rAU
     runTime.deltaT(),
     zeroGradientFvPatchScalarField::typeName
 );
+rAU.boundaryField().updateCoupledPatchFields();
