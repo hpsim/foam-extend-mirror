@@ -134,11 +134,9 @@ void inletOutletFvPatchField<Type>::updateCoeffs()
     if (!this->db().found(phiName_))
     {
         // Flux not available, do not update
-        InfoIn
-        (
-            "void inletOutletFvPatchField<Type>::"
-            "updateCoeffs()"
-        )   << "Flux field " << phiName_ << " not found.  "
+        InfoInFunction
+            << "Flux field " << phiName_ << " for field name "
+            << this->dimensionedInternalField().name() << " not found.  "
             << "Performing mixed update" << endl;
 
         mixedFvPatchField<Type>::updateCoeffs();
