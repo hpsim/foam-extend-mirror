@@ -28,6 +28,7 @@ License
 #include "triSurfaceTools.H"
 #include "triSurface.H"
 #include "vector2D.H"
+#include "IFstream.H"
 #include "OFstream.H"
 #include "AverageIOField.H"
 
@@ -218,28 +219,21 @@ template<class Type>
 void timeVaryingMappedFixedValueFvPatchField<Type>::readSamplePoints()
 {
     // Read the sample points
-
-    pointIOField samplePoints
+    const fileName samplePointsFile
     (
-        IOobject
-        (
-            "points",
-            this->db().time().constant(),
-            "boundaryData"/this->patch().name(),
-            this->db(),
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE,
-            false
-        )
+        this->db().time().constant()/
+        "boundaryData"/this->patch().name()/
+        fileName("points")
     );
-
-    const fileName samplePointsFile = samplePoints.filePath();
+    IFstream samplePointsData(samplePointsFile);
+    
+    pointField samplePoints(samplePointsData);
 
     if (debug)
     {
         InfoInFunction
             << " Read " << samplePoints.size() << " sample points from "
-            << samplePointsFile << endl;
+            << samplePointsFile.path() << endl;
     }
 
     // Determine coordinate system from samplePoints
@@ -248,7 +242,7 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::readSamplePoints()
     {
         FatalErrorInFunction
             << "Only " << samplePoints.size() << " points read from file "
-            << samplePoints.objectPath() << nl
+            << samplePointsFile << nl
             << "Need at least three non-colinear samplePoints"
             << " to be able to interpolate."
             << "\n    on patch " << this->patch().name()
@@ -311,8 +305,7 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::readSamplePoints()
             << "Cannot find points that make valid normal." << nl
             << "Need at least three sample points which are not in a line."
             << "\n    on patch " << this->patch().name()
-            << " of points " << samplePoints.name()
-            << " in file " << samplePoints.objectPath()
+            << " of points in file " << samplePointsFile
             << exit(FatalError);
     }
 
@@ -430,7 +423,7 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::findTime
     lo = startSampleTime_;
     hi = -1;
 
-    for (label i = startSampleTime_+1; i < sampleTimes_.size(); i++)
+    for (label i = startSampleTime_ + 1; i < sampleTimes_.size(); i++)
     {
         if (sampleTimes_[i].value() > timeVal)
         {
@@ -458,7 +451,7 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::findTime
 
     if (lo < sampleTimes_.size()-1)
     {
-        hi = lo+1;
+        hi = lo + 1;
     }
 
 
@@ -536,23 +529,17 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::checkTable()
 
 
             // Reread values and interpolate
-            AverageIOField<Type> vals
+            const fileName loDataFile
             (
-                IOobject
-                (
-                    fieldTableName_,
-                    this->db().time().constant(),
-                    "boundaryData"
-                   /this->patch().name()
-                   /sampleTimes_[startSampleTime_].name(),
-                    this->db(),
-                    IOobject::MUST_READ,
-                    IOobject::AUTO_WRITE,
-                    false
-                )
+                this->db().time().constant()/"boundaryData"/
+                this->patch().name()/sampleTimes_[startSampleTime_].name()/
+                fieldTableName_
             );
+            IFstream loData(loDataFile);
+            
+            Field<Type> vals(loData);
 
-            startAverage_ = vals.average();
+            startAverage_ = average(vals);
             startSampledValues_ = interpolate(vals);
         }
     }
@@ -581,22 +568,17 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::checkTable()
                     << endl;
             }
             // Reread values and interpolate
-            AverageIOField<Type> vals
+            const fileName hiDataFile
             (
-                IOobject
-                (
-                    fieldTableName_,
-                    this->db().time().constant(),
-                    "boundaryData"
-                   /this->patch().name()
-                   /sampleTimes_[endSampleTime_].name(),
-                    this->db(),
-                    IOobject::MUST_READ,
-                    IOobject::AUTO_WRITE,
-                    false
-                )
+                this->db().time().constant()/"boundaryData"/
+                this->patch().name()/sampleTimes_[endSampleTime_].name()/
+                fieldTableName_
             );
-            endAverage_ = vals.average();
+            IFstream hiData(hiDataFile);
+
+            Field<Type> vals(hiData);
+
+            endAverage_ = average(vals);
             endSampledValues_ = interpolate(vals);
         }
     }
