@@ -110,9 +110,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~patchWave();
+    //- Destructor
+    virtual ~patchWave() = default;
 
 
     // Member Functions

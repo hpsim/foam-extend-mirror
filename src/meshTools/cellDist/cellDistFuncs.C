@@ -81,7 +81,7 @@ Foam::labelHashSet Foam::cellDistFuncs::getPatchIDs
     // Construct Set of patchNames for easy checking if included
     HashSet<word> patchNamesHash(patchNames.size());
 
-    forAll(patchNames, patchI)
+    forAll (patchNames, patchI)
     {
         patchNamesHash.insert(patchNames[patchI]);
     }
@@ -90,7 +90,7 @@ Foam::labelHashSet Foam::cellDistFuncs::getPatchIDs
 
     labelHashSet patchIDs(bMesh.size());
 
-    forAll(bMesh, patchI)
+    forAll (bMesh, patchI)
     {
         const polyPatch& patch = bMesh[patchI];
 
@@ -155,7 +155,7 @@ Foam::label Foam::cellDistFuncs::getPointNeighbours
     // Add all face neighbours
     const labelList& faceNeighbours = patch.faceFaces()[patchFaceI];
 
-    forAll(faceNeighbours, faceNeighbourI)
+    forAll (faceNeighbours, faceNeighbourI)
     {
         neighbours[nNeighbours++] = faceNeighbours[faceNeighbourI];
     }
@@ -170,13 +170,13 @@ Foam::label Foam::cellDistFuncs::getPointNeighbours
 
     const face& f = patch.localFaces()[patchFaceI];
 
-    forAll(f, fp)
+    forAll (f, fp)
     {
         label pointI = f[fp];
 
         const labelList& pointNbs = patch.pointFaces()[pointI];
 
-        forAll(pointNbs, nbI)
+        forAll (pointNbs, nbI)
         {
             label faceI = pointNbs[nbI];
 
@@ -201,11 +201,11 @@ Foam::label Foam::cellDistFuncs::getPointNeighbours
         // Use hashSet to determine nbs.
         labelHashSet nbs(4*f.size());
 
-        forAll(f, fp)
+        forAll (f, fp)
         {
             const labelList& pointNbs = patch.pointFaces()[f[fp]];
 
-            forAll(pointNbs, i)
+            forAll (pointNbs, i)
             {
                 nbs.insert(pointNbs[i]);
             }
@@ -222,7 +222,7 @@ Foam::label Foam::cellDistFuncs::getPointNeighbours
                     << "getPointNeighbours : patchFaceI:" << patchFaceI
                     << " verts:" << f << endl;
 
-                forAll(f, fp)
+                forAll (f, fp)
                 {
                     SeriousErrorIn("Foam::cellDistFuncs::getPointNeighbours")
                         << "point:" << f[fp] << " pointFaces:"
@@ -262,7 +262,7 @@ Foam::label Foam::cellDistFuncs::maxPatchSize(const labelHashSet& patchIDs)
 {
     label maxSize = 0;
 
-    forAll(mesh().boundaryMesh(), patchI)
+    forAll (mesh().boundaryMesh(), patchI)
     {
         if (patchIDs.found(patchI))
         {
@@ -282,7 +282,7 @@ Foam::label Foam::cellDistFuncs::sumPatchSize(const labelHashSet& patchIDs)
 {
     label sum = 0;
 
-    forAll(mesh().boundaryMesh(), patchI)
+    forAll (mesh().boundaryMesh(), patchI)
     {
         if (patchIDs.found(patchI))
         {
@@ -313,7 +313,7 @@ void Foam::cellDistFuncs::correctBoundaryFaceCells
     const vectorField& cellCentres = mesh().cellCentres();
     const labelList& faceOwner = mesh().faceOwner();
 
-    forAll(mesh().boundaryMesh(), patchI)
+    forAll (mesh().boundaryMesh(), patchI)
     {
         if (patchIDs.found(patchI))
         {
@@ -321,7 +321,7 @@ void Foam::cellDistFuncs::correctBoundaryFaceCells
             const pointField& points = pPatch.points();
             const unallocLabelList& faceCells = pPatch.faceCells();
 
-            forAll(pPatch, patchFaceI)
+            forAll (pPatch, patchFaceI)
             {
                 const face& f = pPatch.localFaces()[patchFaceI];
 
@@ -329,13 +329,13 @@ void Foam::cellDistFuncs::correctBoundaryFaceCells
                 label minFaceI = -1;
 
                 // Loop over points
-                forAll(f, fI)
+                forAll (f, fI)
                 {
                     const labelList& pointNbs = pPatch.pointFaces()[f[fI]];
 
                     // Loop over faces sharing current point
                     // This will include the face itself
-                    forAll(pointNbs, pointNbsI)
+                    forAll (pointNbs, pointNbsI)
                     {
                         const label nbr = pointNbs[pointNbsI];
                         if (nbs.insert(nbr))
@@ -355,7 +355,9 @@ void Foam::cellDistFuncs::correctBoundaryFaceCells
                     }
                 }
 
-                wallDistCorrected[patchFaceI] = minDist;
+                // Bug fix: wallDistCorrected is defined on cells, not faces
+                // HJ, 12/Nov/2021
+                wallDistCorrected[faceCells[patchFaceI]] = minDist;
 
                 // Store wallCell and its nearest neighbour
                 nearestFace.insert
@@ -384,7 +386,7 @@ void Foam::cellDistFuncs::correctBoundaryPointCells
     const labelListList& pointCells = mesh().pointCells();
     const vectorField& cellCentres = mesh().cellCentres();
 
-    forAll(mesh().boundaryMesh(), patchI)
+    forAll (mesh().boundaryMesh(), patchI)
     {
         if (patchIDs.found(patchI))
         {
@@ -393,13 +395,13 @@ void Foam::cellDistFuncs::correctBoundaryPointCells
             const labelList& meshPoints = patch.meshPoints();
             const labelListList& pointFaces = patch.pointFaces();
 
-            forAll(meshPoints, meshPointI)
+            forAll (meshPoints, meshPointI)
             {
                 label vertI = meshPoints[meshPointI];
 
                 const labelList& neighbours = pointCells[vertI];
 
-                forAll(neighbours, neighbourI)
+                forAll (neighbours, neighbourI)
                 {
                     label cellI = neighbours[neighbourI];
 

@@ -96,10 +96,10 @@ private:
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        wallDist(const wallDist&);
+        wallDist(const wallDist&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const wallDist&);
+        void operator=(const wallDist&) = delete;
 
 
 public:
@@ -113,7 +113,7 @@ public:
 
 
     //- Destructor
-    virtual ~wallDist();
+    virtual ~wallDist() = default;
 
 
     // Member Functions

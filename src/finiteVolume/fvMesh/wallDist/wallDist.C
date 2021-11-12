@@ -54,12 +54,6 @@ Foam::wallDist::wallDist(const fvMesh& mesh, const bool correctWalls)
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::wallDist::~wallDist()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 // Correct for mesh geom/topo changes. Might be more intelligent in the
