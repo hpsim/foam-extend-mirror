@@ -75,6 +75,7 @@ bool Foam::OPstream::write
             << " commsType:" << Pstream::commsTypeNames[commsType]
             << Foam::endl;
     }
+
     if (Pstream::warnComm != -1 && comm != Pstream::warnComm)
     {
         Pout<< "OPstream::write : starting write to:" << toProcNo
