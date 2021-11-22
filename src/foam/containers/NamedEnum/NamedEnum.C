@@ -27,74 +27,99 @@ License
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-template<class Enum, int nEnum>
+template<class Enum, unsigned int nEnum>
 Foam::NamedEnum<Enum, nEnum>::NamedEnum()
 :
-    HashTable<int>(2*nEnum)
+    HashTable<unsigned int>(2*nEnum)
 {
-    for (int i=0; i<nEnum; i++)
+    for (unsigned int enumI = 0; enumI < nEnum; ++enumI)
     {
-        if (!names[i] || names[i][0] == '\0')
+        if (!names[enumI] || names[enumI][0] == '\0')
         {
-            stringList goodNames(i);
+            stringList goodNames(enumI);
 
-            for (label j = 0; j < i; j++)
+            for (unsigned int i = 0; i < enumI; ++i)
             {
-                goodNames[j] = names[j];
+                goodNames[i] = names[i];
             }
 
-            FatalErrorIn("NamedEnum<Enum, nEnum>::NamedEnum()")
-                << "Illegal enumeration name at position " << i << endl
+            FatalErrorInFunction
+                << "Illegal enumeration name at position " << enumI << endl
                 << "after entries " << goodNames << ".\n"
                 << "Possibly your NamedEnum<Enum, nEnum>::names array"
                 << " is not of size " << nEnum << endl
                 << abort(FatalError);
         }
-        insert(names[i], i);
+        insert(names[enumI], enumI);
     }
 }
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-template<class Enum, int nEnum>
+template<class Enum, unsigned int nEnum>
 Enum Foam::NamedEnum<Enum, nEnum>::read(Istream& is) const
 {
-    word name(is);
+    const word name(is);
 
-    HashTable<int>::const_iterator iter = find(name);
+    HashTable<unsigned int>::const_iterator iter = find(name);
 
-    if (iter == HashTable<int>::end())
+    if (iter == HashTable<unsigned int>::end())
     {
-        FatalIOErrorIn
-        (
-            "NamedEnum<Enum, nEnum>::read(Istream& is) const",
-            is
-        )   << name << " is not in enumeration " << toc()
-            << exit(FatalIOError);
+        FatalIOErrorInFunction(is)
+            << name << " is not in enumeration: "
+            << sortedToc() << exit(FatalIOError);
     }
 
     return Enum(iter());
 }
 
 
-template<class Enum, int nEnum>
+template<class Enum, unsigned int nEnum>
 void Foam::NamedEnum<Enum, nEnum>::write(const Enum e, Ostream& os) const
 {
-    os << operator[](e);
+    os  << operator[](e);
+}
+
+
+template<class Enum, unsigned int nEnum>
+const char* Foam::NamedEnum<Enum, nEnum>::operator[](const Enum e) const
+{
+    if (e < nEnum)
+    {
+        return names[e];
+    }
+    else
+    {
+        FatalErrorInFunction
+            << "names array index " << e << " out of range 0-"
+            << nEnum - 1
+            << exit(FatalError);
+
+        return names[0];
+    }
+}
+
+
+template<class Enum, unsigned int nEnum>
+const char* Foam::NamedEnum<Enum, nEnum>::operator[](const int e) const
+{
+    unsigned int ue = unsigned(e);
+
+    return this->operator[](ue);
 }
 
 
 // * * * * * * * * * * * * * * * Ostream Operator  * * * * * * * * * * * * * //
 
-template<class Enum, int nEnum>
+template<class Enum, unsigned int nEnum>
 Foam::Ostream& Foam::operator<<
 (
     Ostream& os,
     const NamedEnum<Enum, nEnum>& n
 )
 {
-    for (int e = 0; e < nEnum; e++)
+    for (unsigned int e = 0; e < nEnum; e++)
     {
         os << e << " " << n.names[e] << nl;
     }
