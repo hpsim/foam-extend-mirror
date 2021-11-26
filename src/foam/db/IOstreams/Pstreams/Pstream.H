@@ -280,7 +280,7 @@ public:
         //  to tree
         static const debug::optimisationSwitch nProcsSimpleSum;
 
-        //- Default commsType
+        //- Default commsType.  Do not use: use defaultComms()
         static debug::optimisationSwitch defaultCommsType;
 
         //- Default comms with a cast

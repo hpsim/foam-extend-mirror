@@ -101,15 +101,6 @@ const char* Foam::NamedEnum<Enum, nEnum>::operator[](const Enum e) const
 }
 
 
-template<class Enum, unsigned int nEnum>
-const char* Foam::NamedEnum<Enum, nEnum>::operator[](const int e) const
-{
-    unsigned int ue = unsigned(e);
-
-    return this->operator[](ue);
-}
-
-
 // * * * * * * * * * * * * * * * Ostream Operator  * * * * * * * * * * * * * //
 
 template<class Enum, unsigned int nEnum>

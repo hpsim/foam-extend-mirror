@@ -331,7 +331,7 @@ evaluate()
     {
         FatalErrorInFunction
             << "Unsuported communications type "
-            << Pstream::commsTypeNames[Pstream::defaultCommsType()]
+            << Pstream::commsTypeNames[Pstream::defaultComms()]
             << exit(FatalError);
     }
 }
@@ -446,7 +446,7 @@ updateCoupledPatchFields() const
         {
             FatalErrorInFunction
                 << "Unsuported communications type "
-                << Pstream::commsTypeNames[Pstream::defaultCommsType()]
+                << Pstream::commsTypeNames[Pstream::defaultComms()]
                     << exit(FatalError);
         }
     }

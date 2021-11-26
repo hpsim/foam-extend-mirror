@@ -218,8 +218,8 @@ void Foam::coupledLduMatrix::initMatrixInterfaces
     {
         if
         (
-            Pstream::defaultCommsType() == Pstream::blocking
-         || Pstream::defaultCommsType() == Pstream::nonBlocking
+            Pstream::defaultComms() == Pstream::blocking
+         || Pstream::defaultComms() == Pstream::nonBlocking
         )
         {
             forAll (interfaces[rowI], interfaceI)
@@ -241,17 +241,14 @@ void Foam::coupledLduMatrix::initMatrixInterfaces
                             matrices[rowI],
                             coupleCoeffs[rowI][interfaceI],
                             cmpt,
-                            static_cast<Pstream::commsTypes>
-                            (
-                                Pstream::defaultCommsType()
-                            ),
+                            Pstream::defaultComms(),
                             switchToLhs
                         );
                     }
                 }
             }
         }
-        else if (Pstream::defaultCommsType() == Pstream::scheduled)
+        else if (Pstream::defaultComms() == Pstream::scheduled)
         {
             // ERROR: Does not work with scheduled comms.
             // To investigate.  HJ, 11/Jun/2015
@@ -288,10 +285,7 @@ void Foam::coupledLduMatrix::initMatrixInterfaces
                                     matrices[rowI],
                                     coupleCoeffs[rowI][interfaceI],
                                     cmpt,
-                                    static_cast<Pstream::commsTypes>
-                                    (
-                                        Pstream::defaultCommsType()
-                                    ),
+                                    Pstream::defaultComms(),
                                     switchToLhs
                                 );
                         }
@@ -301,9 +295,9 @@ void Foam::coupledLduMatrix::initMatrixInterfaces
         }
         else
         {
-            FatalErrorIn("void coupledLduMatrix::initMatrixInterfaces")
+            FatalErrorInFunction
                 << "Unsuported communications type "
-                << Pstream::commsTypeNames[Pstream::defaultCommsType()]
+                << Pstream::commsTypeNames[Pstream::defaultComms()]
                 << exit(FatalError);
         }
     }
@@ -313,8 +307,8 @@ void Foam::coupledLduMatrix::initMatrixInterfaces
     {
         if
         (
-            Pstream::defaultCommsType() == Pstream::blocking
-         || Pstream::defaultCommsType() == Pstream::nonBlocking
+            Pstream::defaultComms() == Pstream::blocking
+         || Pstream::defaultComms() == Pstream::nonBlocking
         )
         {
             forAll (interfaces[rowI], interfaceI)
@@ -336,17 +330,14 @@ void Foam::coupledLduMatrix::initMatrixInterfaces
                             matrices[rowI],
                             coupleCoeffs[rowI][interfaceI],
                             cmpt,
-                            static_cast<Pstream::commsTypes>
-                            (
-                                Pstream::defaultCommsType()
-                            ),
+                            Pstream::defaultComms(),
                             switchToLhs
                         );
                     }
                 }
             }
         }
-        else if (Pstream::defaultCommsType() == Pstream::scheduled)
+        else if (Pstream::defaultComms() == Pstream::scheduled)
         {
             // ERROR: Does not work with scheduled comms.
             // To investigate.  HJ, 11/Jun/2015
@@ -383,10 +374,7 @@ void Foam::coupledLduMatrix::initMatrixInterfaces
                                     matrices[rowI],
                                     coupleCoeffs[rowI][interfaceI],
                                     cmpt,
-                                    static_cast<Pstream::commsTypes>
-                                    (
-                                        Pstream::defaultCommsType()
-                                    ),
+                                    Pstream::defaultComms(),
                                     switchToLhs
                                 );
                         }
@@ -396,9 +384,9 @@ void Foam::coupledLduMatrix::initMatrixInterfaces
         }
         else
         {
-            FatalErrorIn("void coupledLduMatrix::initMatrixInterfaces")
+            FatalErrorInFunction
                 << "Unsuported communications type "
-                << Pstream::commsTypeNames[Pstream::defaultCommsType()]
+                << Pstream::commsTypeNames[Pstream::defaultComms()]
                 << exit(FatalError);
         }
     }

@@ -111,10 +111,6 @@ public:
         //- Return the name of the given enumeration element
         const char* operator[](const Enum e) const;
 
-        //- Return the name of the given enumeration element
-        //  where e is specified as a int
-        const char* operator[](const int e) const;
-
 
     // Friend operators
 

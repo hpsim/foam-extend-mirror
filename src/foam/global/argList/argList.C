@@ -919,7 +919,7 @@ void Foam::argList::parse
                 //<< "    floatTransfer      : " << Pstream::floatTransfer << nl
                 << "    nProcsSimpleSum    : " << Pstream::nProcsSimpleSum << nl
                 << "    commsType          : "
-                << Pstream::commsTypeNames[Pstream::defaultCommsType()] << nl
+                << Pstream::commsTypeNames[(Pstream::defaultComms())] << nl
                 << "    polling iterations : " << Pstream::nPollProcInterfaces
                 << endl;
         }

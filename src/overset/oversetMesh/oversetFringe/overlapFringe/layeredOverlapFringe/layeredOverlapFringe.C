@@ -122,7 +122,7 @@ void Foam::layeredOverlapFringe::evaluateNonOversetBoundaries
     {
         FatalErrorInFunction
             << "Unsuported communications type "
-            << Pstream::commsTypeNames[Pstream::defaultCommsType()]
+            << Pstream::commsTypeNames[Pstream::defaultComms()]
             << exit(FatalError);
     }
 }
