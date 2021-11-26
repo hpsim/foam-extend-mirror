@@ -76,7 +76,7 @@ cleanCase ()
            constant/polyMesh/zoneToPatchName \
            constant/polyMesh/cellLevel* \
            constant/polyMesh/pointLevel* \
-           constant/polyMesh/refinementHistory*, \
+           constant/polyMesh/refinementHistory* \
            constant/polyMesh/surfaceIndex* \
            constant/cellToRegion \
            constant/polyMesh/sets/ \
