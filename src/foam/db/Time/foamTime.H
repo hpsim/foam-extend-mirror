@@ -126,7 +126,7 @@ protected:
     // Protected data
 
         //- Start time index
-        label  startTimeIndex_;
+        label startTimeIndex_;
 
         //- Start time
         scalar startTime_;
