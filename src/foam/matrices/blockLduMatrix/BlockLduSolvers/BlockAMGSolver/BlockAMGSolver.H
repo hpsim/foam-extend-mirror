@@ -70,10 +70,10 @@ private:
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        BlockAMGSolver(const BlockAMGSolver<Type>&);
+        BlockAMGSolver(const BlockAMGSolver<Type>&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const BlockAMGSolver<Type>&);
+        void operator=(const BlockAMGSolver<Type>&) = delete;
 
 
 public:
@@ -94,8 +94,7 @@ public:
 
 
     //- Destructor
-    virtual ~BlockAMGSolver()
-    {}
+    virtual ~BlockAMGSolver() = default;
 
 
     // Member Functions
@@ -105,7 +104,7 @@ public:
         (
             Field<Type>& x,
             const Field<Type>& b
-        );
+        ) const;
 
         //- Re-initialise solver after matrix coefficient update
         virtual void initMatrix()

@@ -55,10 +55,10 @@ class BlockLduPrecon
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        BlockLduPrecon(const BlockLduPrecon&);
+        BlockLduPrecon(const BlockLduPrecon&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const BlockLduPrecon&);
+        void operator=(const BlockLduPrecon&) = delete;
 
 
 protected:
@@ -114,8 +114,7 @@ public:
 
 
     //- Destructor
-    virtual ~BlockLduPrecon()
-    {}
+    virtual ~BlockLduPrecon() = default;
 
 
     // Member Functions

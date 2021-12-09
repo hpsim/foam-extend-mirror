@@ -52,7 +52,7 @@ Foam::BlockDiagonalSolver<Type>::solve
 (
     Field<Type>& x,
     const Field<Type>& b
-)
+) const
 {
     CoeffField<Type> dD = inv(this->matrix_.diag());
 

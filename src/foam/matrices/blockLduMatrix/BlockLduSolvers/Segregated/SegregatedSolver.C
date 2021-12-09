@@ -54,7 +54,7 @@ Foam::BlockSolverPerformance<Type> Foam::SegregatedSolver<Type>::solve
 (
     Field<Type>& x,
     const Field<Type>& b
-)
+) const
 {
     // Get reference to matrix, x and b
     const BlockLduMatrix<Type>& blockMatrix = this->matrix_;

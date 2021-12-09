@@ -52,10 +52,10 @@ class BlockLduSmoother
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        BlockLduSmoother(const BlockLduSmoother&);
+        BlockLduSmoother(const BlockLduSmoother&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const BlockLduSmoother&);
+        void operator=(const BlockLduSmoother&) = delete;
 
 
 protected:
@@ -110,10 +110,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~BlockLduSmoother()
-        {}
+    //- Destructor
+    virtual ~BlockLduSmoother() = default;
 
 
     // Member Functions

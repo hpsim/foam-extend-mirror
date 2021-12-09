@@ -70,10 +70,10 @@ class BlockGaussSeidelSolver
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        BlockGaussSeidelSolver(const BlockGaussSeidelSolver<Type>&);
+        BlockGaussSeidelSolver(const BlockGaussSeidelSolver<Type>&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const BlockGaussSeidelSolver<Type>&);
+        void operator=(const BlockGaussSeidelSolver<Type>&) = delete;
 
 
 public:
@@ -93,10 +93,8 @@ public:
         );
 
 
-        // Destructor
-
-            virtual ~BlockGaussSeidelSolver()
-            {}
+    //- Destructor
+    virtual ~BlockGaussSeidelSolver() = default;
 
 
     // Member Functions
@@ -106,7 +104,7 @@ public:
         (
             Field<Type>& x,
             const Field<Type>& b
-        );
+        ) const;
 
         //- Re-initialise solver after matrix coefficient update
         virtual void initMatrix()

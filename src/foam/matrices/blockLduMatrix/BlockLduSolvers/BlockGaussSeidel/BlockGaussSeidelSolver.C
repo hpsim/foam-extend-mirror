@@ -60,7 +60,7 @@ Foam::BlockGaussSeidelSolver<Type>::solve
 (
     Field<Type>& x,
     const Field<Type>& b
-)
+) const
 {
     // Create local references to avoid the spread this-> ugliness
     const BlockLduMatrix<Type>& matrix = this->matrix_;

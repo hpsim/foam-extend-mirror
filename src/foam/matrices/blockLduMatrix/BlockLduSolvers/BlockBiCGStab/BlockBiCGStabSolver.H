@@ -65,10 +65,10 @@ class BlockBiCGStabSolver
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        BlockBiCGStabSolver(const BlockBiCGStabSolver<Type>&);
+        BlockBiCGStabSolver(const BlockBiCGStabSolver<Type>&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const BlockBiCGStabSolver<Type>&);
+        void operator=(const BlockBiCGStabSolver<Type>&) = delete;
 
 
 public:
@@ -88,10 +88,8 @@ public:
         );
 
 
-        // Destructor
-
-            virtual ~BlockBiCGStabSolver()
-            {}
+    //- Destructor
+    virtual ~BlockBiCGStabSolver() = default;
 
 
     // Member Functions
@@ -101,7 +99,7 @@ public:
         (
             Field<Type>& x,
             const Field<Type>& b
-        );
+        ) const;
 
         //- Re-initialise solver after matrix coefficient update
         virtual void initMatrix()

@@ -63,7 +63,7 @@ Foam::BlockAMGSolver<Type>::solve
 (
     Field<Type>& x,
     const Field<Type>& b
-)
+) const
 {
     // Prepare solver performance
     BlockSolverPerformance<Type> solverPerf

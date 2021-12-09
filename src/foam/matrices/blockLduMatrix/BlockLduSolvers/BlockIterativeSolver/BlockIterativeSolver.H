@@ -73,10 +73,10 @@ class BlockIterativeSolver
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        BlockIterativeSolver(const BlockIterativeSolver&);
+        BlockIterativeSolver(const BlockIterativeSolver&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const BlockIterativeSolver&);
+        void operator=(const BlockIterativeSolver&) = delete;
 
 
 protected:
@@ -108,8 +108,7 @@ public:
 
 
     //- Destructor
-    virtual ~BlockIterativeSolver()
-    {}
+    virtual ~BlockIterativeSolver() = default;
 
 
     // Member Functions
@@ -148,7 +147,7 @@ public:
             (
                 Field<Type>& x,
                 const Field<Type>& b
-            ) = 0;
+            ) const = 0;
 };
 
 

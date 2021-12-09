@@ -60,22 +60,22 @@ class SegregatedSolver
     // Private data
 
         //- Scalar x
-        scalarField scalarX_;
+        mutable scalarField scalarX_;
 
         //- Scalar matrix
-        blockScalarMatrix scalarMatrix_;
+        mutable blockScalarMatrix scalarMatrix_;
 
         //- Scalar b
-        scalarField scalarB_;
+        mutable scalarField scalarB_;
 
 
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        SegregatedSolver(const SegregatedSolver<Type>&);
+        SegregatedSolver(const SegregatedSolver<Type>&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const SegregatedSolver<Type>&);
+        void operator=(const SegregatedSolver<Type>&) = delete;
 
 
 public:
@@ -95,9 +95,8 @@ public:
         );
 
 
-        //- Destructor
-        virtual ~SegregatedSolver()
-        {}
+    //- Destructor
+    virtual ~SegregatedSolver() = default;
 
 
     // Member Functions
@@ -107,7 +106,7 @@ public:
         (
             Field<Type>& x,
             const Field<Type>& b
-        );
+        ) const;
 
         //- Re-initialise solver after matrix coefficient update
         virtual void initMatrix()

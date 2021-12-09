@@ -67,6 +67,15 @@ class BlockLduSolver
         dictionary dict_;
 
 
+    // Private Member Functions
+
+        //- Disallow default bitwise copy construct
+        BlockLduSolver(const BlockLduSolver&) = delete;
+
+        //- Disallow default bitwise assignment
+        void operator=(const BlockLduSolver&) = delete;
+
+
 protected:
 
     // Protected data types
@@ -190,8 +199,7 @@ public:
 
 
     //- Destructor
-    virtual ~BlockLduSolver()
-    {}
+    virtual ~BlockLduSolver() = default;
 
 
     // Member functions
@@ -207,7 +215,7 @@ public:
         (
             TypeField& x,
             const TypeField& b
-        ) = 0;
+        ) const = 0;
 
         //- Re-initialise solver after matrix coefficient update
         virtual void initMatrix() = 0;

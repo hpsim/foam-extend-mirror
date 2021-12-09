@@ -69,10 +69,10 @@ class BlockGMRESSolver
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        BlockGMRESSolver(const BlockGMRESSolver<Type>&);
+        BlockGMRESSolver(const BlockGMRESSolver<Type>&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const BlockGMRESSolver<Type>&);
+        void operator=(const BlockGMRESSolver<Type>&) = delete;
 
         //- Givens rotation
         void givensRotation
@@ -101,10 +101,8 @@ public:
         );
 
 
-        // Destructor
-
-            virtual ~BlockGMRESSolver()
-            {}
+    //- Destructor
+    virtual ~BlockGMRESSolver() = default;
 
 
     // Member Functions
@@ -114,7 +112,7 @@ public:
         (
             Field<Type>& x,
             const Field<Type>& b
-        );
+        ) const;
 
         //- Re-initialise solver after matrix coefficient update
         virtual void initMatrix()
