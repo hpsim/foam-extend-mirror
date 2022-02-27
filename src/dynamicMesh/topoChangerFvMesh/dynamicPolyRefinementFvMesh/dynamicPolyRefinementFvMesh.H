@@ -97,10 +97,13 @@ class dynamicPolyRefinementFvMesh
         // Copy control
 
             //- Disallow default bitwise copy construct
-            dynamicPolyRefinementFvMesh(const dynamicPolyRefinementFvMesh&);
+            dynamicPolyRefinementFvMesh
+            (
+                const dynamicPolyRefinementFvMesh&
+            ) = delete;
 
             //- Disallow default bitwise assignment
-            void operator=(const dynamicPolyRefinementFvMesh&);
+            void operator=(const dynamicPolyRefinementFvMesh&) = delete;
 
 
 public:
@@ -123,7 +126,7 @@ public:
 
 
     //- Destructor
-    virtual ~dynamicPolyRefinementFvMesh();
+    virtual ~dynamicPolyRefinementFvMesh() = default;
 
 
     // Member Functions

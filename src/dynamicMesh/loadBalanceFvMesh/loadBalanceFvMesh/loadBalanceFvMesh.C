@@ -105,23 +105,14 @@ Foam::loadBalanceFvMesh::loadBalanceFvMesh(const IOobject& io)
     // Check imbalance trigger
     if (imbalanceTrigger_ < SMALL || imbalanceTrigger_ > 1)
     {
-        WarningIn
-        (
-            "loadBalanceFvMesh::"
-            "loadBalanceFvMesh(const IOobject& io)"
-        )   << "Invalid imbalance trigger " << imbalanceTrigger_
+        WarningInFunction
+            << "Invalid imbalance trigger " << imbalanceTrigger_
             << " Should be between 0 and 1.  Resetting to 0.8"
             << endl;
 
         imbalanceTrigger_ = 0.8;
     }
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::loadBalanceFvMesh::~loadBalanceFvMesh()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

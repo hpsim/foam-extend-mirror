@@ -63,10 +63,10 @@ class loadBalanceFvMesh
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        loadBalanceFvMesh(const loadBalanceFvMesh&);
+        loadBalanceFvMesh(const loadBalanceFvMesh&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const loadBalanceFvMesh&);
+        void operator=(const loadBalanceFvMesh&) = delete;
 
         //- Check balance.  Return true if re-balancing is required
         bool checkLoadBalance(const scalarField& weights) const;
@@ -85,7 +85,7 @@ public:
 
 
     //- Destructor
-    virtual ~loadBalanceFvMesh();
+    virtual ~loadBalanceFvMesh() = default;
 
 
     // Member Functions
