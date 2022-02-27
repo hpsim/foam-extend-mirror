@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 forcesfilename = 'forces/0/forces.dat'
 
 import sys
 if len(sys.argv) != 1:
-        print 'script assumes forces file ', forcesfilename
+        print('script assumes forces file ', forcesfilename)
         sys.exit()
 
 import re

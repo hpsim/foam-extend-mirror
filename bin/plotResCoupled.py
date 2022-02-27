@@ -1,12 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import sys
 if len(sys.argv) != 2:
-        print 'script requires name of log file'
+        print('script requires name of log file')
         sys.exit()
 
 logfilename = sys.argv[1]
-print 'Reading file', logfilename
+print('Reading file', logfilename)
 
 import re
 UpRegex=r"([A-Z,a-z]*):*.*Solving for Up, Initial residual = \(([0-9.Ee\-+]*)\s([0-9.Ee\-+]*)\s([0-9.Ee\-+]*)\s([0-9.Ee\-+]*)\), Final residual = \(([0-9.Ee\-+]*)\s([0-9.Ee\-+]*)\s([0-9.Ee\-+]*)\s([0-9.Ee\-+]*)\), No Iterations ([0-9]*)"
