@@ -95,6 +95,8 @@ int main(int argc, char *argv[])
 
 #           include "continuityErrs.H"
 
+#           include "boundPU.H"
+
             turbulence->correct();
         }
 
