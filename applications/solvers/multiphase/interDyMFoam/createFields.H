@@ -92,21 +92,6 @@
         incompressible::turbulenceModel::New(U, phi, twoPhaseProperties)
     );
 
-    wordList pcorrTypes
-    (
-        pd.boundaryField().size(),
-        zeroGradientFvPatchScalarField::typeName
-    );
-
-    for (label i = 0; i < pd.boundaryField().size(); i++)
-    {
-        if (pd.boundaryField()[i].fixesValue())
-        {
-            pcorrTypes[i] = fixedValueFvPatchScalarField::typeName;
-        }
-    }
-
-
     volScalarField p
     (
         IOobject

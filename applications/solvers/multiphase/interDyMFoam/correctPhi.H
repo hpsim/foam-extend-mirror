@@ -1,6 +1,22 @@
 {
 #   include "continuityErrs.H"
 
+    // Moved pcorrtypes because dynamic load balancing changes the number
+    // of (processor) patches.  HJ, 23/Feb/2022
+    wordList pcorrTypes
+    (
+        pd.boundaryField().size(),
+        zeroGradientFvPatchScalarField::typeName
+    );
+
+    for (label i = 0; i < pd.boundaryField().size(); i++)
+    {
+        if (pd.boundaryField()[i].fixesValue())
+        {
+            pcorrTypes[i] = fixedValueFvPatchScalarField::typeName;
+        }
+    }
+
     volScalarField pcorr
     (
         IOobject
