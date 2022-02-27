@@ -57,11 +57,8 @@ tmp<snGradScheme<Type> > snGradScheme<Type>::New
 
     if (schemeData.eof())
     {
-        FatalIOErrorIn
-        (
-            "snGradScheme<Type>::New(const fvMesh&, Istream&)",
-            schemeData
-        )   << "Discretisation scheme not specified"
+        FatalIOErrorInFunction(schemeData)
+            << "Discretisation scheme not specified"
             << endl << endl
             << "Valid schemes are :" << endl
             << MeshConstructorTablePtr_->sortedToc()
@@ -75,11 +72,8 @@ tmp<snGradScheme<Type> > snGradScheme<Type>::New
 
     if (constructorIter == MeshConstructorTablePtr_->end())
     {
-        FatalIOErrorIn
-        (
-            "snGradScheme<Type>::New(const fvMesh&, Istream&)",
-            schemeData
-        )   << "Unknown discretisation scheme "
+        FatalIOErrorInFunction(schemeData)
+            << "Unknown discretisation scheme "
             << schemeName << nl << nl
             << "Valid schemes are :" << endl
             << MeshConstructorTablePtr_->sortedToc()
@@ -88,13 +82,6 @@ tmp<snGradScheme<Type> > snGradScheme<Type>::New
 
     return constructorIter()(mesh, schemeData);
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class Type>
-snGradScheme<Type>::~snGradScheme()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

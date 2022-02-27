@@ -71,10 +71,10 @@ class volPointInterpolation
         void makeWeights() const;
 
         //- Disallow default bitwise copy construct
-        volPointInterpolation(const volPointInterpolation&);
+        volPointInterpolation(const volPointInterpolation&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const volPointInterpolation&);
+        void operator=(const volPointInterpolation&) = delete;
 
 
 public:
@@ -90,9 +90,8 @@ public:
         explicit volPointInterpolation(const fvMesh&);
 
 
-    // Destructor
-
-        virtual ~volPointInterpolation();
+    //- Destructor
+    virtual ~volPointInterpolation();
 
 
     // Member functions

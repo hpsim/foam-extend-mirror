@@ -54,7 +54,7 @@ namespace fv
 {
 
 /*---------------------------------------------------------------------------*\
-                 Class snGradScheme Declaration
+                       Class snGradScheme Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
@@ -70,8 +70,11 @@ class snGradScheme
 
     // Private Member Functions
 
+        //- Disallow default copy constructor
+        snGradScheme(const snGradScheme&) = delete;
+
         //- Disallow default bitwise assignment
-        void operator=(const snGradScheme&);
+        void operator=(const snGradScheme&) = delete;
 
 
 public:
@@ -111,9 +114,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~snGradScheme();
+    //- Destructor
+    virtual ~snGradScheme() = default;
 
 
     // Member Functions
