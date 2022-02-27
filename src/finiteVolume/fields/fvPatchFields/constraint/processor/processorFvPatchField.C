@@ -183,6 +183,33 @@ Foam::processorFvPatchField<Type>::processorFvPatchField
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
+void Foam::processorFvPatchField<Type>::autoMap
+(
+    const fvPatchFieldMapper& m
+)
+{
+    // Clear patch neighbour field
+    pnf_.clear();
+
+    fvPatchField<Type>::autoMap(m);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::rmap
+(
+    const fvPatchField<Type>& ptf,
+    const labelList& addr
+)
+{
+    // Clear patch neighbour field
+    pnf_.clear();
+
+    fvPatchField<Type>::rmap(ptf, addr);
+}
+
+
+template<class Type>
 Foam::tmp<Foam::Field<Type> >
 Foam::processorFvPatchField<Type>::patchNeighbourField() const
 {

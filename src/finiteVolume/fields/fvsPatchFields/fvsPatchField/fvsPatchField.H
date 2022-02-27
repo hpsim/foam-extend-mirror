@@ -313,7 +313,6 @@ public:
             //  HJ, 13/Sep/2021
             virtual bool couplesUpdated() const
             {
-                notImplemented(type() + "::couplesUpdated()");
                 return true;
             }
 
