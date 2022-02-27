@@ -1148,7 +1148,6 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
 
             if (rotate != 0)
             {
-                Pout<< "Rotating face" << endl;
                 newFaces[faceI] = rotateFace(newFaces[faceI], rotate);
             }
         }
