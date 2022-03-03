@@ -27,7 +27,7 @@ scalarTransportCoeffs
 
     useZeroField yes;
 
-    accuracy 0.999;
+    accuracy 0.999999;
     beta 0.01;
 }
 
