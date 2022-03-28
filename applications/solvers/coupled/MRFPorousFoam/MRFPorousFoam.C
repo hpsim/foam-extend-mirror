@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 #       include "couplingTerms.H"
 
         // Solve the block matrix
-        residual = UpEqn.solve();
+        BlockSolverPerformance<vector4> residual = UpEqn.solve();
         maxResidual = cmptMax(residual.initialResidual());
 
         // Check for divergence
