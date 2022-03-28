@@ -213,6 +213,9 @@ void Foam::BlockLduMatrix<Type>::TmulCore
     const TypeCoeffField& Diag = this->diag();
     const TypeCoeffField& Upper = this->upper();
 
+    // Create multiplication function object
+    typename BlockCoeff<Type>::multiply mult;
+
     // Diagonal multiplication, no indirection
     multiply(Tx, Diag, x);
 

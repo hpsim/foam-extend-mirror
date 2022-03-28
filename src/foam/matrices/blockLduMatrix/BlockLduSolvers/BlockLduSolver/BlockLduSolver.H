@@ -131,7 +131,7 @@ public:
             symMatrix,
             (
                 const word& fieldName,
-                BlockLduMatrix<Type>& matrix,
+                const BlockLduMatrix<Type>& matrix,
                 const dictionary& dict
             ),
             (
@@ -148,7 +148,7 @@ public:
             asymMatrix,
             (
                 const word& fieldName,
-                BlockLduMatrix<Type>& matrix,
+                const BlockLduMatrix<Type>& matrix,
                 const dictionary& dict
             ),
             (
@@ -184,7 +184,7 @@ public:
         static autoPtr<BlockLduSolver<Type> > New
         (
             const word& fieldName,
-            BlockLduMatrix<Type>& matrix,
+            const BlockLduMatrix<Type>& matrix,
             const dictionary& dict
         );
 
@@ -193,7 +193,7 @@ public:
         (
             const word& solverName,
             const word& fieldName,
-            BlockLduMatrix<Type>& matrix,
+            const BlockLduMatrix<Type>& matrix,
             const dictionary& dict
         );
 

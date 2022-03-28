@@ -78,9 +78,6 @@ Foam::BlockBiCGStabSolver<Type>::solve
 
     Type norm = this->normFactor(x, b);
 
-    // Multiplication helper
-    typename BlockCoeff<Type>::multiply mult;
-
     Field<Type> p(x.size());
 
     // Calculate initial residual
