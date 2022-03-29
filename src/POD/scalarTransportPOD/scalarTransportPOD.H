@@ -68,6 +68,9 @@ class scalarTransportPOD
         //- Use zero field as snapshot
         Switch useZeroField_;
 
+        //- Drift correction
+        Switch driftCorrection_;
+
         //- POD coefficients
         scalarField coeffs_;
 
@@ -80,7 +83,7 @@ class scalarTransportPOD
 
         //- Lagrange multiplier derivative (enforcing boundary conditions)
         //  (new formulation)
-        mutable scalarField* lagrangeDerPtr_;
+        mutable scalarSquareMatrix* lagrangeDerPtr_;
 
         //- Lagrange multiplier source (enforcing boundary conditions)
         //  (new formulation)
@@ -178,6 +181,12 @@ public:
 
         //- Return reconstructed field
         const volScalarField& reconField() const;
+
+
+        // Update
+
+            //- Update ODE after the solution, advancing by delta
+            virtual void update(const scalar delta);
 
 
     // Write

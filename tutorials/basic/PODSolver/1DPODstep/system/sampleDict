@@ -10,27 +10,33 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      PODsolverDict;
+    object      sampleDict;
 }
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+ // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-type scalarTransport;
+interpolationScheme cellPoint;
 
-solver KRR4;
+setFormat     raw;
 
-eps 0.0001;
+sets
+(
+    x
+    {
+        type            midPointAndFace;
+        name            cut;
+        axis            distance;
+        start           (0 0 0);
+        end             (0.1001 0 0);
+        nPoints         100;
+    }
+);
 
-scalarTransportCoeffs
-{
-    field T;
-    flux phi;
-
-    accuracy 1;
-    beta 0.01;
-    
-    useZeroField yes;
-    driftCorrection yes;
-}
+fields
+(
+    // T
+    // directReconT
+    reconT
+);
 
 
 // ************************************************************************* //

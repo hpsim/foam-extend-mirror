@@ -34,7 +34,7 @@ Class
 
 namespace Foam
 {
-    defineTypeNameAndDebug(scalarTransportPOD, 0);
+    defineTypeNameAndDebug(scalarTransportPOD, 1);
 
     addToRunTimeSelectionTable
     (
@@ -342,15 +342,16 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
     const scalarPODOrthoNormalBase& b = orthoBase();
 
     // Derivative
-    derivativePtr_ = new scalarSquareMatrix(b.baseSize(), 0.0);
+    derivativePtr_ = new scalarSquareMatrix(b.baseSize(), scalar(0));
     scalarSquareMatrix& derivative = *derivativePtr_;
 
     // Lagrange multiplier derivative
-    lagrangeDerPtr_ = new scalarField(b.baseSize(), scalar(0));
-    scalarField& lagrangeDer = *lagrangeDerPtr_;
+    lagrangeDerPtr_ = new scalarSquareMatrix(b.baseSize(), scalar(0));
+    scalarSquareMatrix& lagrangeDer = *lagrangeDerPtr_;
 
     // Lagrange multiplier source.  Currently disabled
     lagrangeSrcPtr_ = new scalarField(b.baseSize(), scalar(0));
+    scalarField& lagrangeSrc = *lagrangeSrcPtr_;
 
     const volScalarField& field = *reconFieldPtr_;
 
@@ -404,20 +405,30 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
                     // Note pre-multiplication by beta and signs
                     // of derivative and source.  New formulation
                     // HJ, 14/Jul/2021
-                    lagrangeDer[i] += beta_*
+
+                    // Accumulated across multiple patches
+                    lagrangeDer[i][j] += beta_*
                         POD::projection
                         (
                             snapJ.boundaryField()[patchI],
                             snapI.boundaryField()[patchI]
                         );
-
-                    // lagrangeSrc[i] += beta_*
-                    //     POD::projection
-                    //     (
-                    //         field.boundaryField()[patchI],
-                    //         snapI.boundaryField()[patchI]
-                    //     );
                 }
+            }
+        }
+
+        // Calculate Lagrange source
+        forAll (field.boundaryField(), patchI)
+        {
+            if (field.boundaryField()[patchI].fixesValue())
+            {
+                // Accumulated across multiple patches
+                lagrangeSrc[i] += beta_*
+                    POD::projection
+                    (
+                        field.boundaryField()[patchI],
+                        snapI.boundaryField()[patchI]
+                    );
             }
         }
     }
@@ -442,10 +453,8 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
             // Since the POD decomposition is the velocity field itself,
             // this is not strictly needed.  However, for other cases, this
             // is needed.  HJ, 13/Jul/2021
-            diagScale[i] = POD::projection(snapI, snapI) + lagrangeDer[i];
+            diagScale[i] = POD::projection(snapI, snapI) + lagrangeDer[i][i];
         }
-
-        Info<< "diagScale: " << diagScale << endl;
 
         // Re-scale the derivatives
         for (label i = 0; i < b.baseSize(); i++)
@@ -455,11 +464,18 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
             for (label j = 0; j < b.baseSize(); j++)
             {
                 derivative[i][j] /= curScale;
+
+                // Rescale Lagrange derivatives
+                lagrangeDer[i][j] /= curScale;
             }
+
+            // Kill diagonal Lagrange derivative
+            lagrangeDer[i][i] = 0;
+
+            // Rescale Lagrange source
+            lagrangeSrc[i] /= curScale;
         }
     }
-
-    Info<< "derivative: " << derivative << endl;
 }
 
 
@@ -509,6 +525,7 @@ Foam::scalarTransportPOD::scalarTransportPOD
     phiName_(dict.lookup("flux")),
     beta_(readScalar(dict.lookup("beta"))),
     useZeroField_(dict.lookup("useZeroField")),
+    driftCorrection_(dict.lookup("driftCorrection")),
     coeffs_(),
     validTimesPtr_(nullptr),
     derivativePtr_(nullptr),
@@ -532,8 +549,6 @@ Foam::scalarTransportPOD::scalarTransportPOD
 
     const scalarRectangularMatrix& orthoBaseCoeffs =
         orthoBase().interpolationCoeffs();
-
-    Info<< "orthoBaseCoeffs: " << orthoBaseCoeffs << endl;
 
     forAll (coeffs_, i)
     {
@@ -590,15 +605,22 @@ void Foam::scalarTransportPOD::derivatives
         calcDerivativeCoeffs();
     }
 
-   const scalarSquareMatrix& derivative = *derivativePtr_;
+    // Equation derivative
+    const scalarSquareMatrix& derivative = *derivativePtr_;
+
+    // Lagrange multiplier derivative
+    const scalarSquareMatrix& lagrangeDer = *lagrangeDerPtr_;
+
+    // Lagrange multiplier source
+    const scalarField& lagrangeSrc = *lagrangeSrcPtr_;
 
     forAll (dydx, i)
     {
-        dydx[i] = 0;
+        dydx[i] = lagrangeSrc[i];
 
         forAll (y, j)
         {
-            dydx[i] += derivative[i][j]*y[j];
+            dydx[i] += (derivative[i][j] - lagrangeDer[i][j])*y[j];
         }
     }
 }
@@ -645,6 +667,70 @@ const Foam::volScalarField& Foam::scalarTransportPOD::reconField() const
     return *reconFieldPtr_;
 }
 
+
+void Foam::scalarTransportPOD::update(const scalar delta)
+{
+    if (driftCorrection_)
+    {
+        // Check (and rescale) Dirichlet boundary condition
+
+        // Get ortho-normal base
+        const scalarPODOrthoNormalBase& b = orthoBase();
+
+        const volScalarField& field = *reconFieldPtr_;
+
+        forAll (field.boundaryField(), patchI)
+        {
+            if (field.boundaryField()[patchI].fixesValue())
+            {
+                scalarField reconBC
+                (
+                    field.boundaryField()[patchI].size(),
+                    scalar(0)
+                );
+
+                forAll (coeffs_, i)
+                {
+                    reconBC +=
+                        coeffs_[i]*b.orthoField(i).boundaryField()[patchI];
+                }
+
+                Info<< "Patch " << patchI
+                    << " fieldBC = "
+                    << refCast<const scalarField>(field.boundaryField()[patchI])
+                    << " Coeffs: " << coeffs_
+                    << " reconBC = " << reconBC
+                    << endl;
+
+                // Adjust leading coefficient for drift
+
+                // Field average
+                const scalar avgFieldBC =
+                    average(field.boundaryField()[patchI]);
+
+                // Zeroth ortho base average
+                const scalar avgBase0BC =
+                    average(b.orthoField(0).boundaryField()[patchI]);
+
+                if
+                (
+                    !field.boundaryField()[patchI].empty()
+                 && mag(avgBase0BC) > SMALL
+                )
+                {
+                    scalar delta = (avgFieldBC - average(reconBC))/avgBase0BC;
+
+                    Info<< "Correction on patch " << patchI
+                        << " coeff[0] = " << coeffs_[0]
+                        << " delta: " << delta
+                        << endl;
+
+                    coeffs_[0] += delta;
+                }
+            }
+        }
+    }
+}
 
 void Foam::scalarTransportPOD::writeSnapshots() const
 {

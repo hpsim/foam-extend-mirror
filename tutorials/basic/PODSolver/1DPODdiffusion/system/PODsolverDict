@@ -25,10 +25,11 @@ scalarTransportCoeffs
     field T;
     flux phi;
 
-    useZeroField yes;
-
     accuracy 0.999999;
     beta 0.01;
+
+    useZeroField yes;
+    driftCorrection yes;
 }
 
 

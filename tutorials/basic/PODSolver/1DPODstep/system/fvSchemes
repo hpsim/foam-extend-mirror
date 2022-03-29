@@ -10,26 +10,40 @@ FoamFile
     version     2.0;
     format      ascii;
     class       dictionary;
-    object      PODsolverDict;
+    object      fvSchemes;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-type scalarTransport;
-
-solver KRR4;
-
-eps 0.0001;
-
-scalarTransportCoeffs
+ddtSchemes
 {
-    field T;
-    flux phi;
+    default boundedBackward;
+}
 
-    accuracy 1;
-    beta 0.01;
-    
-    useZeroField yes;
-    driftCorrection yes;
+gradSchemes
+{
+    default         Gauss linear;
+}
+
+divSchemes
+{
+    default         none;
+    div(phi,T)      Gauss Gamma01 0.5;
+}
+
+laplacianSchemes
+{
+    default         none;
+    laplacian(DT,T) Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    default         corrected;
 }
 
 
