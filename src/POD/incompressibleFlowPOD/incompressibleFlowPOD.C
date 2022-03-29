@@ -317,7 +317,6 @@ void Foam::incompressibleFlowPOD::calcOrthoBase() const
     for (label obpI = 0; obpI < orthoBasePtr_->baseSize(); obpI++)
     {
         // Set U and p pointers
-        // Reconsider what to do with fluxes...
         UBase.set
         (
             obpI,
@@ -502,8 +501,8 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
     scalarSquareMatrix& derivative = *derivativePtr_;
 
     // Lagrange multiplier derivative
-    lagrangeDerPtr_ = new scalarField(b.baseSize(), scalar(0));
-    scalarField& lagrangeDer = *lagrangeDerPtr_;
+    lagrangeDerPtr_ = new scalarSquareMatrix(b.baseSize(), scalar(0));
+    scalarSquareMatrix& lagrangeDer = *lagrangeDerPtr_;
 
     // Lagrange multiplier source
     lagrangeSrcPtr_ = new scalarField(b.baseSize(), scalar(0));
@@ -585,20 +584,30 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
                 {
                     // Note pre-multiplication by beta and signs
                     // of derivative and source.  Su-Sp treatment
-                    lagrangeDer[i] += beta_*
+
+                    // Accumulated across multiple patches
+                    lagrangeDer[i][j] += beta_*
                         POD::projection
                         (
                             snapUJ.boundaryField()[patchI],
                             snapUI.boundaryField()[patchI]
                         );
-
-                    lagrangeSrc[i] += beta_*
-                        POD::projection
-                        (
-                            U.boundaryField()[patchI],
-                            snapUI.boundaryField()[patchI]
-                        );
                 }
+            }
+        }
+
+        // Calculate Lagrange source
+        forAll (U.boundaryField(), patchI)
+        {
+            if (U.boundaryField()[patchI].fixesValue())
+            {
+                // Accumulated across multiple patches
+                lagrangeSrc[i] += beta_*
+                    POD::projection
+                    (
+                        U.boundaryField()[patchI],
+                        snapUI.boundaryField()[patchI]
+                    );
             }
         }
     }
@@ -623,7 +632,7 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
             // Since the POD decomposition is the velocity field itself,
             // this is not strictly needed.  However, for other cases, this
             // is needed.  HJ, 13/Jul/2021
-            diagScale[i] = POD::projection(snapUI, snapUI) + lagrangeDer[i];
+            diagScale[i] = POD::projection(snapUI, snapUI) + lagrangeDer[i][i];
         }
 
         // Re-scale the derivatives
@@ -640,6 +649,12 @@ void Foam::incompressibleFlowPOD::calcDerivativeCoeffs() const
                     convectionDerivative[i][j][k] /= curScale;
                 }
             }
+
+            // Kill diagonal Lagrange derivative
+            lagrangeDer[i][i] = 0;
+
+            // Rescale Lagrange source
+            lagrangeSrc[i] /= curScale;
         }
     }
 }
@@ -662,9 +677,12 @@ void Foam::incompressibleFlowPOD::updateFields() const
         volVectorField& reconU = *reconUPtr_;
         volScalarField& reconP = *reconPPtr_;
 
-        // Reset entire field, including boundary conditions
-        reconU == dimensionedVector("zero", reconU.dimensions(), vector::zero);
-        reconP == dimensionedScalar("zero", reconP.dimensions(), scalar(0));
+        // Changed the way boundary conditions are handled.  There is no need
+        // for hard reset.  HJ, 29/Mar/2022
+
+        // Reset field
+        reconU *= 0;
+        reconP *=0;
 
         // Velocity field base
         const PtrList<volVectorField>& Ub = UBase();
@@ -675,24 +693,15 @@ void Foam::incompressibleFlowPOD::updateFields() const
         forAll (coeffs_, i)
         {
             // Update velocity
-            reconU == reconU + coeffs_[i]*Ub[i];
+            reconU += coeffs_[i]*Ub[i];
 
             // Update pressure
-            reconP == reconP + coeffs_[i]*pb[i];
+            reconP += coeffs_[i]*pb[i];
         }
 
         // Internal field is set.  Correct boundary conditions
         reconU.correctBoundaryConditions();
         reconP.correctBoundaryConditions();
-
-            // Hack test, HJ HERE!!!
-            const scalar fluxZero =
-                gSum(reconU.boundaryField()[0] & mesh().Sf().boundaryField()[0]);
-
-            Info<< "Testing flux in: "
-                << fluxZero << " velocity "
-                << fluxZero/gSum(mesh().magSf().boundaryField()[0])
-                << endl;
     }
 }
 
@@ -724,6 +733,7 @@ Foam::incompressibleFlowPOD::incompressibleFlowPOD
     nu_(transportProperties_.lookup("nu")),
     beta_(readScalar(dict.lookup("beta"))),
     useZeroField_(dict.lookup("useZeroField")),
+    driftCorrection_(dict.lookup("driftCorrection")),
     coeffs_(),
     validTimesPtr_(nullptr),
     convectionDerivativePtr_(nullptr),
@@ -825,6 +835,9 @@ void Foam::incompressibleFlowPOD::derivatives
     // Diffusion and pressure derivative
     const scalarSquareMatrix& derivative = *derivativePtr_;
 
+    // Lagrange multiplier derivative
+    const scalarSquareMatrix& lagrangeDer = *lagrangeDerPtr_;
+
     // Lagrange multiplier source
     const scalarField& lagrangeSrc = *lagrangeSrcPtr_;
     
@@ -837,7 +850,7 @@ void Foam::incompressibleFlowPOD::derivatives
 
         forAll (y, j)
         {
-            dydx[i] += derivative[i][j]*y[j];
+            dydx[i] += (derivative[i][j] - lagrangeDer[i][j])*y[j];
 
             forAll (y, k)
             {
@@ -868,6 +881,9 @@ void Foam::incompressibleFlowPOD::jacobian
     // Diffusion and pressure derivative
     const scalarSquareMatrix& derivative = *derivativePtr_;
 
+    // Lagrange multiplier derivative
+    const scalarSquareMatrix& lagrangeDer = *lagrangeDerPtr_;
+
     // Must calculate derivatives
     derivatives(x, y, dfdx);
 
@@ -890,19 +906,10 @@ void Foam::incompressibleFlowPOD::jacobian
                 dfdy[i][j] += convectionDerivative[i][j][k]*y[k];
             }
 
-            // Diffusion
-            dfdy[i][j] += derivative[i][j];
+            // Diffusion and Lagrange multiplier
+            dfdy[i][j] += derivative[i][j] - lagrangeDer[i][j];
         }
     }
-}
-
-
-void Foam::incompressibleFlowPOD::update(const scalar delta)
-{
-    // Warning: lots of cost here: updating fields for top-level
-    // function objects.  Can be removed from production code
-    // HJ, 5/Aug/2020
-    updateFields();
 }
 
 
@@ -967,6 +974,85 @@ const Foam::volScalarField& Foam::incompressibleFlowPOD::reconP() const
     updateFields();
 
     return *reconPPtr_;
+}
+
+
+void Foam::incompressibleFlowPOD::update(const scalar delta)
+{
+    if (driftCorrection_)
+    {
+        // Check (and rescale) Dirichlet boundary condition
+
+        // Get ortho-normal base
+        // Velocity field base
+        const PtrList<volVectorField>& Ub = UBase();
+
+        volVectorField& U = *reconUPtr_;
+
+        forAll (U.boundaryField(), patchI)
+        {
+            if
+            (
+                U.boundaryField()[patchI].fixesValue()
+             && !U.boundaryField()[patchI].empty()
+            )
+            {
+                // Calculate target flux
+                const scalar fieldFlux =
+                    gSum
+                    (
+                        U.boundaryField()[patchI]
+                      & mesh().Sf().boundaryField()[patchI]
+                    );
+
+                const scalar base0Flux =
+                    gSum
+                    (
+                        Ub[0].boundaryField()[patchI]
+                      & mesh().Sf().boundaryField()[patchI]
+                    );
+
+
+                if (mag(fieldFlux) > SMALL && mag(base0Flux) > SMALL)
+                {
+                    scalar reconFlux = 0;
+
+                    forAll (coeffs_, i)
+                    {
+                        reconFlux +=
+                            coeffs_[i]*
+                            gSum
+                            (
+                                Ub[i].boundaryField()[patchI]
+                              & mesh().Sf().boundaryField()[patchI]
+                            );
+                    }
+
+                    // Calculate correction
+                    scalar delta = (fieldFlux - reconFlux)/base0Flux;
+
+                    Info<< "Correction on patch " << patchI
+                        << " flux = " << fieldFlux
+                        << " reconFlux = " << reconFlux
+                        << " base0Flux = " << base0Flux
+                        << " coeff[0] = " << coeffs_[0]
+                        << " delta = " << delta
+                        << endl;
+
+                    // Correct leading coefficient
+                    coeffs_[0] += delta;
+
+                    // Correction achieved
+                    break;
+                }
+            }
+        }
+    }
+
+    // Warning: lots of cost here: updating fields for top-level
+    // function objects.  Can be removed from production code
+    // HJ, 5/Aug/2020
+    updateFields();
 }
 
 

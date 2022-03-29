@@ -497,13 +497,16 @@ void Foam::scalarTransportPOD::updateFields() const
 
         const scalarPODOrthoNormalBase& b = orthoBase();
 
-        // Reset entire field, including boundary conditions
-        recon == dimensionedScalar("zero", b.orthoField(0).dimensions(), 0);
+        // Changed the way boundary conditions are handled.  There is no need
+        // for hard reset.  HJ, 29/Mar/2022
+
+        // Reset field
+        recon *= 0;
 
         forAll (coeffs_, i)
         {
             // Update field
-            recon == recon + coeffs_[i]*b.orthoField(i);
+            recon += coeffs_[i]*b.orthoField(i);
         }
 
         recon.correctBoundaryConditions();
@@ -681,29 +684,12 @@ void Foam::scalarTransportPOD::update(const scalar delta)
 
         forAll (field.boundaryField(), patchI)
         {
-            if (field.boundaryField()[patchI].fixesValue())
+            if
+            (
+                field.boundaryField()[patchI].fixesValue()
+             && !field.boundaryField()[patchI].empty()
+            )
             {
-                scalarField reconBC
-                (
-                    field.boundaryField()[patchI].size(),
-                    scalar(0)
-                );
-
-                forAll (coeffs_, i)
-                {
-                    reconBC +=
-                        coeffs_[i]*b.orthoField(i).boundaryField()[patchI];
-                }
-
-                Info<< "Patch " << patchI
-                    << " fieldBC = "
-                    << refCast<const scalarField>(field.boundaryField()[patchI])
-                    << " Coeffs: " << coeffs_
-                    << " reconBC = " << reconBC
-                    << endl;
-
-                // Adjust leading coefficient for drift
-
                 // Field average
                 const scalar avgFieldBC =
                     average(field.boundaryField()[patchI]);
@@ -712,20 +698,35 @@ void Foam::scalarTransportPOD::update(const scalar delta)
                 const scalar avgBase0BC =
                     average(b.orthoField(0).boundaryField()[patchI]);
 
-                if
-                (
-                    !field.boundaryField()[patchI].empty()
-                 && mag(avgBase0BC) > SMALL
-                )
+                // Adjust leading coefficient for drift
+
+                if (mag(avgBase0BC) > SMALL)
                 {
-                    scalar delta = (avgFieldBC - average(reconBC))/avgBase0BC;
+                    scalar avgReconBC = 0;
+
+                    forAll (coeffs_, i)
+                    {
+                        avgReconBC +=
+                            coeffs_[i]*
+                            average(b.orthoField(i).boundaryField()[patchI]);
+                    }
+
+                    // Calculate correction
+                    scalar delta = (avgFieldBC - avgReconBC)/avgBase0BC;
 
                     Info<< "Correction on patch " << patchI
+                        << " avgFieldBC = " << avgFieldBC
+                        << " avgReconBC = " << avgReconBC
+                        << " avgBase0BC = " << avgBase0BC
                         << " coeff[0] = " << coeffs_[0]
                         << " delta: " << delta
                         << endl;
 
+                    // Correct leading coefficient
                     coeffs_[0] += delta;
+
+                    // Correction achieved
+                    break;
                 }
             }
         }
