@@ -3,9 +3,7 @@ PODODE/PODODE.C
 scalarTransportPOD/scalarTransportPOD.C
 velocityPOD/velocityPOD.C
 pressureVelocityPOD/pressureVelocityPOD.C
-/* velocityMeanPOD/velocityMeanPOD.C */
-
 incompressibleFlowPOD/incompressibleFlowPOD.C
-/* incompressibleFlowMeanPOD/incompressibleFlowMeanPOD.C */
+freeSurfaceFlowPOD/freeSurfaceFlowPOD.C
 
 LIB = $(FOAM_LIBBIN)/libPOD
