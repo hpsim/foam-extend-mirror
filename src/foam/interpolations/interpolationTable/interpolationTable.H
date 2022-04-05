@@ -166,6 +166,9 @@ public:
 
     // Member Operators
 
+        //- Copy assignment
+        void operator=(const interpolationTable<Type>& rhs);
+
         //- Return an element of constant Tuple2<scalar, Type>
         const Tuple2<scalar, Type>& operator[](const label) const;
 

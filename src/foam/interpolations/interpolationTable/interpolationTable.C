@@ -474,6 +474,26 @@ Foam::interpolationTable<Type>::operator[](const label i) const
 }
 
 
+// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
+
+template<class Type>
+void Foam::interpolationTable<Type>::operator=
+(
+    const interpolationTable<Type>& rhs
+)
+{
+    if (this == &rhs)
+    {
+        return;
+    }
+
+    static_cast<List<Tuple2<scalar, Type> >&>(*this) = rhs;
+    boundsHandling_ = rhs.boundsHandling_;
+    fileName_ = rhs.fileName_;
+    reader_.reset(rhs.reader_->clone().ptr());
+}
+
+
 template<class Type>
 Type Foam::interpolationTable<Type>::operator()(const scalar value) const
 {
