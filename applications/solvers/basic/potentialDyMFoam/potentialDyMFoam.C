@@ -85,6 +85,8 @@ int main(int argc, char *argv[])
 
         while (potential.correctNonOrthogonal())
         {
+            p.storePrevIter();
+            
             fvScalarMatrix pEqn
             (
                 fvm::laplacian
