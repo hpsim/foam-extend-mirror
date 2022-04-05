@@ -4,6 +4,5 @@ scalarTransportPOD/scalarTransportPOD.C
 velocityPOD/velocityPOD.C
 pressureVelocityPOD/pressureVelocityPOD.C
 incompressibleFlowPOD/incompressibleFlowPOD.C
-freeSurfaceFlowPOD/freeSurfaceFlowPOD.C
 
 LIB = $(FOAM_LIBBIN)/libPOD
