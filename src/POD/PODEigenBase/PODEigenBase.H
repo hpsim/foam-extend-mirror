@@ -59,7 +59,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                       Class PODEigenBase Declaration
+                         Class PODEigenBase Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>

@@ -175,10 +175,10 @@ class sixDOFODE
         // Copy control
 
             //- Disallow default bitwise copy construct
-            sixDOFODE(const sixDOFODE&);
+            sixDOFODE(const sixDOFODE&) = delete;
 
             //- Disallow default bitwise assignment
-            void operator=(const sixDOFODE&);
+            void operator=(const sixDOFODE&) = delete;
 
 
         // Aitkens relaxation helper function
@@ -267,9 +267,8 @@ public:
         static autoPtr<sixDOFODE> New(const IOobject& io);
 
 
-    // Destructor
-
-        virtual ~sixDOFODE();
+    //- Destructor
+    virtual ~sixDOFODE() = default;
 
 
     // Member Functions

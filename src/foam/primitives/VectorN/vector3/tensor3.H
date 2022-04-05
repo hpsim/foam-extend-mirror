@@ -58,8 +58,7 @@ inline bool contiguous<tensor3>() {return true;}
 
 // Include inline implementations
 
-// Klas Jareteg: 2012-10-10 Not implemented!
-//#include "tensor3I.H"
+#include "tensor3I.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

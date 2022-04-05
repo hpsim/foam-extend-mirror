@@ -78,14 +78,16 @@ int main(int argc, char *argv[])
     // Read required accuracy
     scalar eps = readScalar(PODsolverDict.lookup("eps"));
 
-    runTime.setDeltaT(dt);
-
-    Info<< "\nStarting time loop.  deltaT = "
-        << runTime.deltaT().value() << nl << endl;
-
-    while (runTime.loop())
+    while (runTime.run())
     {
-        Info<< "Time = " << runTime.timeName() << nl << endl;
+        // Manual time-step control to avoid problems with running over
+        // existing directories with time file.  HJ, 5/Mar/2022
+        runTime.setDeltaT(dt);
+        runTime++;
+
+        Info<< "Time = " << runTime.timeName()
+            << " deltaT = " << runTime.deltaT().value()
+            << nl << endl;
 
         solver->solve
         (

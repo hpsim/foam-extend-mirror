@@ -65,16 +65,28 @@ class scalarTransportPOD
         //- Lagrange multiplier pre-factor
         scalar beta_;
 
+        //- Use zero field as snapshot
+        Switch useZeroField_;
+
+        //- Drift correction
+        Switch driftCorrection_;
+
         //- POD coefficients
         scalarField coeffs_;
+
+
+        //- List of valid times for snapshots
+        mutable instantList* validTimesPtr_;
 
         //- Derivative coefficient matrix
         mutable scalarSquareMatrix* derivativePtr_;
 
         //- Lagrange multiplier derivative (enforcing boundary conditions)
-        mutable scalarField* lagrangeDerPtr_;
+        //  (new formulation)
+        mutable scalarSquareMatrix* lagrangeDerPtr_;
 
         //- Lagrange multiplier source (enforcing boundary conditions)
+        //  (new formulation)
         mutable scalarField* lagrangeSrcPtr_;
 
         //- Ortho-normal base pointer
@@ -94,6 +106,12 @@ class scalarTransportPOD
 
         //- Disallow default bitwise assignment
         void operator=(const scalarTransportPOD&) = delete;
+
+        //- Calculated list valid times for snapshots
+        void calcValidTimes() const;
+
+        //- Return valid times
+        const instantList& validTimes() const;
 
         //- Calculate ortho-normal base
         void calcOrthoBase() const;
@@ -163,6 +181,12 @@ public:
 
         //- Return reconstructed field
         const volScalarField& reconField() const;
+
+
+        // Update
+
+            //- Update ODE after the solution, advancing by delta
+            virtual void update(const scalar delta);
 
 
     // Write

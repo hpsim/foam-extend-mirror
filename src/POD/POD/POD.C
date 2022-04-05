@@ -52,13 +52,52 @@ scalar projection(const Field<Type>& a, const Field<Type>& b)
 
 
 template<class Type>
+scalar projection(const tmp<Field<Type> >& ta, const Field<Type>& b)
+{
+    scalar p = projection(ta(), b);
+    ta.clear();
+
+    return p;
+}
+
+
+template<class Type>
+scalar projection(const Field<Type>& a, const tmp<Field<Type> >& tb)
+{
+    scalar p = projection(a, tb());
+    tb.clear();
+
+    return p;
+}
+
+
+template<class Type>
+scalar projection(const tmp<Field<Type> >& ta, const tmp<Field<Type> >& tb)
+{
+    scalar p = projection(ta(), tb());
+    ta.clear();
+    tb.clear();
+
+    return p;
+}
+
+
+template<class Type>
 scalar projection
 (
     const GeometricField<Type, fvPatchField, volMesh>& a,
     const GeometricField<Type, fvPatchField, volMesh>& b
 )
 {
-    return projection(a.internalField(), b.internalField());
+    scalar p = projection(a.internalField(), b.internalField());
+
+    // Experimental; reconsider.  HJ, 10/Feb/2021
+    // forAll (a.boundaryField(), patchI)
+    // {
+    //     p += projection(a.boundaryField()[patchI], b.boundaryField()[patchI]);
+    // }
+
+    return p;
 }
 
 

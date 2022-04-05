@@ -75,8 +75,18 @@ class velocityPOD
         //- Lagrange multiplier pre-factor
         scalar beta_;
 
+        //- Use zero field as snapshot
+        Switch useZeroField_;
+
+        //- Drift correction
+        Switch driftCorrection_;
+
         //- POD coefficients
         scalarField coeffs_;
+
+
+        //- List of valid times for snapshots
+        mutable instantList* validTimesPtr_;
 
         //- Convection derivative coefficient matrix
         mutable PtrList<scalarSquareMatrix>* convectionDerivativePtr_;
@@ -85,7 +95,7 @@ class velocityPOD
         mutable scalarSquareMatrix* derivativePtr_;
 
         //- Lagrange multiplier derivative (enforcing boundary conditions)
-        mutable scalarField* lagrangeDerPtr_;
+        mutable scalarSquareMatrix* lagrangeDerPtr_;
 
         //- Lagrange multiplier source (enforcing boundary conditions)
         mutable scalarField* lagrangeSrcPtr_;
@@ -117,6 +127,12 @@ class velocityPOD
         //- Disallow default bitwise assignment
         void operator=(const velocityPOD&) = delete;
 
+
+        //- Calculated list valid times for snapshots
+        void calcValidTimes() const;
+
+        //- Return valid times
+        const instantList& validTimes() const;
 
         //- Calculate ortho-normal base for velocity
         void calcOrthoBase() const;
@@ -178,36 +194,39 @@ public:
                 scalarSquareMatrix& dfdy
             ) const;
 
+
+        // Orthogonalisation and fields
+
+            //- Return ortho-normal base: velocity fields
+            const vectorPODOrthoNormalBase& orthoBase() const;
+
+            //- Return pressure field base
+            const PtrList<volScalarField>& pBase() const;
+
+            //- Return flux field base
+            const PtrList<surfaceScalarField>& phiBase() const;
+
+
+            //- Return reconstructed velocity field
+            const volVectorField& reconU() const;
+
+            //- Return reconstructed pressure field
+            const volScalarField& reconP() const;
+
+
+        // Update
+
             //- Update ODE after the solution, advancing by delta
             virtual void update(const scalar delta);
 
 
-    // Orthogonalisation and fields
+        // Write
 
-        //- Return ortho-normal base: velocity fields
-        const vectorPODOrthoNormalBase& orthoBase() const;
+            //- Write snapshots
+            virtual void writeSnapshots() const;
 
-        //- Return pressure field base
-        const PtrList<volScalarField>& pBase() const;
-
-        //- Return flux field base
-        const PtrList<surfaceScalarField>& phiBase() const;
-
-
-        //- Return reconstructed velocity field
-        const volVectorField& reconU() const;
-
-        //- Return reconstructed pressure field
-        const volScalarField& reconP() const;
-
-
-    // Write
-
-        //- Write snapshots
-        virtual void writeSnapshots() const;
-
-        //- Write reconstructed fields
-        virtual void write() const;
+            //- Write reconstructed fields
+            virtual void write() const;
 };
 
 

@@ -35,6 +35,76 @@ Description
 #include "POD.H"
 #include "IOmanip.H"
 
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+template<class Type>
+template<class GeoField>
+void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
+(
+    const FieldField<Field, scalar> eigenVectors,
+    const PtrList<GeoField>& snapshots,
+    PtrList<GeoField>& orthoFields
+)
+{
+    // Check if there are less requested orthoFields than eigen vectors
+    if
+    (
+        eigenVectors.empty()
+     || snapshots.empty()
+     || (orthoFields.size() > snapshots.size())
+     || (eigenVectors[0].size() != snapshots.size())
+    )
+    {
+        FatalErrorInFunction
+            << "Incompatible snapshots, eigenVectors and orthoFields: "
+            << snapshots.size() << ", " << orthoFields.size()
+            << " and " << eigenVectors[0].size()
+            << abort(FatalError);
+    }
+
+    forAll (orthoFields, baseI)
+    {
+        // Scale the eigenvector before establishing the ortho-normal base
+        const scalarField& eigenVector = eigenVectors[baseI];
+
+        // Use calculated boundary conditions on the eigenbase
+        GeoField* onBasePtr
+        (
+            new GeoField
+            (
+                IOobject
+                (
+                    snapshots[0].name() + "POD" + name(baseI),
+                    snapshots[0].time().timeName(),
+                    snapshots[0].mesh(),
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                snapshots[0].mesh(),
+                dimensioned<typename GeoField::PrimitiveType>
+                (
+                    "zero",
+                    snapshots[0].dimensions(),
+                    pTraits<typename GeoField::PrimitiveType>::zero
+                )
+            )
+        );
+        GeoField& onBase = *onBasePtr;
+
+        forAll (eigenVector, eigenI)
+        {
+            onBase += eigenVector[eigenI]*snapshots[eigenI];
+        }
+
+        // Note: onBase field is not normalised
+        // This is required when the fields are rebuild using consistent
+        // scaling factors, eg. flux fields from velocity
+        // HJ, 20/Sep/2021
+        orthoFields.set(baseI, onBasePtr);
+    }
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
@@ -45,6 +115,7 @@ Foam::PODOrthoNormalBase<Type>::PODOrthoNormalBase
 )
 :
     eigenBase_(snapshots),
+    scaledEigenVectors_(eigenBase_.eigenVectors()), // To be scaled later
     orthoFields_(),
     interpolationCoeffsPtr_(nullptr)
 {
@@ -62,14 +133,42 @@ Foam::PODOrthoNormalBase<Type>::PODOrthoNormalBase
         }
     }
 
-    Info<< "Cumulative eigen-values: "
-        << setprecision(14) << cumEigenValues << nl
+    Info<< setprecision(14)
+        << "eigen-values: " << eigenBase_.eigenValues() << nl
+        << "Cumulative eigen-values: " << cumEigenValues << nl
         << "Base size: " << baseSize << endl;
 
     // Establish orthonormal base
     orthoFields_.setSize(baseSize);
 
-    calcOrthoBase(snapshots, orthoFields_);
+    // Calculate orthogonal base
+    calcOrthoBase
+    (
+        scaledEigenVectors_,
+        snapshots,
+        orthoFields_
+    );
+
+    // Scale the eigen-vectors and orthoFields
+    forAll (orthoFields_, baseI)
+    {
+        GeoTypeField& onBase = orthoFields_[baseI];
+
+        scalarField& eigenVector = scaledEigenVectors_[baseI];
+
+        // Re-normalise the ortho-normal vector and eigenVector
+        scalar magSumSquare = Foam::sqrt(sumSqr(onBase));
+
+        if (magSumSquare > SMALL)
+        {
+            // Rescale ortho base
+            onBase /= magSumSquare;
+            onBase.correctBoundaryConditions();
+
+            // Also rescale scaledEigenVectors_ for future use
+            eigenVector /= magSumSquare;
+        }
+    }
 
     // Calculate interpolation coefficients
     interpolationCoeffsPtr_ =
@@ -125,66 +224,18 @@ void Foam::PODOrthoNormalBase<Type>::checkBase() const
 
 template<class Type>
 template<class GeoField>
-void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
+void Foam::PODOrthoNormalBase<Type>::getOrthoBase
 (
     const PtrList<GeoField>& snapshots,
     PtrList<GeoField>& orthoFields
-)
+) const
 {
-    // Check if there are less requested orthoFields than eigen vectors
-    if (orthoFields.size() > eigenBase_.eigenValues().size())
-    {
-        FatalErrorInFunction
-            << "Requested " << orthoFields.size()
-            << " orthogonal fields in snapshot size of "
-            << eigenBase_.eigenValues().size() << "(" << snapshots.size() << ")"
-            << abort(FatalError);
-    }
-
-    forAll (orthoFields, baseI)
-    {
-        const scalarField& eigenVector = eigenBase_.eigenVectors()[baseI];
-
-        // Use calculated boundary conditions on the eigenbase
-        GeoField* onBasePtr
-        (
-            new GeoField
-            (
-                IOobject
-                (
-                    snapshots[0].name() + "POD" + name(baseI),
-                    snapshots[0].time().timeName(),
-                    snapshots[0].mesh(),
-                    IOobject::NO_READ,
-                    IOobject::NO_WRITE
-                ),
-                snapshots[0].mesh(),
-                dimensioned<typename GeoField::PrimitiveType>
-                (
-                    "zero",
-                    snapshots[0].dimensions(),
-                    pTraits<typename GeoField::PrimitiveType>::zero
-                )
-            )
-        );
-        GeoField& onBase = *onBasePtr;
-
-        forAll (eigenVector, eigenI)
-        {
-            onBase += eigenVector[eigenI]*snapshots[eigenI];
-        }
-
-        // Re-normalise ortho-normal vector
-        scalar magSumSquare = Foam::sqrt(sumSqr(onBase));
-
-        if (magSumSquare > SMALL)
-        {
-            onBase /= magSumSquare;
-            onBase.correctBoundaryConditions();
-        }
-
-        orthoFields.set(baseI, onBasePtr);
-    }
+    calcOrthoBase
+    (
+        this->scaledEigenVectors(),
+        snapshots,
+        orthoFields
+    );
 }
 
 

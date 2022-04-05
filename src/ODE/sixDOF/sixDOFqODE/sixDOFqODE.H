@@ -255,9 +255,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~sixDOFqODE();
+    //- Destructor
+    virtual ~sixDOFqODE();
 
 
     // Member Functions

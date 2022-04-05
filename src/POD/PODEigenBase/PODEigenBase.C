@@ -48,12 +48,18 @@ void Foam::PODEigenBase<Type>::calcEigenBase
 
     forAll (sortedList, i)
     {
-        sortedList[i] = eigenSolver.eigenValue(i);
+        // Note:
+        // For stability under normalisation, make sure that very small
+        // eigen-values remain positive
+        // HJ, 19/Feb/2021
+        sortedList[i] = mag(eigenSolver.eigenValue(i));
     }
 
     // Sort will sort the values in descending order and insert values
     sortedList.sort();
 
+    // Add normalisation to eigenvectors
+    // HJ, 19/Feb/2021
     label n = 0;
     forAllReverse (sortedList, i)
     {
@@ -61,11 +67,36 @@ void Foam::PODEigenBase<Type>::calcEigenBase
         eigenVectors_.set
         (
             n,
-            new scalarField(eigenSolver.eigenVector(sortedList.indices()[i]))
+            new scalarField
+            (
+                eigenSolver.eigenVector(sortedList.indices()[i])*
+                sqrt(eigenVectors_.size()*mag(eigenValues_[n]))
+            )
         );
 
         n++;
     }
+
+    // Info<< "Check products of base vectors" << endl;
+    // forAll (eigenVectors_, i)
+    // {
+    //     Info<< " i " << i << " eigenValue " << eigenValues_[i]
+    //         << " scale " << eigenVectors_.size()*mag(eigenValues_[i])
+    //         << nl;
+
+    //         forAll (eigenVectors_, j)
+    //         {
+    //             Info<< "(" << i << ", " << j << ") = "
+    //                 <<
+    //                 POD::projection
+    //                 (
+    //                     eigenVectors_[i],
+    //                     eigenVectors_[j]
+    //                 )
+    //                 << nl;
+    //         }
+    //         Info<< nl << endl;
+    // }
 
     // Assemble cumulative relative eigen-values
     cumEigenValues_[0] = eigenValues_[0];
@@ -94,7 +125,7 @@ Foam::PODEigenBase<Type>::PODEigenBase
     cumEigenValues_(snapshots.size()),
     eigenVectors_(snapshots.size())
 {
-    // Calculate the snapshot of the field with all available fields
+    // Calculate the snapshot products of the field with all available fields
     label nSnapshots = snapshots.size();
 
     scalarSquareMatrix orthMatrix(nSnapshots);
@@ -104,13 +135,17 @@ Foam::PODEigenBase<Type>::PODEigenBase
         for (label snapJ = 0; snapJ <= snapI; snapJ++)
         {
             // Calculate the inner product and insert it into the matrix
+            // Added normalisation with the number of snapshots
+            // Note projection with cell volumes
             orthMatrix[snapI][snapJ] =
+                1.0/nSnapshots*
                 POD::projection
                 (
-                    snapshots[snapI],
-                    snapshots[snapJ]
+                    snapshots[snapI].internalField(),
+                    snapshots[snapJ].internalField()
                 );
 
+            // Fill in the symmetric part of the matrix
             if (snapI != snapJ)
             {
                 orthMatrix[snapJ][snapI] = orthMatrix[snapI][snapJ];
@@ -118,6 +153,7 @@ Foam::PODEigenBase<Type>::PODEigenBase
         }
     }
 
+    // Calculate eigenbase: this fills in the eigenvalues and eigenvectors
     this->calcEigenBase(orthMatrix);
 }
 

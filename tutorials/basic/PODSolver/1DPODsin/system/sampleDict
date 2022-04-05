@@ -16,24 +16,25 @@ FoamFile
 
 interpolationScheme cellPoint;
 
-writeFormat     raw;
+setFormat     raw;
 
-sampleSets
+sets
 (
-    uniform
+    x
     {
+        type            midPointAndFace;
         name            cut;
         axis            distance;
         start           (0 0 0);
-        end             (0.1 0 0);
+        end             (0.1001 0 0);
         nPoints         100;
     }
 );
 
 fields
 (
-//    T
-//    directReconT
+    // T
+    // directReconT
     reconT
 );
 
