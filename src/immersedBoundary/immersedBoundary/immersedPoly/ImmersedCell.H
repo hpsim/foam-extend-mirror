@@ -152,7 +152,8 @@ public:
         );
 
 
-    //- Destructor - default
+    //- Destructor
+    ~ImmersedCell() = default;
 
 
     // Public member functions

@@ -569,15 +569,59 @@ Foam::ImmersedCell<Distance>::ImmersedCell
     // For a good cut there should be at least 3 points at zero level
     label nIntersections = 0;
 
+    // Added collinearity check.  HJ, 8/Apr/2022
+    
+    // Collect first intersection point as reference for colinearity check
+    point refPoint;
+    vector refVec;
+    scalar minDot = GREAT;
+    
     forAll (depth_, pointI)
     {
         if (mag(depth_[pointI]) < absTol_)
         {
+            if (nIntersections == 0)
+            {
+                // First intersection: collect reference point
+                refPoint = points_[pointI];
+            }
+            else if (nIntersections == 1)
+            {
+                // Second intersection: collect reference vector
+                refVec = points_[pointI] - refPoint;
+
+                // Normalise
+                refVec /= mag(refVec) + SMALL;
+            }
+            else
+            {
+                // Third and further intersection: collinearity check
+                vector otherVec = points_[pointI] - refPoint;
+
+                // Normalise
+                otherVec /= mag(otherVec) + SMALL;
+
+                // Collect minimum dot-product
+                minDot = Foam::min(minDot, (refVec & otherVec));
+            }
+                
             nIntersections++;
+        }
+
+        if (nIntersections >= 3 && minDot > immersedPoly::collinearity_())
+        {
+            // Condition satisfied.  No need to keep checking
+            break;
         }
     }
 
-    if (nIntersections < 3)
+    if
+    (
+        // Insufficient number of intersections
+        nIntersections < 3
+        // More than 3 intersections, but collinear
+     || (nIntersections >= 3 && minDot > immersedPoly::collinearity_())
+    )
     {
         // Check if cell centre is wet or dry, depending on greatest distance
         // away from the cutting surface

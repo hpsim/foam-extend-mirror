@@ -72,6 +72,11 @@ public:
         //  Used as a fraction of edge length
         static const debug::tolerancesSwitch tolerance_;
 
+        //- Collinearity tolerance
+        //  Dot-product of two unit vectors above which they are considered
+        //  collinear
+        static const debug::tolerancesSwitch collinearity_;
+
         //- Live factor
         //  Fraction of face/cell size within the IB for which the face/cell is
         //  considered to be live
@@ -80,6 +85,7 @@ public:
         //- Bad cut factor
         //  Fraction of face/cell size error that declares a bad cut
         static const debug::tolerancesSwitch badCutFactor_;
+
 };
 
 

@@ -44,6 +44,14 @@ Foam::immersedPoly::tolerance_
 
 
 const Foam::debug::tolerancesSwitch
+Foam::immersedPoly::collinearity_
+(
+    "immersedPolyCollinearity",
+    0.99999
+);
+
+
+const Foam::debug::tolerancesSwitch
 Foam::immersedPoly::liveFactor_
 (
     "immersedPolyLiveFactor",
