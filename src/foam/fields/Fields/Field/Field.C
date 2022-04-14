@@ -593,6 +593,10 @@ tmp<Field<Type> > Field<Type>::T() const
 
 
 template<class Type>
+void Field<Type>::clearCaches()
+{}
+
+template<class Type>
 void Field<Type>::writeEntry(const word& keyword, Ostream& os) const
 {
     os.writeKeyword(keyword);

@@ -160,6 +160,8 @@ public:
         //- Return the field transpose (only defined for second rank tensors)
         tmp<FieldField<Field, Type> > T() const;
 
+       //- Clear field caches
+        void clearCaches();
 
     // Member operators
 

@@ -472,6 +472,10 @@ public:
                 );
             }
 
+        //- Clear field caches
+        void clearCaches()
+        {}
+
 
         //- Write
         virtual void write(Ostream&) const;

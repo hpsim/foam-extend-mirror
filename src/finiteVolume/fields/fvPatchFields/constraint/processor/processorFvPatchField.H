@@ -345,6 +345,9 @@ public:
                 return pTraits<Type>::rank;
             }
 
+            //- Clear caches
+            virtual void clearCaches();
+
 
     // Member operators
 
