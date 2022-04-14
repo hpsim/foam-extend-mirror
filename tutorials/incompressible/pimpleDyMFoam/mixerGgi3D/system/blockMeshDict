@@ -1,0 +1,604 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     5.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+//process this file using: m4 -P blockMeshDict.m4 > blockMeshDict
+
+//m4 definitions -----------------------------
+
+
+
+
+
+
+
+
+//Geometry -----------------------------------
+// 2 planes levels for rotor
+
+
+
+// 2 planes levels for stator
+
+
+
+// Angle span for inner rotor block
+
+
+
+// Angle span for outer stator block
+
+
+
+// Radial dimensions
+
+  // Impeller: from rMinRotor to rRotorImpeller
+
+
+
+  // Baffle : from rStatorBaffle to rMaxStator
+
+
+// Baffle/impeller half width angle
+  // impeller thickness
+  // baffle thickness
+
+// Mesh parameters
+
+
+
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+convertToMeters 0.1;
+
+vertices
+(
+// Stator with impeller
+//Plane A:
+//Bottom of rotor block#1 : sector 0-90 deg
+(0.999945169365512                  0.0104717841162458                   0.0) // Vertex A0_000 = 0 
+(2                           0                            0.0) // Vertex A1_000 = 1 
+(0.0104717841162423          0.999945169365512           0.0) // Vertex A2_000 = 2 
+(-6.98296267768627e-15                   2                    0.0) // Vertex A3_000 = 3 
+
+//Plane B:
+//Top of rotor block#1 : sector 0-90 deg
+(0.999945169365512                  0.0104717841162458                   0.5) // Vertex B0_000 = 4 
+(2                           0                            0.5) // Vertex B1_000 = 5 
+(0.0104717841162423          0.999945169365512           0.5) // Vertex B2_000 = 6 
+(-6.98296267768627e-15                   2                    0.5) // Vertex B3_000 = 7 
+
+//Plane A:
+//Bottom of rotor block#2 : sector 90-180 deg
+(-0.0104717841162493          0.999945169365512           0.0) // Vertex A0_090 = 8 
+(-6.98296267768627e-15                   2                    0.0) // Vertex A1_090 = 9 
+(-0.999945169365512  0.010471784116239   0.0) // Vertex A2_090 = 10 
+(-2           -1.39659253553725e-14            0.0) // Vertex A3_090 = 11 
+
+//Plane B:
+//Top of rotor block#2 : sector 90-180 deg
+(-0.0104717841162493          0.999945169365512           0.5) // Vertex B0_090 = 12 
+(-6.98296267768627e-15                   2                    0.5) // Vertex B1_090 = 13 
+(-0.999945169365512  0.010471784116239   0.5) // Vertex B2_090 = 14 
+(-2           -1.39659253553725e-14            0.5) // Vertex B3_090 = 15 
+
+//Plane A:
+//Bottom of rotor block#3 : sector 180-270 deg
+(-0.999945169365512         -0.0104717841162428          0.0) // Vertex A0_180 = 16 
+(-2                  6.46217829773035e-15                   0.0) // Vertex A1_180 = 17 
+(-0.0104717841162453 -0.999945169365512  0.0) // Vertex A2_180 = 18 
+(-3.67394039744206e-16          -2           0.0) // Vertex A3_180 = 19 
+
+//Plane B:
+//Top of rotor block#3 : sector 180-270 deg
+(-0.999945169365512         -0.0104717841162428          0.5) // Vertex B0_180 = 20 
+(-2                  6.46217829773035e-15                   0.5) // Vertex B1_180 = 21 
+(-0.0104717841162453 -0.999945169365512  0.5) // Vertex B2_180 = 22 
+(-3.67394039744206e-16          -2           0.5) // Vertex B3_180 = 23 
+
+//Plane A:
+//Bottom of rotor block#4 : sector 270-360 deg
+(0.0104717841162458         -0.999945169365512          0.0) // Vertex A0_270 = 24 
+(-3.67394039744206e-16                  -2                   0.0) // Vertex A1_270 = 25 
+(0.999945169365512 -0.0104717841162427  0.0) // Vertex A2_270 = 26 
+(2          6.61556863794206e-15           0.0) // Vertex A3_270 = 27 
+
+//Plane B:
+//Top of rotor block#4 : sector 270-360 deg
+(0.0104717841162458         -0.999945169365512          0.5) // Vertex B0_270 = 28 
+(-3.67394039744206e-16                  -2                   0.5) // Vertex B1_270 = 29 
+(0.999945169365512 -0.0104717841162427  0.5) // Vertex B2_270 = 30 
+(2          6.61556863794206e-15           0.5) // Vertex B3_270 = 31 
+
+//Plane A:
+//Bottom of rotor block#5 : sector without impeller 0-90 deg
+(3                           0                            0.0) // Vertex AA1_000 = 32 
+(-1.04744440165294e-14                   3                    0.0) // Vertex AA3_000 = 33 
+
+//Plane B:
+//Top of rotor block#5 : sector without impeller 0-90 deg
+(3                           0                            0.5) // Vertex BB1_000 = 34 
+(-1.04744440165294e-14                   3                    0.5) // Vertex BB3_000 = 35 
+
+//Plane A:
+//Bottom of rotor block#6 : sector without impeller 90-180 deg
+(-1.04744440165294e-14                   3                    0.0) // Vertex AA1_090 = 36 
+(-3           -2.09488880330588e-14            0.0) // Vertex AA3_090 = 37 
+
+//Plane B:
+//Top of rotor block#6 : sector without impeller 90-180 deg
+(-1.04744440165294e-14                   3                    0.5) // Vertex BB1_090 = 38 
+(-3           -2.09488880330588e-14            0.5) // Vertex BB3_090 = 39 
+
+//Plane A:
+//Bottom of rotor block#7 : sector without impeller 180-270 deg
+(-3                  9.69326744659552e-15                   0.0) // Vertex AA1_180 = 40 
+(-5.51091059616309e-16          -3           0.0) // Vertex AA3_180 = 41 
+
+//Plane B:
+//Top of rotor block#7 : sector without impeller 180-270 deg
+(-3                  9.69326744659552e-15                   0.5) // Vertex BB1_180 = 42 
+(-5.51091059616309e-16          -3           0.5) // Vertex BB3_180 = 43 
+
+//Plane A:
+//Bottom of rotor block#8 : sector without impeller 270-360 deg
+(-5.51091059616309e-16                  -3                   0.0) // Vertex AA1_270 = 44 
+(3          9.92335295691309e-15           0.0) // Vertex AA3_270 = 45 
+
+//Plane B:
+//Top of rotor block#8 : sector without impeller 270-360 deg
+(-5.51091059616309e-16                  -3                   0.5) // Vertex BB1_270 = 46 
+(3          9.92335295691309e-15           0.5) // Vertex BB3_270 = 47 
+
+/////////////////////////////////
+/////////////////////////////////
+
+// Stator with impeller
+
+//Plane C:
+//Bottom of stator block#1 : sector without baffle 0-60 deg
+(3                           0                          0.0) // Vertex CC0_000 = 48 
+(1.49999999999999                   2.59807621135332                  0.0) // Vertex CC2_000 = 49 
+
+//Plane D:
+//Top of stator block#1 : sector without baffle 0-60 deg
+(3                           0                          0.5) // Vertex DD0_000 = 50 
+(1.49999999999999                   2.59807621135332                  0.5) // Vertex DD2_000 = 51 
+
+//Plane C:
+//Bottom of stator block#2 : sector without baffle 60-120 deg
+(1.49999999999999                   2.59807621135332                  0.0) // Vertex CC0_060 = 52 
+(-1.50000000000001           2.59807621135331          0.0) // Vertex CC2_060 = 53 
+
+//Plane D:
+//Top of stator block#2 : sector without baffle 60-120 deg
+(1.49999999999999                   2.59807621135332                  0.5) // Vertex DD0_060 = 54 
+(-1.50000000000001           2.59807621135331          0.5) // Vertex DD2_060 = 55 
+
+//Plane C:
+//Bottom of stator block#3 : sector without baffle 120-180 deg
+(-1.50000000000001                  2.59807621135331                 0.0) // Vertex CC0_120 = 56 
+(-3          -2.09488880330588e-14         0.0) // Vertex CC2_120 = 57 
+
+//Plane D:
+//Top of stator block#3 : sector without baffle 120-180 deg
+(-1.50000000000001                  2.59807621135331                 0.5) // Vertex DD0_120 = 58 
+(-3          -2.09488880330588e-14         0.5) // Vertex DD2_120 = 59 
+
+//Plane C:
+//Bottom of stator block#4 : sector without baffle 180-240 deg
+(-3                  9.69326744659552e-15                 0.0) // Vertex CC0_180 = 60 
+(-1.5          -2.59807621135331         0.0) // Vertex CC2_180 = 61 
+
+//Plane D:
+//Top of stator block#4 : sector without baffle 180-240 deg
+(-3                  9.69326744659552e-15                 0.5) // Vertex DD0_180 = 62 
+(-1.5          -2.59807621135331         0.5) // Vertex DD2_180 = 63 
+
+//Plane C:
+//Bottom of stator block#5 : sector without baffle 240-300 deg
+(-1.5                  -2.59807621135331                 0.0) // Vertex CC0_240 = 64 
+(1.5          -2.59807621135331         0.0) // Vertex CC2_240 = 65 
+
+//Plane D:
+//Top of stator block#5 : sector without baffle 240-300 deg
+(-1.5                  -2.59807621135331                 0.5) // Vertex DD0_240 = 66 
+(1.5          -2.59807621135331         0.5) // Vertex DD2_240 = 67 
+
+//Plane C:
+//Bottom of stator block#6 : sector without baffle 300-360 deg
+(1.5                  -2.59807621135331                 0.0) // Vertex CC0_300 = 68 
+(3          9.92335295691309e-15         0.0) // Vertex CC2_300 = 69 
+
+//Plane D:
+//Top of stator block#6 : sector without baffle 300-360 deg
+(1.5                  -2.59807621135331                 0.5) // Vertex DD0_300 = 70 
+(3          9.92335295691309e-15         0.5) // Vertex DD2_300 = 71 
+
+//Plane C:
+//Bottom of stator block#7 : sector with baffle 0-60 deg
+(4                            0                           0.0) // Vertex C0_000 = 72 
+(4.9999890337769                   0.0104719678560969                  0.0) // Vertex C1_000 = 73 
+(1.99999999999999                    3.46410161513776                   0.0) // Vertex C2_000 = 74 
+(2.49999999999999          4.32488153796636          0.0) // Vertex C3_000 = 75 
+
+//Plane D:
+//Top of stator block#7 : sector with baffle 0-60 deg
+(4                            0                           0.5) // Vertex D0_000 = 76 
+(4.9999890337769                   0.0104719678560969                  0.5) // Vertex D1_000 = 77 
+(1.99999999999999                    3.46410161513776                   0.5) // Vertex D2_000 = 78 
+(2.49999999999999          4.32488153796636          0.5) // Vertex D3_000 = 79 
+
+
+//Plane C:
+//Bottom of stator block#8 : sector with baffle 60-120 deg
+(1.99999999999999                    3.46410161513776                   0.0) // Vertex C0_060 = 80 
+(2.49092552669744           4.33535350582246          0.0) // Vertex C1_060 = 81 
+(-2.00000000000002            3.46410161513775           0.0) // Vertex C2_060 = 82 
+(-2.50000000000002  4.33535350582244  0.0) // Vertex C3_060 = 83 
+
+//Plane D:
+//Top of stator block#8 : sector with baffle 60-120 deg
+(1.99999999999999                    3.46410161513776                   0.5) // Vertex D0_060 = 84 
+(2.49092552669744           4.33535350582246          0.5) // Vertex D1_060 = 85 
+(-2.00000000000002            3.46410161513775           0.5) // Vertex D2_060 = 86 
+(-2.50000000000002  4.33535350582244  0.5) // Vertex D3_060 = 87 
+
+//Plane C:
+//Bottom of stator block#9 : sector with baffle 120-180 deg
+(-2.00000000000002                   3.46410161513775                  0.0) // Vertex C0_120 = 88 
+(-2.50906350707946          4.32488153796634         0.0) // Vertex C1_120 = 89 
+(-4           -2.79318507107451e-14          0.0) // Vertex C2_120 = 90 
+(-5 0.0104719678560613 0.0) // Vertex C3_120 = 91 
+
+//Plane D:
+//Top of stator block#9 : sector with baffle 120-180 deg
+(-2.00000000000002                   3.46410161513775                  0.5) // Vertex D0_120 = 92 
+(-2.50906350707946          4.32488153796634         0.5) // Vertex D1_120 = 93 
+(-4           -2.79318507107451e-14          0.5) // Vertex D2_120 = 94 
+(-5 0.0104719678560613 0.5) // Vertex D3_120 = 95 
+
+//Plane C:
+//Bottom of stator block#10 : sector with baffle 180-240 deg
+(-4                   1.29243565954607e-14                  0.0) // Vertex C0_180 = 96 
+(-4.9999890337769          -0.0104719678560801         0.0) // Vertex C1_180 = 97 
+(-2           -3.46410161513775          0.0) // Vertex C2_180 = 98 
+(-2.50000000000001 -4.32488153796635 0.0) // Vertex C3_180 = 99 
+
+//Plane D:
+//Top of stator block#10 : sector with baffle 180-240 deg
+(-4                   1.29243565954607e-14                  0.5) // Vertex D0_180 = 100 
+(-4.9999890337769          -0.0104719678560801         0.5) // Vertex D1_180 = 101 
+(-2           -3.46410161513775          0.5) // Vertex D2_180 = 102 
+(-2.50000000000001 -4.32488153796635 0.5) // Vertex D3_180 = 103 
+
+//Plane C:
+//Bottom of stator block#11 : sector with baffle 240-300 deg
+(-2                   -3.46410161513775                  0.0) // Vertex C0_240 = 104 
+(-2.49092552669746          -4.33535350582245         0.0) // Vertex C1_240 = 105 
+(2           -3.46410161513775          0.0) // Vertex C2_240 = 106 
+(2.5 -4.33535350582245 0.0) // Vertex C3_240 = 107 
+
+//Plane D:
+//Top of stator block#11 : sector with baffle 240-300 deg
+(-2                   -3.46410161513775                  0.5) // Vertex D0_240 = 108 
+(-2.49092552669746          -4.33535350582245         0.5) // Vertex D1_240 = 109 
+(2           -3.46410161513775          0.5) // Vertex D2_240 = 110 
+(2.5 -4.33535350582245 0.5) // Vertex D3_240 = 111 
+
+//Plane C:
+//Bottom of stator block#12 : sector with baffle 300-360 deg
+(2                   -3.46410161513775                  0.0) // Vertex C0_300 = 112 
+(2.50906350707945          -4.32488153796635         0.0) // Vertex C1_300 = 113 
+(4           1.32311372758841e-14          0.0) // Vertex C2_300 = 114 
+(5 -0.0104719678560797 0.0) // Vertex C3_300 = 115 
+
+//Plane D:
+//Top of stator block#12 : sector with baffle 300-360 deg
+(2                   -3.46410161513775                  0.5) // Vertex D0_300 = 116 
+(2.50906350707945          -4.32488153796635         0.5) // Vertex D1_300 = 117 
+(4           1.32311372758841e-14          0.5) // Vertex D2_300 = 118 
+(5 -0.0104719678560797 0.5) // Vertex D3_300 = 119 
+
+);
+
+blocks
+(
+    // Rotor
+    hex ( 0  1   9   2  4  5   13   6 ) ( 8  27 4 )  simpleGrading (1 1 1.0)
+    hex ( 8  9   17   10  12  13   21   14 ) ( 8  27 4 )  simpleGrading (1 1 1.0)
+    hex ( 16  17   25   18  20  21   29   22 ) ( 8  27 4 )  simpleGrading (1 1 1.0)
+    hex ( 24  25   1   26  28  29   5   30 ) ( 8  27 4 )  simpleGrading (1 1 1.0)
+
+    hex ( 1  32  36  9  5  34  38  13 ) ( 8  27 4 )  simpleGrading (1 1 1.0)
+    hex ( 9  36  40  17  13  38  42  21 ) ( 8  27 4 )  simpleGrading (1 1 1.0)
+    hex ( 17  40  44  25  21  42  46  29 ) ( 8  27 4 )  simpleGrading (1 1 1.0)
+    hex ( 25  44  32  1  29  46  34  5 ) ( 8  27 4 )  simpleGrading (1 1 1.0)
+
+    // Stator
+    hex ( 48 72  80  52 50 76  84  54 ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+    hex ( 52 80  88  56 54 84  92  58 ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+    hex ( 56 88  96  60 58 92  100  62 ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+    hex ( 60 96  104  64 62 100  108  66 ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+    hex ( 64 104  112  68 66 108  116  70 ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+    hex ( 68 112  72  48 70 116  76  50 ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+
+    hex ( 72  73  75  80  76  77  79  84  ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+    hex ( 80  81  83  88  84  85  87  92  ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+    hex ( 88  89  91  96  92  93  95  100  ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+    hex ( 96  97  99  104  100  101  103  108  ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+    hex ( 104  105  107  112  108  109  111  116  ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+    hex ( 112  113  115  72  116  117  119  76  ) ( 8  18 4 ) simpleGrading (1 1 1.0)
+);
+
+edges
+(
+    // --- PLANE A: Bottom of rotor block#1
+    arc  0 2   (0.707106781186546          0.707106781186549          0.0)
+    arc  1 9   (1.41421356237309          1.4142135623731          0.0)
+
+    // --- PLANE B: Top of rotor block#1
+    arc  4 6   (0.707106781186546          0.707106781186549          0.5)
+    arc  5 13   (1.41421356237309          1.4142135623731          0.5)
+
+
+    // --- PLANE A: Bottom of rotor block#2
+    arc  8 10   (-0.707106781186551  0.707106781186544  0.0)
+    arc  9 17   (-1.4142135623731  1.41421356237309  0.0)
+
+    // --- PLANE B: Top of rotor block#2
+    arc  12 14   (-0.707106781186551  0.707106781186544  0.5)
+    arc  13 21   (-1.4142135623731  1.41421356237309  0.5)
+
+    // --- PLANE A: Bottom of rotor block#3
+    arc  16 18   (-0.707106781186549 -0.707106781186546 0.0)
+    arc  17 25   (-1.4142135623731 -1.41421356237309 0.0)
+
+    // --- PLANE B: Top of rotor block#3
+    arc  20 22   (-0.707106781186549 -0.707106781186546 0.5)
+    arc  21 29   (-1.4142135623731 -1.41421356237309 0.5)
+
+    // --- PLANE A: Bottom of rotor block#4
+    arc  24 26   (0.707106781186549 -0.707106781186546 0.0)
+    arc  25 1   (1.4142135623731 -1.41421356237309 0.0)
+
+    // --- PLANE B: Top of rotor block#4
+    arc  28 30   (0.707106781186549 -0.707106781186546 0.5)
+    arc  29 5   (1.4142135623731 -1.41421356237309 0.5)
+
+
+    // --- PLANE A: Bottom of rotor block#5
+    arc  32 36 (2.12132034355964          2.12132034355965          0.0)
+
+    // --- PLANE B: Top of rotor block#5
+    arc  34 38 (2.12132034355964          2.12132034355965          0.5)
+
+    // --- PLANE A: Bottom of rotor block#6
+    arc  36 40 (-2.12132034355965  2.12132034355963  0.0)
+
+    // --- PLANE B: Top of rotor block#6
+    arc  38 42 (-2.12132034355965  2.12132034355963  0.5)
+
+    // --- PLANE A: Bottom of rotor block#7
+    arc  40 44 (-2.12132034355965 -2.12132034355964 0.0)
+
+    // --- PLANE B: Top of rotor block#7
+    arc  42 46 (-2.12132034355965 -2.12132034355964 0.5)
+
+    // --- PLANE A: Bottom of rotor block#8
+    arc  44 32 (2.12132034355965 -2.12132034355964 0.0)
+
+    // --- PLANE B: Top of rotor block#8
+    arc  46 34 (2.12132034355965 -2.12132034355964 0.5)
+
+
+
+
+    // --- PLANE C: Bottom of stator block#1
+    arc  48 52  (2.59807621135331           1.5         0.0)
+
+    // --- PLANE D: Top of stator block#1
+    arc  50 54  (2.59807621135331           1.5         0.5)
+
+    // --- PLANE C: Bottom of stator block#2
+    arc  52 56  (-1.04744440165294e-14   3 0.0)
+
+    // --- PLANE D: Top of stator block#2
+    arc  54 58  (-1.04744440165294e-14   3 0.5)
+
+    // --- PLANE C: Bottom of stator block#3
+    arc  56 60  (-2.59807621135332  1.49999999999998 0.0)
+
+    // --- PLANE D: Top of stator block#3
+    arc  58 62  (-2.59807621135332  1.49999999999998 0.5)
+
+    // --- PLANE C: Bottom of stator block#4
+    arc  60 64  (-2.59807621135332  -1.49999999999999 0.0)
+
+    // --- PLANE D: Top of stator block#4
+    arc  62 66  (-2.59807621135332  -1.49999999999999 0.5)
+
+    // --- PLANE C: Bottom of stator block#5
+    arc  64 68  (-5.51091059616309e-16  -3 0.0)
+
+    // --- PLANE D: Top of stator block#5
+    arc  66 70  (-5.51091059616309e-16  -3 0.5)
+
+    // --- PLANE C: Bottom of stator block#6
+    arc  68 48  (2.59807621135332  -1.49999999999999 0.0)
+
+    // --- PLANE D: Top of stator block#6
+    arc  70 50  (2.59807621135332  -1.49999999999999 0.5)
+
+    // --- PLANE C: Bottom of stator block#7
+    arc  72 80   (3.46410161513775          2          0.0)
+    arc  73 75   (4.33012701892219          2.5          0.0)
+
+    // --- PLANE D: Top of stator block#7
+    arc  76 84   (3.46410161513775          2          0.5)
+    arc  77 79   (4.33012701892219          2.5          0.5)
+
+    // --- PLANE C: Bottom of stator block#8
+    arc  80 88   (-1.39659253553725e-14  4  0.0)
+    arc  81 83   (-1.74574066942157e-14  5  0.0)
+
+    // --- PLANE D: Top of stator block#8
+    arc  84 92   (-1.39659253553725e-14  4  0.5)
+    arc  85 87   (-1.74574066942157e-14  5  0.5)
+
+    // --- PLANE C: Bottom of stator block#9
+    arc  88 96   (-3.46410161513777 1.99999999999998 0.0)
+    arc  89 91   (-4.33012701892221 2.49999999999997 0.0)
+
+    // --- PLANE D: Top of stator block#9
+    arc  92 100   (-3.46410161513776 -1.99999999999999 0.5)
+    arc  93 95   (-4.3301270189222 -2.49999999999999 0.5)
+
+    // --- PLANE C: Bottom of stator block#10
+    arc  96 104   (-7.34788079488412e-16 -4 0.0)
+    arc  97 99   (-9.18485099360515e-16 -5 0.0)
+
+    // --- PLANE D: Top of stator block#10
+    arc  100 108   (-7.34788079488412e-16 -4 0.5)
+    arc  101 103   (-9.18485099360515e-16 -5 0.5)
+
+    // --- PLANE C: Bottom of stator block#11
+    arc  104 112   (3.46410161513776 -1.99999999999999 0.0)
+    arc  105 107   (4.3301270189222 -2.49999999999999 0.0)
+
+    // --- PLANE D: Top of stator block#11
+    arc  108 116   (3.46410161513776 -1.99999999999999 0.5)
+    arc  109 111   (4.3301270189222 -2.49999999999999 0.5)
+
+    // --- PLANE C: Bottom of stator block#12
+    arc  112 72   (3.46410161513775 2.00000000000002 0.0)
+    arc  113 115   (4.33012701892218 2.50000000000002 0.0)
+
+    // --- PLANE D: Top of stator block#12
+    arc  116 76   (3.46410161513775 2.00000000000002 0.5)
+    arc  117 119   (4.33012701892218 2.50000000000002 0.5)
+
+);
+
+boundary
+(
+    inlet
+    {
+        type patch;
+        faces
+        (
+            ( 0 4 6 2 )
+            ( 8 12 14 10 )
+            ( 16 20 22 18 )
+            ( 24 28 30 26 )
+        );
+    }
+
+    outlet
+    {
+        type patch;
+        faces
+        (
+            ( 73 75 79 77 )
+            ( 81 83 87 85 )
+            ( 89 91 95 93 )
+            ( 97 99 103 101 )
+            ( 105 107 111 109 )
+            ( 113 115 119 117 )
+        );
+    }
+
+    impellerWall
+    {
+        type wall;
+        faces
+        (
+            ( 0 1 5 4 )
+            ( 8 9 13 12 )
+            ( 16 17 21 20 )
+            ( 24 25 29 28 )
+
+            ( 2 6 13 9 )
+            ( 10 14 21 17 )
+            ( 18 22 29 25 )
+            ( 26 30 5 1 )
+
+        );
+    }
+
+    baffleWall
+    {
+        type wall;
+        faces
+        (
+            ( 72 73 77 76 )
+            ( 80 81 85 84 )
+            ( 88 89 93 92 )
+            ( 96 97 101 100 )
+            ( 104 105 109 108 )
+            ( 112 113 117 116 )
+
+            ( 80 84 79 75 )
+            ( 88 92 87 83 )
+            ( 96 100 95 91 )
+            ( 104 108 103 99 )
+            ( 112 116 111 107 )
+            ( 72 76 119 115 )
+        );
+    }
+
+
+    insideSlider
+    {
+        type ggi;
+        shadowPatch     outsideSlider;
+        zone            insideZone;
+        bridgeOverlap   false;
+
+        faces
+        (
+            ( 32 36 38 34 )
+            ( 36 40 42 38 )
+            ( 40 44 46 42 )
+            ( 44 32 34 46 )
+        );
+    }
+
+    outsideSlider
+    {
+        type            ggi;
+        shadowPatch     insideSlider;
+        zone            outsideZone;
+        bridgeOverlap   false;
+
+        faces
+        (
+            ( 48 50 54 52 )
+            ( 52 54 58 56 )
+            ( 56 58 62 60 )
+            ( 60 62 66 64 )
+            ( 64 66 70 68 )
+            ( 68 70 50 48 )
+        );
+    }
+);
+
+mergePatchPairs
+(
+);
+
+
+// ************************************************************************* //

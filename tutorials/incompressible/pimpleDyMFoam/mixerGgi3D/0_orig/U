@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inlet
+    {
+        //type            surfaceNormalFixedValue;
+        //refValue        uniform -1;
+        //value           uniform (0 0 0);
+        type            swirlInletVelocity;
+        axis            (0 0 1);
+        origin          (0 0 0);
+        axialVelocity   constant 0;
+        radialVelocity  constant 1;
+        tangentialVelocity  constant 0;
+        value           uniform (0 0 0);
+    }
+    outlet
+    {
+        type            inletOutlet;
+        inletValue      uniform (0 0 0);
+        // type            zeroGradient;
+        value           uniform (0 0 0);
+    }
+    impellerWall
+    {
+        type            movingWallVelocity;
+        value           uniform (0 0 0);
+    }
+    baffleWall
+    {
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    insideSlider
+    {
+        type            ggi;
+        value           uniform (0 0 0);
+    }
+    outsideSlider
+    {
+        type            ggi;
+        value           uniform (0 0 0);
+    }
+    defaultFaces
+    {
+        type            symmetryPlane;
+    }
+}
+
+
+// ************************************************************************* //
