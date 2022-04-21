@@ -230,10 +230,8 @@ void Foam::totalPressureFvPatchScalarField::updateCoeffs(const vectorField& Up)
     }
     else
     {
-        FatalErrorIn
-        (
-            "totalPressureFvPatchScalarField::updateCoeffs()"
-        )   << " rho or psi set inconsistently, rho = " << rhoName_
+        FatalErrorInFunction
+            << " rho or psi set inconsistently, rho = " << rhoName_
             << ", psi = " << psiName_ << ".\n"
             << "    Set either rho or psi or neither depending on the "
                "definition of total pressure." << nl
