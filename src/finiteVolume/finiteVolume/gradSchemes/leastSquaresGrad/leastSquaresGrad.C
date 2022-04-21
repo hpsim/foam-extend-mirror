@@ -97,9 +97,7 @@ leastSquaresGrad<Type>::calcGrad
 
     // updateCoupledPatchFields for patchNeighbourField update
     // HJ, 10/Sep/2021
-    GeometricField<Type, fvPatchField, volMesh>& cvsf =
-        const_cast<GeometricField<Type, fvPatchField, volMesh>&>(vsf);
-    cvsf.boundaryField().updateCoupledPatchFields();
+    vsf.boundaryField().updateCoupledPatchFields();
 
     // Get access to internal field
 

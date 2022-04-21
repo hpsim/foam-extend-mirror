@@ -58,6 +58,10 @@ Foam::tmp<Foam::surfaceScalarField> Foam::harmonic<Type>::weights
         )
     );
 
+    // updateCoupledPatchFields for patchNeighbourField update
+    // HJ, 21/Apr/2022
+    phi.boundaryField().updateCoupledPatchFields();
+    
     const surfaceScalarField& deltaCoeffs = this->mesh().deltaCoeffs();
     const surfaceScalarField& weights = this->mesh().weights();
 
