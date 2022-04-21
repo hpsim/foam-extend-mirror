@@ -41,26 +41,18 @@ Foam::tmp<Foam::Field<Type> > Foam::ggiPolyPatch::fastExpand
     // with communication
     if (ff.size() != size())
     {
-        FatalErrorIn
-        (
-            "tmp<Field<Type> > ggiPolyPatch::fastExpand\n"
-            "(\n"
-            "    const Field<Type>& ff\n"
-            ") const"
-        )   << "Incorrect patch field size.  Field size: "
+        FatalErrorInFunction
+            << "Incorrect patch field size for fastExpand.  Field size: "
             << ff.size() << " patch size: " << size()
+            << " for patch pair: " << this->name() << " " 
+            << this->shadowName()
             << abort(FatalError);
     }
 
     if (localParallel())
     {
-        FatalErrorIn
-        (
-            "tmp<Field<Type> > ggiPolyPatch::fastExpand"
-            "("
-            "    const Field<Type>& ff"
-            ") const"
-        )   << "Requested expand on local parallel.  This is not allowed"
+        FatalErrorInFunction
+            << "Requested expand on local parallel.  This is not allowed"
             << abort(FatalError);
     }
 
@@ -124,14 +116,11 @@ Foam::tmp<Foam::Field<Type> > Foam::ggiPolyPatch::interpolate
     // Check and expand the field from patch size to zone size
     if (ff.size() != shadow().size())
     {
-        FatalErrorIn
-        (
-            "tmp<Field<Type> > ggiPolyPatch::interpolate\n"
-            "(\n"
-            "    const Field<Type>& ff\n"
-            ") const"
-        )   << "Incorrect slave patch field size.  Field size: "
+        FatalErrorInFunction
+            << "Incorrect slave patch field size.  Field size: "
             << ff.size() << " patch size: " << shadow().size()
+            << " for patch pair: " << this->name() << " " 
+            << this->shadowName()
             << abort(FatalError);
     }
 
@@ -210,15 +199,12 @@ void Foam::ggiPolyPatch::setUncoveredFaces
     // Check and expand the field from patch size to zone size
     if (ff.size() != size())
     {
-        FatalErrorIn
-        (
-            "template<class Type> void ggiPolyPatch::setUncoveredFaces\n"
-            "(\n"
-            "    const Field<Type>& fieldToSet,\n"
-            "    Field<Type>& ff\n"
-            ") const"
-        )   << "Incorrect patch field size for setting.  Field size: "
+        FatalErrorInFunction
+            << "Incorrect patch field size for setting uncovered faces.  "
+            << "Field size: "
             << ff.size() << " patch size: " << size()
+            << " for patch pair: " << this->name() << " " 
+            << this->shadowName()
             << abort(FatalError);
     }
 
@@ -277,15 +263,11 @@ void Foam::ggiPolyPatch::setPartialFaces
     // Check and expand the field from patch size to zone size
     if (ff.size() != size())
     {
-        FatalErrorIn
-        (
-            "template<class Type> void ggiPolyPatch::setPartialFaces\n"
-            "(\n"
-            "    const Field<Type>& fieldToSet,\n"
-            "    Field<Type>& ff\n"
-            ") const"
-        )   << "Incorrect patch field size for setting.  Field size: "
-            << ff.size() << " patch size: " << size()
+        FatalErrorInFunction
+            << "Incorrect patch field size for setting partial faces.  "
+            << "Field size: " << ff.size() << " patch size: " << size()
+            << " for patch pair: " << this->name() << " " 
+            << this->shadowName()
             << abort(FatalError);
     }
 
@@ -340,14 +322,11 @@ void Foam::ggiPolyPatch::scalePartialFaces(Field<Type>& ff) const
     // Check and expand the field from patch size to zone size
     if (ff.size() != size())
     {
-        FatalErrorIn
-        (
-            "template<class Type> ggiPolyPatch::scalePartialFaces\n"
-            "(\n"
-            "    Field<Type>& ff,\n"
-            ") const"
-        )   << "Incorrect patch field size for scaling.  Field size: "
+        FatalErrorInFunction
+            << "Incorrect patch field size for scaling.  Field size: "
             << ff.size() << " patch size: " << size()
+            << " for patch pair: " << this->name() << " " 
+            << this->shadowName()
             << abort(FatalError);
     }
 
@@ -404,16 +383,12 @@ void Foam::ggiPolyPatch::addToPartialFaces
     // Check and expand the field from patch size to zone size
     if (ff.size() != size())
     {
-        FatalErrorIn
-        (
-            "template<class Type> ggiPolyPatch::addToPartialFaces\n"
-            "(\n"
-            "    const Field<Type>& fieldToAdd,\n"
-            "    Field<Type>& ff,\n"
-            ") const"
-        )   << "Incorrect patch field size for adding.  Field size: "
+        FatalErrorInFunction
+            << "Incorrect patch field size for adding.  Field size: "
             << ff.size() << " field to add size: "
             << fieldToAdd.size() << " patch size: " << size()
+            << " for patch pair: " << this->name() << " " 
+            << this->shadowName()
             << abort(FatalError);
     }
 
