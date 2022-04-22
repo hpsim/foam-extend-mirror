@@ -358,7 +358,7 @@ updateCoupledPatchFields() const
         }
     }
 
-    reduce(couplesUpdated, orOp<bool>());
+    reduce(couplesUpdated, andOp<bool>());
 
     // Update couples if not updated
     if (!couplesUpdated)
