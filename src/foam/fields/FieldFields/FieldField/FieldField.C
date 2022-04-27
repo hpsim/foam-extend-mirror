@@ -291,6 +291,9 @@ tmp<FieldField<Field, Type> > FieldField<Field, Type>::T() const
     return transpose;
 }
 
+template<template<class> class Field, class Type>
+void FieldField<Field, Type>::clearCaches()
+{}
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 

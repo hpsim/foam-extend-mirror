@@ -436,6 +436,10 @@ public:
                 const Pstream::commsTypes commsType = Pstream::blocking
             );
 
+            //- Clear field caches
+            virtual void clearCaches()
+            {}
+
 
             // Decoupled matrix coefficients
 

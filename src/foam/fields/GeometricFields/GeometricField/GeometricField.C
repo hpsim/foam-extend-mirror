@@ -968,6 +968,14 @@ Foam::word Foam::GeometricField<Type, PatchField, GeoMesh>::select
 
 
 template<class Type, template<class> class PatchField, class GeoMesh>
+void Foam::GeometricField<Type, PatchField, GeoMesh>::clearCaches()
+{
+    // Nothing to do for the main field; clear the boundaryField caches.
+    this->boundaryField().clearCaches();
+}
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
 void Foam::GeometricField<Type, PatchField, GeoMesh>::writeMinMax
 (
     Ostream& os

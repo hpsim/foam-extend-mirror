@@ -89,6 +89,7 @@ public:
         {
             df1.rename(name);
             df1.dimensions().reset(dimensions);
+            df1.clearCaches();
             return tdf1;
         }
         else
@@ -184,6 +185,7 @@ public:
         {
             df2.rename(name);
             df2.dimensions().reset(dimensions);
+            df2.clearCaches();
             return tdf2;
         }
         else
@@ -240,6 +242,7 @@ public:
         {
             df1.rename(name);
             df1.dimensions().reset(dimensions);
+            df1.clearCaches();
             return tdf1;
         }
         else
@@ -298,12 +301,14 @@ public:
         {
             df1.rename(name);
             df1.dimensions().reset(dimensions);
+            df1.clearCaches();
             return tdf1;
         }
         else if (tdf2.isTmp())
         {
             df2.rename(name);
             df2.dimensions().reset(dimensions);
+            df2.clearCaches();
             return tdf2;
         }
         else
