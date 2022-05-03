@@ -253,10 +253,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~PointPatchField()
-        {}
+    //- Destructor
+    virtual ~PointPatchField() = default;
 
 
     // Member functions
@@ -473,7 +471,7 @@ public:
             }
 
         //- Clear field caches
-        void clearCaches()
+        virtual void clearCaches() const
         {}
 
 

@@ -110,13 +110,23 @@ public:
         }
 
 
-    // Destructor
-
-        virtual ~tetPolyPatchField()
-        {}
+    //- Destructor
+    virtual ~tetPolyPatchField() = default;
 
 
     // Member operators
+
+        virtual void operator=(const tetPolyPatchField& pf)
+        {
+            PointPatchField
+            <
+                Foam::tetPolyPatchField,
+                tetPointMesh,
+                tetPolyPatch,
+                Foam::tetFemMatrix,
+                Type
+            >::operator=(pf);
+        }
 
         virtual void operator=(const Type& t)
         {

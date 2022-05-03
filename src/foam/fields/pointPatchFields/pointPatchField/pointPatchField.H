@@ -109,11 +109,22 @@ public:
 
 
     //- Destructor
-    virtual ~pointPatchField()
-    {}
+    virtual ~pointPatchField() = default;
 
 
     // Member operators
+
+        virtual void operator=(const pointPatchField& pf)
+        {
+            PointPatchField
+            <
+                Foam::pointPatchField,
+                pointMesh,
+                pointPatch,
+                DummyMatrix,
+                Type
+            >::operator=(pf);
+        }
 
         virtual void operator=(const Type& t)
         {
