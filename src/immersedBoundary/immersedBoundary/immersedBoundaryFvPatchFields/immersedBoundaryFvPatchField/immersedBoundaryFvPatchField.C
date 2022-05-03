@@ -192,11 +192,8 @@ void immersedBoundaryFvPatchField<Type>::evaluate
     // Use internal values
     Field<Type>::operator=(this->patchInternalField());
 
-    // Get non-constant reference to internal field
-    Field<Type>& intField = const_cast<Field<Type>&>(this->internalField());
-
     // Set dead values
-    this->setDeadValues(intField);
+    this->setDeadValues(*this);
 
     fvPatchField<Type>::evaluate();
 }

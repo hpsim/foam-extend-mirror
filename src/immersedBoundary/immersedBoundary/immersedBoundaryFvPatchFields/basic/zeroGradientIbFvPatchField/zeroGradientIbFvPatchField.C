@@ -211,11 +211,8 @@ void zeroGradientIbFvPatchField<Type>::evaluate
 {
     this->updateIbValues();
 
-    // Get non-constant reference to internal field
-    Field<Type>& intField = const_cast<Field<Type>&>(this->internalField());
-
     // Set dead value
-    this->setDeadValues(intField);
+    this->setDeadValues(*this);
 
     // Evaluate fixed value condition
     zeroGradientFvPatchField<Type>::evaluate();

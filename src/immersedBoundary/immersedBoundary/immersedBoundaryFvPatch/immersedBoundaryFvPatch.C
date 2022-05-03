@@ -94,8 +94,7 @@ void Foam::immersedBoundaryFvPatch::makeC(slicedVolVectorField& C) const
 
 
 void Foam::immersedBoundaryFvPatch::makeV(scalarField& V) const
-{
-}
+{}
 
 
 void Foam::immersedBoundaryFvPatch::updatePhi
@@ -283,8 +282,10 @@ void Foam::immersedBoundaryFvPatch::makeDeltaCoeffs
 
 void Foam::immersedBoundaryFvPatch::makeCorrVecs(fvsPatchVectorField& cv) const
 {
-    // Set patch non-orthogonality correction to zero
+    // Set patch non-orthogonality correction to zero on the patch
     cv = vector::zero;
+
+    // Kill correction vectors in dead cells?  HJ, 3/May/2022
 }
 
 

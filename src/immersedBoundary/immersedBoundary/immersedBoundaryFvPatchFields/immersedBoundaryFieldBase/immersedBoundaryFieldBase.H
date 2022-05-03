@@ -82,7 +82,8 @@ public:
         );
 
 
-    //- Destructor - default
+    //- Destructor
+    ~immersedBoundaryFieldBase() = default;
 
 
     // Member Functions
@@ -120,8 +121,8 @@ public:
                 return deadValue_;
             }
 
-            //- Set values in dead cells
-            void setDeadValues(Field<Type>& psiI) const;
+            //- Set values in dead internal field cells
+            void setDeadValues(fvPatchField<Type>& patchPsi) const;
 
             //- Set matrix constraints in dead cells
             void setDeadValues(fvMatrix<Type>& matrix) const;

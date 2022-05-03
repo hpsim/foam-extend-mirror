@@ -209,11 +209,8 @@ void Foam::movingImmersedBoundaryVelocityFvPatchVectorField::evaluate
     const Pstream::commsTypes
 )
 {
-    // Get non-constant reference to internal field
-    vectorField& intField = const_cast<vectorField&>(this->internalField());
-
     // Set dead value
-    this->setDeadValues(intField);
+    this->setDeadValues(*this);
 
     // Evaluate mixed condition
     fixedValueFvPatchVectorField::evaluate();

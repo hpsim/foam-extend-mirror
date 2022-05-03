@@ -47,13 +47,17 @@ Foam::immersedBoundaryFieldBase<Type>::immersedBoundaryFieldBase
 template<class Type>
 void Foam::immersedBoundaryFieldBase<Type>::setDeadValues
 (
-    Field<Type>& psiI
+    fvPatchField<Type>& patchPsi
 ) const
 {
     // Fix the value in dead cells
     if (setDeadValue_)
     {
+        // Get dead cell addressing
         const labelList& dc = ibPatch_.ibPolyPatch().deadCells();
+
+        // Get internal field
+        Field<Type>& psiI = const_cast<Field<Type>&>(patchPsi.internalField());
 
         forAll (dc, dcI)
         {

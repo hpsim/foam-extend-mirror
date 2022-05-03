@@ -141,8 +141,7 @@ public:
 
 
     //- Destructor
-    virtual ~fixedValueIbFvPatchField()
-    {}
+    virtual ~fixedValueIbFvPatchField() = default;
 
 
     // Member functions
