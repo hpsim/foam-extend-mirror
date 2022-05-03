@@ -185,11 +185,8 @@ void immersedBoundaryAlphatWallFunctionFvPatchScalarField::evaluate
         scalarField::operator=(patchInternalField());
     }
 
-    // Get non-constant reference to internal field
-    scalarField& intField = const_cast<scalarField&>(this->internalField());
-
     // Set dead value
-    this->setDeadValues(intField);
+    this->setDeadValues(*this);
 
     alphatWallFunctionFvPatchScalarField::evaluate(commsType);
 }

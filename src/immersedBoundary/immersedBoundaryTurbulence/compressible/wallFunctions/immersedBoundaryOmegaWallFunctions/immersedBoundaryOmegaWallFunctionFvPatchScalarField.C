@@ -239,11 +239,8 @@ void immersedBoundaryOmegaWallFunctionFvPatchScalarField::evaluate
         refValue() = patchInternalField();
     }
 
-    // Get non-constant reference to internal field
-    scalarField& intField = const_cast<scalarField&>(this->internalField());
-
-    // Set dead value
-    this->setDeadValues(intField);
+    // Set dead values
+    this->setDeadValues(*this);
 
     omegaWallFunctionFvPatchScalarField::evaluate(commsType);
 }

@@ -45,7 +45,7 @@ void immersedBoundaryKqRWallFunctionFvPatchField<Type>::checkType()
 {
     if (!this->patch().isWall())
     {
-        FatalErrorIn("immersedBoundaryKqRWallFunctionFvPatchField::checkType()")
+        FatalErrorInFunction
             << "Invalid wall function specification" << nl
             << "    Patch type for patch " << this->patch().name()
             << " must be wall" << nl
@@ -210,11 +210,8 @@ void immersedBoundaryKqRWallFunctionFvPatchField<Type>::evaluate
         Field<Type>::operator=(this->patchInternalField());
     }
 
-    // Get non-constant reference to internal field
-    Field<Type>& intField = const_cast<Field<Type>&>(this->internalField());
-
-    // Set dead value
-    this->setDeadValues(intField);
+    // Set dead values
+    this->setDeadValues(*this);
 
     kqRWallFunctionFvPatchField<Type>::evaluate(commsType);
 }
