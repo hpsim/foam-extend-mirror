@@ -324,12 +324,15 @@ void Foam::immersedBoundaryPolyPatch::calcImmersedBoundary() const
                 // strange arrangaments.
                 // Issue a warning, mark CUT and hope for the best.
                 // (IG 22/Nov/2018)
-                WarningInFunction
-                    << "Cannot find wet or dry neigbours! Cell C:"
-                    << C[cellI]
-                    << " Neighbours: WET:" << foundWetNei
-                    << ", DRY:" << foundDryNei
-                    << endl;
+                if (debug)
+                {
+                    WarningInFunction
+                        << "Cannot find wet or dry neigbours! Cell C:"
+                            << C[cellI]
+                            << " Neighbours: WET:" << foundWetNei
+                            << ", DRY:" << foundDryNei
+                            << endl;
+                }
 
                 intersectedCell[cellI] = immersedPoly::CUT;
                 nIntersectedCells++;
@@ -377,9 +380,6 @@ void Foam::immersedBoundaryPolyPatch::calcImmersedBoundary() const
 
     // Count interected cells
     label nIbCells = 0;
-
-    // Collect dead cells
-    boolList deadCells(mesh.nCells(), false);
 
     // At this point, all live cells are marked with 1
     // Intesect all cells that are marked for intersection
@@ -1233,8 +1233,8 @@ void Foam::immersedBoundaryPolyPatch::calcCorrectedGeometry() const
 
     vectorField& Sf =
         const_cast<vectorField&>(boundaryMesh().mesh().faceAreas());
-    
-    
+
+
     // Initialise IB patch face areas with the areas of the stand-alone patch
     // They will be corrected using the Marooney Maneouvre
     correctedIbPatchFaceAreasPtr_ = new vectorField(ibPatch().areas());
@@ -1348,11 +1348,14 @@ void Foam::immersedBoundaryPolyPatch::calcCorrectedGeometry() const
         // if (mag(curSumSf + ibSf[cutCellI]) > 1e-6*curSumMagSf)
         if (mag(curSumSf + ibSf[cutCellI]) > primitiveMesh::closedThreshold_)
         {
-            // Info<< "Marooney Maneouvre for cell " << ccc
-            //     << " error: " << curSumSf + ibSf[cutCellI] << " "
-            //     << " V: " << cutCellVolumes[cutCellI]
-            //     << " Sf: " << ibSf[cutCellI]
-            //     << " corr S: " << curSumSf << endl;
+            if (debug)
+            {
+                Pout<< "Marooney Maneouvre for cell " << ccc
+                    << " error: " << curSumSf + ibSf[cutCellI] << " "
+                    << " V: " << cutCellVolumes[cutCellI]
+                    << " Sf: " << ibSf[cutCellI]
+                    << " corr S: " << curSumSf << endl;
+            }
 
             nMarooneyCells++;
 
@@ -1392,7 +1395,7 @@ void Foam::immersedBoundaryPolyPatch::initAddressing()
     // interfere with other comms
     // HJ, 17/Sep/2021
     boundaryMesh().mesh().geometricD();
-    
+
     calcImmersedBoundary();
 }
 
@@ -1863,6 +1866,7 @@ void Foam::immersedBoundaryPolyPatch::moveTriSurfacePoints
         ibUpdateTimeIndex_ = boundaryMesh().mesh().time().timeIndex();
 
         deleteDemandDrivenData(oldIbPointsPtr_);
+
         Info<< "Storing old points for time index " << ibUpdateTimeIndex_
             << endl;
         oldIbPointsPtr_ = new pointField(oldPoints);

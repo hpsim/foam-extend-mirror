@@ -570,12 +570,12 @@ Foam::ImmersedCell<Distance>::ImmersedCell
     label nIntersections = 0;
 
     // Added collinearity check.  HJ, 8/Apr/2022
-    
+
     // Collect first intersection point as reference for colinearity check
     point refPoint;
     vector refVec;
     scalar minDot = GREAT;
-    
+
     forAll (depth_, pointI)
     {
         if (mag(depth_[pointI]) < absTol_)
@@ -604,7 +604,7 @@ Foam::ImmersedCell<Distance>::ImmersedCell
                 // Collect minimum dot-product
                 minDot = Foam::min(minDot, (refVec & otherVec));
             }
-                
+
             nIntersections++;
         }
 
@@ -735,10 +735,12 @@ Foam::ImmersedCell<Distance>::ImmersedCell
                 {
                     // Wet face area is greater than original face area
                     // This is a bad cut
-                    Info<< "Bad cell face cut: wet = ("
+#                   ifdef WET_DEBUG
+                    Pout<< "Bad cell face cut: wet = ("
                         << wetFace.mag(points_) << " "
                         << oldFaceArea
                         << ")" << endl;
+#                   endif
 
                     isBadCut_ = true;
                 }
@@ -762,10 +764,12 @@ Foam::ImmersedCell<Distance>::ImmersedCell
                 {
                     // Dry face area is greater than original face area
                     // This is a bad cut
-                    Info<< "Bad cell face cut: dry = ("
+#                   ifdef WET_DEBUG
+                    Pout<< "Bad cell face cut: dry = ("
                         << dryFace.mag(points_) << " "
                         << oldFaceArea
                         << ")" << endl;
+#                   endif
 
                     isBadCut_ = true;
                 }
@@ -864,7 +868,8 @@ Foam::ImmersedCell<Distance>::ImmersedCell
     }
     else
     {
-        Info<< "Bad cell cut: volume = (" << wetCut << " " << dryCut
+#       ifdef WET_DEBUG
+        Pout<< "Bad cell cut: volume = (" << wetCut << " " << dryCut
             << ") = " << wetCut + dryCut << nl
             // << "Points: " << nl << this->points() << nl
             // << "Faces: " << nl << this->faces() << nl
@@ -872,6 +877,7 @@ Foam::ImmersedCell<Distance>::ImmersedCell
             // << "Neighbour: " << nl << this->faceNeighbour() << nl
             // << "Cut (wet dry) = (" << isAllWet_ << " " << isAllDry_ << ")"
             << endl;
+#       endif
     }
 
     // Correction on cutting is not allowed, as it results in an open cell
