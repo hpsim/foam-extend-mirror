@@ -113,27 +113,26 @@ bool Foam::GeometricField<Type, PatchField, GeoMesh>::readIfPresent()
 {
     if (this->readOpt() == IOobject::MUST_READ)
     {
-        WarningIn
-        (
-            "GeometricField<Type, PatchField, GeoMesh>::readIfPresent()"
-        )   << "read option IOobject::MUST_READ "
+        WarningInFunction
+            << "read option IOobject::MUST_READ "
             << "suggests that a read constructor for field " << this->name()
             << " would be more appropriate." << endl;
     }
     else if (this->readOpt() == IOobject::READ_IF_PRESENT && this->headerOk())
     {
-        boundaryField_.transfer(readField(this->readStream(typeName))());
+        boundaryField_ = readField(this->readStream(typeName));
+
+        // Clear caches: boundary field has been transferred.
+        // HJ, 2/May/2022
+        this->clearCaches();
+
         this->close();
 
         // Check compatibility between field and mesh
         if (this->size() != GeoMesh::size(this->mesh()))
         {
-            FatalIOErrorIn
-            (
-                "GeometricField<Type, PatchField, GeoMesh>::"
-                "readIfPresent()",
-                this->readStream(typeName)
-            )   << "   number of field elements = " << this->size()
+            FatalIOErrorInFunction(this->readStream(typeName))
+                << "   number of field elements = " << this->size()
                 << " number of mesh elements = "
                 << GeoMesh::size(this->mesh())
                 << exit(FatalIOError);
@@ -434,11 +433,8 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 
     if (this->size() != GeoMesh::size(this->mesh()))
     {
-        FatalErrorIn
-        (
-            "GeometricField<Type, PatchField, GeoMesh>::GeometricField"
-            "(const IOobject&, const Mesh&, const dictionary&)"
-        )   << "   number of field elements = " << this->size()
+        FatalErrorInFunction
+            << "   number of field elements = " << this->size()
             << " number of mesh elements = " << GeoMesh::size(this->mesh())
             << exit(FatalIOError);
     }
@@ -867,10 +863,8 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::prevIter() const
 {
     if (!fieldPrevIterPtr_)
     {
-        FatalErrorIn
-        (
-            "GeometricField<Type, PatchField, GeoMesh>::prevIter() const"
-        )   << "previous iteration field" << endl << this->info() << endl
+        FatalErrorInFunction
+            << "previous iteration field" << endl << this->info() << endl
             << "  not stored."
             << "  Use field.storePrevIter() at start of iteration."
             << abort(FatalError);
@@ -968,7 +962,7 @@ Foam::word Foam::GeometricField<Type, PatchField, GeoMesh>::select
 
 
 template<class Type, template<class> class PatchField, class GeoMesh>
-void Foam::GeometricField<Type, PatchField, GeoMesh>::clearCaches()
+void Foam::GeometricField<Type, PatchField, GeoMesh>::clearCaches() const
 {
     // Nothing to do for the main field; clear the boundaryField caches.
     this->boundaryField().clearCaches();
@@ -1132,11 +1126,8 @@ void Foam::GeometricField<Type, PatchField, GeoMesh>::operator=
 {
     if (this == &gf)
     {
-        FatalErrorIn
-        (
-            "GeometricField<Type, PatchField, GeoMesh>::operator="
-            "(const GeometricField<Type, PatchField, GeoMesh>&)"
-        )   << "attempted assignment to self"
+        FatalErrorInFunction
+            << "attempted assignment to self"
             << abort(FatalError);
     }
 
@@ -1146,6 +1137,10 @@ void Foam::GeometricField<Type, PatchField, GeoMesh>::operator=
 
     dimensionedInternalField() = gf.dimensionedInternalField();
     boundaryField() = gf.boundaryField();
+
+    // Belts and braces: some code uses transfer(...) to avoid calling
+    // op=.  Force clearCaches()  HJ, 2/May/2022
+    // this->clearCaches();
 }
 
 
@@ -1157,11 +1152,8 @@ void Foam::GeometricField<Type, PatchField, GeoMesh>::operator=
 {
     if (this == &(tgf()))
     {
-        FatalErrorIn
-        (
-            "GeometricField<Type, PatchField, GeoMesh>::operator="
-            "(const tmp<GeometricField<Type, PatchField, GeoMesh> >&)"
-        )   << "attempted assignment to self"
+        FatalErrorInFunction
+            << "attempted assignment to self"
             << abort(FatalError);
     }
 
@@ -1174,13 +1166,20 @@ void Foam::GeometricField<Type, PatchField, GeoMesh>::operator=
     this->dimensions() = gf.dimensions();
 
     // This is dodgy stuff, don't try it at home.
-    internalField().transfer
-    (
-        const_cast<Field<Type>&>(gf.internalField())
-    );
+    // It hurt me.  HJ, 2/May/2022
+    // internalField().transfer
+    // (
+    //     const_cast<Field<Type>&>(gf.internalField())
+    // );
 
+    dimensionedInternalField() = gf.dimensionedInternalField();
     boundaryField() = gf.boundaryField();
 
+    // Belts and braces: some code uses transfer(...) to avoid calling
+    // op=.  Force clearCaches()  HJ, 2/May/2022
+    // this->clearCaches();
+
+    // Clear tmp
     tgf.clear();
 }
 
@@ -1211,6 +1210,11 @@ void Foam::GeometricField<Type, PatchField, GeoMesh>::operator==
     dimensionedInternalField() = gf.dimensionedInternalField();
     boundaryField() == gf.boundaryField();
 
+    // Belts and braces: some code uses transfer(...) to avoid calling
+    // op=.  Force clearCaches()  HJ, 2/May/2022
+    this->clearCaches();
+
+    // Clear tmp
     tgf.clear();
 }
 

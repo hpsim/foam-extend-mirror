@@ -346,7 +346,7 @@ public:
             }
 
             //- Clear caches
-            virtual void clearCaches();
+            virtual void clearCaches() const;
 
 
     // Member operators

@@ -436,8 +436,9 @@ public:
                 const Pstream::commsTypes commsType = Pstream::blocking
             );
 
-            //- Clear field caches
-            virtual void clearCaches()
+            //- Clear field caches.  Management for patchNeighbourField
+            //  for coupled patches involving communication
+            virtual void clearCaches() const
             {}
 
 

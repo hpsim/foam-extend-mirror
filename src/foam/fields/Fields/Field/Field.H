@@ -316,8 +316,9 @@ public:
         //- Return the field transpose (only defined for second rank tensors)
         tmp<Field<Type> > T() const;
 
-        //- Clear field caches
-        void clearCaches();
+        //- Clear field caches.  Note over-ride in patchFields
+        inline void clearCaches() const
+        {}
 
         //- Write the field as a dictionary entry
         void writeEntry(const word& keyword, Ostream& os) const;

@@ -219,7 +219,7 @@ public:
             blockInterfaces() const;
 
             //- Clear field caches
-            void clearCaches();
+            void clearCaches() const;
 
             //- Write boundary field as dictionary entry
             void writeEntry(const word& keyword, Ostream& os) const;
@@ -517,7 +517,7 @@ public:
         word select(bool final) const;
 
         //- Clear field caches
-        void clearCaches();
+        void clearCaches() const;
 
         //- Helper function to write the min and max to an Ostream
         void writeMinMax(Ostream& os) const;

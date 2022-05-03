@@ -37,7 +37,6 @@ namespace Foam
     defineTypeNameAndDebug(surfaceInterpolation, 0);
 }
 
-// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 // * * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * //
 
@@ -336,7 +335,7 @@ void Foam::surfaceInterpolation::makeMagLongDeltas() const
     const scalarField& magSf = mesh_.magSf().internalField();
 
     scalarField& mldIn = magLongDeltas.internalField();
-    
+
     forAll (owner, faceI)
     {
         // This must be the same as in surfaceInterpolation.C - but it is not!
@@ -424,25 +423,38 @@ void Foam::surfaceInterpolation::makeCorrectionVectors() const
         );
     }
 
+    // Set max non-orthogonality to zero
     scalar MaxNonOrthog = 0.0;
 
     // Calculate the non-orthogonality for meshes with 1 face or more
-    if (returnReduce(magSf.size(), sumOp<label>()) > 0)
+    if (!corrVecs.internalField().empty())
     {
-        MaxNonOrthog =
-            asin
-            (
-                min
-                (
-                    max(mag(corrVecs)).value(),
-                    1.0
-                )
-            )*180.0/mathematicalConstant::pi;
+        MaxNonOrthog = max(mag(corrVecs.internalField()));
+
+        forAll (corrVecs.boundaryField(), patchI)
+        {
+            if (!corrVecs.boundaryField()[patchI].empty())
+            {
+                MaxNonOrthog =
+                    max
+                    (
+                        MaxNonOrthog,
+                        max(mag(corrVecs.boundaryField()[patchI]))
+                    );
+            }
+        }
     }
+
+    reduce(MaxNonOrthog, maxOp<scalar>());
+
+    // Convert to angle
+    MaxNonOrthog =
+        asin(min(MaxNonOrthog, scalar(1)))*
+        180.0/mathematicalConstant::pi;
 
     if (debug)
     {
-        Info<< "surfaceInterpolation::makeCorrectionVectors() : "
+        InfoInFunction
             << "maximum non-orthogonality = " << MaxNonOrthog << " deg."
             << endl;
     }

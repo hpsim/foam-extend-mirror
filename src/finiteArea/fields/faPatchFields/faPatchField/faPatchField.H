@@ -362,6 +362,11 @@ public:
                 const Pstream::commsTypes commsType = Pstream::blocking
             );
 
+            //- Clear field caches.  Management for patchNeighbourField
+            //  for coupled patches involving communication
+            virtual void clearCaches() const
+            {}
+
 
             //- Return the matrix diagonal coefficients corresponding to the
             //  evaluation of the value of this patchField with given weights

@@ -354,16 +354,10 @@ void Field<Type>::map
 
     if (mapWeights.size() != mapAddressing.size())
     {
-        FatalErrorIn
-        (
-            "void Field<Type>::map\n"
-            "(\n"
-            "    const UList<Type>& mapF,\n"
-            "    const labelListList& mapAddressing,\n"
-            "    const scalarListList& mapWeights\n"
-            ")"
-        ) << "Weights and addressing map have different sizes.  Weights size: "
-            << mapWeights.size() << " map size: " << mapAddressing.size()
+        FatalErrorInFunction
+            << "Weights and addressing map have different sizes.  "
+            << "Weights size: " << mapWeights.size()
+            << " map size: " << mapAddressing.size()
             << abort(FatalError);
     }
 
@@ -593,10 +587,6 @@ tmp<Field<Type> > Field<Type>::T() const
 
 
 template<class Type>
-void Field<Type>::clearCaches()
-{}
-
-template<class Type>
 void Field<Type>::writeEntry(const word& keyword, Ostream& os) const
 {
     os.writeKeyword(keyword);
@@ -639,7 +629,7 @@ void Field<Type>::operator=(const Field<Type>& rhs)
 {
     if (this == &rhs)
     {
-        FatalErrorIn("Field<Type>::operator=(const Field<Type>&)")
+        FatalErrorInFunction
             << "attempted assignment to self"
             << abort(FatalError);
     }
@@ -667,15 +657,23 @@ void Field<Type>::operator=(const tmp<Field>& rhs)
 {
     if (this == &(rhs()))
     {
-        FatalErrorIn("Field<Type>::operator=(const tmp<Field>&)")
+        FatalErrorInFunction
             << "attempted assignment to self"
             << abort(FatalError);
     }
 
     // This is dodgy stuff, don't try it at home.
-    Field* fieldPtr = rhs.ptr();
-    List<Type>::transfer(*fieldPtr);
-    delete fieldPtr;
+    // It hurt me.  HJ, 2/May/2022
+    // Field* fieldPtr = rhs.ptr();
+    // List<Type>::transfer(*fieldPtr);
+    // delete fieldPtr;
+
+    // Field is transferred, avoiding assignment operators.
+    // This disables virtual functions, which breaks the code.
+    // Use normal assingment instead.  HJ, 3/May/2022
+    List<Type>::operator=(rhs());
+
+    rhs.clear();
 }
 
 

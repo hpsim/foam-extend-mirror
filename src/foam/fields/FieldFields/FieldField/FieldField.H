@@ -161,7 +161,8 @@ public:
         tmp<FieldField<Field, Type> > T() const;
 
        //- Clear field caches
-        void clearCaches();
+        void clearCaches() const;
+
 
     // Member operators
 

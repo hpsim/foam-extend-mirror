@@ -545,7 +545,7 @@ blockInterfaces() const
 template<class Type, template<class> class PatchField, class GeoMesh>
 void
 Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricBoundaryField::
-clearCaches()
+clearCaches() const
 {
     // Clear caches on all boundary patches
     forAll(*this, patchi)
@@ -553,6 +553,7 @@ clearCaches()
         this->operator[](patchi).clearCaches();
     }
 }
+
 
 template<class Type, template<class> class PatchField, class GeoMesh>
 void Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricBoundaryField::
