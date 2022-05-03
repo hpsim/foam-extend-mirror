@@ -202,9 +202,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~faMatrix();
+    //- Destructor
+    virtual ~faMatrix();
 
 
     // Member functions
