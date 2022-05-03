@@ -232,7 +232,7 @@ Foam::processorFvPatchField<Type>::patchNeighbourField() const
 
     if (debug)
     {
-        Pout << "Tracing processorFvPatchField: reusing cache : "
+        Pout<< "Tracing processorFvPatchField: reusing cache : "
             << this->dimensionedInternalField().name()
             << " on patch: " << this->patch().name()
             << endl;
@@ -302,10 +302,10 @@ void Foam::processorFvPatchField<Type>::evaluate
 {
     if (debug)
     {
-        Pout << "Tracing processorFvPatchField: updating cache: "
-        << this->dimensionedInternalField().name()
-        << " on patch: " << this->patch().name()
-        << endl;
+        Pout<< "Tracing processorFvPatchField: updating cache: "
+            << this->dimensionedInternalField().name()
+            << " on patch: " << this->patch().name()
+            << endl;
     }
 
     if (Pstream::parRun())
@@ -657,11 +657,11 @@ bool Foam::processorFvPatchField<Type>::ready() const
 }
 
 template<class Type>
-void Foam::processorFvPatchField<Type>::clearCaches()
+void Foam::processorFvPatchField<Type>::clearCaches() const
 {
     if (debug && !pnf_.empty())
     {
-        Pout << "Tracing processorFvPatchField: clearing cache: "
+        Pout<< "Tracing processorFvPatchField: clearing cache: "
             << this->dimensionedInternalField().name()
             << " on patch: " << this->patch().name()
             << endl;
@@ -845,7 +845,6 @@ void Foam::processorFvPatchField<Type>::operator/=
 }
 
 
-// Force an assignment, overriding fixedValue status
 template<class Type>
 void Foam::processorFvPatchField<Type>::operator==
 (

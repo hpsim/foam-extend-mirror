@@ -161,7 +161,7 @@ void Foam::fvMatrix<Type>::addBoundarySource
     {
         psi_.boundaryField().updateCoupledPatchFields();
     }
-    
+
     forAll (psi_.boundaryField(), patchI)
     {
         const fvPatchField<Type>& ptf = psi_.boundaryField()[patchI];
@@ -867,9 +867,9 @@ void Foam::fvMatrix<Type>::completeAssembly()
 
     if (debug)
     {
-        InfoIn("void Foam::fvMatrix<Type>::completeAssembly()")
+        InfoInFunction
             << "Completing matrix for equation " << this->psi().name()
-                << endl;
+            << endl;
     }
 
     assemblyCompleted_ = true;
@@ -930,7 +930,7 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Type>::A() const
         (
             IOobject
             (
-                "A("+psi_.name()+')',
+                "A(" + psi_.name() + ")",
                 psi_.instance(),
                 psi_.mesh(),
                 IOobject::NO_READ,
@@ -959,7 +959,7 @@ Foam::fvMatrix<Type>::H() const
         (
             IOobject
             (
-                "H("+psi_.name()+')',
+                "H(" + psi_.name() + ")",
                 psi_.instance(),
                 psi_.mesh(),
                 IOobject::NO_READ,
@@ -1085,7 +1085,7 @@ flux() const
         (
             IOobject
             (
-                "flux("+psi_.name()+')',
+                "flux(" + psi_.name() + ")",
                 psi_.instance(),
                 psi_.mesh(),
                 IOobject::NO_READ,
@@ -1110,7 +1110,7 @@ flux() const
     // in order to simplify handling of overset meshes
     // HJ, 29/May/2013
     psi_.boundaryField().updateCoupledPatchFields();
-    
+
     forAll (psi_.boundaryField(), patchI)
     {
         psi_.boundaryField()[patchI].patchFlux
@@ -1150,7 +1150,7 @@ jumpFlux() const
         (
             IOobject
             (
-                "flux("+psi_.name()+')',
+                "flux(" + psi_.name() + ")",
                 psi_.instance(),
                 psi_.mesh(),
                 IOobject::NO_READ,

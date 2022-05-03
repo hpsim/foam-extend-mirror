@@ -282,7 +282,7 @@ void fvMesh::makePhi() const
     {
         if (debug)
         {
-            InfoIn("void fvMesh::makePhi()")
+            InfoInFunction
                 << "Reading mesh fluxes" << endl;
         }
 
