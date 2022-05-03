@@ -70,13 +70,10 @@ class minMaxField
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        minMaxField
-        (
-            const minMaxField&
-        );
+        minMaxField(const minMaxField&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const minMaxField&);
+        void operator=(const minMaxField&) = delete;
 
 
 public:
@@ -97,8 +94,7 @@ public:
 
 
     //- Destructor
-    virtual ~minMaxField()
-    {}
+    virtual ~minMaxField() = default;
 
 
     // Member Functions
