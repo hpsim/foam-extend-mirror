@@ -64,6 +64,7 @@ Foam::tmp<Foam::Field<Type> > Foam::lduMatrix::H(const Field<Type>& psi) const
     return tHpsi;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::Field<Type> >
 Foam::lduMatrix::H(const tmp<Field<Type> >& tpsi) const
