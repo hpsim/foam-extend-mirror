@@ -1764,6 +1764,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     return (A - B);
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
 (
@@ -1774,6 +1775,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     checkMethod(tA(), B, "==");
     return (tA - B);
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1786,6 +1788,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     return (A - tB);
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
 (
@@ -1796,6 +1799,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     checkMethod(tA(), tB(), "==");
     return (tA - tB);
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1809,6 +1813,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     tC().source() += su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1824,6 +1829,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
 (
@@ -1837,6 +1843,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1851,6 +1858,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
 (
@@ -1864,6 +1872,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1879,6 +1888,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
 (
@@ -1891,6 +1901,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     tC().source() += A.psi().mesh().V()*su.value();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1938,6 +1949,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -1963,6 +1975,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -1976,6 +1989,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -1988,6 +2002,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC() += A;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2003,6 +2018,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2015,6 +2031,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC().source() -= su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2030,6 +2047,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2043,6 +2061,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2057,6 +2076,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2070,6 +2090,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2085,6 +2106,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2097,6 +2119,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC().source() -= su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2111,6 +2134,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2126,6 +2150,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2138,6 +2163,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC().source() -= su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2152,6 +2178,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2181,6 +2208,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2193,6 +2221,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC() -= B;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2208,6 +2237,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2222,6 +2252,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2234,6 +2265,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC().source() += su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2249,6 +2281,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2262,6 +2295,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2276,6 +2310,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2289,6 +2324,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2304,6 +2340,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2317,6 +2354,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC().source() -= su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2333,6 +2371,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2348,6 +2387,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2361,6 +2401,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC().source() -= su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2377,6 +2418,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2392,6 +2434,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2404,6 +2447,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC().source() -= su.value()*A.psi().mesh().V();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2418,6 +2462,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2430,6 +2475,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC().source() -= su.value()*A.psi().mesh().V();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2444,6 +2490,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2456,6 +2503,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC().source() += su.value()*tC().psi().mesh().V();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2470,6 +2518,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2483,6 +2532,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC().source() -= su.value()*A.psi().mesh().V();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2510,6 +2560,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     tC() *= dsf;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
@@ -2523,6 +2574,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
 (
@@ -2534,6 +2586,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     tC() *= tvsf;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
@@ -2547,6 +2600,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
 (
@@ -2558,6 +2612,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     tC() *= tdsf;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
@@ -2571,6 +2626,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
 (
@@ -2582,6 +2638,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     tC() *= ds;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
@@ -2645,6 +2702,7 @@ Foam::operator&
     return tMphi;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh> >
 Foam::operator&
@@ -2658,6 +2716,7 @@ Foam::operator&
     return tMpsi;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh> >
 Foam::operator&
@@ -2670,6 +2729,7 @@ Foam::operator&
     tpsi.clear();
     return tMpsi;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh> >
@@ -2697,6 +2757,7 @@ Foam::operator&
     tpsi.clear();
     return tMpsi;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh> >
