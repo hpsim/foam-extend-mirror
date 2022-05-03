@@ -285,7 +285,26 @@ void Foam::immersedBoundaryFvPatch::makeCorrVecs(fvsPatchVectorField& cv) const
     // Set patch non-orthogonality correction to zero on the patch
     cv = vector::zero;
 
-    // Kill correction vectors in dead cells?  HJ, 3/May/2022
+    // Kill correction vectors in dead cells
+    // Potential problem: cannot kill correction vectors on coupled boundaries
+    // because the are set later.  For the moment, only the internal
+    // correction vectors are killed.
+    // HJ, 3/May/2022
+
+    vectorField& cvIn = const_cast<vectorField&>(cv.internalField());
+
+    // Get dead faces
+    const labelList& deadFaces = ibPolyPatch_.deadFaces();
+
+    const fvMesh& mesh = boundaryMesh().mesh();
+    
+    forAll (deadFaces, dfI)
+    {
+        if (mesh.isInternalFace(deadFaces[dfI]))
+        {
+            cvIn[deadFaces[dfI]] = vector::zero;
+        }
+    }
 }
 
 
