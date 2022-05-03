@@ -182,9 +182,7 @@ surfaceInterpolationScheme<Type>::interpolate
 
     // updateCoupledPatchFields for patchNeighbourField update
     // HJ, 10/Sep/2021
-    GeometricField<Type, fvPatchField, volMesh>& cvf =
-        const_cast<GeometricField<Type, fvPatchField, volMesh>&>(vf);
-    cvf.boundaryField().updateCoupledPatchFields();
+    vf.boundaryField().updateCoupledPatchFields();
 
     Field<Type>& sfi = sf.internalField();
 
@@ -260,9 +258,7 @@ surfaceInterpolationScheme<Type>::interpolate
 
     // updateCoupledPatchFields for patchNeighbourField update
     // HJ, 10/Sep/2021
-    GeometricField<Type, fvPatchField, volMesh>& cvf =
-        const_cast<GeometricField<Type, fvPatchField, volMesh>&>(vf);
-    cvf.boundaryField().updateCoupledPatchFields();
+    vf.boundaryField().updateCoupledPatchFields();
 
     Field<Type>& sfi = sf.internalField();
 
@@ -308,8 +304,8 @@ surfaceInterpolationScheme<Type>::interpolate
             << endl;
     }
 
-    tmp<GeometricField<Type, fvsPatchField, surfaceMesh> > tsf
-        = interpolate(vf, weights(vf));
+    tmp<GeometricField<Type, fvsPatchField, surfaceMesh> > tsf =
+        interpolate(vf, weights(vf));
 
     if (corrected())
     {
