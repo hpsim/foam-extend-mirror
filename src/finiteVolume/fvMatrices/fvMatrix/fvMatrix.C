@@ -48,11 +48,8 @@ void Foam::fvMatrix<Type>::addToInternalField
 {
     if (addr.size() != pf.size())
     {
-        FatalErrorIn
-        (
-            "fvMatrix<Type>::addToInternalField(const unallocLabelList&, "
-            "const Field&, Field&)"
-        )   << "sizes of addressing and field are different.  Addr: "
+        FatalErrorInFunction
+            << "sizes of addressing and field are different.  Addr: "
             << addr.size() << " pf: " << pf.size()
             << abort(FatalError);
     }
@@ -253,12 +250,8 @@ Foam::fvMatrix<Type>::fvMatrix
 {
     if (debug)
     {
-        InfoIn
-        (
-            "fvMatrix<Type>("
-            "const GeometricField<Type, fvPatchField, volMesh>&,"
-            "const dimensionSet&)"
-        )   << "constructing fvMatrix<Type> for field " << psi_.name()
+        InfoInFunction
+            << "Constructing fvMatrix<Type> for field " << psi_.name()
             << endl;
     }
 
@@ -312,8 +305,8 @@ Foam::fvMatrix<Type>::fvMatrix(const fvMatrix<Type>& fvm)
 {
     if (debug)
     {
-        Info<< "fvMatrix<Type>::fvMatrix(const fvMatrix<Type>&) : "
-            << "copying fvMatrix<Type> for field " << psi_.name()
+        InfoInFunction
+            << "Copying fvMatrix<Type> for field " << psi_.name()
             << endl;
     }
 
@@ -370,8 +363,8 @@ Foam::fvMatrix<Type>::fvMatrix(const tmp<fvMatrix<Type> >& tfvm)
 {
     if (debug)
     {
-        Info<< "fvMatrix<Type>::fvMatrix(const tmp<fvMatrix<Type> >&) : "
-            << "copying fvMatrix<Type> for field " << psi_.name()
+        InfoInFunction
+            << "Copying fvMatrix<Type> for field " << psi_.name()
             << endl;
     }
 
@@ -433,9 +426,8 @@ Foam::fvMatrix<Type>::fvMatrix
 {
     if (debug)
     {
-        Info<< "fvMatrix<Type>"
-               "(GeometricField<Type, fvPatchField, volMesh>&, Istream&) : "
-               "constructing fvMatrix<Type> for field " << psi_.name()
+        InfoInFunction
+            << "Constructing fvMatrix<Type> for field " << psi_.name()
             << endl;
     }
 
@@ -626,10 +618,8 @@ void Foam::fvMatrix<Type>::relax(const scalar alpha)
 {
     if (debug)
     {
-        InfoIn
-        (
-            "fvMatrix<Type>(const scalar alpha"
-        )   << "relaxing fvMatrix<Type> for field " << psi_.name()
+        InfoInFunction
+            << "relaxing fvMatrix<Type> for field " << psi_.name()
             << " with " << alpha
             << endl;
     }
@@ -735,7 +725,7 @@ void Foam::fvMatrix<Type>::relax()
     {
         if (debug)
         {
-            InfoIn("void fvMatrix<Type>::relax()")
+            InfoInFunction
                 << "Relaxation factor for field " << psi_.name()
                 << " not found.  Relaxation will not be used." << endl;
         }
@@ -942,6 +932,10 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Type>::A() const
         )
     );
 
+    // Complete matrix assembly.  HJ, 3/May/2022
+    fvMatrix& m = const_cast<fvMatrix&>(*this);
+    m.completeAssembly();
+
     tAphi().internalField() = D()/psi_.mesh().V();
     tAphi().correctBoundaryConditions();
 
@@ -972,8 +966,12 @@ Foam::fvMatrix<Type>::H() const
     );
     GeometricField<Type, fvPatchField, volMesh>& Hphi = tHphi();
 
+    // Complete matrix assembly.  HJ, 3/May/2022
+    fvMatrix& m = const_cast<fvMatrix&>(*this);
+    m.completeAssembly();
+
     // Loop over field components
-    for (direction cmpt=0; cmpt<Type::nComponents; cmpt++)
+    for (direction cmpt = 0; cmpt < Type::nComponents; cmpt++)
     {
         scalarField psiCmpt = psi_.internalField().component(cmpt);
 
@@ -1000,7 +998,7 @@ Foam::fvMatrix<Type>::H() const
         )
     );
 
-    for(direction cmpt=0; cmpt<Type::nComponents; cmpt++)
+    for(direction cmpt = 0; cmpt<Type::nComponents; cmpt++)
     {
         if (validComponents[cmpt] == -1)
         {
@@ -1038,23 +1036,6 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Type>::H1() const
     );
     volScalarField& H1_ = tH1();
 
-    // Loop over field components
-    /*
-    for (direction cmpt=0; cmpt<Type::nComponents; cmpt++)
-    {
-        scalarField psiCmpt = psi_.internalField().component(cmpt);
-
-        scalarField boundaryDiagCmpt(psi_.size(), 0.0);
-        addBoundaryDiag(boundaryDiagCmpt, cmpt);
-        boundaryDiagCmpt.negate();
-        addCmptAvBoundaryDiag(boundaryDiagCmpt);
-
-        H1_.internalField().replace(cmpt, boundaryDiagCmpt);
-    }
-
-    H1_.internalField() += lduMatrix::H1();
-    */
-
     H1_.internalField() = lduMatrix::H1();
 
     H1_.internalField() /= psi_.mesh().V();
@@ -1066,8 +1047,7 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Type>::H1() const
 
 template<class Type>
 Foam::tmp<Foam::GeometricField<Type, Foam::fvsPatchField, Foam::surfaceMesh> >
-Foam::fvMatrix<Type>::
-flux() const
+Foam::fvMatrix<Type>::flux() const
 {
     if (!psi_.mesh().schemesDict().fluxRequired(psi_.name()))
     {
@@ -1097,7 +1077,11 @@ flux() const
     );
     GeometricField<Type, fvsPatchField, surfaceMesh>& fieldFlux = tfieldFlux();
 
-    for (direction cmpt=0; cmpt<pTraits<Type>::nComponents; cmpt++)
+    // Complete matrix assembly.  HJ, 3/May/2022
+    fvMatrix& m = const_cast<fvMatrix&>(*this);
+    m.completeAssembly();
+
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
         fieldFlux.internalField().replace
         (
@@ -1162,7 +1146,11 @@ jumpFlux() const
     );
     GeometricField<Type, fvsPatchField, surfaceMesh>& fieldFlux = tfieldFlux();
 
-    for (direction cmpt=0; cmpt<pTraits<Type>::nComponents; cmpt++)
+    // Complete matrix assembly.  HJ, 3/May/2022
+    fvMatrix& m = const_cast<fvMatrix&>(*this);
+    m.completeAssembly();
+
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
         fieldFlux.internalField().replace
         (
@@ -2635,8 +2623,12 @@ Foam::operator&
     );
     GeometricField<Type, fvPatchField, volMesh>& Mphi = tMphi();
 
+    // Complete matrix assembly.  HJ, 3/May/2022
+    fvMatrix<Type>& m = const_cast<fvMatrix<Type>&>(M);
+    m.completeAssembly();
+
     // Loop over field components
-    for (direction cmpt=0; cmpt<pTraits<Type>::nComponents; cmpt++)
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
         scalarField psiCmpt = psi.field().component(cmpt);
         scalarField boundaryDiagCmpt(M.diag());
