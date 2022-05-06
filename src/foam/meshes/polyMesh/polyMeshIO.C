@@ -269,7 +269,7 @@ Foam::polyMesh::readUpdateState Foam::polyMesh::readUpdate()
 {
     if (debug)
     {
-        Info<< "polyMesh::readUpdateState polyMesh::readUpdate() : "
+        InfoInFunction
             << "Updating mesh based on saved data." << endl;
     }
 
@@ -404,7 +404,7 @@ Foam::polyMesh::readUpdateState Foam::polyMesh::readUpdate()
 
         if (boundaryChanged)
         {
-            WarningIn("polyMesh::readUpdateState polyMesh::readUpdate()")
+            WarningInFunction
                 << "Number of patches has changed.  This may have "
                 << "unexpected consequences.  Proceed with care." << endl;
 
@@ -544,7 +544,6 @@ Foam::polyMesh::readUpdateState Foam::polyMesh::readUpdate()
             faceZones_.set(fzI, newFaceZones[fzI].clone(faceZones_));
         }
 
-
         cellZoneMesh newCellZones
         (
             IOobject
@@ -588,7 +587,7 @@ Foam::polyMesh::readUpdateState Foam::polyMesh::readUpdate()
         boundary_.updateMesh();
 
         // Calculate the geometry for the patches (transformation tensors etc.)
-        boundary_.calcGeometry();
+        // This is called in boundary_.updateMesh().  HJ, 6/May/2022
 
         // Derived info
         bounds_ = boundBox(allPoints_);
