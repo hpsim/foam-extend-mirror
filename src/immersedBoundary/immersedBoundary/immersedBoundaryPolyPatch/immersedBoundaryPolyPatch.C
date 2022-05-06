@@ -328,10 +328,10 @@ void Foam::immersedBoundaryPolyPatch::calcImmersedBoundary() const
                 {
                     WarningInFunction
                         << "Cannot find wet or dry neigbours! Cell C:"
-                            << C[cellI]
-                            << " Neighbours: WET:" << foundWetNei
-                            << ", DRY:" << foundDryNei
-                            << endl;
+                        << C[cellI]
+                        << " Neighbours: WET:" << foundWetNei
+                        << ", DRY:" << foundDryNei
+                        << endl;
                 }
 
                 intersectedCell[cellI] = immersedPoly::CUT;
@@ -1381,6 +1381,13 @@ void Foam::immersedBoundaryPolyPatch::calcCorrectedGeometry() const
             << "Minimum IB face area for patch " << name()
             << ": " << min(mag(ibSf)) << ".  Possible cutting error.  "
             << "Review immersed boundary tolerances."
+            << endl;
+    }
+
+    if (debug)
+    {
+        InfoInFunction
+            << "Finished calculating geometry"
             << endl;
     }
 }
