@@ -63,6 +63,9 @@ class ImmersedFace
         //- Point field with original face points and intersection points
         pointField facePointsAndIntersections_;
 
+        //- Absolute tolerance, based on min edge length
+        scalar absTol_;
+
         //- Face that describes the submerged part of the original face
         face wetSubface_;
 

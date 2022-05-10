@@ -70,6 +70,7 @@ void Foam::ImmersedFace<Distance>::createSubfaces
         const label start = curEdge.start();
         const label end = curEdge.end();
 
+        // Length of current edge
         const scalar edgeLength = curEdge.mag(localPoints);
 
         // Check if there is a legitimate cut to be found
@@ -185,9 +186,25 @@ void Foam::ImmersedFace<Distance>::createSubfaces
             // Store first point depth
             newDepth[nNewPoints] = depth[curEdge.start()];
 
-            // Record submerged using real depth
-            // IG, 14/May/2019 and HJ 10/May/2022
-            isSubmerged[nNewPoints] = sign(depth[curEdge.start()]);
+            // Determine whether it is above, below or on the surface.
+            // NOTE: now it can be any of the options since end or start is
+            // sitting on the surface, othervise the if statement above would
+            // have been true.(IG 14/May/2019)
+            // NOTE:
+            // Old check depended on the length of the current edge, meaning
+            // that the tolerance depends on the order the face is visited
+            // (consider pair of faces on the processor boundary.
+            // This is incorrect: use absolute tolerance instead, consistent
+            // with the wet/dry test in the constructor
+            // HJ, 10/May/2022
+            if (mag(depth[curEdge.start()]) < absTol_)
+            {
+                isSubmerged[nNewPoints] = 0;
+            }
+            else
+            {
+                isSubmerged[nNewPoints] = sign(depth[curEdge.start()]);
+            }
 
             nNewPoints++;
         }
@@ -291,7 +308,8 @@ void Foam::ImmersedFace<Distance>::init()
     scalarField depth = dist_.distance(facePointsAndIntersections_);
 
     // Calculating absolute tolerances based on minimum edge length
-    scalar absTol = 0.0;
+    absTol_ = 0;
+
     {
         // Use local edges
         const edgeList edges = localFace.edges();
@@ -310,11 +328,11 @@ void Foam::ImmersedFace<Distance>::init()
                 );
         }
 
-        absTol = minEdgeLength*immersedPoly::tolerance_();
+        absTol_ = minEdgeLength*immersedPoly::tolerance_();
     }
 
     // Check if all points are wet or dry, using absolute tolerance
-    if (max(depth) < absTol)
+    if (max(depth) < absTol_)
     {
         // All points are wet within a tolerance: face is wet
         isAllWet_ = true;
@@ -322,7 +340,7 @@ void Foam::ImmersedFace<Distance>::init()
 
         wetSubface_ = localFace;
     }
-    else if (min(depth) > -absTol)
+    else if (min(depth) > -absTol_)
     {
         // All points are dry within a tolerance: face is dry
         isAllWet_ = false;
