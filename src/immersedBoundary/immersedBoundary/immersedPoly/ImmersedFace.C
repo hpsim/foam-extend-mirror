@@ -376,7 +376,7 @@ Foam::ImmersedFace<Distance>::ImmersedFace
     init();
 }
 
-    
+
 template<class Distance>
 Foam::ImmersedFace<Distance>::ImmersedFace
 (
