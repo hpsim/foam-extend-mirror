@@ -299,12 +299,6 @@ Foam::refineImmersedBoundaryMesh::refineImmersedBoundaryMesh
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::refineImmersedBoundaryMesh::~refineImmersedBoundaryMesh()
-{}
-
-
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 Foam::labelList
@@ -332,13 +326,8 @@ Foam::refineImmersedBoundaryMesh::refinementCells
 
         default:
         {
-            FatalErrorIn
-            (
-                "labelList refineImmersedBoundaryMesh::refinementCells\n"
-                "(\n"
-                "    const ibCellCollection& collectionType\n"
-                ") const"
-            )   << "Collection type undefined: "
+            FatalErrorInFunction
+                << "Collection type undefined: "
                 << ibCellCollectionNames_[collectionType]
                 << abort(FatalError);
         }
@@ -372,7 +361,8 @@ void Foam::refineImmersedBoundaryMesh::refineMesh
         refineDict.add("directions", directions);
 
         // Use hex cutter
-        refineDict.add("useHexTopology", "true");
+        // refineDict.add("useHexTopology", "true");
+        refineDict.add("useHexTopology", "false");
     }
     else
     {
