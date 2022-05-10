@@ -75,10 +75,10 @@ private:
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        refineImmersedBoundaryMesh(const refineImmersedBoundaryMesh&);
+        refineImmersedBoundaryMesh(const refineImmersedBoundaryMesh&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const refineImmersedBoundaryMesh&);
+        void operator=(const refineImmersedBoundaryMesh&) = delete;
 
 
         // Mesh refinement
@@ -109,7 +109,7 @@ public:
 
 
     //- Destructor
-    ~refineImmersedBoundaryMesh();
+    ~refineImmersedBoundaryMesh() = default;
 
 
     // Member Functions
