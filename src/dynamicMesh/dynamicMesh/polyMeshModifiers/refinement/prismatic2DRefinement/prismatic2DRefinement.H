@@ -169,10 +169,10 @@ private:
         // Copy control
 
             //- Disallow default bitwise copy construct
-            prismatic2DRefinement(const prismatic2DRefinement&);
+            prismatic2DRefinement(const prismatic2DRefinement&) = delete;
 
             //- Disallow default bitwise assignment
-            void operator=(const prismatic2DRefinement&);
+            void operator=(const prismatic2DRefinement&) = delete;
 
 
 protected:

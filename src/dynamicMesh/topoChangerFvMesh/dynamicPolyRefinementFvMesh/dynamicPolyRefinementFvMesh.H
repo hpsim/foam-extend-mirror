@@ -69,6 +69,7 @@ protected:
         //- Dictionary containing dynamic mesh coefficient controls
         dictionary refinementDict_;
 
+
 private:
 
     // Private data

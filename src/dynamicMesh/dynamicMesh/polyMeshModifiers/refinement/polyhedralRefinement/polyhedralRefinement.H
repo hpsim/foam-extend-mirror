@@ -76,8 +76,8 @@ private:
 
         // Local topology modification functions (operate on cells/faces)
 
-            //- Create all internal faces of split cellI into n cells where n is the
-            //  number of cell points
+            //- Create all internal faces of split cellI into n cells
+            //   where n is the number of cell points
             void createInternalFaces
             (
                 const labelListList& cellAnchorPoints,
@@ -145,8 +145,8 @@ private:
                 polyTopoChange& ref
             ) const;
 
-            //- If p0 and p1 are existing vertices check if edge is split and insert
-            //  splitPoint. Used with storing mid point
+            //- If p0 and p1 are existing vertices check if edge is split
+            //  and insert splitPoint. Used with storing mid point
             void insertEdgeSplit
             (
                 const labelList& edgeMidPoint,
@@ -159,10 +159,10 @@ private:
         // Copy control
 
             //- Disallow default bitwise copy construct
-            polyhedralRefinement(const polyhedralRefinement&);
+            polyhedralRefinement(const polyhedralRefinement&) = delete;
 
             //- Disallow default bitwise assignment
-            void operator=(const polyhedralRefinement&);
+            void operator=(const polyhedralRefinement&) = delete;
 
 
 protected:

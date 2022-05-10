@@ -69,7 +69,7 @@ class cellLooper;
 class topoSet;
 
 /*---------------------------------------------------------------------------*\
-                           Class multiDirRefinement Declaration
+                      Class multiDirRefinement Declaration
 \*---------------------------------------------------------------------------*/
 
 class multiDirRefinement
@@ -139,10 +139,10 @@ class multiDirRefinement
 
 
         //- Disallow default bitwise copy construct
-        multiDirRefinement(const multiDirRefinement&);
+        multiDirRefinement(const multiDirRefinement&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const multiDirRefinement&);
+        void operator=(const multiDirRefinement&) = delete;
 
 
 public:
@@ -183,6 +183,10 @@ public:
             const List<vectorField>& directions,
             const bool writeMesh = false    // write intermediate meshes
         );
+
+
+    //- Destructor
+    ~multiDirRefinement() = default;
 
 
     // Member Functions
