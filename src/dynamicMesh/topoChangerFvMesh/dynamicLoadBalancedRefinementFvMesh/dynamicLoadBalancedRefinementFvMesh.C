@@ -59,10 +59,10 @@ Foam::dynamicLoadBalancedRefinementFvMesh::dynamicLoadBalancedRefinementFvMesh
     // subdictionary in dynamicMeshDict (see dynamicPolyRefinementFvMesh
     // constructor). VV, 31/12/2018.
     dynamicPolyRefinementFvMesh(io, typeName),
-    loadBalance_(refinementDict().lookup("loadBalance")),
+    loadBalance_(refinementDict_.lookup("loadBalance")),
     imbalanceThreshold_
     (
-        readScalar(refinementDict().lookup("imbalanceThreshold"))
+        readScalar(refinementDict_.lookup("imbalanceThreshold"))
     )
 {}
 
@@ -124,7 +124,7 @@ bool Foam::dynamicLoadBalancedRefinementFvMesh::update()
             dictionary loadBalanceDict;
 
             // Get decomposition method and add it to the load balancing dict
-            const word decompMethod = refinementDict().lookup("method");
+            const word decompMethod = refinementDict_.lookup("method");
             loadBalanceDict.add(word("method"), decompMethod);
 
             // Set numberOfSubdomains to number or processors we are running

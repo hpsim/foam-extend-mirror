@@ -62,10 +62,16 @@ class dynamicPolyRefinementFvMesh
 :
     public topoChangerFvMesh
 {
-    // Private data
+protected:
+
+    // Protected data
 
         //- Dictionary containing dynamic mesh coefficient controls
         dictionary refinementDict_;
+
+private:
+
+    // Private data
 
         //- Refinement interval
         label refineInterval_;
@@ -130,12 +136,6 @@ public:
 
 
     // Member Functions
-
-        //- Return access to dictionary
-        inline const dictionary& refinementDict() const
-        {
-            return refinementDict_;
-        }
 
         //- Is this the first update in the current time-step?
         bool firstUpdate() const;

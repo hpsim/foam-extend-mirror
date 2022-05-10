@@ -139,7 +139,7 @@ Foam::dynamicPolyRefinementFvMesh::dynamicPolyRefinementFvMesh
     // Get number of valid geometric dimensions
     const label nGeometricDirs = this->nGeometricD();
 
-    switch(nGeometricDirs)
+    switch (nGeometricDirs)
     {
         case 3:
             // Add the polyhedralRefinement engine for
