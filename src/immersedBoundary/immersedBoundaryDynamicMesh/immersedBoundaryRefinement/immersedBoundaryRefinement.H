@@ -70,10 +70,10 @@ class immersedBoundaryRefinement
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        immersedBoundaryRefinement(const immersedBoundaryRefinement&);
+        immersedBoundaryRefinement(const immersedBoundaryRefinement&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const immersedBoundaryRefinement&);
+        void operator=(const immersedBoundaryRefinement&) = delete;
 
 
 public:
@@ -93,7 +93,7 @@ public:
 
 
     //- Destructor
-    virtual ~immersedBoundaryRefinement();
+    virtual ~immersedBoundaryRefinement() = default;
 
 
     // Member Functions

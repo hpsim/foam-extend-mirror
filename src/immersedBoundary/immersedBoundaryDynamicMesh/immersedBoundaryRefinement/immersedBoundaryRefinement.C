@@ -75,12 +75,6 @@ Foam::immersedBoundaryRefinement::immersedBoundaryRefinement
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor* * * * * * * * * * * * * * * * //
-
-Foam::immersedBoundaryRefinement::~immersedBoundaryRefinement()
-{}
-
-
 // * * * * * * * * * * * * Public Member Functions * * * * * * * * * * * * * //
 
 Foam::Xfer<Foam::labelList>
