@@ -147,7 +147,6 @@ void Foam::ImmersedFace<Distance>::createSubfaces
 
                     iters++;
                 }
-
             }
 
             // Store first point of edge
@@ -186,22 +185,9 @@ void Foam::ImmersedFace<Distance>::createSubfaces
             // Store first point depth
             newDepth[nNewPoints] = depth[curEdge.start()];
 
-            // Determine whether it is above, below or on the surface.
-            // NOTE: now it can be any of the options since end or start is
-            // sitting on the surface, othervise the if statement above would
-            // have been true.(IG 14/May/2019)
-            if
-            (
-                mag(depth[curEdge.start()])
-              < edgeLength*immersedPoly::tolerance_()
-            )
-            {
-                isSubmerged[nNewPoints] = 0;
-            }
-            else
-            {
-                isSubmerged[nNewPoints] = sign(depth[curEdge.start()]);
-            }
+            // Record submerged using real depth
+            // IG, 14/May/2019 and HJ 10/May/2022
+            isSubmerged[nNewPoints] = sign(depth[curEdge.start()]);
 
             nNewPoints++;
         }
@@ -290,30 +276,13 @@ void Foam::ImmersedFace<Distance>::createSubfaces
 }
 
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
 template<class Distance>
-Foam::ImmersedFace<Distance>::ImmersedFace
-(
-    const label faceID,
-    const polyMesh& mesh,
-    const Distance& dist
-)
-:
-    dist_(dist),
-    wetSubface_(),
-    drySubface_(),
-    isAllWet_(false),
-    isAllDry_(false)
+void Foam::ImmersedFace<Distance>::init()
 {
-    const face& origFace = mesh.faces()[faceID];
-
-    // Store face points locally
-    facePointsAndIntersections_ = origFace.points(mesh.points());
-    face localFace(origFace.size());
+    face localFace(facePointsAndIntersections_.size());
 
     // Local face addresses into local points
-    forAll (origFace, pointI)
+    forAll (localFace, pointI)
     {
         localFace[pointI]  = pointI;
     }
@@ -367,6 +336,46 @@ Foam::ImmersedFace<Distance>::ImmersedFace
         // Perform detailed analysis to create dry and wet sub-face
         createSubfaces(localFace, depth);
     }
+}
+
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+template<class Distance>
+Foam::ImmersedFace<Distance>::ImmersedFace
+(
+    const pointField& p,
+    const Distance& dist
+)
+:
+    dist_(dist),
+    facePointsAndIntersections_(p),
+    wetSubface_(),
+    drySubface_(),
+    isAllWet_(false),
+    isAllDry_(false)
+{
+    init();
+}
+
+    
+template<class Distance>
+Foam::ImmersedFace<Distance>::ImmersedFace
+(
+    const label faceID,
+    const polyMesh& mesh,
+    const Distance& dist
+)
+:
+    dist_(dist),
+    facePointsAndIntersections_(mesh.faces()[faceID].points(mesh.points())),
+    wetSubface_(),
+    drySubface_(),
+    isAllWet_(false),
+    isAllDry_(false)
+{
+    // Initialised immersed face
+    init();
 }
 
 

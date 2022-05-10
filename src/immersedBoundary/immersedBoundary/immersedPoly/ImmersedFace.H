@@ -88,12 +88,15 @@ class ImmersedFace
         //- Create wetSubface and drySubface
         void createSubfaces(const face& origFace, const scalarField& depth);
 
+        //- Initialise
+        void init();
+
 
 public:
 
     // Constructors
 
-        //- Construct from components
+        //- Construct from points given in face order
         ImmersedFace
         (
             const label faceID,
@@ -101,8 +104,16 @@ public:
             const Distance& dist
         );
 
+        //- Construct from polyMesh
+        ImmersedFace
+        (
+            const pointField& p,
+            const Distance& dist
+        );
 
-    //- Destructor - default
+
+    //- Destructor
+    ~ImmersedFace() = default;
 
 
     // Public member functions
