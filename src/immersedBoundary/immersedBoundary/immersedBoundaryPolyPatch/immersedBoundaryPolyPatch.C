@@ -1955,6 +1955,13 @@ void Foam::immersedBoundaryPolyPatch::clearOut() const
 
     deleteDemandDrivenData(correctedIbPatchFaceAreasPtr_);
 
+    // Warning.  This function should also clear the geometry in polyMesh
+    // to avoid double cutting of polyMesh geometry data.
+    // This is protected by the presence of correctedIbPatchFaceAreasPtr_
+    // pointer, but may possibly go wrong.
+    // HJ, 11/May/2022
+    // boundaryMesh().mesh().clearOut();
+
     // Cannot delete old motion points.  HJ, 10/Dec/2017
 }
 
