@@ -31,6 +31,8 @@ License
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
+#define WET_DEBUG 1
+
 template<class Distance>
 void Foam::ImmersedCell<Distance>::getBase
 (
@@ -608,13 +610,15 @@ Foam::ImmersedCell<Distance>::ImmersedCell
             nIntersections++;
         }
 
-        if (nIntersections >= 3 && minDot > immersedPoly::collinearity_())
+        // Can the check be terminated early?
+        if (nIntersections >= 3 && minDot < immersedPoly::collinearity_())
         {
             // Condition satisfied.  No need to keep checking
             break;
         }
     }
 
+    // Check if the intersection is sufficient to make a proper face
     if
     (
         // Insufficient number of intersections
