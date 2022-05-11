@@ -116,7 +116,9 @@ void Foam::immersedBoundaryPolyPatch::calcImmersedBoundary() const
     if (debug)
     {
         InfoInFunction
-            << "Calculating geometry"
+            << "Calling calcImmersedBoundary for patch "
+            << name() << " for mesh "
+            << boundaryMesh().mesh().time().path()
             << endl;
     }
 
@@ -187,11 +189,15 @@ void Foam::immersedBoundaryPolyPatch::calcImmersedBoundary() const
     // Adjust selection of points: inside or outside of immersed boundary
     if (internalFlow())
     {
-        Info<< "Internal flow" << endl;
+        Info<< "Internal flow  for patch "
+            << name() << " for mesh "
+            << boundaryMesh().mesh().time().path() << endl;
     }
     else
     {
-        Info<< "External flow" << endl;
+        Info<< "External flow for patch "
+            << name() << " for mesh "
+            << boundaryMesh().mesh().time().path() << endl;
 
         // Flip all points inside identifier
         forAll (pointsInside, i)
@@ -1190,6 +1196,10 @@ void Foam::immersedBoundaryPolyPatch::calcImmersedBoundary() const
     {
         // reduce(totalIbCount, sumOp<List<label> >());
 
+        InfoInFunction
+            << "Finished calcImmersedBoundary"
+            << endl;
+
         Pout<< "Immersed boundary " << name() << " info: "
             << "nIbCells: " << totalIbCount[0]
             << " nDeadCells: " << totalIbCount[1]
@@ -1387,7 +1397,7 @@ void Foam::immersedBoundaryPolyPatch::calcCorrectedGeometry() const
     if (debug)
     {
         InfoInFunction
-            << "Finished calculating geometry"
+            << "Finished calculating corrected geometry"
             << endl;
     }
 }
@@ -1924,7 +1934,9 @@ void Foam::immersedBoundaryPolyPatch::clearOut() const
     if (debug)
     {
         InfoInFunction
-            << "Clear immersed boundary polyPatch"
+            << "Clear immersed boundary for patch "
+            << name() << " for mesh "
+            << boundaryMesh().mesh().time().path() 
             << endl;
     }
 

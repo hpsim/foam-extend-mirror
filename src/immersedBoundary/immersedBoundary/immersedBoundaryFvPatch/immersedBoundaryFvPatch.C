@@ -319,9 +319,7 @@ Foam::immersedBoundaryFvPatch::immersedBoundaryFvPatch
     fvPatch(patch, bm),
     ibPolyPatch_(refCast<const immersedBoundaryPolyPatch>(patch)),
     mesh_(bm.mesh())
-{
-    ibPolyPatch_.clearOut();
-}
+{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
