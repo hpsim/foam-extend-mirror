@@ -31,8 +31,6 @@ License
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-#define WET_DEBUG 1
-
 template<class Distance>
 void Foam::ImmersedCell<Distance>::getBase
 (
