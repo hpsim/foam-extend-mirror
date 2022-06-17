@@ -70,10 +70,10 @@ class movingImmersedBoundary
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        movingImmersedBoundary(const movingImmersedBoundary&);
+        movingImmersedBoundary(const movingImmersedBoundary&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const movingImmersedBoundary&);
+        void operator=(const movingImmersedBoundary&) = delete;
 
 
 public:
@@ -90,7 +90,7 @@ public:
 
 
     //- Destructor
-    ~movingImmersedBoundary();
+    ~movingImmersedBoundary() = default;
 
 
     // Member Functions

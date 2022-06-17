@@ -68,13 +68,13 @@ class immersedBoundarySolidBodyMotionFvMesh
         immersedBoundarySolidBodyMotionFvMesh
         (
             const immersedBoundarySolidBodyMotionFvMesh&
-        );
+        ) = delete;
 
         //- Disallow default bitwise assignment
         void operator=
         (
             const immersedBoundarySolidBodyMotionFvMesh&
-        );
+        ) = delete;
 
 
 public:
@@ -90,7 +90,7 @@ public:
 
 
     // Destructor
-    virtual ~immersedBoundarySolidBodyMotionFvMesh();
+    virtual ~immersedBoundarySolidBodyMotionFvMesh() = default;
 
 
     // Member Functions

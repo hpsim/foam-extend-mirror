@@ -55,12 +55,6 @@ Foam::movingImmersedBoundary::movingImmersedBoundary
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::movingImmersedBoundary::~movingImmersedBoundary()
-{}
-
-
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 void Foam::movingImmersedBoundary::movePoints() const
@@ -70,10 +64,8 @@ void Foam::movingImmersedBoundary::movePoints() const
 
     if (patchID < 0)
     {
-        FatalErrorIn
-        (
-            "void movingImmersedBoundary::movePoints() const"
-        )   << "Patch " << name() << " not found.  Available patch names: "
+        FatalErrorInFunction
+            << "Patch " << name() << " not found.  Available patch names: "
             << mesh().boundaryMesh().names()
             << abort(FatalError);
     }
