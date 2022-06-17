@@ -131,8 +131,7 @@ public:
 
 
     //- Destructor
-    virtual ~zeroGradientIbFvPatchField()
-    {}
+    virtual ~zeroGradientIbFvPatchField() = default;
 
 
     // Member functions

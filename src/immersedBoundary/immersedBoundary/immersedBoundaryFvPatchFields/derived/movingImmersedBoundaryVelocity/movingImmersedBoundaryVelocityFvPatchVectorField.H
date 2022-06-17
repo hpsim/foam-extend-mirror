@@ -131,6 +131,10 @@ public:
         }
 
 
+    //- Destructor
+    ~movingImmersedBoundaryVelocityFvPatchVectorField() = default;
+
+
     // Member functions
 
         // Mapping functions

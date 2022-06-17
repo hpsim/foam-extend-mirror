@@ -125,6 +125,7 @@ Foam::fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
 
     // Re-interpolate the data related to immersed boundary
     this->updateIbValues();
+
     this->setPatchType(ptf);
 
     // On creation of the mapped field, the internal field is dummy and
