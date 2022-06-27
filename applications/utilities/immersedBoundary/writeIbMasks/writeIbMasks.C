@@ -32,6 +32,7 @@ Description
 #include "calc.H"
 #include "fvc.H"
 #include "fvMatrices.H"
+#include "emptyFvPatch.H"
 #include "immersedBoundaryFvPatch.H"
 #include "cellSet.H"
 
@@ -149,6 +150,11 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
             gamma.boundaryField()[patchI] =
                 sGamma.boundaryField()[patchI];
         }
+        else
+        {
+            sGamma.boundaryField()[patchI] = 1;
+            gamma.boundaryField()[patchI] = 1;
+        }
     }
 
     sGamma.write();
@@ -202,7 +208,7 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
                 maxOpenCellIndex = cellI;
             }
 
-            if (magDivSf[cellI] > 1e-9)
+            if (magDivSf[cellI] > primitiveMesh::closedThreshold_)
             {
                 Info<< "Open cell " << cellI << ": " << magDivSf[cellI]
                     << " gamma: " << gamma[cellI] << endl;
@@ -236,13 +242,22 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
             {
                 const label patchI = mesh.boundaryMesh().whichPatch(faceI);
 
-                const label patchFaceI =
-                    mesh.boundaryMesh()[patchI].whichFace(faceI);
+                if (!isA<emptyFvPatch>(mesh.boundary()[patchI]))
+                {
+                    const label patchFaceI =
+                        mesh.boundaryMesh()[patchI].whichFace(faceI);
 
-                openCellFaceGamma[cfI] =
-                    sGamma.boundaryField()[patchI][patchFaceI];
+                    openCellFaceGamma[cfI] =
+                        sGamma.boundaryField()[patchI][patchFaceI];
 
-                adjustedFaceAreas[cfI] = Sf.boundaryField()[patchI][patchFaceI];
+                    adjustedFaceAreas[cfI] =
+                        Sf.boundaryField()[patchI][patchFaceI];
+                }
+                else
+                {
+                    openCellFaceGamma[cfI] = 0;
+                    adjustedFaceAreas[cfI] = vector::zero;
+                }
             }
         }
 
