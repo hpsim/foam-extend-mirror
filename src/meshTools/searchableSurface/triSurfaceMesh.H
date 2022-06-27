@@ -127,10 +127,10 @@ private:
         );
 
         //- Disallow default bitwise copy construct
-        triSurfaceMesh(const triSurfaceMesh&);
+        triSurfaceMesh(const triSurfaceMesh&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const triSurfaceMesh&);
+        void operator=(const triSurfaceMesh&) = delete;
 
 
 protected:
@@ -150,7 +150,7 @@ public:
         triSurfaceMesh(const IOobject&, const triSurface&);
 
         //- Construct read.
-        triSurfaceMesh(const IOobject& io);
+        explicit triSurfaceMesh(const IOobject& io);
 
         //- Construct from IO and dictionary (used by searchableSurface).
         //  Dictionary may contain a 'scale' entry (eg, 0.001: mm -> m)
