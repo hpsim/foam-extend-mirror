@@ -100,8 +100,6 @@ void Foam::nearWallDist::correct()
                     )
                 );
             }
-
-            operator[](patchI).setSize(mesh_.boundary()[patchI].size());
         }
     }
 
