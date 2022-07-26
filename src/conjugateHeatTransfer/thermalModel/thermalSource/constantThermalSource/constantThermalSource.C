@@ -56,12 +56,6 @@ Foam::constantThermalSource::constantThermalSource
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::constantThermalSource::~constantThermalSource()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void Foam::constantThermalSource::addSource(volScalarField& source) const

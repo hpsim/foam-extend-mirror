@@ -24,9 +24,6 @@ License
 Class
     thermalModel
 
-Description
-    Thermal  material properties for solids.
-
 Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved.
 

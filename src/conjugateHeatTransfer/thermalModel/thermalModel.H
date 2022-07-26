@@ -25,7 +25,8 @@ Class
     thermalModel
 
 Description
-    Thermal material properties for solids.
+    Thermal model for solids, including material properties, thermal sources
+    and gaps.
 
 Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved.
@@ -73,17 +74,17 @@ class thermalModel
         //- Contact resistance
         PtrList<thermalGap> gapPtr_;
 
-        //- Thermal Source
+        //- Thermal source
         PtrList<thermalSource> sourcePtr_;
 
 
     // Private Member Functions
 
         //- Disallow copy construct
-        thermalModel(const thermalModel&);
+        thermalModel(const thermalModel&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const thermalModel&);
+        void operator=(const thermalModel&) = delete;
 
 
 public:
@@ -97,10 +98,8 @@ public:
         thermalModel(const volScalarField& T);
 
 
-    // Destructor
-
-        virtual ~thermalModel()
-        {}
+    //- Destructor
+    virtual ~thermalModel() = default;
 
 
     // Member Functions

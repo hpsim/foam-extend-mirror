@@ -67,19 +67,16 @@ class constantThermalSource
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        constantThermalSource(const constantThermalSource&);
+        constantThermalSource(const constantThermalSource&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const constantThermalSource&);
+        void operator=(const constantThermalSource&) = delete;
 
 
 public:
 
     //- Runtime type information
     TypeName("constant");
-
-    // Static data members
-
 
     // Constructors
 
@@ -92,9 +89,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~constantThermalSource();
+    //- Destructor
+    virtual ~constantThermalSource() = default;
 
 
     // Member Functions
