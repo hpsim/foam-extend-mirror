@@ -259,7 +259,12 @@ template<class Type>
 void inletOutletIbFvPatchField<Type>::write(Ostream& os) const
 {
     // Resolve post-processing issues.  HJ, 1/Dec/2017
-    inletOutletFvPatchField<Type>::write(os);
+    if (this->phiName() != "phi")
+    {
+        os.writeKeyword("phi")
+            << this->phiName() << token::END_STATEMENT << nl;
+    }
+
     triInletValue_.writeEntry("triInletValue", os);
     immersedBoundaryFieldBase<Type>::writeDeadData(os);
 

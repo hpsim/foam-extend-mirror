@@ -141,7 +141,6 @@ mixedIbFvPatchField<Type>::mixedIbFvPatchField
             << exit(FatalIOError);
     }
 
-    // Copy the patch type since mixed data was not mapped
     this->setPatchType(ptf);
 
     // Re-interpolate the data related to immersed boundary
@@ -170,7 +169,9 @@ mixedIbFvPatchField<Type>::mixedIbFvPatchField
     triValue_(ptf.triValue()),
     triGrad_(ptf.triGrad()),
     triValueFraction_(ptf.triValueFraction())
-{}
+{
+    this->setPatchType(ptf);
+}
 
 
 template<class Type>
@@ -190,7 +191,9 @@ mixedIbFvPatchField<Type>::mixedIbFvPatchField
     triValue_(ptf.triValue()),
     triGrad_(ptf.triGrad()),
     triValueFraction_(ptf.triValueFraction())
-{}
+{
+    this->setPatchType(ptf);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

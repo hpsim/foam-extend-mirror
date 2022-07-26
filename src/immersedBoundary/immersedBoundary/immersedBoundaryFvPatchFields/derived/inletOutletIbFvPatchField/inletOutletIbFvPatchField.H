@@ -114,7 +114,6 @@ public:
         //- Construct and return a clone
         virtual tmp<fvPatchField<Type> > clone() const
         {
-            Info<< "Solo Cloning inletOutletIbFvPatchField" << endl;
             return tmp<fvPatchField<Type> >
             (
                 new inletOutletIbFvPatchField<Type>(*this)
@@ -134,11 +133,6 @@ public:
             const DimensionedField<Type, volMesh>& iF
         ) const
         {
-            Info<< "iF Cloning inletOutletIbFvPatchField" << endl;
-            Info<< "tri patch size: "
-                << this->ibPatch().ibMesh().size()
-                << " tri field size: " << this->triInletValue_.size()
-                << endl;
             return tmp<fvPatchField<Type> >
             (
                 new inletOutletIbFvPatchField<Type>(*this, iF)

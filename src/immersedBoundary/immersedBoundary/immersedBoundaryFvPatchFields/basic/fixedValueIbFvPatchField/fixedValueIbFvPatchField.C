@@ -123,10 +123,11 @@ Foam::fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
             << exit(FatalIOError);
     }
 
+    // Copy the patch type since mixed data was not mapped
+    this->setPatchType(ptf);
+
     // Re-interpolate the data related to immersed boundary
     this->updateIbValues();
-
-    this->setPatchType(ptf);
 
     // On creation of the mapped field, the internal field is dummy and
     // cannot be used.  Initialise the value to avoid errors
