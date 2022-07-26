@@ -181,6 +181,13 @@ class porousZone
 
     // Private Member Functions
 
+        //- Disallow default bitwise copy construct
+        porousZone(const porousZone&) = delete;
+
+        //- Disallow default bitwise assignment
+        void operator=(const porousZone&) = delete;
+
+
         //- Adjust negative resistance values to be multiplier of max value
         static void adjustNegativeResistance(dimensionedVector& resist);
 
@@ -244,13 +251,6 @@ class porousZone
         ) const;
 
 
-        //- Disallow default bitwise copy construct
-        porousZone(const porousZone&);
-
-        //- Disallow default bitwise assignment
-        void operator=(const porousZone&);
-
-
 public:
 
     // Constructors
@@ -289,8 +289,7 @@ public:
 
 
     //- Destructor
-    virtual ~porousZone()
-    {}
+    virtual ~porousZone() = default;
 
 
     // Member Functions
@@ -377,7 +376,7 @@ public:
         ) const;
 
         //- Add the heat source in enthalpy equation
-        void addHeatResistance
+        void addHeatSource
         (
             fvScalarMatrix& hTEqn,
             const volScalarField& T,

@@ -88,7 +88,7 @@ void Foam::porousZones::addResistance
 }
 
 
-void Foam::porousZones::addHeatResistance
+void Foam::porousZones::addHeatSource
 (
     fvScalarMatrix& hTEqn,
     const volScalarField& T,
@@ -101,7 +101,7 @@ void Foam::porousZones::addHeatResistance
 {
     forAll(*this, i)
     {
-        operator[](i).addHeatResistance
+        operator[](i).addHeatSource
         (
             hTEqn,
             T,

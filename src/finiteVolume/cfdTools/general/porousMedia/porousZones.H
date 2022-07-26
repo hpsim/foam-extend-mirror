@@ -93,10 +93,10 @@ class porousZones
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        porousZones(const porousZones&);
+        porousZones(const porousZones&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const porousZones&);
+        void operator=(const porousZones&) = delete;
 
 
         //- Modify time derivative elements
@@ -110,6 +110,10 @@ public:
         //- Construct from fvMesh
         //  with automatically constructed coordinate systems list
         porousZones(const fvMesh&);
+
+
+    //- Destructor
+    ~porousZones() = default;
 
 
     // Member Functions
@@ -159,7 +163,7 @@ public:
 
         //- Add the heat source contribution to enalphy equation (energy
         // equation)
-        void addHeatResistance
+        void addHeatSource
         (
             fvScalarMatrix& hTEqn,
             const volScalarField& T,

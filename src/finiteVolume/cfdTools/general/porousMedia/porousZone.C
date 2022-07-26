@@ -413,7 +413,7 @@ void Foam::porousZone::addResistance
 }
 
 
-void Foam::porousZone::addHeatResistance
+void Foam::porousZone::addHeatSource
 (
     fvScalarMatrix& hTEqn,
     const volScalarField& T,
@@ -436,7 +436,6 @@ void Foam::porousZone::addHeatResistance
     const vectorField& Ui = U.internalField();
     const scalarField& Macroi = Macro.internalField();
     const scalarField& posFluxi = posFlux.internalField();
-
 
 
     if (hTEqn.dimensions() == dimensionSet(1, -2, -3, 0, 0))
@@ -473,6 +472,7 @@ void Foam::porousZone::addHeatResistance
         return;
     }
 }
+
 
 void Foam::porousZone::macroCellOrder
 (

@@ -207,6 +207,7 @@ public:
             (
                 "autoPtr<TimeActivatedExplicitSource> clone() const"
             );
+
             return autoPtr<TimeActivatedExplicitSource>(nullptr);
         }
 
