@@ -71,3 +71,6 @@
         ),
         1.0 - beta*(T - TRef)
     );
+
+    // Create thermal model for fluid sources
+    fluidThermalModel thermalModel(laminarTransport, T);

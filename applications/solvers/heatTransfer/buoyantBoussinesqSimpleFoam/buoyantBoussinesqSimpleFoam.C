@@ -47,6 +47,7 @@ Description
 
 #include "fvCFD.H"
 #include "singlePhaseTransportModel.H"
+#include "fluidThermalModel.H"
 #include "RASModel.H"
 #include "simpleControl.H"
 
