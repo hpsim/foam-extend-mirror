@@ -72,12 +72,6 @@ Foam::solidBodyMotionFunctions::linearOscillation::linearOscillation
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructors * * * * * * * * * * * * * * * //
-
-Foam::solidBodyMotionFunctions::linearOscillation::~linearOscillation()
-{}
-
-
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 Foam::septernion

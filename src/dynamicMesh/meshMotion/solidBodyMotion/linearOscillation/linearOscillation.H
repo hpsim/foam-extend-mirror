@@ -64,10 +64,10 @@ class linearOscillation
     // Private Member Functions
 
         //- Disallow copy construct
-        linearOscillation(const linearOscillation&);
+        linearOscillation(const linearOscillation&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const linearOscillation&);
+        void operator=(const linearOscillation&) = delete;
 
 
         //- Calculate position
@@ -90,9 +90,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~linearOscillation();
+    //- Destructor
+    virtual ~linearOscillation() = default;
 
 
     // Member Functions
