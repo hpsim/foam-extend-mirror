@@ -120,7 +120,7 @@ class PatchToPatchInterpolation
     // Private Member Functions
 
         //- Disallow default bitwise assignment
-        void operator=(const PatchToPatchInterpolation&);
+        void operator=(const PatchToPatchInterpolation&) = delete;
 
         //- Calculate point weights
         void calcPointAddressing() const;
