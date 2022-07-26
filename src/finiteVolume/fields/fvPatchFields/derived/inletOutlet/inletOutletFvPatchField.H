@@ -43,7 +43,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                     Class inletOutletFvPatch Declaration
+                   Class inletOutletFvPatchField Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
