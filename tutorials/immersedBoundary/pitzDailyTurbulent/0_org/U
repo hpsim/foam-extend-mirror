@@ -22,11 +22,9 @@ boundaryField
 {
     pitzDailyIB
     {
-        type mixedIb;
+        type fixedValueIb;
         patchType immersedBoundary;
         triValue uniform (0 0 0);
-        triGradient uniform (0 0 0);
-        triValueFraction uniform 1;
         setDeadValue yes;
         deadValue (0 0 0);
         value uniform (0 0 0);

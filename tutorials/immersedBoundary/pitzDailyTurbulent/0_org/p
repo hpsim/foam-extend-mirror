@@ -22,15 +22,10 @@ boundaryField
 {
     pitzDailyIB
     {
-        type mixedIb;
+        type zeroGradientIb;
         patchType immersedBoundary;
-        triValue uniform 0;
-        triGradient  uniform 0;
-        triValueFraction uniform 0;
-
         setDeadValue   yes;
         deadValue      0;
-
         value uniform 0;
     }
     inlet
