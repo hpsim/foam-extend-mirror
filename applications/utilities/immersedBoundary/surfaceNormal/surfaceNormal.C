@@ -48,7 +48,6 @@ int main(int argc, char *argv[])
     Info<< "Reading surf from " << surfFileName << " ..." << endl;
 
     triSurface ts(surfFileName);
-
     fileName normalFileName(surfFileName.lessExt() + "Normals");
 
     Info<< "Writing normals to file " << normalFileName << endl;
