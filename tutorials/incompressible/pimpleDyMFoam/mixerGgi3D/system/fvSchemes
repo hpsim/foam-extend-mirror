@@ -18,13 +18,10 @@ ddtSchemes
 {
     default Euler;
 }
-
 gradSchemes
 {
     default         Gauss linear;
-    grad(p)         Gauss linear;
 }
-
 divSchemes
 {
     default         none;
@@ -34,7 +31,6 @@ divSchemes
     div((nuEff*T(grad(U)))) Gauss linear;
     div((dev(T(grad(U)))*nuEff)) Gauss linear;
 }
-
 laplacianSchemes
 {
     default         none;

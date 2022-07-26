@@ -18,15 +18,14 @@ solvers
 {
     pcorr
     {
-        solver           BiCGStab;
-        preconditioner   DILU;
+        solver           CG;
+        preconditioner   Cholesky;
 
         minIter          0;
         maxIter          1000;
-        tolerance        1e-02;
+        tolerance        1e-07;
         relTol           0;
     }
-
     p
     {
         solver           CG;
@@ -37,7 +36,6 @@ solvers
         tolerance        1e-07;
         relTol           0.0;
     }
-
     pFinal
     {
         solver           CG;

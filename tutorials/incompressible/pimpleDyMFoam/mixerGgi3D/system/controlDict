@@ -21,8 +21,7 @@ libs
 
 application     pimpleDyMFoam;
 
-//startFrom       startTime;
-startFrom       latestTime;
+startFrom       startTime;
 
 startTime       0;
 
@@ -42,7 +41,7 @@ writeFormat     ascii;
 
 writePrecision  10;
 
-writeCompression uncompressed;
+writeCompression compressed;
 
 timeFormat      general;
 
