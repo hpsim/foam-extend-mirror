@@ -52,15 +52,13 @@ void PrimitivePatchInterpolation<Patch>::makeFaceToPointWeights() const
 {
     if (faceToPointWeightsPtr_)
     {
-        FatalErrorIn
-        (
-            "PrimitivePatchInterpolation<Patch>::makeFaceToPointWeights() const"
-        )   << "Face-to-edge weights already calculated"
+        FatalErrorInFunction
+            << "Face-to-edge weights already calculated"
             << abort(FatalError);
     }
 
     const pointField& points = patch_.localPoints();
-    const faceList& faces = patch_.localFaces();
+    const List<typename Patch::FaceType>& faces = patch_.localFaces();
 
     faceToPointWeightsPtr_ = new scalarListList(points.size());
     scalarListList& weights = *faceToPointWeightsPtr_;
@@ -110,10 +108,8 @@ void PrimitivePatchInterpolation<Patch>::makeFaceToEdgeWeights() const
 {
     if (faceToEdgeWeightsPtr_)
     {
-        FatalErrorIn
-        (
-            "PrimitivePatchInterpolation<Patch>::makeFaceToEdgeWeights() const"
-        )   << "Face-to-edge weights already calculated"
+        FatalErrorInFunction
+            << "Face-to-edge weights already calculated"
             << abort(FatalError);
     }
 
@@ -182,11 +178,8 @@ tmp<Field<Type> > PrimitivePatchInterpolation<Patch>::faceToPointInterpolate
     // Check size of the given field
     if (ff.size() != patch_.size())
     {
-        FatalErrorIn
-        (
-            "tmp<Field<Type> > PrimitivePatchInterpolation::"
-            "faceToPointInterpolate(const Field<Type> ff)"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "given field does not correspond to patch. Patch size: "
             << patch_.size() << " field size: " << ff.size()
             << abort(FatalError);
     }
@@ -241,11 +234,8 @@ tmp<Field<Type> > PrimitivePatchInterpolation<Patch>::pointToFaceInterpolate
 {
     if (pf.size() != patch_.nPoints())
     {
-        FatalErrorIn
-        (
-            "tmp<Field<Type> > PrimitivePatchInterpolation::"
-            "pointToFaceInterpolate(const Field<Type> pf)"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "given field does not correspond to patch. Patch size: "
             << patch_.nPoints() << " field size: " << pf.size()
             << abort(FatalError);
     }
@@ -302,11 +292,8 @@ tmp<Field<Type> > PrimitivePatchInterpolation<Patch>::faceToEdgeInterpolate
     // Check size of the given field
     if (pf.size() != patch_.size())
     {
-        FatalErrorIn
-        (
-            "tmp<Field<Type> > PrimitivePatchInterpolation::"
-            "faceToEdgeInterpolate(const Field<Type> ff)"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "given field does not correspond to patch. Patch size: "
             << patch_.size() << " field size: " << pf.size()
             << abort(FatalError);
     }
