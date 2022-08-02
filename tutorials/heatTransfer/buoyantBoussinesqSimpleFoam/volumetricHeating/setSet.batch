@@ -1,0 +1,2 @@
+cellSet volHeatSource new boxToCell (1.5 0 1.5) (2 2 2)
+quit

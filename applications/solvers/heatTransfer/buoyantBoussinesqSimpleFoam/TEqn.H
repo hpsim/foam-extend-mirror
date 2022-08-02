@@ -10,9 +10,14 @@
         fvm::div(phi, T)
       + fvm::SuSp(-fvc::div(phi), T)
       - fvm::laplacian(kappaEff, T)
-     ==
-        thermalModel.S()
     );
+
+    if (thermalModelFluid.active())
+    {
+        TEqn -=
+            thermalModelFluid.S()/
+            (thermalModelFluid.rho()*thermalModelFluid.C());
+    }
 
     TEqn.relax();
     TEqn.solve();

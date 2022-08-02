@@ -1,0 +1,56 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     4.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+transportModel Newtonian;
+
+// Laminar viscosity
+nu              nu [0 2 -1 0 0 0 0] 1e-05;
+
+// Thermal expansion coefficient
+beta            beta [0 0 0 -1 0 0 0] 3e-03;
+
+// Reference temperature
+TRef            TRef [0 0 0 1 0 0 0] 300;
+
+// Laminar Prandtl number
+Pr              Pr [0 0 0 0 0 0 0] 0.7;
+
+// Turbulent Prandtl number
+Prt             Prt [0 0 0 0 0 0 0] 0.9;
+
+thermal
+{
+    type constant;
+
+    rho rho [1 -3 0 0 0 0 0] 1;
+    C C [0  2 -2 -1 0 0 0]  717.1;
+    k k [1  1 -3 -1 0 0 0] 1e5;
+    alpha alpha [0 0 0 -1 0 0 0] 0;
+    T0 T0 [0 0 0 1 0 0 0] 300;
+    
+    sources
+    (
+        volHeatedZone
+        {
+            type            constant;
+            S               S [1 -2 -3 0 0 0 0] 50000; // 500 W
+            zones           ( volHeatSource );
+
+        }
+    );
+}
+
+// ************************************************************************* //

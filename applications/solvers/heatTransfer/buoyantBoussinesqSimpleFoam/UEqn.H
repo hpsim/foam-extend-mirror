@@ -4,12 +4,22 @@
     (
         fvm::div(phi, U)
       + turbulence->divDevReff()
+      + fvm::SuSp(-fvc::div(phi), U)
     );
+
+    UEqn().relax();
 
     solve
     (
-        relax(UEqn())
+        UEqn()
       ==
-       -fvc::grad(p)
-      + fvc::reconstruct(fvc::interpolate(rhok)*(g & mesh.Sf()))
+        fvc::reconstruct
+        (
+            (
+                (
+                  - ghf*fvc::snGrad(rhok)
+                  - fvc::snGrad(p_rgh)
+                )*mesh.magSf()
+            )
+        )
     );
