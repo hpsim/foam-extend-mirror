@@ -18,8 +18,8 @@ solvers
 {
     p_rgh
     {
-        solver           PCG;
-        preconditioner   DIC;
+        solver           CG;
+        preconditioner   Cholesky;
 
         minIter          0;
         maxIter          1000;

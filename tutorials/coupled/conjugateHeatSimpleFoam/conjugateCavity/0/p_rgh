@@ -24,26 +24,26 @@ boundaryField
     {
         type            buoyantPressure;
         rho             rhok;
+        value           uniform 0;
     }
-
     left
     {
         type            buoyantPressure;
         rho             rhok;
+        value           uniform 0;
     }
-
     right
     {
         type            buoyantPressure;
         rho             rhok;
+        value           uniform 0;
     }
-
     bottom
     {
         type            buoyantPressure;
         rho             rhok;
+        value           uniform 0;
     }
-
     frontAndBack
     {
         type            empty;
