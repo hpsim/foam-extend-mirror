@@ -17,59 +17,46 @@ FoamFile
 
 solvers
 {
-    p
+    p_rgh
     {
-        solver          PCG;
-        preconditioner  DIC;
+        solver          CG;
+        preconditioner  Cholesky;
         tolerance       1e-07;
-        relTol          0.1;
+        relTol          0.0;
     }
-
-    pFinal
+    p_rghFinal
     {
-        solver          PCG;
-        preconditioner  DIC;
+        solver          CG;
+        preconditioner  Cholesky;
         tolerance       1e-07;
         relTol          0;
     }
-
     U
     {
         solver          BiCGStab;
         preconditioner  DILU;
-        tolerance       1e-05;
+        tolerance       1e-07;
         relTol          0;
     }
-
     T
     {
         solver          BiCGStab;
         preconditioner  DILU;
-        tolerance       1e-05;
+        tolerance       1e-07;
         relTol          0;
     }
-
     k
     {
         solver          BiCGStab;
         preconditioner  DILU;
-        tolerance       1e-05;
+        tolerance       1e-07;
         relTol          0;
     }
-
     epsilon
     {
         solver          BiCGStab;
         preconditioner  DILU;
-        tolerance       1e-05;
-        relTol          0;
-    }
-
-    R
-    {
-        solver          BiCGStab;
-        preconditioner  DILU;
-        tolerance       1e-05;
+        tolerance       1e-07;
         relTol          0;
     }
 }
@@ -79,8 +66,8 @@ PISO
     momentumPredictor yes;
     nCorrectors     2;
     nNonOrthogonalCorrectors 0;
-    pRefCell        0;
-    pRefValue       0;
+    p_rghRefCell        0;
+    p_rghRefValue       0;
 }
 
 

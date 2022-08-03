@@ -4,31 +4,33 @@
 
     U = rUA*UEqn.H();
 
-    surfaceScalarField phiU
-    (
-        (fvc::interpolate(U) & mesh.Sf())
-      + fvc::ddtPhiCorr(rUA, U, phi)
-    );
+    phi = fvc::interpolate(U) & mesh.Sf();
+    adjustPhi(phi, U, p_rgh);
 
-    phi = phiU + rUAf*fvc::interpolate(rhok)*(g & mesh.Sf());
+    surfaceScalarField buoyancyPhi(rUAf*ghf*fvc::snGrad(rhok)*mesh.magSf());
+    phi -= buoyancyPhi;
 
     while (piso.correctNonOrthogonal())
     {
-        fvScalarMatrix pEqn
+        fvScalarMatrix p_rghEqn
         (
-            fvm::laplacian(rUAf, p) == fvc::div(phi)
+            fvm::laplacian(rUAf, p_rgh) == fvc::div(phi)
         );
 
-        pEqn.solve(mesh.solutionDict().solver(p.select(piso.finalInnerIter())));
+        p_rghEqn.solve
+        (
+            mesh.solutionDict().solver(p_rgh.select(piso.finalInnerIter()))
+        );
 
         if (piso.finalNonOrthogonalIter())
         {
-            phi -= pEqn.flux();
+            phi -= p_rghEqn.flux();
         }
+
+        // Correct the momentum source with the pressure gradient flux
+        U -= rUA*fvc::reconstruct((buoyancyPhi + p_rghEqn.flux())/rUAf);
+        U.correctBoundaryConditions();
     }
 
-    U += rUA*fvc::reconstruct((phi - phiU)/rUAf);
-    U.correctBoundaryConditions();
-
-    #include "continuityErrs.H"
+#   include "continuityErrs.H"
 }
