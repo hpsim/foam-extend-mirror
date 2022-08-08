@@ -13,7 +13,7 @@
     );
 
     Info<< "Reading solid thermal properties" << endl;
-    thermalModel solidThermo(Tsolid);
+    thermalModel solidThermalModel(Tsolid);
 
     Info<< "Reading solid diffusivity k\n" << endl;
     volScalarField kSolid

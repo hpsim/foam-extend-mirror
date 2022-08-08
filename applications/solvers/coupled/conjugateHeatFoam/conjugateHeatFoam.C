@@ -35,6 +35,7 @@ Description
 #include "coupledFvMatrices.H"
 #include "regionCouplePolyPatch.H"
 #include "radiationModel.H"
+#include "fluidThermalModel.H"
 #include "thermalModel.H"
 #include "singlePhaseTransportModel.H"
 #include "RASModel.H"
@@ -94,21 +95,21 @@ int main(int argc, char *argv[])
         kappaEff = rho*Cp*(turbulence->nu()/Pr + turbulence->nut()/Prt);
 
         // Update thermal conductivity in the solid
-        solidThermo.correct();
-        ksolid = solidThermo.k();
+        solidThermalModel.correct();
+        kSolid = solidThermalModel.k();
 
         rhoCpsolid.oldTime();
-        rhoCpsolid = solidThermo.rho()*solidThermo.C();
+        rhoCpsolid = solidThermalModel.rho()*solidThermalModel.C();
 
         // Attached coupled CHT patches
 #       include "attachPatches.H"
 
         kappaEff.correctBoundaryConditions();
-        ksolid.correctBoundaryConditions();
+        kSolid.correctBoundaryConditions();
 
         // Interpolate to the faces and add thermal resistance
-        surfaceScalarField ksolidf = fvc::interpolate(ksolid);
-        solidThermo.modifyResistance(ksolidf);
+        surfaceScalarField kSolidf = fvc::interpolate(kSolid);
+        solidThermalModel.modifyResistance(kSolidf);
 
 #       include "solveEnergy.H"
 

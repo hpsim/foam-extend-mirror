@@ -13,10 +13,10 @@
     );
 
     Info<< "Reading solid thermal properties" << endl;
-    thermalModel solidThermo(Tsolid);
+    thermalModel solidThermalModel(Tsolid);
 
     Info<< "Reading solid diffusivity k\n" << endl;
-    volScalarField ksolid
+    volScalarField kSolid
     (
         IOobject
         (
@@ -40,6 +40,6 @@
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        solidThermo.rho()*solidThermo.C()
+        solidThermalModel.rho()*solidThermalModel.C()
     );
     rhoCpsolid.oldTime();

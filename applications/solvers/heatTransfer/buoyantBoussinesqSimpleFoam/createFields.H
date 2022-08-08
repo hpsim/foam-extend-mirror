@@ -1,5 +1,4 @@
     Info<< "Reading transportProperties\n" << endl;
-
     IOdictionary transportProperties
     (
         IOobject
