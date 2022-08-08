@@ -22,22 +22,21 @@ License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    thermalModel
+    fluidThermalModel
 
 Description
-    Thermal model for solids, including material properties, thermal sources
-    and gaps.
+    Thermal model for fluids.
 
 Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved.
 
 SourceFiles
-    thermalModel.C
+    fluidThermalModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef thermalModel_H
-#define thermalModel_H
+#ifndef fluidThermalModel_H
+#define fluidThermalModel_H
 
 #include "IOdictionary.H"
 #include "typeInfo.H"
@@ -46,7 +45,6 @@ SourceFiles
 #include "fvMatrices.H"
 #include "tmp.H"
 #include "thermalLaw.H"
-#include "thermalGap.H"
 #include "thermalSource.H"
 #include "Switch.H"
 
@@ -56,14 +54,15 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                         Class thermalModel Declaration
+                      Class fluidThermalModel Declaration
 \*---------------------------------------------------------------------------*/
 
-class thermalModel
-:
-    public IOdictionary
+class fluidThermalModel
 {
     // Private data
+
+        //- Dictionary
+        const dictionary& dict_;
 
         //- Reference to temperature field
         const volScalarField& T_;
@@ -71,35 +70,36 @@ class thermalModel
         //- Thermal law
         autoPtr<thermalLaw> lawPtr_;
 
-        //- Contact resistance
-        PtrList<thermalGap> gapPtr_;
-
         //- Thermal source
-        PtrList<thermalSource> sourcePtr_;
+        PtrList<thermalSource> sources_;
 
 
     // Private Member Functions
 
         //- Disallow copy construct
-        thermalModel(const thermalModel&) = delete;
+        fluidThermalModel(const fluidThermalModel&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const thermalModel&) = delete;
+        void operator=(const fluidThermalModel&) = delete;
 
 
 public:
 
     //- Runtime type information
-    TypeName("thermalModel");
+    TypeName("fluidThermalModel");
 
     // Constructors
 
         //- Construct from dictionary
-        thermalModel(const volScalarField& T);
+        fluidThermalModel
+        (
+            const dictionary& dict,
+            const volScalarField& T
+        );
 
 
     //- Destructor
-    virtual ~thermalModel() = default;
+    virtual ~fluidThermalModel() = default;
 
 
     // Member Functions
@@ -134,35 +134,8 @@ public:
             return lawPtr_->k();
         }
 
-        //- Return thermal expansion coefficient
-        tmp<volScalarField> alpha() const
-        {
-            return lawPtr_->alpha();
-        }
-
-        //- Return reference temperature
-        tmp<volScalarField> T0() const
-        {
-            return lawPtr_->T0();
-        }
-
-        //- Add resistance for gaps
-        void modifyResistance(surfaceScalarField&) const;
-
-        //- Return the laplacian and incorporate resistance for gaps
-        tmp<fvScalarMatrix> laplacian(volScalarField&);
-
         //- Return the aggregated source
         tmp<volScalarField> S() const;
-
-        //- Correct the thermal model
-        void correct()
-        {
-            lawPtr_->correct();
-        }
-
-        //- Read thermalProperties dictionary
-        virtual bool read();
 };
 
 

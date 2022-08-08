@@ -62,10 +62,8 @@ Foam::multiMaterialZonesThermal::multiMaterialZonesThermal
 
             if (zoneID < 0)
             {
-                FatalErrorIn
-                (
-                    "multiMaterialZonesThermal::multiMaterialZonesThermal()\n"
-                )   << "Zone " << zones[zoneI]
+                FatalIOErrorInFunction(lawEntries[lawI].dict())
+                    << "Zone " << zones[zoneI]
                     << " specified in material " << lawEntries[lawI].keyword()
                     << " does not exist"
                     << abort(FatalError);
@@ -86,10 +84,5 @@ Foam::multiMaterialZonesThermal::multiMaterialZonesThermal
     checkLaws();
 }
 
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::multiMaterialZonesThermal::~multiMaterialZonesThermal()
-{}
 
 // ************************************************************************* //

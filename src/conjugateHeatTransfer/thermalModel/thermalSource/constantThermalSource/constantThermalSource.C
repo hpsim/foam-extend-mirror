@@ -66,10 +66,8 @@ void Foam::constantThermalSource::addSource(volScalarField& source) const
 
         if ( zoneID < 0 )
         {
-            FatalErrorIn
-            (
-                "constantThermalSource::addSourcex()\n"
-            )   << "Zone " << zones_[zoneI]
+            FatalErrorInFunction
+                << "Zone " << zones_[zoneI]
                 << " specified in source " << name()
                 << " does not exist"
                 << abort(FatalError);
@@ -91,10 +89,8 @@ void Foam::constantThermalSource::addSource(volScalarField& source) const
 
         if (sumVolume < SMALL)
         {
-            FatalErrorIn
-            (
-                "constantThermalSource::addSourcex()\n"
-            )   << "Zone " << zones_[zoneI]
+            FatalErrorInFunction
+                << "Zone " << zones_[zoneI]
                 << " specified in source " << name()
                 << " has zero volume: " << sumVolume
                 << abort(FatalError);

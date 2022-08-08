@@ -116,9 +116,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~multiMaterialThermal();
+    //- Destructor
+    virtual ~multiMaterialThermal() = default;
 
 
     // Member Functions

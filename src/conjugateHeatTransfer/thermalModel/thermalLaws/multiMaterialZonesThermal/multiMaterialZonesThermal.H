@@ -82,7 +82,7 @@ public:
 
 
     //- Destructor
-    virtual ~multiMaterialZonesThermal();
+    virtual ~multiMaterialZonesThermal() = default;
 };
 
 
