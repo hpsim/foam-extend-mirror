@@ -27,7 +27,7 @@ gradSchemes
 divSchemes
 {
     default         none;
-    div(phi,U)      Gauss linearUpwind Gauss linear;
+    div(phi,U)      Gauss linearUpwindV Gauss linear;
     div((nuEff*dev(T(grad(U))))) Gauss linear;
     div((grad(p)|A(U))) Gauss linear;
     div(U)          Gauss linear;

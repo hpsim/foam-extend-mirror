@@ -31,7 +31,7 @@ solvers
     Up
     {
         solver          AMG;
-        cycle           W-cycle;
+        cycle           V-cycle;
         coarseningType  SAMG;
         norm            componentNorm;
         normComponent   3;
@@ -39,8 +39,8 @@ solvers
         minGroupSize    4;
         maxGroupSize    6;
 
-        nPreSweeps      2;
-        nPostSweeps     2;
+        nPreSweeps      1;
+        nPostSweeps     3;
         groupSize       2;
         minCoarseEqns   4;
         nMaxLevels      100;

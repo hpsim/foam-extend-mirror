@@ -21,35 +21,35 @@ solvers
     {
         solver          CG;
         preconditioner  Cholesky;
-        tolerance       1e-08;
+        tolerance       1e-07;
         relTol          0.0;
     }
     U
     {
         solver          BiCGStab;
         preconditioner  DILU;
-        tolerance       1e-08;
+        tolerance       1e-07;
         relTol          0;
     }
     T
     {
         solver          BiCGStab;
         preconditioner  DILU;
-        tolerance       1e-08;
+        tolerance       1e-07;
         relTol          0;
     }
     k
     {
         solver          BiCGStab;
         preconditioner  DILU;
-        tolerance       1e-08;
+        tolerance       1e-07;
         relTol          0;
     }
     epsilon
     {
         solver          BiCGStab;
         preconditioner  DILU;
-        tolerance       1e-08;
+        tolerance       1e-07;
         relTol          0;
     }
 }
