@@ -21,7 +21,7 @@
         if (thermalModelFluid.active())
         {
             fvScalarMatrix& TFEqn = *TFluidEqn;
-            TFluidEqn -=
+            TFEqn -=
                 thermalModelFluid.S()/
                 (thermalModelFluid.rho()*thermalModelFluid.C());
         }
