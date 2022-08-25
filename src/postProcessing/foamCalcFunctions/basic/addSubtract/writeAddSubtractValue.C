@@ -49,7 +49,7 @@ void Foam::calcTypes::addSubtract::writeAddSubtractValue
         }
 
         Type value;
-        IStringStream(valueStr)() >> value;
+        IStringStream(valueStr).operator()() >> value;
 
         Info<< "    Reading " << baseHeader.name() << endl;
         fieldType baseField(baseHeader, mesh);

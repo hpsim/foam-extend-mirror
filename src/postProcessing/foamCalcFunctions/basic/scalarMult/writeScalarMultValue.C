@@ -42,7 +42,7 @@ void Foam::calcTypes::scalarMult::writeScalarMultValue
         }
 
         scalar value;
-        IStringStream(valueStr)() >> value;
+        IStringStream(valueStr).operator()() >> value;
 
         Info<< "    Reading " << baseHeader.name() << endl;
         fieldType baseField(baseHeader, mesh);

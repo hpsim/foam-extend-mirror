@@ -52,7 +52,7 @@ void Foam::openFoamTableReader<Type>::operator()
 )
 {
     // Read data from file
-    IFstream(fName)() >> data;
+    IFstream(fName).operator()() >> data;
 }
 
 
@@ -64,7 +64,7 @@ void Foam::openFoamTableReader<Type>::operator()
 )
 {
     // Read data from file
-    IFstream(fName)() >> data;
+    IFstream(fName).operator()() >> data;
 }
 
 
