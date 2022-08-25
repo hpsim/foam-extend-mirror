@@ -74,17 +74,8 @@ fluxFvPatchField<Type>::fluxFvPatchField
     }
     else
     {
-        FatalIOErrorIn
-        (
-            "fluxFvPatchField<Type>::fluxFvPatchField"
-            "("
-            "const fvPatch& p,"
-            "const DimensionedField<Type, volMesh>& iF,"
-            "const dictionary& dict,"
-            "const bool valueRequired"
-            ")",
-            dict
-        )   << "Essential entry 'value' missing"
+        FatalIOErrorInFunction(dict)
+            << "Essential entry 'value' missing"
             << exit(FatalIOError);
     }
 }
