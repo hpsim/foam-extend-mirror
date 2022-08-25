@@ -26,11 +26,12 @@ Class
 
 Description
     Constant thermal source, given in Watts for the component
-    consisting of face zones.  Therefore, S from dictionary is divided by
+    consisting of cell zones.  Therefore, S from dictionary is divided by
     total volume of the component
 
 Author
     Henrik Rusche, Wikki GmbH.  All rights reserved.
+    Updates, maintenance, improvements by Hrvoje Jasak
 
 SourceFiles
     constantThermalSource.C
