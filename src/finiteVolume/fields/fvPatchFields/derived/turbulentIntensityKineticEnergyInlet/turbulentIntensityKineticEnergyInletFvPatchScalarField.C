@@ -80,13 +80,8 @@ turbulentIntensityKineticEnergyInletFvPatchScalarField
 {
     if (intensity_ < 0 || intensity_ > 1)
     {
-        FatalErrorIn
-        (
-            "turbulentIntensityKineticEnergyInletFvPatchScalarField::"
-            "turbulentIntensityKineticEnergyInletFvPatchScalarField"
-            "(const fvPatch& p, const DimensionedField<scalar, volMesh>& iF, "
-            "const dictionary& dict)"
-        )   << "Turbulence intensity should be specified as a fraction 0-1 "
+        FatalErrorInFunction
+            << "Turbulence intensity should be specified as a fraction 0-1 "
                "of the mean velocity\n"
                "    value given is " << intensity_
             << "\n    on patch " << this->patch().name()

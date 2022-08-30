@@ -37,11 +37,8 @@ void Foam::porousZone::adjustNegativeResistance(dimensionedVector& resist)
 
     if (maxCmpt < 0)
     {
-        FatalErrorIn
-        (
-            "Foam::porousZone::porousZone::adjustNegativeResistance"
-            "(dimensionedVector&)"
-        )   << "negative resistances! " << resist
+        FatalErrorInFunction
+            << "negative resistances! " << resist
             << exit(FatalError);
     }
     else
@@ -97,11 +94,8 @@ Foam::porousZone::porousZone
 
     if (!foundZone && Pstream::master())
     {
-        FatalErrorIn
-        (
-            "Foam::porousZone::porousZone"
-            "(const fvMesh&, const word&, const dictionary&)"
-        )   << "cannot find porous cellZone " << name_
+        FatalErrorInFunction
+            << "cannot find porous cellZone " << name_
             << exit(FatalError);
     }
 
