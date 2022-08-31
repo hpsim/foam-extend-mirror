@@ -49,6 +49,7 @@ Description
 #include "singlePhaseTransportModel.H"
 #include "fluidThermalModel.H"
 #include "RASModel.H"
+#include "porousZones.H"
 #include "simpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

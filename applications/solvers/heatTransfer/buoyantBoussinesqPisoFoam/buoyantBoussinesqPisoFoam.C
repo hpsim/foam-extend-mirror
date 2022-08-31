@@ -49,6 +49,7 @@ Description
 #include "singlePhaseTransportModel.H"
 #include "fluidThermalModel.H"
 #include "turbulenceModel.H"
+#include "porousZones.H"
 #include "pisoControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

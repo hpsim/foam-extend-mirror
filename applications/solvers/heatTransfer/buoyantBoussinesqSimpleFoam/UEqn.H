@@ -7,6 +7,8 @@
       + fvm::SuSp(-fvc::div(phi), U)
     );
 
+    pZones.addResistance(UEqn());
+
     UEqn().relax();
 
     solve

@@ -89,3 +89,6 @@
 
     // Create thermal model for fluid sources
     fluidThermalModel thermalModelFluid(laminarTransport, T);
+
+    // Create porous zones
+    porousZones pZones(mesh);

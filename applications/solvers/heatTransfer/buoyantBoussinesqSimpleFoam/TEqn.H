@@ -14,6 +14,10 @@
 
     if (thermalModelFluid.active())
     {
+        Info<< "Adding thermal source: "
+            << gMax(thermalModelFluid.S()().internalField())
+            << endl;
+
         TEqn -=
             thermalModelFluid.S()/
             (thermalModelFluid.rho()*thermalModelFluid.C());

@@ -7,6 +7,8 @@
       + turbulence->divDevReff()
     );
 
+    pZones.addResistance(UEqn);
+
     solve
     (
         UEqn
