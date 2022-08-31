@@ -35,6 +35,7 @@ SourceFiles
 #ifndef fluxFvPatchField_H
 #define fluxFvPatchField_H
 
+#include "Pair.H"
 #include "fixedGradientFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -61,6 +62,9 @@ class fluxFvPatchField
 
         //- Name of diffusion field
         word gammaName_;
+
+        //- Field bound
+        Pair<Type> fieldBound_;
 
 
 public:
@@ -131,6 +135,44 @@ public:
 
 
     // Member functions
+
+        // Access
+    
+        //- Return flux
+        inline const Field<Type>& flux() const
+        {
+            return flux_;
+        }
+
+        //- Return access to flux
+        inline Field<Type>& flux()
+        {
+            return flux_;
+        }
+
+        //- Return reactivity
+        inline const scalarField& reactivity() const
+        {
+            return reactivity_;
+        }
+
+        //- Return access to reactivity
+        inline scalarField& reactivity()
+        {
+            return reactivity_;
+        }
+
+        //- Return field bound
+        inline const Type& fieldBound() const
+        {
+            return fieldBound_;
+        }
+
+        //- Return access to field bound
+        inline Type& fieldBound()
+        {
+            return fieldBound_;
+        }
 
         //- Update the coefficients associated with the patch field
         virtual void updateCoeffs();
