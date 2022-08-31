@@ -96,11 +96,8 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::readField(Istream& is)
 {
     if (is.version() < 2.0)
     {
-        FatalIOErrorIn
-        (
-            "GeometricField<Type, PatchField, GeoMesh>::readField(Istream&)",
-            is
-        )   << "IO versions < 2.0 are not supported."
+        FatalIOErrorInFunction(is)
+            << "IO versions < 2.0 are not supported."
             << exit(FatalIOError);
     }
 
@@ -120,7 +117,9 @@ bool Foam::GeometricField<Type, PatchField, GeoMesh>::readIfPresent()
     }
     else if (this->readOpt() == IOobject::READ_IF_PRESENT && this->headerOk())
     {
-        boundaryField_ = readField(this->readStream(typeName));
+        // Force assignment to preserve types from the boundary field which
+        // was just read in.  HJ, 29/Aug/2022
+        boundaryField_.transfer(readField(this->readStream(typeName))());
 
         // Clear caches: boundary field has been transferred.
         // HJ, 2/May/2022
@@ -355,12 +354,8 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 
     if (this->size() != GeoMesh::size(this->mesh()))
     {
-        FatalIOErrorIn
-        (
-            "GeometricField<Type, PatchField, GeoMesh>::GeometricField"
-            "(const IOobject&, const Mesh&)",
-            this->readStream(typeName)
-        )   << "   number of field elements = " << this->size()
+        FatalIOErrorInFunction(this->readStream(typeName))
+            << "   number of field elements = " << this->size()
             << " number of mesh elements = " << GeoMesh::size(this->mesh())
             << exit(FatalIOError);
     }
@@ -394,12 +389,8 @@ Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricField
 
     if (this->size() != GeoMesh::size(this->mesh()))
     {
-        FatalIOErrorIn
-        (
-            "GeometricField<Type, PatchField, GeoMesh>::GeometricField"
-            "(const IOobject&, const Mesh&, Istream&)",
-            is
-        )   << "   number of field elements = " << this->size()
+        FatalIOErrorInFunction(is)
+            << "   number of field elements = " << this->size()
             << " number of mesh elements = " << GeoMesh::size(this->mesh())
             << exit(FatalIOError);
     }
