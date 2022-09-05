@@ -258,6 +258,8 @@ void Foam::inletOutletIbFvPatchField<Type>::manipulateMatrix
 template<class Type>
 void inletOutletIbFvPatchField<Type>::write(Ostream& os) const
 {
+    fvPatchField<Type>::write(os);
+
     // Resolve post-processing issues.  HJ, 1/Dec/2017
     if (this->phiName() != "phi")
     {
