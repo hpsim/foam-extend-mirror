@@ -44,7 +44,7 @@ void inletOutletIbFvPatchField<Type>::updateIbValues()
     this->refGrad() =
         Field<Type>(this->ibPatch().size(), pTraits<Type>::zero);
 
-    this->valueFraction() = scalarField(this->patch().size(), scalar(0));
+    this->valueFraction() = scalarField(this->ibPatch().size(), scalar(0));
 
     // Resize the field and initialise to a reasonable value.
     // Reconsider.  HJ, 16/Jun/2022
@@ -225,6 +225,7 @@ void inletOutletIbFvPatchField<Type>::updateOnMotion()
     if (this->size() != this->ibPatch().size())
     {
         this->updateIbValues();
+        inletOutletFvPatchField<Type>::evaluate();
     }
 }
 
