@@ -617,7 +617,7 @@ Foam::scalar Foam::triSurfaceTools::edgeCosAngle
         }
         else
         {
-            FatalErrorIn("edgeCosAngle")
+            FatalErrorInFunction
                 << "face " << faceI << " does not use vertex "
                 << v1 << " of collapsed edge" << abort(FatalError);
         }
@@ -889,7 +889,8 @@ Foam::surfaceLocation Foam::triSurfaceTools::cutEdge
 
         if (fp0 == -1)
         {
-            FatalErrorIn("cutEdge(..)") << "excludePointI:" << excludePointI
+            FatalErrorInFunction
+                << "excludePointI:" << excludePointI
                 << " localF:" << s.localFaces()[triI] << abort(FatalError);
         }
 
@@ -946,7 +947,7 @@ Foam::surfaceLocation Foam::triSurfaceTools::cutEdge
             {
                 if (interI >= 2)
                 {
-                    FatalErrorIn("cutEdge(..)")
+                    FatalErrorInFunction
                         << "problem : triangle has three intersections." << nl
                         << "triangle:" << f.tri(points)
                         << " d:" << d << abort(FatalError);
@@ -965,7 +966,7 @@ Foam::surfaceLocation Foam::triSurfaceTools::cutEdge
             {
                 if (interI >= 2)
                 {
-                    FatalErrorIn("cutEdge(..)")
+                    FatalErrorInFunction
                         << "problem : triangle has three intersections." << nl
                         << "triangle:" << f.tri(points)
                         << " d:" << d << abort(FatalError);
@@ -1212,7 +1213,7 @@ Foam::surfaceLocation Foam::triSurfaceTools::visitFaces
                 // If crossing an edge we expect next edge to be cut.
                 if (excludeEdgeI != -1 && !cutInfo.hit())
                 {
-                    FatalErrorIn("triSurfaceTools::visitFaces(..)")
+                    FatalErrorInFunction
                         << "Triangle:" << triI
                         << " excludeEdge:" << excludeEdgeI
                         << " point:" << start.rawPoint()
@@ -1471,12 +1472,8 @@ void Foam::triSurfaceTools::otherEdges
 
     if (i0 == -1)
     {
-        FatalErrorIn
-        (
-            "otherEdges"
-            "(const triSurface&, const label, const label,"
-            " label&, label&)"
-        )   << "Edge " << surf.edges()[edgeI] << " not in face "
+        FatalErrorInFunction
+            << "Edge " << surf.edges()[edgeI] << " not in face "
             << surf.localFaces()[faceI] << abort(FatalError);
     }
 
@@ -1517,12 +1514,8 @@ void Foam::triSurfaceTools::otherVertices
     }
     else
     {
-        FatalErrorIn
-        (
-            "otherVertices"
-            "(const triSurface&, const label, const label,"
-            " label&, label&)"
-        )   << "Vertex " << vertI << " not in face " << f << abort(FatalError);
+        FatalErrorInFunction
+            << "Vertex " << vertI << " not in face " << f << abort(FatalError);
     }
 }
 
@@ -1549,11 +1542,8 @@ Foam::label Foam::triSurfaceTools::oppositeEdge
         }
     }
 
-    FatalErrorIn
-    (
-        "oppositeEdge"
-        "(const triSurface&, const label, const label)"
-    )   << "Cannot find vertex " << vertI << " in edges of face " << faceI
+    FatalErrorInFunction
+        << "Cannot find vertex " << vertI << " in edges of face " << faceI
         << abort(FatalError);
 
     return -1;
@@ -1582,7 +1572,7 @@ Foam::label Foam::triSurfaceTools::oppositeVertex
         }
     }
 
-    FatalErrorIn("triSurfaceTools::oppositeVertex")
+    FatalErrorInFunction
         << "Cannot find vertex opposite edge " << edgeI << " vertices " << e
         << " in face " << faceI << " vertices " << f << abort(FatalError);
 
@@ -1626,12 +1616,8 @@ Foam::label Foam::triSurfaceTools::getTriangle
 {
     if ((e0I == e1I) || (e0I == e2I) || (e1I == e2I))
     {
-        FatalErrorIn
-        (
-            "getTriangle"
-            "(const triSurface&, const label, const label,"
-            " const label)"
-        )   << "Duplicate edge labels : e0:" << e0I << " e1:" << e1I
+        FatalErrorInFunction
+            << "Duplicate edge labels : e0:" << e0I << " e1:" << e1I
             << " e2:" << e2I
             << abort(FatalError);
     }
@@ -1697,7 +1683,7 @@ Foam::triSurface Foam::triSurfaceTools::collapseEdges
     //
     //    if ((neighbours.size() != 2) && (neighbours.size() != 1))
     //    {
-    //        FatalErrorIn("collapseEdges")
+    //        FatalErrorInFunction
     //            << abort(FatalError);
     //    }
     //
@@ -1751,7 +1737,7 @@ Foam::triSurface Foam::triSurfaceTools::collapseEdges
 
         if ((edgeI < 0) || (edgeI >= surf.nEdges()))
         {
-            FatalErrorIn("collapseEdges")
+            FatalErrorInFunction
                 << "Edge label outside valid range." << endl
                 << "edge label:" << edgeI << endl
                 << "total number of edges:" << surf.nEdges() << endl
@@ -1781,7 +1767,7 @@ Foam::triSurface Foam::triSurfaceTools::collapseEdges
                  || (pointMap[e.end()] != e.end())
                 )
                 {
-                    FatalErrorIn("collapseEdges")
+                    FatalErrorInFunction
                         << "points already mapped. Double collapse." << endl
                         << "edgeI:" << edgeI
                         << "  start:" << e.start()
@@ -2254,7 +2240,7 @@ Foam::triSurfaceTools::sideType Foam::triSurfaceTools::surfaceSide
         //     != edge(f[nearLabel], f[f.fcIndex(nearLabel)])
         //    )
         //    {
-        //        FatalErrorIn("triSurfaceTools::surfaceSide")
+        //        FatalErrorInFunction
         //            << "Edge:" << edgeI << " local vertices:" << e
         //            << " mesh vertices:" << meshEdge
         //            << " not at position " << nearLabel
@@ -2315,7 +2301,7 @@ Foam::triSurfaceTools::sideType Foam::triSurfaceTools::surfaceSide
 
         if (minEdgeI == -1)
         {
-            FatalErrorIn("treeDataTriSurface::getSide")
+            FatalErrorInFunction
                 << "Problem: did not find edge closer than " << minDistSqr
                 << abort(FatalError);
         }
@@ -2358,7 +2344,7 @@ Foam::triSurface Foam::triSurfaceTools::triangulate
 
         label nTriTotal = 0;
 
-        forAll(patch, patchFaceI)
+        forAll (patch, patchFaceI)
         {
             const face& f = patch[patchFaceI];
 
@@ -2448,6 +2434,7 @@ Foam::triSurface Foam::triSurfaceTools::triangulateFaceCentre
     {
         newPoints[newPointI++] = points[pointI];
     }
+
     forAll(faceCentres, faceI)
     {
         newPoints[newPointI++] = faceCentres[faceI];
