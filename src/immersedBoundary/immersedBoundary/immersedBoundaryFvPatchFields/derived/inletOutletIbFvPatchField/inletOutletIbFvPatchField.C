@@ -41,8 +41,7 @@ void inletOutletIbFvPatchField<Type>::updateIbValues()
 
     this->refValue() = Field<Type>(triInletValue_, nt);
 
-    this->refGrad() =
-        Field<Type>(this->ibPatch().size(), pTraits<Type>::zero);
+    this->refGrad() = Field<Type>(this->ibPatch().size(), pTraits<Type>::zero);
 
     this->valueFraction() = scalarField(this->ibPatch().size(), scalar(0));
 
@@ -225,7 +224,14 @@ void inletOutletIbFvPatchField<Type>::updateOnMotion()
     if (this->size() != this->ibPatch().size())
     {
         this->updateIbValues();
-        inletOutletFvPatchField<Type>::evaluate();
+
+        // Note:
+        // At this point, flux field has not been updated and it has the
+        // wrong size.  Therefore, inletOutlet updateCoeffs will give the
+        // wrong size of valueFraction.
+        // To avoid the problem, the field is dimensioned to the right size in
+        // updateIbValues().  HJ, 9/Sep/2022
+        // inletOutletFvPatchField<Type>::evaluate();
     }
 }
 
