@@ -69,10 +69,10 @@ class triSurfaceSearch
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        triSurfaceSearch(const triSurfaceSearch&);
+        triSurfaceSearch(const triSurfaceSearch&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const triSurfaceSearch&);
+        void operator=(const triSurfaceSearch&) = delete;
 
 
 public:
@@ -88,6 +88,10 @@ public:
         //- Construct from surface. Holds reference to surface!
         explicit triSurfaceSearch(const triSurface&);
 
+
+    //- Destructor
+    ~triSurfaceSearch() = default;
+    
 
     // Member Functions
 
