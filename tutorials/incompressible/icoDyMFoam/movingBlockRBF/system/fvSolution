@@ -44,11 +44,11 @@ solvers
     }
 }
 
-PISO
+PIMPLE
 {
     checkMeshCourantNo true;
-    momentumPredictor yes;
 
+    nOuterCorrectors 2;
     nCorrectors     4;
     nNonOrthogonalCorrectors 1;
 

@@ -26,7 +26,6 @@ solvers
         tolerance        1e-02;
         relTol           0;
     }
-
     p
     {
         solver           CG;
@@ -37,7 +36,6 @@ solvers
         tolerance        1e-07;
         relTol           0.0;
     }
-
     pFinal
     {
         solver           CG;
@@ -48,7 +46,6 @@ solvers
         tolerance        1e-07;
         relTol           0;
     }
-
     U
     {
         solver            BiCGStab;
@@ -61,8 +58,9 @@ solvers
     }
 }
 
-PISO
+PIMPLE
 {
+    nOuterCorrectors 2;
     nCorrectors     4;
     nNonOrthogonalCorrectors 0;
     pRefCell        0;
