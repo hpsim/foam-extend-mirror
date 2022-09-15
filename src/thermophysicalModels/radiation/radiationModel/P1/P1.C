@@ -186,12 +186,6 @@ Foam::radiation::P1::P1(const dictionary& dict, const volScalarField& T)
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::radiation::P1::~P1()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool Foam::radiation::P1::read()
