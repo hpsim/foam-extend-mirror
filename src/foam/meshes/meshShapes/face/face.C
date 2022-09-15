@@ -132,12 +132,7 @@ Foam::label Foam::face::split
 
     if (size() <= 2)
     {
-        FatalErrorIn
-        (
-            "face::split"
-            "(const face::splitMode, const pointField&, label&, label&"
-            ", faceList&, faceList&)"
-        )
+        FatalErrorInFunction
             << "Serious problem: asked to split a face with < 3 vertices"
             << abort(FatalError);
     }
@@ -483,7 +478,7 @@ Foam::point Foam::face::centre(const pointField& meshPoints) const
     // area-weighted averaging their centres
     if (size() < 3)
     {
-        FatalErrorIn("point face::centre(const pointField& meshPoints) const")
+        FatalErrorInFunction
             << "Face with fewer than 3 points detected: " << *this
             << abort(FatalError);
     }
@@ -817,6 +812,7 @@ Foam::label Foam::face::nTrianglesQuads
     label& quadI
 ) const
 {
+    // Dummy lists: only counting
     faceList triFaces;
     faceList quadFaces;
 

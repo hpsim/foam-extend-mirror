@@ -119,7 +119,7 @@ public:
         {
             if (!hit_)
             {
-                FatalErrorIn("const Point& PointHit::hitPoint() const")
+                FatalErrorInFunction
                     << "requested a hit point for a miss"
                     << abort(FatalError);
             }
@@ -138,7 +138,7 @@ public:
         {
             if (hit_)
             {
-                FatalErrorIn("const Point& PointHit::missPoint() const")
+                FatalErrorInFunction
                     << "requested a miss point for a hit"
                     << abort(FatalError);
             }

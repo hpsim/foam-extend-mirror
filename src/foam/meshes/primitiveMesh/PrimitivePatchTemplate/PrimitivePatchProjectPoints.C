@@ -56,12 +56,8 @@ projectPoints
 
     if (projectionDirection.size() != nPoints())
     {
-        FatalErrorIn
-        (
-            "PrimitivePatch<Face, FaceList, PointField, PointType>::"
-            "projectPoints(const PrimitivePatch& "
-            ", const Field<PointType>&) const"
-        )   << "Projection direction field does not correspond to "
+        FatalErrorInFunction
+            << "Projection direction field does not correspond to "
             << "patch points." << endl
             << "Size: " << projectionDirection.size()
             << " Number of points: " << nPoints()
@@ -107,7 +103,8 @@ projectPoints
 
     if (debug)
     {
-        Info<< "N-squared projection set for all points" << endl;
+        InfoInFunction
+            << "N-squared projection set for all points" << endl;
     }
 
     label curFace = 0;
@@ -325,12 +322,8 @@ projectFaceCentres
 
     if (projectionDirection.size() != this->size())
     {
-        FatalErrorIn
-        (
-            "labelList PrimitivePatch<Face, FaceList, PointField, PointType>::"
-            "projectFaceCentres(const PrimitivePatch& "
-            ", const Field<PointType>&) const"
-        )   << "Projection direction field does not correspond to patch faces."
+        FatalErrorInFunction
+            << "Projection direction field does not correspond to patch faces."
             << endl << "Size: " << projectionDirection.size()
             << " Number of points: " << this->size()
             << abort(FatalError);

@@ -162,10 +162,8 @@ void Foam::fixedFluxPressureFvPatchScalarField::updateCoeffs()
     }
     else
     {
-        FatalErrorIn
-        (
-            "void fixedFluxPressureFvPatchScalarField::updateCoeffs()"
-        )   << " Field " << rAUName_ << " not found for patch "
+        FatalErrorInFunction
+            << " Field " << rAUName_ << " not found for patch "
             << patch().name() << " and field "
             << dimensionedInternalField().name()
             << abort(FatalError);
