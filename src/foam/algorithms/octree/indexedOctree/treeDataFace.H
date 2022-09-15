@@ -62,7 +62,6 @@ class treeDataFace
         static scalar tolSqr;
 
 
-
     // Private data
 
         const primitiveMesh& mesh_;
@@ -88,6 +87,7 @@ class treeDataFace
         //- Initialise all member data
         void update();
 
+
 public:
 
     // Declare name of the class and its debug switch
@@ -109,6 +109,10 @@ public:
 
         //- Construct from mesh. Uses all faces in patch.
         treeDataFace(const bool cacheBb, const polyPatch&);
+
+
+    //- Destructor
+    ~treeDataFace() = default;
 
 
     // Member Functions
