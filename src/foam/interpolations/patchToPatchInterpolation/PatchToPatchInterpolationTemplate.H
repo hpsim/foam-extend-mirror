@@ -168,9 +168,8 @@ public:
         );
 
 
-    // Destructor
-
-        ~PatchToPatchInterpolation();
+    //- Destructor
+    ~PatchToPatchInterpolation();
 
 
     // Member Functions

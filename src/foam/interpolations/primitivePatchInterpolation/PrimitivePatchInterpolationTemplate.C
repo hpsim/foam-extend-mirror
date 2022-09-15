@@ -23,8 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "PrimitivePatchTemplate.H"
 #include "PrimitivePatchInterpolationTemplate.H"
-#include "faceList.H"
 #include "demandDrivenData.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -57,8 +57,8 @@ void PrimitivePatchInterpolation<Patch>::makeFaceToPointWeights() const
             << abort(FatalError);
     }
 
-    const pointField& points = patch_.localPoints();
-    const List<typename Patch::FaceType>& faces = patch_.localFaces();
+    const typename Patch::PointFieldType& points = patch_.localPoints();
+    // const List<typename Patch::FaceType>& faces = patch_.localFaces();
 
     faceToPointWeightsPtr_ = new scalarListList(points.size());
     scalarListList& weights = *faceToPointWeightsPtr_;
@@ -77,8 +77,11 @@ void PrimitivePatchInterpolation<Patch>::makeFaceToPointWeights() const
 
         forAll(curFaces, facei)
         {
-            pw[facei] =
-                1.0/mag(faces[curFaces[facei]].centre(points) - points[pointi]);
+            // Hacked weighting.  HJ, 2/Sep/2022
+            pw[facei] = 1.0;
+
+            // pw[facei] =
+            //     1.0/mag(faces[curFaces[facei]].centre(points) - points[pointi]);
             sumw += pw[facei];
         }
 
@@ -113,8 +116,10 @@ void PrimitivePatchInterpolation<Patch>::makeFaceToEdgeWeights() const
             << abort(FatalError);
     }
 
-    const pointField& points = patch_.localPoints();
-    const faceList& faces = patch_.localFaces();
+    const typename Patch::PointFieldType& points = patch_.localPoints();
+    const typename Patch::FaceListType& faces =
+        patch_.localFaces();
+
     const edgeList& edges = patch_.edges();
     const labelListList& edgeFaces = patch_.edgeFaces();
 
@@ -251,7 +256,7 @@ tmp<Field<Type> > PrimitivePatchInterpolation<Patch>::pointToFaceInterpolate
 
     Field<Type>& result = tresult();
 
-    const faceList& localFaces = patch_.localFaces();
+    const List<typename Patch::FaceType>& localFaces = patch_.localFaces();
 
     forAll(result, facei)
     {
