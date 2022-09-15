@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.0                                |
+|  \\    /   O peration     | Version:     4.1                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -11,84 +11,92 @@ FoamFile
     format      ascii;
     class       volScalarField;
     location    "0";
-    object      T;
+    object      i;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 0 1 0 0 0];
+dimensions      [0 2 -2 0 0 0 0];
 
-internalField   uniform 305.66;
+internalField   uniform 307494;
 
 boundaryField
 {
     GVINLET
     {
-        type            isentropicTotalTemperature;
-        phi             phi;
-        rho             none;
-        psi             psi;
-        U               U;
-        gamma           1.4;
-        T0              uniform 305.66;
-        value           $internalField;
+        type            fixedEnthalpy;
+        value           uniform 307494;
     }
     GVOUTLET
     {
         type            ggiEnthalpyJump;
         patchType       ggi;
         rotating        false;
-        value           uniform 305.66;
+        value           uniform 307494;
     }
     GVCYCLIC
     {
         type            cyclic;
+        value           uniform 307494;
     }
     GVBLADE
     {
-        type            zeroGradient;
-        value           $internalField;
+        type            gradientEnthalpy;
+        gradient        uniform 0;
+        value           uniform 307000;
     }
     GVHUB
     {
-        type            zeroGradient;
+        type            gradientEnthalpy;
+        gradient        uniform 0;
+        value           uniform 307494;
     }
     GVSHROUD
     {
-        type            zeroGradient;
+        type            gradientEnthalpy;
+        gradient        uniform 0;
+        value           uniform 307494;
     }
     RUINLET
     {
         type            ggiEnthalpyJump;
         patchType       ggi;
         rotating        true;
-        value           uniform 305.66;
+        value           uniform 307494;
     }
     RUOUTLET
     {
         type            ggiEnthalpyJump;
         patchType       ggi;
         rotating        true;
-        value           uniform 305.66;
+        value           uniform 307494;
     }
     RUCYCLIC1
     {
         type            cyclicGgi;
+        value           uniform 307494;
     }
     RUCYCLIC2
     {
         type            cyclicGgi;
+        value           uniform 307494;
     }
     RUBLADE
     {
-        type            zeroGradient;
+        type            gradientEnthalpy;
+        gradient        uniform 0;
+        value           uniform 307494;
     }
     RUHUB
     {
-        type            zeroGradient;
+        type            gradientEnthalpy;
+        gradient        uniform 0;
+        value           uniform 307494;
     }
     RUSHROUD
     {
-        type            zeroGradient;
+        type            gradientEnthalpy;
+        gradient        uniform 0;
+        value           uniform 307494;
     }
     DTINLET
     {
@@ -99,25 +107,32 @@ boundaryField
     }
     DTOUTLET
     {
-        type            inletOutlet;
-        inletValue      uniform 300;
-        value           $internalField;
+        type            gradientEnthalpy;
+        gradient        uniform 0;
+        value           uniform 307494;
     }
     DTCYCLIC1
     {
         type            cyclicGgi;
+        value           uniform 307494;
     }
     DTCYCLIC2
     {
         type            cyclicGgi;
+        value           uniform 307494;
     }
     DTHUB
     {
-        type            zeroGradient;
+        type            gradientEnthalpy;
+        gradient        uniform 0;
+        value           uniform 307494;
+
     }
     DTSHROUD
     {
-        type            zeroGradient;
+        type            gradientEnthalpy;
+        gradient        uniform 0;
+        value            uniform 307494;
     }
 }
 

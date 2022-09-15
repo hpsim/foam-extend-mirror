@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     4.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -21,67 +21,124 @@ internalField   uniform 0;
 
 boundaryField
 {
-    inlet
+    GVINLET
     {
         type            calculated;
         value           uniform 0;
     }
-    outlet
+    GVOUTLET
     {
-        type            calculated;
+        type            ggi;
         value           uniform 0;
     }
-    bladeRotor
-    {
-        type            mutkWallFunction;
-        Cmu             0.09;
-        kappa           0.41;
-        E               9.8;
-        value           uniform 0;
-    }
-    shaftRotor
-    {
-        type            mutkWallFunction;
-        Cmu             0.09;
-        kappa           0.41;
-        E               9.8;
-        value           uniform 0;
-    }
-    shroudRotor
-    {
-        type            mutkWallFunction;
-        Cmu             0.09;
-        kappa           0.41;
-        E               9.8;
-        value           uniform 0;
-    }
-    bladeStator
-    {
-        type            mutkWallFunction;
-        Cmu             0.09;
-        kappa           0.41;
-        E               9.8;
-        value           uniform 0;
-    }
-    shaftStator
-    {
-        type            mutkWallFunction;
-        Cmu             0.09;
-        kappa           0.41;
-        E               9.8;
-        value           uniform 0;
-    }
-    shroudStator
-    {
-        type            mutkWallFunction;
-        Cmu             0.09;
-        kappa           0.41;
-        E               9.8;
-        value           uniform 0;
-    }
-    frontAndBack
+    GVCYCLIC
     {
         type            cyclic;
+        value           uniform 0;
+    }
+    GVBLADE
+    {
+        type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+        value           uniform 0;
+    }
+    GVHUB
+    {
+        type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+        value           uniform 0;
+    }
+    GVSHROUD
+    {
+        type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+        value           uniform 0;
+    }
+    RUINLET
+    {
+        type            ggi;
+        value           uniform 0;
+    }
+    RUOUTLET
+    {
+        type            ggi;
+        value           uniform 0;
+    }
+    RUCYCLIC1
+    {
+        type            cyclicGgi;
+        value           uniform 0;
+    }
+    RUCYCLIC2
+    {
+        type            cyclicGgi;
+        value           uniform 0;
+    }
+    RUBLADE
+    {
+        type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+        value           uniform 0;
+    }
+    RUHUB
+    {
+        type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+        value           uniform 0;
+    }
+    RUSHROUD
+    {
+        type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+        value           uniform 0;
+    }
+    DTINLET
+    {
+        type            ggi;
+        value           uniform 0;
+    }
+    DTOUTLET
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+    DTCYCLIC1
+    {
+        type            cyclicGgi;
+        value           uniform 0;
+    }
+    DTCYCLIC2
+    {
+        type            cyclicGgi;
+        value           uniform 0;
+    }
+    DTHUB
+    {
+        type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+        value           uniform 0;
+    }
+    DTSHROUD
+    {
+        type            mutkWallFunction;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
+        value           uniform 0;
     }
 }
 

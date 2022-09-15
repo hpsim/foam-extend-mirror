@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     4.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -19,51 +19,51 @@ solvers
     p
     {
         solver           BiCGStab;
-        preconditioner   DILU;
+        preconditioner   ILUC0;
 
         minIter          0;
         maxIter          1000;
-        tolerance        1e-8;
-        relTol           0.01;
+        tolerance        1e-7;
+        relTol           0.001;
     }
     U
     {
         solver           BiCGStab;
-        preconditioner   DILU;
+        preconditioner   ILUC0;
 
         minIter          0;
-        maxIter          1000;
-        tolerance        1e-8;
-        relTol           0.01;
+        maxIter          100;
+        tolerance        1e-7;
+        relTol           0.0;
     }
     i
     {
         solver           BiCGStab;
-        preconditioner   DILU;
+        preconditioner   ILUC0;
 
         minIter          0;
-        maxIter          1000;
-        tolerance        1e-8;
-        relTol           0.01;
+        maxIter          100;
+        tolerance        1e-7;
+        relTol           0.0;
     }
     k
     {
         solver           BiCGStab;
-        preconditioner   DILU;
+        preconditioner   ILUC0;
 
         minIter          0;
-        maxIter          1000;
-        tolerance        1e-8;
+        maxIter          100;
+        tolerance        1e-7;
         relTol           0.0;
     }
     epsilon
     {
         solver           BiCGStab;
-        preconditioner   DILU;
+        preconditioner   ILUC0;
 
         minIter          0;
-        maxIter          1000;
-        tolerance        1e-8;
+        maxIter          100;
+        tolerance        1e-7;
         relTol           0.0;
     }
 }
@@ -77,21 +77,25 @@ PIMPLE
 
 relaxationFactors
 {
-    // Note: under-relaxation factors used in wave-transmissive schemes
-    U               0.5;
-    p               0.3;
-    i               0.5;
-
-    k               0.5;
-    epsilon         0.5;
+    equations
+    {
+        U               0.5;
+        i               0.5;
+        k               0.5;
+        epsilon         0.5;
+    }
+    fields
+    {
+        p               0.3;
+    }        
 }
 
 fieldBounds
 {
     // With bounding
-    p      2e4     1e6;
-    T      200     500;
-    U      500;
+    p      5e4     2e5;
+    T      230     380;
+    U      400;
 }
 
 

@@ -1,7 +1,7 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     4.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
@@ -20,57 +20,88 @@ internalField   uniform 101325;
 
 boundaryField
 {
-    inlet
+    GVINLET
     {
-        type            totalPressure;
-        phi             phi;
-        rho             none;
-        psi             psi;
-        U               U;
-        gamma           1.4;
+        type            isentropicTotalPressure;
         p0              uniform 1.4e5;
         value           $internalField;
     }
-
-    outlet
+    GVOUTLET
     {
-        type            fixedValue;
+        type            ggi;
         value           $internalField;
     }
-
-    bladeRotor
-    {
-        type            zeroGradient;
-    }
-
-    shaftRotor
-    {
-        type            zeroGradient;
-    }
-
-    shroudRotor
-    {
-        type            zeroGradient;
-    }
-
-    bladeStator
-    {
-        type            zeroGradient;
-    }
-
-    shaftStator
-    {
-        type            zeroGradient;
-    }
-
-    shroudStator
-    {
-        type            zeroGradient;
-    }
-
-    frontAndBack
+    GVCYCLIC
     {
         type            cyclic;
+    }
+    GVBLADE
+    {
+        type            zeroGradient;
+    }
+    GVHUB
+    {
+        type            zeroGradient;
+    }
+    GVSHROUD
+    {
+        type            zeroGradient;
+    }
+    RUINLET
+    {
+        type            ggi;
+        value           $internalField;
+    }
+    RUOUTLET
+    {
+        type            ggi;
+        value           $internalField;
+    }
+    RUCYCLIC1
+    {
+        type            cyclicGgi;
+    }
+    RUCYCLIC2
+    {
+        type            cyclicGgi;
+    }
+    RUBLADE
+    {
+        type            zeroGradient;
+    }
+    RUHUB
+    {
+        type            zeroGradient;
+    }
+    RUSHROUD
+    {
+        type            zeroGradient;
+    }
+    DTINLET
+    {
+        type            ggi;
+        value           $internalField;
+    }
+    DTOUTLET
+    {
+        type            fixedValue;
+        value           uniform 101325;
+    }
+    DTCYCLIC1
+    {
+        type            cyclicGgi;
+    }
+    DTCYCLIC2
+    {
+        type            cyclicGgi;
+    }
+    DTHUB
+    {
+        type            zeroGradient;
+    }
+    DTSHROUD
+    {
+        type            zeroGradient;
     }
 }
 

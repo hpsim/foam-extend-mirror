@@ -4,7 +4,14 @@
 
 application="steadyCompressibleMRFFoam"
 
+#Create the mesh:
+m4 < system/blockMeshDict.m4 > system/blockMeshDict
 runApplication blockMesh
-runApplication setSet -batch setSet.batch
-runApplication setsToZones
+transformPoints -scale "(1 20 1)"
+transformPoints -cylToCart "((0 0 0) (0 0 1) (1 0 0))"
+
+# Set 0-directory and create GGI set:
+runApplication setSet -batch setBatchGgi.batch
+runApplication setsToZones -noFlipMap
+
 runApplication $application
