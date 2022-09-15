@@ -71,8 +71,19 @@ PIMPLE
 
 relaxationFactors
 {
-    U               1;
-    UFinal          1;
+    equations
+    {
+        U               1;
+        UFinal          1;
+    }
+    fields
+    {}
+}
+
+fieldBounds
+{
+    p -1e4 1e4;
+    U 20;
 }
 
 
