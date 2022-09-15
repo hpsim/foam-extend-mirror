@@ -158,7 +158,6 @@ bool triSurface::stitchTriangles
     {
         // Nothing has merged: copy raw points
         // HJ, 27/Jun/2022
-        storedPoints() = rawPoints;
     }
     
     return hasMerged;
