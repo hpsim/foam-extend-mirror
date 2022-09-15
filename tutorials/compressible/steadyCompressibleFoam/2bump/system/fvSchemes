@@ -39,6 +39,7 @@ divSchemes
     div(phi,U)       Gauss vanLeerDC;
     div(phi,h)       Gauss vanLeerDC;
     div(phid,p)      Gauss upwind;
+    div(U,p)         Gauss vanLeerDC;
 
     div(phi,K)       Gauss linear;
 
