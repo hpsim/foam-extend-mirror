@@ -79,6 +79,7 @@ class triSurfaceTools
                 const label faceI,
                 List<refineType>& refine
             );
+
             static void greenRefine
             (
                 const triSurface& surf,
@@ -87,6 +88,7 @@ class triSurfaceTools
                 const label newPointI,
                 DynamicList<labelledTri>& newFaces
             );
+
             static triSurface doRefine
             (
                 const triSurface& surf,

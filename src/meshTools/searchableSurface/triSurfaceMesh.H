@@ -55,7 +55,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class triSurfaceMesh Declaration
+                       Class triSurfaceMesh Declaration
 \*---------------------------------------------------------------------------*/
 
 class triSurfaceMesh
