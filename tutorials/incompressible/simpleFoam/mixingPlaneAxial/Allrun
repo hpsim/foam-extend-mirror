@@ -3,7 +3,7 @@
 . $WM_PROJECT_DIR/bin/tools/RunFunctions
 
 echo "$caseName: Creating the file blockMeshDict using m4"
-(cd constant/polyMesh; m4 -P blockMeshDict.m4 > blockMeshDict)
+m4 -P system/blockMeshDict.m4 > system/blockMeshDict
 
 runApplication blockMesh
 

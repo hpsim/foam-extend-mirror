@@ -7,7 +7,7 @@ application="interFoam"
 
 setDamBreakFine ()
 {
-    blockMeshDict="constant/polyMesh/blockMeshDict"
+    blockMeshDict="system/blockMeshDict"
     controlDict="system/controlDict"
     sed \
     -e s/"23 8"/"46 10"/g \

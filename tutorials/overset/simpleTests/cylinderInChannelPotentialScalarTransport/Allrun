@@ -6,7 +6,7 @@
 application1="potentialOversetFoam"
 application2="scalarTransportFoam"
 
-\cp -f blockMeshDict constant/polyMesh/blockMeshDict
+\cp -f blockMeshDict system/blockMeshDict
 runApplication blockMesh
 \cp -f boundary constant/polyMesh/boundary
 runApplication setSet -batch setBatch.batch

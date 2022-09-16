@@ -7,7 +7,7 @@ application="sonicLiquidFoam"
 
 setDecompressionTankFine ()
 {
-    blockMeshDict="$1/constant/polyMesh/blockMeshDict"
+    blockMeshDict="$1/system/blockMeshDict"
     controlDict="$1/system/controlDict"
     sed \
     -e s/"30 20"/"120 80"/g \
