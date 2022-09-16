@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -12,9 +12,7 @@ FoamFile
     class       dictionary;
     object      blockMeshDict;
 }
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
 
 convertToMeters 1.0e-02;
 
@@ -70,7 +68,6 @@ vertices
     (0.707 0.707 0.1)
 );
 
-
 edges
 (
 // inside edges
@@ -93,7 +90,6 @@ edges
     arc 36 35 (0 2 0.1)
     arc 35 30 (-2 0 0.1)
 );
-
 
 blocks
 (
@@ -163,6 +159,5 @@ patches
 mergePatchPairs
 (
 );
-
 
 // ************************************************************************* //

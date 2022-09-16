@@ -3,7 +3,7 @@
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
 |  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -17,7 +17,7 @@ FoamFile
 
 dimensions      [0 0 0 1 0 0 0];
 
-internalField   nonuniform List<scalar> 
+internalField   nonuniform List<scalar>
 50
 (
 1
@@ -89,6 +89,5 @@ boundaryField
         type            empty;
     }
 }
-
 
 // ************************************************************************* //

@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -15,17 +15,7 @@ FoamFile
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 // General macros to create 2D/extruded-2D meshes
 
-
-
 //define(calc, [esyscmd(echo $1 | bc | tr -d \\n)])
-
-
-
-
-
-
-
-
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -35,7 +25,6 @@ convertToMeters 1;
 // Hub radius (m)
 
 // Shroud radius (m)
-
 
 // GUIDE VANE REGION GEOMETRY AND MESH PROPERTIES
 // Guide vane inlet axial length (m)
@@ -56,7 +45,6 @@ convertToMeters 1;
 
 // Number of cells in axial direction at guide vane outlet
 
-
 // RUNNER REGION GEOMETRY AND MESH PROPERTIES
 // Runner inlet axial length (m)
 
@@ -76,7 +64,6 @@ convertToMeters 1;
 
 // Number of cells in axial direction at runner outlet
 
-
 // DRAFT TUBE REGION GEOMETRY AND MESH PROPERTIES
 // "Draft tube" axial length (m)
 
@@ -88,7 +75,6 @@ convertToMeters 1;
 
 // Number of cells in axial direction in "draft tube"
 
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 // TANGENTIAL PITCHES (RADIANS)
@@ -97,7 +83,6 @@ convertToMeters 1;
 // Runner region
 
 // Draft tube region
-
 
 // TANGENTIAL SHIFTS BETWEEN AXIAL LEVELS (BOTTOM-UP)
 // Tangential shift from level DT0 to DT1
@@ -116,7 +101,6 @@ convertToMeters 1;
 
 // Tangential shift from level GV2 to GV3
 
-
 // AXIAL/TANGENTIAL BASE POINTS FOR EACH LEVEL (BOTTOM-UP):
 // (CENTER OF RUNNER SET TO THETA=0, Z=0)
 // Draft tube:
@@ -127,14 +111,9 @@ convertToMeters 1;
  //Center runner
  //Center runner
 
-
-
 // Guide vane:
  //Center runner
  //Center runner
-
-
-
 
 vertices //(radial [m], tangential [radians], axial [m])
 (
@@ -504,6 +483,5 @@ boundary
         );
     }
 );
-
 
 // ************************************************************************* //

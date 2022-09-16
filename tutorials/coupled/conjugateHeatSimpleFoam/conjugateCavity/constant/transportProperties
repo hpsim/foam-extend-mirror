@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -29,6 +29,5 @@ beta            beta [0 0 0 -1 0 0 0] 1e-3;
 Prt             Prt [0 0 0 0 0 0 0] 0.85;
 
 Pr              Pr [0 0 0 0 0 0 0] 0.71; // nu/a = 1.78e-5/0.03*1000*1.2
-
 
 // ************************************************************************* //

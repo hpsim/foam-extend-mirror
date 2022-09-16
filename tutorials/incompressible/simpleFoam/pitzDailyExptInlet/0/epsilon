@@ -3,7 +3,7 @@
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
 |  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -25,7 +25,7 @@ boundaryField
     {
         type            timeVaryingMappedFixedValue;
         setAverage      0;
-        value           nonuniform List<scalar> 
+        value           nonuniform List<scalar>
 30
 (
 9813.84
@@ -88,6 +88,5 @@ boundaryField
         type            empty;
     }
 }
-
 
 // ************************************************************************* //

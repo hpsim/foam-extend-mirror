@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -28,8 +28,6 @@ Tolerances
     immersedBoundaryLiveFactor  0.05;
 //     immersedBoundaryNonOrthogonalFactor 0.5;
 }
-
-
 
 application     potentialFoam;
 
@@ -75,6 +73,5 @@ maxCo           0.2;
 //         Uref 1;
 //     }
 // );
-
 
 // ************************************************************************* //

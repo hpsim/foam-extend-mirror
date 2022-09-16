@@ -1,15 +1,14 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
-| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Version:  v2106                                 |
-|   \\  /    A nd           | Website:  www.openfoam.com                      |
-|    \\/     M anipulation  |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     5.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     version     2.0;
     format      ascii;
-    arch        "LSB;label=32;scalar=64";
     class       volScalarField;
     location    "constant";
     object      gh;
@@ -18,7 +17,7 @@ FoamFile
 
 dimensions      [0 2 -2 0 0 0 0];
 
-internalField   nonuniform List<scalar> 
+internalField   nonuniform List<scalar>
 4000
 (
 -245.25
@@ -4039,7 +4038,7 @@ boundaryField
     inlet
     {
         type            calculated;
-        value           nonuniform List<scalar> 
+        value           nonuniform List<scalar>
 200
 (
 -245.25
@@ -4248,7 +4247,7 @@ boundaryField
     outlet
     {
         type            calculated;
-        value           nonuniform List<scalar> 
+        value           nonuniform List<scalar>
 200
 (
 -245.25
@@ -4457,7 +4456,7 @@ boundaryField
     fixedWalls
     {
         type            calculated;
-        value           nonuniform List<scalar> 
+        value           nonuniform List<scalar>
 400
 (
 -245.25
@@ -4864,6 +4863,5 @@ boundaryField
 ;
     }
 }
-
 
 // ************************************************************************* //

@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -30,7 +30,6 @@ Guimarães, Portugal, June 26 - 30, 2016
 
 */
 
-
 rheology
 {
                 type             UCM;
@@ -39,6 +38,5 @@ rheology
                 lambda           lambda [0 0 1 0 0 0 0] 1;
                 etaStab          0.25;
 }
-
 
 // ************************************************************************* //

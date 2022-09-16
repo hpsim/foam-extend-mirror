@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -12,7 +12,6 @@ FoamFile
     class       dictionary;
     object      fvSchemes;
 }
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 ddtSchemes
@@ -49,7 +48,6 @@ divSchemes
     div(phi,k)        Gauss upwind;
     div(phi,epsilon)  Gauss upwind;
 
-
     div((muEff*dev2(T(grad(U))))) Gauss linear;
     div((nuEff*dev(T(grad(U)))))  Gauss linear;
     div(U,p)    Gauss upwind;
@@ -78,6 +76,5 @@ mixingPlane
     k        fluxAveraging;
     omega    areaAveraging;
 }
-
 
 // ************************************************************************* //

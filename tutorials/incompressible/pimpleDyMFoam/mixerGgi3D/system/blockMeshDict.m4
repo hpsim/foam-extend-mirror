@@ -3,7 +3,7 @@
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
 |  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -23,7 +23,6 @@ m4_define(pi, 3.14159265358979323844)
 m4_define(rad, [calc($1*pi/180.0)])
 m4_define(VCOUNT, 0)
 m4_define(vlabel, [[// ]Vertex $1 = VCOUNT m4_define($1, VCOUNT)m4_define([VCOUNT], m4_incr(VCOUNT))])
-
 
 //Geometry -----------------------------------
 // 2 planes levels for rotor
@@ -242,7 +241,6 @@ vertices
 (calc(rStatorBaffle*cos(angleStartStator+rad(60)))                    calc(rStatorBaffle*sin(angleStartStator+rad(60)))                   zD) vlabel(D2_000)
 (calc(rMaxStator   *cos(angleStartStator+rad(60)-bafThicks))          calc(rMaxStator   *sin(angleStartStator+rad(60)-bafThick))          zD) vlabel(D3_000)
 
-
 //Plane C:
 //Bottom of stator block#8 : sector with baffle 60-120 deg
 (calc(rStatorBaffle*cos(angleStartStator+rad(60)))                    calc(rStatorBaffle*sin(angleStartStator+rad(60)))                   zC) vlabel(C0_060)
@@ -354,7 +352,6 @@ edges
     arc  B0_000 B2_000   (calc(rMinRotor     *cos((angleStartRotor+rad(90))/2))          calc(rMinRotor     *sin((angleStartRotor+rad(90))/2))          zB)
     arc  B1_000 B1_090   (calc(rRotorImpeller*cos((angleStartRotor+rad(90))/2))          calc(rRotorImpeller*sin((angleStartRotor+rad(90))/2))          zB)
 
-
     // --- PLANE A: Bottom of rotor block#2
     arc  A0_090 A2_090   (calc(rMinRotor     *cos((angleStartRotor+rad(90))/2+rad(90)))  calc(rMinRotor     *sin((angleStartRotor+rad(90))/2+rad(90)))  zA)
     arc  A1_090 A1_180   (calc(rRotorImpeller*cos((angleStartRotor+rad(90))/2+rad(90)))  calc(rRotorImpeller*sin((angleStartRotor+rad(90))/2+rad(90)))  zA)
@@ -379,7 +376,6 @@ edges
     arc  B0_270 B2_270   (calc(rMinRotor     *cos((angleStartRotor+rad(90))/2+rad(270))) calc(rMinRotor     *sin((angleStartRotor+rad(90))/2+rad(270))) zB)
     arc  B1_270 B1_000   (calc(rRotorImpeller*cos((angleStartRotor+rad(90))/2+rad(270))) calc(rRotorImpeller*sin((angleStartRotor+rad(90))/2+rad(270))) zB)
 
-
     // --- PLANE A: Bottom of rotor block#5
     arc  AA1_000 AA1_090 (calc(rMaxRotor     *cos((angleStartRotor+rad(90))/2))          calc(rMaxRotor     *sin((angleStartRotor+rad(90))/2))          zA)
 
@@ -403,9 +399,6 @@ edges
 
     // --- PLANE B: Top of rotor block#8
     arc  BB1_270 BB1_000 (calc(rMaxRotor     *cos((angleStartRotor+rad(90))/2+rad(270))) calc(rMaxRotor     *sin((angleStartRotor+rad(90))/2+rad(270))) zB)
-
-
-
 
     // --- PLANE C: Bottom of stator block#1
     arc  CC0_000 CC0_060  (calc(rMinStator *cos((angleStartStator+rad(60))/2))           calc(rMinStator    *sin((angleStartStator+rad(60))/2))         zC)
@@ -560,7 +553,6 @@ boundary
         );
     }
 
-
     insideSlider
     {
         type ggi;
@@ -599,6 +591,5 @@ boundary
 mergePatchPairs
 (
 );
-
 
 // ************************************************************************* //
