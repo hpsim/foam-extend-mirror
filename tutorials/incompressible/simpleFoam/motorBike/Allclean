@@ -5,5 +5,3 @@
 
 cleanCase
 \rm -rf constant/polyMesh
-mkdir constant/polyMesh
-\cp -f blockMeshDict constant/polyMesh/
