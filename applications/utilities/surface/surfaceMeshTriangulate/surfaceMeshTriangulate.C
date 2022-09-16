@@ -130,7 +130,6 @@ int main(int argc, char *argv[])
     );
 
 
-
     if (!Pstream::parRun())
     {
         Info<< "Writing surface to " << outFileName << endl;
