@@ -80,7 +80,7 @@ class ZoneMesh
         ZoneMesh(const ZoneMesh&);
 
         //- Disallow assignment
-        void operator=(const ZoneMesh<ZoneType, MeshType>&);
+        void operator=(const ZoneMesh<ZoneType, MeshType>&) = delete;
 
 
         //- Create zone map
@@ -144,17 +144,9 @@ public:
         //- Return a list of zone names
         wordList names() const;
 
-        //- Return zone indices for all matches
-        labelList findIndices(const keyType&) const;
-
-        //- Return zone index for the first match, return -1 if not found
-        label findIndex(const keyType&) const;
-
         //- Find zone index given a name
         label findZoneID(const word& zoneName) const;
 
-        //- Mark cells that match the zone specification
-        PackedBoolList findMatching(const keyType&) const;
 
         //- Clear the zones
         void clear();
@@ -170,6 +162,7 @@ public:
 
         //- writeData member function required by regIOobject
         bool writeData(Ostream&) const;
+
 
     // Member Operators
 
