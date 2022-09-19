@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -648,7 +648,7 @@ void Foam::domainDecomposition::decomposeMesh(const bool filterEmptyPatches)
                             (
                                 ownerProc,     // Processor to append to
                                 neighbourProc, // Processor to append
-                                
+
                                 patchStart + patchFaceI, // Face index to append
 
                                 interProcBoundaries,
@@ -663,7 +663,7 @@ void Foam::domainDecomposition::decomposeMesh(const bool filterEmptyPatches)
                             (
                                 neighbourProc, // Processor to append to
                                 ownerProc,     // Processor to append
-                                
+
                                 // Face index with offset to append
                                 patchStart + cycOffset + patchFaceI,
 

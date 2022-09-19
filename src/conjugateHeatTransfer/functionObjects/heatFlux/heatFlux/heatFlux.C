@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -79,10 +79,10 @@ void Foam::heatFlux::calcAndPrint()
 {
     const volScalarField& T =
         obr_.lookupObject<volScalarField>("T");
-    
+
     const volScalarField& kappaEff =
         obr_.lookupObject<volScalarField>(Kfluid_);
-    
+
     //const surfaceScalarField& kappaEff =
     //    obr_.lookupObject<surfaceScalarField>(Kfluid_);
 

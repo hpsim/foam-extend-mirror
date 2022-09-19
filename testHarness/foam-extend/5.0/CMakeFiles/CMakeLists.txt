@@ -1,7 +1,7 @@
 # /*-------------------------------------------------------------------------*\
 #   =========                 |
 #   \\      /  F ield         | foam-extend: Open Source CFD
-#    \\    /   O peration     | Version:     4.1
+#    \\    /   O peration     | Version:     5.0
 #     \\  /    A nd           | Web:         http://www.foam-extend.org
 #      \\/     M anipulation  | For copyright notice see file Copyright
 # -----------------------------------------------------------------------------
@@ -23,7 +23,7 @@
 #
 # Description
 #     CMakeLists.txt file for implementing a test harness for the compilation
-#     and test of foam-extend-4.1 using Kitware CTest/CMake/CDash
+#     and test of foam-extend-5.0 using Kitware CTest/CMake/CDash
 #
 #     The results will be submitted to the CDash server identified by the file
 #     CTestConfig.cmake
@@ -36,7 +36,7 @@
 
 cmake_minimum_required (VERSION 2.8)
 
-PROJECT(foam-extend-4.1)
+PROJECT(foam-extend-5.0)
 
 #-----------------------------------------------------------------------------
 # Utility functions

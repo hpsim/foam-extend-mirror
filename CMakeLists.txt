@@ -1,9 +1,9 @@
 # --------------------------------------------------------------------------
-#   ========                 |
-#   \      /  F ield         | foam-extend: Open Source CFD
-#    \    /   O peration     | Version:     4.1
-#     \  /    A nd           | Web:         http://www.foam-extend.org
-#      \/     M anipulation  | For copyright notice see file Copyright
+#   =========                 |
+#   \\      /  F ield         | foam-extend: Open Source CFD
+#    \\    /   O peration     | Version:     5.0
+#     \\  /    A nd           | Web:         http://www.foam-extend.org
+#      \\/     M anipulation  | For copyright notice see file Copyright
 # --------------------------------------------------------------------------
 # License
 #     This file is part of foam-extend.
@@ -32,7 +32,7 @@
 
 cmake_minimum_required (VERSION 2.8)
 
-project(foam-extend-4.1 C CXX)
+project(foam-extend-5.0 C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 

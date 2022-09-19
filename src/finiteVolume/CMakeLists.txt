@@ -1,9 +1,9 @@
 # --------------------------------------------------------------------------
-#   ========                 |
-#   \      /  F ield         | foam-extend: Open Source CFD
-#    \    /   O peration     | Version:     4.1
-#     \  /    A nd           | Web:         http://www.foam-extend.org
-#      \/     M anipulation  | For copyright notice see file Copyright
+#   =========                 |
+#   \\      /  F ield         | foam-extend: Open Source CFD
+#    \\    /   O peration     | Version:     5.0
+#     \\  /    A nd           | Web:         http://www.foam-extend.org
+#      \\/     M anipulation  | For copyright notice see file Copyright
 # --------------------------------------------------------------------------
 # License
 #     This file is part of foam-extend.
@@ -145,7 +145,7 @@ list(APPEND SOURCES
 #  ${basicFvPatchFields}/basicSymmetry/basicSymmetryFvPatchFields.C
   ${basicFvPatchFields}/basicSymmetry/basicSymmetryFvPatchScalarField.C
   ${basicFvPatchFields}/calculated/calculatedFvPatchFields.C
-  ${basicFvPatchFields}/calculated/calculatedFvPatchVectorNFields.C 
+  ${basicFvPatchFields}/calculated/calculatedFvPatchVectorNFields.C
   ${basicFvPatchFields}/extrapolatedCalculated/extrapolatedCalculatedFvPatchFields.C
   ${basicFvPatchFields}/extrapolatedCalculated/extrapolatedCalculatedFvPatchVectorNFields.C
   ${basicFvPatchFields}/coupled/coupledFvPatchFields.C

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -215,7 +215,7 @@ void ggiFvPatchField<Type>::initEvaluate
     // All communication happens in patchNeighbourField, which can potentially
     // be cached to reduce communication
     // HJ, 10/Sep/2021
-    
+
     Field<Type> pf
     (
         this->patch().weights()*this->patchInternalField()

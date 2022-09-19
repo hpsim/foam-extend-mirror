@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -333,12 +333,12 @@ void FieldField<Field, Type>::operator=(const tmp<FieldField>& tf)
     // This disables virtual functions, which breaks the code.
     // Use normal assignment instead.  HJ, 3/May/2022
     const FieldField<Field, Type>& f = tf();
-    
+
     forAll (this, i)
     {
         this->operator[](i) = f[i];
     }
-    
+
     tf.clear();
 }
 

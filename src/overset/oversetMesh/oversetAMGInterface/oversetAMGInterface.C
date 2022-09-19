@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -261,7 +261,7 @@ Foam::oversetAMGInterface::oversetAMGInterface
     //   will be recorded multiple times.  However, its restrict index is
     //   the same.
     // Reconsider.  HJ, 23/Sep/2019
-    
+
     // Get fine donors
     const labelList& fineDonors = fineOversetInterface_.donorCells();
 
@@ -329,7 +329,7 @@ Foam::oversetAMGInterface::oversetAMGInterface
     if (!donorCells_.empty())
     {
         coarseDonorIndex.setSize(max(donorCells_) + 1);
-    
+
         forAll (donorCells_, dcI)
         {
             coarseDonorIndex[donorCells_[dcI]] = dcI;

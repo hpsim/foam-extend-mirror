@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -153,11 +153,11 @@ void fluxFvPatchField<Type>::updateCoeffs()
     Field<Type> minGrad =
         (fieldBound_.first() - this->patchInternalField())*
         this->patch().deltaCoeffs();
-    
+
     Field<Type> maxGrad =
         (fieldBound_.second() - this->patchInternalField())*
         this->patch().deltaCoeffs();
-    
+
     this->gradient() =
         max
         (

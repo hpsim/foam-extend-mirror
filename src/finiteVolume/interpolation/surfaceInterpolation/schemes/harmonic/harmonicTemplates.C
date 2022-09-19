@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ Foam::tmp<Foam::surfaceScalarField> Foam::harmonic<Type>::weights
     // updateCoupledPatchFields for patchNeighbourField update
     // HJ, 21/Apr/2022
     phi.boundaryField().updateCoupledPatchFields();
-    
+
     const surfaceScalarField& deltaCoeffs = this->mesh().deltaCoeffs();
     const surfaceScalarField& weights = this->mesh().weights();
 

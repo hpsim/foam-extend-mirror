@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | foam-extend: Open Source CFD
-#  \\    /   O peration     |
-#   \\  /    A nd           | For copyright notice see file Copyright
-#    \\/     M anipulation  |
+#  \\    /   O peration     | Version:     5.0
+#   \\  /    A nd           | Web:         http://www.foam-extend.org
+#    \\/     M anipulation  | For copyright notice see file Copyright
 #------------------------------------------------------------------------------
 # License
 #     This file is part of foam-extend.
@@ -103,8 +103,8 @@ Group: 			Development/Tools
     # This bug will occur on Centos 6.2. and probably on other OSes as well
     cp gmp/configure.in gmp/configure.in.orig
     cp gmp/configure gmp/configure.orig
-    sed "s/m4-not-needed/m4/g" gmp/configure.in > gmp/configure.in.patched 
-    sed "s/m4-not-needed/m4/g" gmp/configure > gmp/configure.patched 
+    sed "s/m4-not-needed/m4/g" gmp/configure.in > gmp/configure.in.patched
+    sed "s/m4-not-needed/m4/g" gmp/configure > gmp/configure.patched
     mv gmp/configure.in.patched gmp/configure.in
     mv gmp/configure.patched gmp/configure
 
@@ -113,7 +113,7 @@ Group: 			Development/Tools
     cd ./objBuildDir
 
 %ifos darwin
-    # Couple of fixes for OSX Yosemite and Xcode 6.3.1 
+    # Couple of fixes for OSX Yosemite and Xcode 6.3.1
     # See here : http://lists.gnu.org/archive/html/libtool-patches/2014-09/msg00001.html
     # and here : https://gcc.gnu.org/bugzilla/show_bug.cgi?id=63610
     # for the details.

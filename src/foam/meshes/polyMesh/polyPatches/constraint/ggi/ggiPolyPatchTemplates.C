@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ Foam::tmp<Foam::Field<Type> > Foam::ggiPolyPatch::fastExpand
         FatalErrorInFunction
             << "Incorrect patch field size for fastExpand.  Field size: "
             << ff.size() << " patch size: " << size()
-            << " for patch pair: " << this->name() << " " 
+            << " for patch pair: " << this->name() << " "
             << this->shadowName()
             << abort(FatalError);
     }
@@ -119,7 +119,7 @@ Foam::tmp<Foam::Field<Type> > Foam::ggiPolyPatch::interpolate
         FatalErrorInFunction
             << "Incorrect slave patch field size.  Field size: "
             << ff.size() << " patch size: " << shadow().size()
-            << " for patch pair: " << this->name() << " " 
+            << " for patch pair: " << this->name() << " "
             << this->shadowName()
             << abort(FatalError);
     }
@@ -203,7 +203,7 @@ void Foam::ggiPolyPatch::setUncoveredFaces
             << "Incorrect patch field size for setting uncovered faces.  "
             << "Field size: "
             << ff.size() << " patch size: " << size()
-            << " for patch pair: " << this->name() << " " 
+            << " for patch pair: " << this->name() << " "
             << this->shadowName()
             << abort(FatalError);
     }
@@ -266,7 +266,7 @@ void Foam::ggiPolyPatch::setPartialFaces
         FatalErrorInFunction
             << "Incorrect patch field size for setting partial faces.  "
             << "Field size: " << ff.size() << " patch size: " << size()
-            << " for patch pair: " << this->name() << " " 
+            << " for patch pair: " << this->name() << " "
             << this->shadowName()
             << abort(FatalError);
     }
@@ -325,7 +325,7 @@ void Foam::ggiPolyPatch::scalePartialFaces(Field<Type>& ff) const
         FatalErrorInFunction
             << "Incorrect patch field size for scaling.  Field size: "
             << ff.size() << " patch size: " << size()
-            << " for patch pair: " << this->name() << " " 
+            << " for patch pair: " << this->name() << " "
             << this->shadowName()
             << abort(FatalError);
     }
@@ -387,7 +387,7 @@ void Foam::ggiPolyPatch::addToPartialFaces
             << "Incorrect patch field size for adding.  Field size: "
             << ff.size() << " field to add size: "
             << fieldToAdd.size() << " patch size: " << size()
-            << " for patch pair: " << this->name() << " " 
+            << " for patch pair: " << this->name() << " "
             << this->shadowName()
             << abort(FatalError);
     }

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -157,7 +157,7 @@ void Foam::immersedBoundaryFvPatch::updatePhi
 
         const scalar ibAreaRatio =
             mag(faceAreas[faceI])/faces[faceI].mag(points);
-        
+
         if (mesh.isInternalFace(faceI))
         {
             // Multiply by masking function
@@ -297,7 +297,7 @@ void Foam::immersedBoundaryFvPatch::makeCorrVecs(fvsPatchVectorField& cv) const
     const labelList& deadFaces = ibPolyPatch_.deadFaces();
 
     const fvMesh& mesh = boundaryMesh().mesh();
-    
+
     forAll (deadFaces, dfI)
     {
         if (mesh.isInternalFace(deadFaces[dfI]))

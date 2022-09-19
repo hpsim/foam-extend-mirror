@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -1936,7 +1936,7 @@ void Foam::immersedBoundaryPolyPatch::clearOut() const
         InfoInFunction
             << "Clear immersed boundary for patch "
             << name() << " for mesh "
-            << boundaryMesh().mesh().time().path() 
+            << boundaryMesh().mesh().time().path()
             << endl;
     }
 

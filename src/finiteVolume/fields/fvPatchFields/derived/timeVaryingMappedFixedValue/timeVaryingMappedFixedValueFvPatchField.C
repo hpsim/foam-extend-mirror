@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -226,7 +226,7 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::readSamplePoints()
         fileName("points")
     );
     IFstream samplePointsData(samplePointsFile);
-    
+
     pointField samplePoints(samplePointsData);
 
     if (debug)
@@ -536,7 +536,7 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::checkTable()
                 fieldTableName_
             );
             IFstream loData(loDataFile);
-            
+
             Field<Type> vals(loData);
 
             startAverage_ = average(vals);
