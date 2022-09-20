@@ -3,22 +3,29 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title><b>Release notes for foam-extend-4.0</b></title>
-<!-- 2016-12-09 Fri 16:16 -->
-<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<meta  name="generator" content="Org-mode" />
+<!-- 2022-09-20 Tue 09:35 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title><b>Release notes for foam-extend-5.0</b> <b>Version 5.0 - Cambridge</b></title>
+<meta name="generator" content="Org mode" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
   .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
   .tag    { background-color: #eee; font-family: monospace;
             padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
   .underline { text-decoration: underline; }
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
@@ -45,27 +52,111 @@
     border: 1px solid black;
   }
   pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
   pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
 
   table { border-collapse:collapse; }
   caption.t-above { caption-side: top; }
   caption.t-bottom { caption-side: bottom; }
   td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
   dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
+  .footpara { display: inline; }
   .footdef  { margin-bottom: 1em; }
   .figure { padding: 1em; }
   .figure p { text-align: center; }
@@ -85,6 +176,7 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
   /*]]>*/-->
 </style>
 <script type="text/javascript">
@@ -92,7 +184,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012-2013 Free Software Foundation, Inc.
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -136,20 +228,23 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
-<h1 class="title"><b>Release notes for foam-extend-4.0</b></h1>
+<h1 class="title"><b>Release notes for foam-extend-5.0</b> <b>Version 5.0 - Cambridge</b></h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. Overview</a></li>
-<li><a href="#sec-2">2. Installation</a></li>
-<li><a href="#sec-3">3. Compatibility</a></li>
-<li><a href="#sec-4">4. Main differentiators between foam-extend and OpenFOAM</a></li>
-<li><a href="#sec-5">5. New features in foam-extend-4.0, since foam-extend-3.2</a></li>
-<li><a href="#sec-6">6. Recent successful compilations and tests</a></li>
-<li><a href="#sec-7">7. Reporting bugs</a></li>
-<li><a href="#sec-8">8. How to contribute</a></li>
-<li><a href="#sec-9">9. List of Contributors:</a></li>
+<li><a href="#org91c5e77">1. Overview</a></li>
+<li><a href="#org5f93325">2. Installation</a></li>
+<li><a href="#org1564cfd">3. Compatibility</a></li>
+<li><a href="#orge965305">4. Main differentiators between foam-extend and OpenFOAM</a></li>
+<li><a href="#org58de222">5. New features in foam-extend-5.0, since foam-extend-4.1</a></li>
+<li><a href="#orgda5bb1e">6. Major new features:</a></li>
+<li><a href="#orgc6c30d8">7. Software engineering</a></li>
+<li><a href="#org804948d">8. Consistency with previous version</a></li>
+<li><a href="#org7d3852e">9. Overview of Development</a></li>
+<li><a href="#orgd5f40f4">10. Reporting bugs</a></li>
+<li><a href="#org99c69c6">11. How to contribute</a></li>
+<li><a href="#org2b35aaf">12. List of Contributors:</a></li>
 </ul>
 </div>
 </div>
@@ -157,8 +252,8 @@ for the JavaScript code in this tag.
 ###############################################################################
 </p>
 
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Overview</h2>
+<div id="outline-container-org91c5e77" class="outline-2">
+<h2 id="org91c5e77"><span class="section-number-2">1</span> Overview</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 The foam-extend project is a fork of the OpenFOAM® open source
@@ -167,19 +262,13 @@ project welcoming and integrating contributions from all users and
 developers. Previously known as OpenFOAM-dev and OpenFOAM-extend,
 it contains bug fixes and performance improvements, as well as
 extensions and additional features provided by community
-contributors (see file ListOfContributors), such as dynamic mesh and
-topological change support, turbomachinery extensions including
-general grid interpolation (GGI), cyclic GGI and mixing plane,
-block-coupled matrix support, implicitly coupled conjugate heat
-transfer and other physics coupling, finite area method,
-comprehensive dynamic mesh (motion and topological changes)
-capability and GPU support. For a full list, see below and previous
-release notes at:
+contributors (see file ListOfContributors).
+For a full list, see below and previous release notes at:
 <a href="http://sourceforge.net/p/foam-extend/wiki/Home/">http://sourceforge.net/p/foam-extend/wiki/Home/</a>
 </p>
 
 <p>
-Version 4.0, nicknamed "Guimaraes", is the current version of
+Version 5.0, nicknamed "Cambridge", is the current version of
 foam-extend. The release continues the tradition and spirit of the
 original FOAM code developed by prof. Jasak and Mr. Weller during
 their time at Imperial College and released as the general purpose
@@ -193,104 +282,92 @@ for more information.
 OPENFOAM is a registered trademark of ESI Group. OpenFOAM-extend and
 foam-extend are a community effort not endorsed by ESI Group.
 </p>
+
+
+<p>
+This is a major release of foam-extend-5.0 created from the
+nextRelease branch of foam-extend-4.1 which consolidates
+cumulative development since 14 October 2019.
+</p>
 </div>
 </div>
 
-
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Installation</h2>
+<div id="outline-container-org5f93325" class="outline-2">
+<h2 id="org5f93325"><span class="section-number-2">2</span> Installation</h2>
 <div class="outline-text-2" id="text-2">
 <p>
-foam-extend-4.0 can be compiled and runs on a large variety of Linux, Mac or Windows
+foam-extend-5.0 can be compiled and runs on a large variety of Linux, Mac or Windows
 systems
 </p>
 
 <ul class="org-ul">
 <li>Main supported OSs:
 <ul class="org-ul">
-<li>Ubuntu 16.04 LTS
-</li>
-<li>Ubuntu 14.04 LTS
-</li>
-<li>Fedora 24
-</li>
-<li>Mac OS X
-</li>
-<li>Microsoft Windows 7, 8.1 and 10
-</li>
-</ul>
-</li>
+<li>Ubuntu 20.04 LTS</li>
+<li>Ubuntu 22.04 LTS</li>
+<li>Ubuntu 18.04 LTS</li>
+<li>Mac OS X</li>
+<li>Microsoft Windows 10</li>
+</ul></li>
 
-<li>Compile from source:
+<li><p>
+Compile from source:
+</p>
 
 <p>
 Please refer to doc/buildInstructions/ for details. Further
 installation instruction are available on the unofficial OpenFOAM
 Wiki:
-<a href="http://openfoamwiki.net/index.php/Installation/Linux/foam-extend-4.0">http://openfoamwiki.net/index.php/Installation/Linux/foam-extend-4.0</a>
+<a href="http://openfoamwiki.net/index.php/Installation/Linux/foam-extend-4.1">http://openfoamwiki.net/index.php/Installation/Linux/foam-extend-4.1</a>
 If you have improvements or build instructions for a new system,
 please share them with the community (see section "How to
 contribute", below).
-</p>
-</li>
+</p></li>
 
-<li>Download binary packages:
+<li><p>
+Download binary packages:
+</p>
 
 <p>
 Binary packages are available for download at
 <a href="http://sourceforge.net/projects/foam-extend/">http://sourceforge.net/projects/foam-extend/</a> for the following
-systems: Ubuntu 16.04, Fedora 24 and Mac OS X and Windows 10.
-</p>
-</li>
+systems: Ubuntu 20.04, Ubuntu 22.04, Ubuntu 18.04 and Windows 10
+</p></li>
 
 <li>Accompanying ThirdParty software:
 <ul class="org-ul">
-<li>gcc compatibility up to 4.9.2
-</li>
-<li>bison 2.7
-</li>
-<li>cmake 3.2.2
-</li>
-<li>flex-2.5.35
-</li>
-<li>hwloc 1.10.1
-</li>
-<li>libccmio 2.6.1
-</li>
-<li>mesquite 2.1.2
-</li>
-<li>metis 5.1.0
-</li>
-<li>openmpi 1.8.8
-</li>
-<li>Paraview 4.4.0
-</li>
-<li>parmetis 4.0.3
-</li>
-<li>ParMGridGen 1.0
-</li>
-<li>PyFoam 0.6.4
-</li>
-<li>qt 4.8.6
-</li>
-<li>scotch 6.0.4
-</li>
-<li>swak4Foam 0.4.0
-</li>
+<li>gcc compatibility up to 11.2</li>
+<li>bison 3.8.2</li>
+<li>cmake 3.22.1</li>
+<li>flex-2.6.4</li>
+<li>hwloc 2.0.1</li>
+<li>libccmio 2.6.1</li>
+<li>mesquite 2.3.0</li>
+<li>metis 5.1.0</li>
+<li>openmpi 4.1.2</li>
+<li>parmetis 4.0.3</li>
+<li>ParMGridGen 1.0</li>
+<li>PyFoam 0.6.4</li>
+<li>scotch 6.0.9</li>
+<li>pyFoam 0.6.9</li>
+</ul></li>
 </ul>
-</li>
+
+
+<ul class="org-ul">
+<li>The code has been developed on Ubuntu-20.04.  It is natively compiled
+on Linux, Mac OSX and Microsoft Windows 10.</li>
 </ul>
 </div>
 </div>
 
-
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> Compatibility</h2>
+<div id="outline-container-org1564cfd" class="outline-2">
+<h2 id="org1564cfd"><span class="section-number-2">3</span> Compatibility</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Upstream features from the OpenFOAM® code base are merged into
 foam-extend on regular basis. The interface format of
-foam-extend-4.0 is largely compatible to foam-extend-3.2, to
+foam-extend-5.0 is largely compatible to foam-extend-4.1, to
 OpenFOAM-1.6-ext and OpenFOAM-1.7.x. In some cases, the
 differences are caused by bug fixes and algorithmic improvements,
 considered more important than inter-operability.
@@ -298,8 +375,8 @@ considered more important than inter-operability.
 </div>
 </div>
 
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> Main differentiators between foam-extend and OpenFOAM</h2>
+<div id="outline-container-orge965305" class="outline-2">
+<h2 id="orge965305"><span class="section-number-2">4</span> Main differentiators between foam-extend and OpenFOAM</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 A large number of features have been lost within the release of
@@ -314,100 +391,83 @@ which are lacking, lost, deactivated or unusable in ESI releases:
 <ul class="org-ul">
 <li>Turbomachinery features, including General Grid Interface (GGI),
 partial overlap GGI, cyclic GGI, with improvements in parallel
-scaling.  First release of a mixing plane stage interface
-</li>
+scaling.  First release of a mixing plane stage interface</li>
 
 <li>Dynamic mesh with topological changes Sliding interfaces, mesh
 layering, attach-detach boundaries etc.  In foam-extend, full
 parallel support for topological changes is released for the first
-time
-</li>
+time</li>
 
 <li>Finite Element Method with support for polyhedral meshes This is
 mainly used in mesh deformation and over the last 15 years it has
-proven vastly superior to all other dynamic mesh methods.
-</li>
+proven vastly superior to all other dynamic mesh methods.</li>
 
 <li>Advanced mesh deformation technology Including tet FEM mesh
 deformation, Radial Basis Function (RBF) mesh deformation,
 tetrahedral remeshing dynamic mesh support and solid body motion
-functions.  All of the above include parallelisation support
-</li>
+functions.  All of the above include parallelisation support</li>
 
 <li>Library of dynamic meshes with topological changes with full
 second order FVM discretisation support on moving meshes with
-topological changes
-</li>
+topological changes</li>
 
 <li>Internal combustion engine-specific dynamic mesh classes such as
 two-stroke engine and various forms of 4-stroke and multi-valve
-dynamic mesh classes
-</li>
+dynamic mesh classes</li>
 
 <li>Finite Area Method providing support for FVM-like discretisation
-on a curved surface in 3-D, with examples of liquid film modeling
-</li>
+on a curved surface in 3-D, with examples of liquid film modeling</li>
 
 <li>Block-coupled matrix support, allowing fully implicit
 multi-equation solution of NxN equation sets, with full
 parallelisation support.  First release of a block-AMG linear
-equation solver
-</li>
+equation solver</li>
 
 <li>Fully implicit conjugate-coupled solution framework, allowing
-implicit solution fo multiple equations over multiple meshes, with
-parallelism
-</li>
+implicit solution for multiple equations over multiple meshes, with
+parallelism</li>
 
 <li>Proper Orthogonal Decomposition data analysis tools, with
-applications to FOAM field classes
-</li>
+applications to FOAM field classes</li>
 
-<li>Equation reader classes and tutorials
-</li>
+<li>Equation reader classes and tutorials</li>
 
 <li>Multi-solver solution framework, allowing multiple field models to
-be solved in a coupled manner
-</li>
+be solved in a coupled manner</li>
 
 <li>A major contribution is solid mechanics modelling, including
 linear and non-linear materials, contact, self-contact and
 friction, with updated Lagrangian or absolute Lagrangian
 formulation.  Solution of damage models and crack propagation in
-complex materials via topological changes
-</li>
+complex materials via topological changes</li>
 
 <li>CUDA solver release, provided in full source and as an example of
-coupling external linear equation solvers with FOAM
-</li>
+coupling external linear equation solvers with FOAM</li>
 
 <li>Library-level support for Immersed Boundary Method and Overset
-Mesh
-</li>
+Mesh</li>
+
+<li>Framework for Reduced Order Models using Proper Orthogonal Decomposition
+(POD) for real-time simulations based on the method of snapshots</li>
 
 <li>Major improvements in accuracy and stability of FVM discretisation
 with options on convection and diffusion discretisation, deferred
-correction or explicit schemes
-</li>
+correction or explicit schemes</li>
 
-<li>Algebraic multigrid solver framework
-</li>
+<li>Algebraic multigrid solver framework for scalar and block matrices</li>
 
-<li>253 tutorials with automated run scripts
-</li>
+<li>274 tutorials with automated run scripts</li>
 
-<li>Automatic test harness
-</li>
+<li>Automatic test harness</li>
 
-<li>Approximately 6000 bug fixes in fundamental level libraries and
-discretisation techniques
-</li>
+<li>Approximately 6800 bug fixes in fundamental level libraries and
+discretisation techniques</li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-sec-5" class="outline-2">
-<h2 id="sec-5"><span class="section-number-2">5</span> New features in foam-extend-4.0, since foam-extend-3.2</h2>
+<div id="outline-container-org58de222" class="outline-2">
+<h2 id="org58de222"><span class="section-number-2">5</span> New features in foam-extend-5.0, since foam-extend-4.1</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 The list of features is a result of the work of numerous
@@ -419,150 +479,135 @@ thank them all.
 Get a full log of the updates by (either):
 </p>
 <div class="org-src-container">
-
-<pre class="src src-bash">user@machine&gt; git log 4.0.. &gt; commitLog
+<pre class="src src-bash">user@machine&gt; git log 5.0.. &gt; commitLog
 </pre>
 </div>
 <div class="org-src-container">
-
-<pre class="src src-bash">user@machine&gt; git log 4.0.. --oneline &gt; commitLog
+<pre class="src src-bash">user@machine&gt; git log 5.0.. --oneline &gt; commitLog
 </pre>
 </div>
 <div class="org-src-container">
-
-<pre class="src src-bash">user@machine&gt; gitg 4.0..
+<pre class="src src-bash">user@machine&gt; gitg 5.0..
 </pre>
 </div>
-
-<ul class="org-ul">
-<li>Major new features:
-<ul class="org-ul">
-<li>Improved BlockLduMatrix and block-coupled p-U solver and associated tools
-</li>
-<li>ILUCp and block ILUCp preconditioners
-</li>
-<li>Added MRF and porous media handling to the block-coupled solver
-</li>
-<li>Change of generic turbulence modelling interface: no U required
-</li>
-<li>Updated version of block-coupled turbulence models
-</li>
-<li>Major improvements in immersed boundary method library: improved performance
-and parallel scaling.  Completed supporft for moving deforming immersed boundary
-</li>
-<li>Adopted vanilla OpenFOAM solver control format (solutionControl class)
-</li>
-<li>Implicit adjoint convection operator
-</li>
-<li>Improved GGI interpolation and cutting, with better parallel scaling
-</li>
-<li>Global GGI search option for parallel cases
-</li>
-<li>GGI and mixing planes with jump condition for the rothalpy equation
-</li>
-<li>Improved 6-DOF solver, with new handling of constraints
-</li>
-<li>Fully integrated real gas library
-</li>
-<li>Updated viscoelastoplastic models
-</li>
-<li>New steady-state universal flow solver, handling incompressible and compressible
-flows within the same framework
-</li>
-<li>Time consistent incompressible solvers update
-</li>
-<li>Added decaying turbulence inlet boundary condition by Kornev
-</li>
-<li>New gradient limiter implementation
-</li>
-<li>Full gradient cacheing capability
-</li>
-<li>Removed fluxRequired from solution dictionaries
-</li>
-<li>Consistent notation of 1/aP
-</li>
-<li>Dynamic mesh improvements: prescribed motion functions
-</li>
-</ul>
-</li>
-
-<li>Software
-<ul class="org-ul">
-<li>New handling of lnInclude directories: avoid file copying on MS Windows
-</li>
-<li>Changes to controlDict and options on MS Windows
-</li>
-<li>Consistency in formatting of compression options
-</li>
-<li>Raspberry Pi port
-</li>
-</ul>
-</li>
-
-<li>Installation:
-<ul class="org-ul">
-<li>Compilation improvements
-</li>
-<li>Updated packages versions and compilation in ThirdParty
-</li>
-<li>Changed compilation options for Infiniband: new versions of MPI
-</li>
-<li>Added support for mvapich2-2.2
-</li>
-<li>Updated compilation for latest version of XCode for Mac OSX
-</li>
-<li>Updates for MS Windows build
-</li>
-</ul>
-</li>
-
-<li>Solvers:
-<ul class="org-ul">
-<li>Updated time consistent incompressible solvers (channelFoam, icoFoam, nonNewtonianIcoFoam, pimpleDyMFoam, pimpleFoam, simpleFoam, simpleSRFFoam)
-</li>
-<li>Steady universal (compressible and incompressible) flow solver (steadyUniversalFoam)
-</li>
-<li>Block-coupled p-U solver improvements (MRFPorousFoam and pUCoupledFoam)
-</li>
-<li>Improved steadyCompressibleMRFFoam
-</li>
-</ul>
-</li>
-
-<li>New tutorials:
-<ul class="org-ul">
-<li>Transient real fluid examples
-</li>
-<li>Universal steady-state MRF examples
-</li>
-<li>Additional coupled CHT example
-</li>
-<li>Additional immersed boundary example
-</li>
-<li>Additional steady-state MRF and GGI example
-</li>
-</ul>
-</li>
-
-<li>Bug fixes: see git log for details
-</li>
-</ul>
 </div>
 </div>
 
-<div id="outline-container-sec-6" class="outline-2">
-<h2 id="sec-6"><span class="section-number-2">6</span> Recent successful compilations and tests</h2>
+<div id="outline-container-orgda5bb1e" class="outline-2">
+<h2 id="orgda5bb1e"><span class="section-number-2">6</span> Major new features:</h2>
 <div class="outline-text-2" id="text-6">
 <ul class="org-ul">
-<li>Ubuntu 16.04 LTS
-</li>
+<li>Physics modelling
+
+<ul class="org-ul">
+<li>Proper Orthogonal Decomposition (POD) model development across a number of applications with tutorials and validation cases.  POD uses the Method of Snapshots to create energy-consistent reduced order models which run 1000s of times faster than full CFD.  POD analysis is also used to examine stability characteristics of flow regimes or to assemble "digital twin"-type models.  POD has been deployed across a number of applications, with new tutorials.</li>
+
+<li>Extension to porous zone models for thermal modelling and heat transfer, including implicit coupled conjugate heat transfer</li>
+
+<li>Physics modelling updates for coal combustion</li>
+
+<li>Handling of derived forms of enthalpy in thermophysical models with correct boundary condition setup (coupled interfaces)</li>
+</ul></li>
+</ul>
+
+
+<ul class="org-ul">
+<li>Numerics
+<ul class="org-ul">
+<li>Immersed Boundary (Surface) method: major improvements.  Consistency errors in parallel cutting and interaction with coupled boundaries have been resolved.  Further type-consistent boundary conditions on IB surfaces have been adeed, with correct mapping and post-processing.  Major robustness improvements in the method.  Algorithmic improvements in immersed boundary handling; cutting, dead cells, extended sets of boundary conditions.  Rewrite of cut cell handling, parallelism and consistency updates.</li>
+
+<li>Immersed boundary with interfering patches: multiple intersections</li>
+
+<li>Updated algorithms for buoyant flows: correct limit of incompressibility and consistent handling of stratified flows.  Solvers represent incompressible results for canonical flows without instability</li>
+
+<li>Consistency updates for Multiple Rotating Frames (MRF) of reference, with accurate geometry handling.  Consistent and convergent integration with block pressure-velocity solvers</li>
+
+<li>Algorithmic updates for steady compressible turbomachinery flows.  New implementation of rothalpy handling with better consistency in rothalpy jump coupled boundary conditions</li>
+
+<li>Use of block-AMG solvers for block-coupled p-U solvers: see tutorials</li>
+
+<li>Updated handling of bounded flux boundary conditions</li>
+
+<li>New 01 bounded convection schemes</li>
+
+<li>Better reporting of flux check</li>
+
+<li>Updated algorithms for partial overlap GGI interface pairs</li>
+
+<li>Change in handling of adjustPhi for moving deforming meshes</li>
+</ul></li>
+</ul>
+
+
+<ul class="org-ul">
+<li>HPC and parallelism, performance improvements
+<ul class="org-ul">
+<li>Major improvement in handling of processor boundaries and other cached coupled interface patch types. This resolves long-standing bugs in FOAM-OpenFOAM development lines and results in significant reduction in number of iterations of linear solvers.  Further, numerous stability and consistency problems in parallel execution have been resolved</li>
+
+<li>Improvements for large memory usage in large-scale HPC cases</li>
+
+<li>Incremental consistency work on block-coupled solvers for incompressible flows</li>
+
+<li>Incremental improvement in performance for parallel Oveset Mesh capability.  Update in low-level communication and consistency</li>
+
+<li>Clean-up of boundary condition updates in absence of database field access</li>
+</ul></li>
+</ul>
+
+
+<ul class="org-ul">
+<li>Dynamic Mesh
+<ul class="org-ul">
+<li>Full deployment of dynamic load balancing with AMR or other dynamic mesh features at the level of topoChangerDynamicFvMesh</li>
+
+<li>Refactoring of dynamic mesh solvers with algoritmic efficiency improvements</li>
+
+<li>Changes in dynamic mesh handling: efficient and consistent geometry updates</li>
+</ul></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-sec-7" class="outline-2">
-<h2 id="sec-7"><span class="section-number-2">7</span> Reporting bugs</h2>
+
+<div id="outline-container-orgc6c30d8" class="outline-2">
+<h2 id="orgc6c30d8"><span class="section-number-2">7</span> Software engineering</h2>
 <div class="outline-text-2" id="text-7">
+<ul class="org-ul">
+<li>Port to gcc-9 and gcc-11</li>
+<li>c++-11 updates: default destructors, delete automatically generated</li>
+<li>update of the build system using native third party packages whenever possible</li>
+<li>Change in style to FatalErrorInFunction sytnax</li>
+<li>new VectorN types for extended coupling in block matrices</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org804948d" class="outline-2">
+<h2 id="org804948d"><span class="section-number-2">8</span> Consistency with previous version</h2>
+<div class="outline-text-2" id="text-8">
+<ul class="org-ul">
+<li>fvSolution requires correct PIMPLE/SIMPLE sub-dictionaries; use of potentialFlow sub-dictionary in initialisation</li>
+<li>blockMeshDict moved into system</li>
+<li>faceCompactList consistency with OpenCFD version</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org7d3852e" class="outline-2">
+<h2 id="org7d3852e"><span class="section-number-2">9</span> Overview of Development</h2>
+<div class="outline-text-2" id="text-9">
+<ul class="org-ul">
+<li>New tutorials: 274 in total</li>
+<li>Bug fixes: see git log for details</li>
+<li>In total, the release consists of 5535 commits since the last release</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgd5f40f4" class="outline-2">
+<h2 id="orgd5f40f4"><span class="section-number-2">10</span> Reporting bugs</h2>
+<div class="outline-text-2" id="text-10">
 <p>
 To report bugs, please use the bugtracker at
 <a href="http://sourceforge.net/p/foam-extend/tickets/">http://sourceforge.net/p/foam-extend/tickets/</a>
@@ -570,9 +615,9 @@ To report bugs, please use the bugtracker at
 </div>
 </div>
 
-<div id="outline-container-sec-8" class="outline-2">
-<h2 id="sec-8"><span class="section-number-2">8</span> How to contribute</h2>
-<div class="outline-text-2" id="text-8">
+<div id="outline-container-org99c69c6" class="outline-2">
+<h2 id="org99c69c6"><span class="section-number-2">11</span> How to contribute</h2>
+<div class="outline-text-2" id="text-11">
 <p>
 All your contributions are highly welcome: New solvers, utilities and
 models; bug fixes; documentation. The many ways of contributing and the
@@ -582,9 +627,9 @@ contribution process are described in detail at:
 </div>
 </div>
 
-<div id="outline-container-sec-9" class="outline-2">
-<h2 id="sec-9"><span class="section-number-2">9</span> List of Contributors:</h2>
-<div class="outline-text-2" id="text-9">
+<div id="outline-container-org2b35aaf" class="outline-2">
+<h2 id="org2b35aaf"><span class="section-number-2">12</span> List of Contributors:</h2>
+<div class="outline-text-2" id="text-12">
 <p>
 See file ListOfContributors
 </p>
@@ -592,9 +637,8 @@ See file ListOfContributors
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Date: December 2016</p>
-<p class="date">Created: 2016-12-09 Fri 16:16</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="date">Date: September 2022</p>
+<p class="date">Created: 2022-09-20 Tue 09:35</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

@@ -1,14 +1,14 @@
 #                            -*- mode: org; -*-
 #
-#+TITLE:             *Release notes for foam-extend-4.1*
-#+TITLE:                  *Version 4.01 - Duisburg*
+#+TITLE:             *Release notes for foam-extend-5.0*
+#+TITLE:                  *Version 5.0 - Cambridge*
 #+AUTHOR:                foam-extend administrators:
 #+AUTHOR:                        Hrvoje Jasak
 #+AUTHOR:                       Håkan Nilsson
 #+AUTHOR:                       Henrik Rusche
 #+AUTHOR:                      Martin Beaudoin
 #+AUTHOR:                     Bernhard Gschaider
-#+DATE:                          December 2016
+#+DATE:                          September 2022
 #+LINK:                     http://foam-extend.org
 #+OPTIONS: author:nil
 #+OPTIONS: toc:2
@@ -28,7 +28,7 @@
   For a full list, see below and previous release notes at:
   http://sourceforge.net/p/foam-extend/wiki/Home/
 
-  Version 4.1, nicknamed "Duisburg", is the current version of
+  Version 5.0, nicknamed "Cambridge", is the current version of
   foam-extend. The release continues the tradition and spirit of the
   original FOAM code developed by prof. Jasak and Mr. Weller during
   their time at Imperial College and released as the general purpose
@@ -41,13 +41,17 @@
   foam-extend are a community effort not endorsed by ESI Group.
 
 
-  This is a major release of foam-extend-4.1 created form the nextRelease branch of foam-extend-4.0 which consolidates cumulative development since 2016.
+  This is a major release of foam-extend-5.0 created from the
+  nextRelease branch of foam-extend-4.1 which consolidates
+  cumulative development since 14 October 2019.
 
 ** Installation
-   foam-extend-4.0 can be compiled and runs on a large variety of Linux, Mac or Windows
+   foam-extend-5.0 can be compiled and runs on a large variety of Linux, Mac or Windows
    systems
 
   * Main supported OSs:
+    - Ubuntu 20.04 LTS
+    - Ubuntu 22.04 LTS
     - Ubuntu 18.04 LTS
     - Mac OS X
     - Microsoft Windows 10
@@ -66,33 +70,32 @@
 
     Binary packages are available for download at
     http://sourceforge.net/projects/foam-extend/ for the following
-    systems: Ubuntu 18.04, Mac OS X and Windows 10.
-
+    systems: Ubuntu 20.04, Ubuntu 22.04, Ubuntu 18.04 and Windows 10
+    
   * Accompanying ThirdParty software:
-    - gcc compatibility up to 7.4.0
-    - bison 2.7
-    - cmake 3.11.4
-    - flex-2.5.35
+    - gcc compatibility up to 11.2
+    - bison 3.8.2
+    - cmake 3.22.1
+    - flex-2.6.4
     - hwloc 2.0.1
     - libccmio 2.6.1
     - mesquite 2.3.0
     - metis 5.1.0
-    - openmpi 1.8.8
+    - openmpi 4.1.2
     - parmetis 4.0.3
     - ParMGridGen 1.0
     - PyFoam 0.6.4
-    - scotch 6.0.4
+    - scotch 6.0.9
     - pyFoam 0.6.9
 
 
-The code has been developed on Ubuntu-18.04.  It is natively compiled on Linux, Mac OSX and Microsoft Windows 10.
-
-The code is packaged for Ubuntu-18.04 MAc OSX and Windows 10.
+  * The code has been developed on Ubuntu-20.04.  It is natively compiled
+    on Linux, Mac OSX and Microsoft Windows 10.
 
 ** Compatibility
   Upstream features from the OpenFOAM® code base are merged into
   foam-extend on regular basis. The interface format of
-  foam-extend-4.1 is largely compatible to foam-extend-4.0, to
+  foam-extend-5.0 is largely compatible to foam-extend-4.1, to
   OpenFOAM-1.6-ext and OpenFOAM-1.7.x. In some cases, the
   differences are caused by bug fixes and algorithmic improvements,
   considered more important than inter-operability.
@@ -141,7 +144,7 @@ The code is packaged for Ubuntu-18.04 MAc OSX and Windows 10.
     equation solver
 
   * Fully implicit conjugate-coupled solution framework, allowing
-    implicit solution fo multiple equations over multiple meshes, with
+    implicit solution for multiple equations over multiple meshes, with
     parallelism
 
   * Proper Orthogonal Decomposition data analysis tools, with
@@ -163,75 +166,115 @@ The code is packaged for Ubuntu-18.04 MAc OSX and Windows 10.
 
   * Library-level support for Immersed Boundary Method and Overset
     Mesh
+    
+  * Framework for Reduced Order Models using Proper Orthogonal Decomposition
+    (POD) for real-time simulations based on the method of snapshots
 
   * Major improvements in accuracy and stability of FVM discretisation
     with options on convection and diffusion discretisation, deferred
     correction or explicit schemes
 
-  * Algebraic multigrid solver framework
+  * Algebraic multigrid solver framework for scalar and block matrices
 
-  * 267 tutorials with automated run scripts
+  * 274 tutorials with automated run scripts
 
   * Automatic test harness
 
-  * Approximately 6000 bug fixes in fundamental level libraries and
+  * Approximately 6800 bug fixes in fundamental level libraries and
     discretisation techniques
 
-** New features in foam-extend-4.1, since foam-extend-4.0
+** New features in foam-extend-5.0, since foam-extend-4.1
   The list of features is a result of the work of numerous
   contributors. The maintainers of foam-extend would formally like to
   thank them all.
 
   Get a full log of the updates by (either):
 #+BEGIN_SRC bash
-    user@machine> git log 4.0.. > commitLog
+    user@machine> git log 5.0.. > commitLog
 #+END_SRC
 #+BEGIN_SRC bash
-    user@machine> git log 4.0.. --oneline > commitLog
+    user@machine> git log 5.0.. --oneline > commitLog
 #+END_SRC
 #+BEGIN_SRC bash
-    user@machine> gitg 4.0..
+    user@machine> gitg 5.0..
 #+END_SRC
 
-  * Major new features:
+** Major new features:
 
-    - Numerics
-      - Block-coupled pressure velocity solver for steady and transient simulations of incompressible turbulent fluid flow.  Fully implicit handling of porosity and MRF in block-coupled solvers
-      - Immersed Boundary Surface Method.  Support for turbulence, dynamic immersed boundary and adaptive polyhedral refinement on immersed bondary meshes
-      - Overset Mesh Method.  New automatic overset mesh fringe calculation algorithms.  Major performance improvement for parallel overset and GGI interfaces
-      - Consistent SIMPLE and PISO segregated algorithms, where the solution is independent of time-step size or relaxation parameters
-      - New formulation of buoyant Bousinesq approximation solver
-      - Incremental development of the Finite Area Method and liquid film solver
+ * Physics modelling
+ 
+	* Proper Orthogonal Decomposition (POD) model development across a number of applications with tutorials and validation cases.  POD uses the Method of Snapshots to create energy-consistent reduced order models which run 1000s of times faster than full CFD.  POD analysis is also used to examine stability characteristics of flow regimes or to assemble "digital twin"-type models.  POD has been deployed across a number of applications, with new tutorials.
+	
+	* Extension to porous zone models for thermal modelling and heat transfer, including implicit coupled conjugate heat transfer
+	
+	* Physics modelling updates for coal combustion
+	
+	* Handling of derived forms of enthalpy in thermophysical models with correct boundary condition setup (coupled interfaces)
 
-    - Turbulence Modelling
-      - Full library of rough and non-equilibrium wall functions
-      - Block-coupled k-epsilon and k-omega SST turbulence models for fast non-linear convergence
 
-    - Dynamic Mesh Support
-      - Polyhedral adaptive mesh refinement and coarsening, working on all cell types, in 2-D and 3-D
-      - Dynamic load balancing for parallel topologically changing meshes
-      - Rewrite of the 6-DOF ODE solver, working directly on the rotation matrix.  Implementation of constraints and restraints in the 6-DOF solver
+ * Numerics
+	* Immersed Boundary (Surface) method: major improvements.  Consistency errors in parallel cutting and interaction with coupled boundaries have been resolved.  Further type-consistent boundary conditions on IB surfaces have been adeed, with correct mapping and post-processing.  Major robustness improvements in the method.  Algorithmic improvements in immersed boundary handling; cutting, dead cells, extended sets of boundary conditions.  Rewrite of cut cell handling, parallelism and consistency updates.
+	
+	* Immersed boundary with interfering patches: multiple intersections
+	
+	* Updated algorithms for buoyant flows: correct limit of incompressibility and consistent handling of stratified flows.  Solvers represent incompressible results for canonical flows without instability
+	
+	* Consistency updates for Multiple Rotating Frames (MRF) of reference, with accurate geometry handling.  Consistent and convergent integration with block pressure-velocity solvers
+	
+	* Algorithmic updates for steady compressible turbomachinery flows.  New implementation of rothalpy handling with better consistency in rothalpy jump coupled boundary conditions
+	
+	* Use of block-AMG solvers for block-coupled p-U solvers: see tutorials
+	
+	* Updated handling of bounded flux boundary conditions
+	
+	* New 01 bounded convection schemes
+	
+	* Better reporting of flux check
+	
+	* Updated algorithms for partial overlap GGI interface pairs
+	
+	* Change in handling of adjustPhi for moving deforming meshes
 
-    - Linear algebra
-      - Selective algebraic multigrid solver (AMG) with support for non-M matrices, GGI interfaces and other coupled boundary types
-      - Block-algebraic multigrid solver development for block coupled systems, with support for coupled interfaces
-      - ILUC0 preconditoning for polyhedral and coarse AMG meshes, using Crout's algorithm
 
-  * Software
-    - Optional Cmake buid environment
-    - Port to ARM 8 HPC arcihecture
-    - Port fo Cray XD40 supercomputer
-  * Installation:
-    - Compilation improvements
-    - Updated packages versions and compilation in ThirdParty
-    - Updated compilation for latest version of XCode for Mac OSX
-    - Updates for MS Windows build
+ * HPC and parallelism, performance improvements
+	* Major improvement in handling of processor boundaries and other cached coupled interface patch types. This resolves long-standing bugs in FOAM-OpenFOAM development lines and results in significant reduction in number of iterations of linear solvers.  Further, numerous stability and consistency problems in parallel execution have been resolved
 
-  * New tutorials: 267 in total
+	* Improvements for large memory usage in large-scale HPC cases
 
+	* Incremental consistency work on block-coupled solvers for incompressible flows
+
+	* Incremental improvement in performance for parallel Oveset Mesh capability.  Update in low-level communication and consistency
+
+	* Clean-up of boundary condition updates in absence of database field access
+
+
+ * Dynamic Mesh
+	* Full deployment of dynamic load balancing with AMR or other dynamic mesh features at the level of topoChangerDynamicFvMesh
+
+	* Refactoring of dynamic mesh solvers with algoritmic efficiency improvements
+
+	* Changes in dynamic mesh handling: efficient and consistent geometry updates
+
+
+** Software engineering
+
+	* Port to gcc-9 and gcc-11
+	* c++-11 updates: default destructors, delete automatically generated
+	* update of the build system using native third party packages whenever possible
+	* Change in style to FatalErrorInFunction sytnax
+	* new VectorN types for extended coupling in block matrices
+
+
+** Consistency with previous version
+
+	* fvSolution requires correct PIMPLE/SIMPLE sub-dictionaries; use of potentialFlow sub-dictionary in initialisation
+	* blockMeshDict moved into system
+	* faceCompactList consistency with OpenCFD version
+
+** Overview of Development
+  * New tutorials: 274 in total
   * Bug fixes: see git log for details
-
-  * In total, the release consists of 1450 commits since the last release
+  * In total, the release consists of 5535 commits since the last release
 
 ** Reporting bugs
     To report bugs, please use the bugtracker at
