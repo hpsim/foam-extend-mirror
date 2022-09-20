@@ -32,6 +32,7 @@ Description
 #include "calc.H"
 #include "fvc.H"
 #include "fvMatrices.H"
+#include "emptyFvPatch.H"
 #include "immersedBoundaryFvPatch.H"
 #include "cellSet.H"
 
