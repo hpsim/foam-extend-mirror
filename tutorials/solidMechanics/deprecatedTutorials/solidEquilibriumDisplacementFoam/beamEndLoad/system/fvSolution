@@ -16,7 +16,7 @@ FoamFile
 
 solvers
 {
-    D GAMG
+    D
     {
         solver           GAMG;
         smoother         GaussSeidel;
@@ -31,8 +31,7 @@ solvers
         agglomerator     faceAreaPair;
         mergeLevels      1;
     }
-
-    Dcorr GAMG
+    Dcorr
     {
         solver           GAMG;
         smoother         GaussSeidel;
