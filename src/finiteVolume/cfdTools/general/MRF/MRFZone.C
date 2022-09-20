@@ -623,10 +623,24 @@ void Foam::MRFZone::relativeVelocity(volVectorField& U) const
     // Included faces
     forAll (includedFaces_, patchI)
     {
-        forAll (includedFaces_[patchi], i)
+        if (mesh_.boundaryMesh()[patchI].coupled())
         {
-            label patchFaceI = includedFaces_[patchi][i];
-            U.boundaryField()[patchi][patchFaceI] = vector::zero;
+            // Coupled patch.  Subtract rotation
+            forAll (includedFaces_[patchI], i)
+            {
+                label patchFaceI = includedFaces_[patchI][i];
+                U.boundaryField()[patchI][patchFaceI] -=
+                    (rotVel ^ (C.boundaryField()[patchI][patchFaceI] - origin));
+            }
+        }
+        else
+        {
+            // Regular patch.  Set relative velocity to zero
+            forAll (includedFaces_[patchI], i)
+            {
+                label patchFaceI = includedFaces_[patchI][i];
+                U.boundaryField()[patchI][patchFaceI] = vector::zero;
+            }
         }
     }
 
@@ -668,11 +682,34 @@ void Foam::MRFZone::absoluteVelocity(volVectorField& U) const
     // Included faces
     forAll (includedFaces_, patchI)
     {
-        forAll (includedFaces_[patchi], i)
+        if (mesh_.boundaryMesh()[patchI].coupled())
         {
-            label patchFaceI = includedFaces_[patchi][i];
-            U.boundaryField()[patchi][patchFaceI] =
-                (rotVel ^ (C.boundaryField()[patchi][patchFaceI] - origin));
+            // Correct velocity for coupled patches
+            forAll (excludedFaces_[patchI], i)
+            {
+                label patchFaceI = excludedFaces_[patchI][i];
+                U.boundaryField()[patchI][patchFaceI] +=
+                    (rotVel ^ (C.boundaryField()[patchI][patchFaceI] - origin));
+            }
+        }
+        else
+        {
+            // Correct velocity for non-coupled patches
+            vectorField n = mesh_.boundary()[patchI].nf();
+
+            forAll (includedFaces_[patchI], i)
+            {
+                label patchFaceI = includedFaces_[patchI][i];
+
+                vector Up =
+                    rotVel ^ (C.boundaryField()[patchI][patchFaceI] - origin);
+
+                scalar Un = meshVel.boundaryField()[patchI][patchFaceI]/
+                    magSf.boundaryField()[patchI][patchFaceI];
+
+                U.boundaryField()[patchI][patchFaceI] =
+                    (Up + n[patchFaceI]*(Un - (n[patchFaceI] & Up)));
+            }
         }
     }
 
