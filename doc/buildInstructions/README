@@ -1,4 +1,4 @@
-Here you can find build instructions for foam-extend-3.1 . The instructions for
+Here you can find build instructions for foam-extend-5.0 . The instructions for
 different Linux distributions are in corresponding sub-folders. If you need to
 take different or additional steps to get foam-extend compiled on your machine,
 please file a bug at https://sourceforge.net/p/openfoam-extend/ticketsfoamextendrelease/.
@@ -9,4 +9,4 @@ For instructions, see: https://sourceforge.net/p/openfoam-extend/wiki/HowToContr
 
 Please also refer to the unofficial OpenFOAM Wiki for additional installation
 instructions:
-http://openfoamwiki.net/index.php/Installation/Linux/foam-extend-3.1
+http://openfoamwiki.net/index.php/Installation/Linux/foam-extend-5.0
