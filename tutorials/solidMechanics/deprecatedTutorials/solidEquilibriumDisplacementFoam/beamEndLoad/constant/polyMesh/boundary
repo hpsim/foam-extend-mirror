@@ -3,53 +3,51 @@
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
 |  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  | For copyright notice see file Copyright         |
+|    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     version     2.0;
     format      ascii;
     class       polyBoundaryMesh;
+    location    "constant/polyMesh";
     object      boundary;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 5
 (
-topSurface
-{
-    type patch;
-    nFaces 6;
-    startFace 16;
-}
-
-bottomSurface
-{
-    type patch;
-    nFaces 6;
-    startFace 22;
-}
-
-fixedEnd
-{
-    type wall;
-    nFaces 2;
-    startFace 28;
-}
-
-tractionEnd
-{
-    type patch;
-    nFaces 2;
-    startFace 30;
-}
-
-defaultFaces
-{
-    type empty;
-    nFaces 24;
-    startFace 32;
-}
+    topSurface
+    {
+        type            patch;
+        nFaces          6;
+        startFace       16;
+    }
+    bottomSurface
+    {
+        type            patch;
+        nFaces          6;
+        startFace       22;
+    }
+    fixedEnd
+    {
+        type            patch;
+        nFaces          2;
+        startFace       28;
+    }
+    tractionEnd
+    {
+        type            patch;
+        nFaces          2;
+        startFace       30;
+    }
+    defaultFaces
+    {
+        type            empty;
+        nFaces          24;
+        startFace       32;
+    }
 )
+
 
 // ************************************************************************* //
