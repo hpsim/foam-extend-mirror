@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -397,7 +397,7 @@ Foam::label Foam::treeDataFace::getVolumeType
     // - tolerances are wrong. (if e.g. face has zero area)
     // - or (more likely) surface is not closed.
 
-    return indexedOctree<treeDataFace>::UNKNOWN;
+    return volumeType::UNKNOWN;
 }
 
 

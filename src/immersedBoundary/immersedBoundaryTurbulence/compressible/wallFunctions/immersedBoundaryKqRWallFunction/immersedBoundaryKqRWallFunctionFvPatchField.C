@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.0
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ void immersedBoundaryKqRWallFunctionFvPatchField<Type>::checkType()
 {
     if (!this->patch().isWall())
     {
-        FatalErrorIn("immersedBoundaryKqRWallFunctionFvPatchField::checkType()")
+        FatalErrorInFunction
             << "Invalid wall function specification" << nl
             << "    Patch type for patch " << this->patch().name()
             << " must be wall" << nl
@@ -210,11 +210,8 @@ void immersedBoundaryKqRWallFunctionFvPatchField<Type>::evaluate
         Field<Type>::operator=(this->patchInternalField());
     }
 
-    // Get non-constant reference to internal field
-    Field<Type>& intField = const_cast<Field<Type>&>(this->internalField());
-
-    // Set dead value
-    this->setDeadValues(intField);
+    // Set dead values
+    this->setDeadValues(*this);
 
     kqRWallFunctionFvPatchField<Type>::evaluate(commsType);
 }

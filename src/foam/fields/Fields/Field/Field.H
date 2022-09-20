@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -116,11 +116,11 @@ public:
 
         //- Construct null
         //  Used for temporary fields which are initialised after construction
-        Field();
+        inline Field();
 
         //- Construct given size
         //  Used for temporary fields which are initialised after construction
-        explicit Field(const label);
+        inline explicit Field(const label);
 
         //- Construct given size and initial value
         Field(const label, const Type&);
@@ -315,6 +315,10 @@ public:
 
         //- Return the field transpose (only defined for second rank tensors)
         tmp<Field<Type> > T() const;
+
+        //- Clear field caches.  Note over-ride in patchFields
+        inline void clearCaches() const
+        {}
 
         //- Write the field as a dictionary entry
         void writeEntry(const word& keyword, Ostream& os) const;

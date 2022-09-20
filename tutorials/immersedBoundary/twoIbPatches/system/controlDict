@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.0                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -13,24 +13,6 @@ FoamFile
     object      controlDict;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-DebugSwitches
-{
-
-  //     immersedBoundary 1;
-  //    immersedBoundaryFvPatch 10;
-    // polyMesh 2;
-    // fvMesh   2;
-  /*
-    immersedBoundary 2;
-    immersedBoundaryCorrectedMeshFields 2;
-    immersedBoundaryEpsilonWallFunction 2;
-    immersedBoundaryKqRWallFunction 2;
-    immersedBoundaryNutWallFunction 2;
-    immersedBoundaryOmegaWallFunction 2;
-    foo 2;
-  */
-}
 
 application     pimpleDyMIbFoam;
 
@@ -44,19 +26,16 @@ endTime         5;
 
 deltaT          0.01;
 
-// writeControl    runTime;
-// writeInterval   0.2;
-
-writeControl    timeStep;
-writeInterval   5;
+writeControl    runTime;
+writeInterval   0.2;
 
 purgeWrite      0;
 
-writeFormat     binary;
+writeFormat     ascii;
 
 writePrecision  6;
 
-writeCompression uncompressed;
+writeCompression compressed;
 
 timeFormat      general;
 
@@ -72,8 +51,7 @@ libs
 (
     "libimmersedBoundary.so"
     "libimmersedBoundaryDynamicMesh.so"
-    //   "libimmersedBoundaryTurbulence.so"
-"libincompressibleImmersedBoundaryTurbulence.so"
+    "libincompressibleImmersedBoundaryTurbulence.so"
 );
 
 functions
@@ -147,6 +125,5 @@ functions
     }
     */
 );
-
 
 // ************************************************************************* //

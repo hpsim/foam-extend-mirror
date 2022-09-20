@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -59,6 +59,7 @@ SourceFiles
 #include "HashTable.H"
 #include "wordList.H"
 #include "className.H"
+#include "infoSwitch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -146,10 +147,6 @@ class dictionary
 {
     // Private data
 
-        //- If true write optional keywords and values
-        //  if not present in dictionary
-        static bool writeOptionalEntries;
-
         //- HashTable of the entries held on the DL-list for quick lookup
         HashTable<entry*> hashedEntries_;
 
@@ -197,6 +194,9 @@ public:
     //- Null dictionary
     static const dictionary null;
 
+    //- If true write optional keywords and values
+    //  if not present in dictionary
+    static debug::infoSwitch writeOptionalEntries;
 
     // Constructors
 

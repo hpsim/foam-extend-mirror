@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ Author
 
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
-#include "pisoControl.H"
+#include "potentialControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 #   include "createTime.H"
 #   include "createDynamicFvMesh.H"
 
-    pisoControl piso(mesh);
+    potentialControl potential(mesh);
 
 #   include "createFields.H"
 #   include "initTotalVolume.H"
@@ -83,8 +83,10 @@ int main(int argc, char *argv[])
         // Solve potential flow equations
         adjustPhi(phi, U, p);
 
-        while (piso.correctNonOrthogonal())
+        while (potential.correctNonOrthogonal())
         {
+            p.storePrevIter();
+
             fvScalarMatrix pEqn
             (
                 fvm::laplacian
@@ -104,7 +106,7 @@ int main(int argc, char *argv[])
             pEqn.setReference(pRefCell, pRefValue);
             pEqn.solve();
 
-            if (piso.finalNonOrthogonalIter())
+            if (potential.finalNonOrthogonalIter())
             {
                 phi -= pEqn.flux();
             }

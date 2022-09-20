@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -35,6 +35,7 @@ Description
 #include "coupledFvMatrices.H"
 #include "regionCouplePolyPatch.H"
 #include "radiationModel.H"
+#include "fluidThermalModel.H"
 #include "thermalModel.H"
 #include "singlePhaseTransportModel.H"
 #include "RASModel.H"
@@ -94,21 +95,21 @@ int main(int argc, char *argv[])
         kappaEff = rho*Cp*(turbulence->nu()/Pr + turbulence->nut()/Prt);
 
         // Update thermal conductivity in the solid
-        solidThermo.correct();
-        ksolid = solidThermo.k();
+        solidThermalModel.correct();
+        kSolid = solidThermalModel.k();
 
         rhoCpsolid.oldTime();
-        rhoCpsolid = solidThermo.rho()*solidThermo.C();
+        rhoCpsolid = solidThermalModel.rho()*solidThermalModel.C();
 
         // Attached coupled CHT patches
 #       include "attachPatches.H"
 
         kappaEff.correctBoundaryConditions();
-        ksolid.correctBoundaryConditions();
+        kSolid.correctBoundaryConditions();
 
         // Interpolate to the faces and add thermal resistance
-        surfaceScalarField ksolidf = fvc::interpolate(ksolid);
-        solidThermo.modifyResistance(ksolidf);
+        surfaceScalarField kSolidf = fvc::interpolate(kSolid);
+        solidThermalModel.modifyResistance(kSolidf);
 
 #       include "solveEnergy.H"
 

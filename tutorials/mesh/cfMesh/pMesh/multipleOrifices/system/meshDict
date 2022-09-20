@@ -1,20 +1,18 @@
 /*--------------------------------*- C++ -*----------------------------------*\
-| =========                 |                                                |
-| \\      /  F ield         | cfMesh: A library for mesh generation          | 
-|  \\    /   O peration     |                                                |
-|   \\  /    A nd           | Author: Franjo Juretic                         | 
-|    \\/     M anipulation  | E-mail: franjo.juretic@c-fields.com            |
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     5.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
-
 FoamFile
 {
-    version   2.0;
-    format    ascii;
-    class     dictionary;
-    location  "system";
-    object    meshDict;
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      meshDict;
 }
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 surfaceFile "multipleOrifices.stl";
@@ -28,7 +26,7 @@ localRefinement
     "orifice01.*"
     {
         cellSize 0.1;
-    } 
+    }
 
     "orifice02.*"
     {
@@ -72,7 +70,6 @@ renameBoundary
     }
 }
 
-
 workflowControls
 {
 //stopAfter templateGeneration;
@@ -86,5 +83,5 @@ workflowControls
 
 //restartFromLatestStep 1;
 }
-     
+
 // ************************************************************************* //

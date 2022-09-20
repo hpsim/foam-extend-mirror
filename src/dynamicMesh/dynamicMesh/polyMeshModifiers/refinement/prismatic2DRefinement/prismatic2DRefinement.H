@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.0
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -169,10 +169,10 @@ private:
         // Copy control
 
             //- Disallow default bitwise copy construct
-            prismatic2DRefinement(const prismatic2DRefinement&);
+            prismatic2DRefinement(const prismatic2DRefinement&) = delete;
 
             //- Disallow default bitwise assignment
-            void operator=(const prismatic2DRefinement&);
+            void operator=(const prismatic2DRefinement&) = delete;
 
 
 protected:

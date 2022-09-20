@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -203,6 +203,9 @@ public:
 
         //- Return element of constant FixedList.
         inline const T& operator[](const label) const;
+
+        //- Assignment to a FixedList
+        inline void operator=(const FixedList<T, Size>&);
 
         //- Assignment from array operator. Takes linear time.
         inline void operator=(const T v[Size]);

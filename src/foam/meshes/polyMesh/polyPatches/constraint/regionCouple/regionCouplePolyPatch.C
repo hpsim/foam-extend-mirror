@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -799,7 +799,7 @@ bool Foam::regionCouplePolyPatch::coupled() const
 
 const Foam::polyMesh& Foam::regionCouplePolyPatch::shadowRegion() const
 {
-    if (shadowRegionName_ != Foam::word::null)
+    if (shadowRegionName_ != word::null)
     {
         return boundaryMesh().mesh().db().parent().
             objectRegistry::lookupObject<polyMesh>
@@ -826,8 +826,8 @@ Foam::label Foam::regionCouplePolyPatch::shadowIndex() const
     if
     (
         shadowIndex_ == -1
-     && shadowRegionName_ != Foam::word::null
-     && shadowPatchName_ != Foam::word::null
+     && shadowRegionName_ != word::null
+     && shadowPatchName_ != word::null
     )
     {
         // Grab shadow patch index from shadow region
@@ -893,7 +893,7 @@ Foam::label Foam::regionCouplePolyPatch::shadowIndex() const
 
 Foam::label Foam::regionCouplePolyPatch::zoneIndex() const
 {
-    if (zoneIndex_ == -1 && zoneName_ != Foam::word::null)
+    if (zoneIndex_ == -1 && zoneName_ != word::null)
     {
         // Grab zone patch index
         faceZoneID zone(zoneName_, boundaryMesh().mesh().faceZones());

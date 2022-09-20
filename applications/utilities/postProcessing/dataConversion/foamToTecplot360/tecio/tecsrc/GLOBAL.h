@@ -1273,8 +1273,8 @@ typedef    short            SmInteger_t;
  * A number of color index constants are \#defined. These include Black_C, Red_C,
  * Green_C, Blue_C, Cyan_C, Yellow_C, Purple_C, White_C, Custom1_C through
  * Custom56_C, MultiColor_C, NoColor_C, MulitiColor2_C through MulitiColor8_C,
- * RGBColor_C, and InvalidColor_C.  
- */ 
+ * RGBColor_C, and InvalidColor_C.
+ */
 typedef    SmInteger_t      ColorIndex_t;
 
 #ifdef INDEX_16_BIT
@@ -4801,7 +4801,7 @@ typedef struct
 
 /* BEGINREMOVEFROMADDON */
 
-typedef struct  
+typedef struct
 {
     double Psi;
     double Theta;

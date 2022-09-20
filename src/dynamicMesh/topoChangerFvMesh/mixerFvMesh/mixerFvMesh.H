@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -75,10 +75,10 @@ class mixerFvMesh
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        mixerFvMesh(const mixerFvMesh&);
+        mixerFvMesh(const mixerFvMesh&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const mixerFvMesh&);
+        void operator=(const mixerFvMesh&) = delete;
 
 
         //- Add mixer zones and modifiers
@@ -106,9 +106,8 @@ public:
         explicit mixerFvMesh(const IOobject& io);
 
 
-    // Destructor
-
-        virtual ~mixerFvMesh();
+    //- Destructor
+    virtual ~mixerFvMesh();
 
 
     // Member Functions

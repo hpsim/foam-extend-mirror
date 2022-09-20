@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -117,9 +117,6 @@ public:
         //- Construct from Istream
         icoPolynomial(Istream&);
 
-        //- Construct as copy
-        inline icoPolynomial(const icoPolynomial&);
-
         //- Construct as named copy
         inline icoPolynomial(const word& name, const icoPolynomial&);
 
@@ -144,7 +141,6 @@ public:
 
     // Member operators
 
-        inline icoPolynomial& operator=(const icoPolynomial&);
         inline void operator+=(const icoPolynomial&);
         inline void operator-=(const icoPolynomial&);
 

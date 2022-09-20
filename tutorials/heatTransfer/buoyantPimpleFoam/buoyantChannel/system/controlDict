@@ -1,0 +1,80 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     5.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      controlDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+application     buoyantPimpleFoam;
+
+startFrom       startTime;
+
+startTime       0;
+
+stopAt          endTime;
+
+endTime         50;
+
+deltaT          1;
+
+writeControl    timeStep;
+
+writeInterval   1;
+
+purgeWrite      0;
+
+writeFormat     ascii;
+
+writePrecision  10;
+
+writeCompression off;
+
+timeFormat      general;
+
+timePrecision   10;
+
+runTimeModifiable true;
+
+adjustTimeStep  no;
+
+maxCo           0.5;
+
+functions
+(
+    minMaxP
+    {
+        type minMaxField;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        name p;
+    }
+    minMaxU
+    {
+        type minMaxField;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        name U;
+    }
+    minMaxT
+    {
+        type minMaxField;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        name T;
+    }
+    minMaxRho
+    {
+        type minMaxField;
+        functionObjectLibs ("libfieldFunctionObjects.so");
+        name rho;
+    }
+);
+
+// ************************************************************************* //

@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -44,17 +44,16 @@ solvers
     }
 }
 
-PISO
+PIMPLE
 {
     checkMeshCourantNo true;
-    momentumPredictor yes;
 
+    nOuterCorrectors 2;
     nCorrectors     4;
     nNonOrthogonalCorrectors 1;
 
     pRefCell        0;
     pRefValue       0;
 }
-
 
 // ************************************************************************* //

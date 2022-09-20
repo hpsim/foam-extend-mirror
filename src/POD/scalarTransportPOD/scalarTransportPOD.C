@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -24,8 +24,6 @@ License
 Class
     scalarTransportPOD
 
-Description
-
 \*---------------------------------------------------------------------------*/
 
 #include "scalarTransportPOD.H"
@@ -36,7 +34,7 @@ Description
 
 namespace Foam
 {
-    defineTypeNameAndDebug(scalarTransportPOD, 0);
+    defineTypeNameAndDebug(scalarTransportPOD, 1);
 
     addToRunTimeSelectionTable
     (
@@ -49,14 +47,111 @@ namespace Foam
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
+void Foam::scalarTransportPOD::calcValidTimes() const
+{
+    if (validTimesPtr_)
+    {
+        FatalErrorInFunction
+            << "Valid times already calculated"
+            << abort(FatalError);
+    }
+
+    // Get times list
+    Time& runTime = const_cast<Time&>(mesh().time());
+
+    // Remember time index to restore it after the scan
+    label origTimeIndex = runTime.timeIndex();
+
+    instantList Times = runTime.times();
+
+    validTimesPtr_ = new instantList(Times.size());
+    instantList& vt = *validTimesPtr_;
+
+    label nValidTimes = 0;
+
+    forAll (Times, i)
+    {
+        // Check if zero field should be used
+        if (Times[i].equal(0)  && !useZeroField_)
+        {
+            Info << "Skipping time " << Times[i] << endl;
+
+            continue;
+        }
+
+        runTime.setTime(Times[i], i);
+
+        // Both field and flux need to be read for the snapshot to be valid
+        // Check both
+
+        // Field header
+        IOobject fieldHeader
+        (
+            fieldName_,
+            runTime.timeName(),
+            mesh(),
+            IOobject::MUST_READ
+        );
+
+        // Flux header
+        IOobject phiHeader
+        (
+            phiName_,
+            runTime.timeName(),
+            this->mesh(),
+            IOobject::MUST_READ
+        );
+
+        // Check field and phi header and report separately
+        if (fieldHeader.headerOk() && !phiHeader.headerOk())
+        {
+            Info<< "    Field present but not phi: skipping"
+                << endl;
+        }
+
+        if (fieldHeader.headerOk() && phiHeader.headerOk())
+        {
+            // Record time as valid
+            vt[nValidTimes] = Times[i];
+            nValidTimes++;
+        }
+    }
+
+    // Reset time index to initial state
+    runTime.setTime(Times[origTimeIndex], origTimeIndex);
+
+    // Check snapshots
+    if (nValidTimes < 2)
+    {
+        FatalErrorInFunction
+            << "Insufficient number of snapshots (validTimes): "
+            << nValidTimes
+            << abort(FatalError);
+    }
+
+    // Reset the list of times
+    Info<< "Number of valid snapshots: " << nValidTimes << endl;
+    vt.setSize(nValidTimes);
+}
+
+
+const Foam::instantList& Foam::scalarTransportPOD::validTimes() const
+{
+    if (!validTimesPtr_)
+    {
+        calcValidTimes();
+    }
+
+    return *validTimesPtr_;
+}
+
+
 void Foam::scalarTransportPOD::calcOrthoBase() const
 {
     if (orthoBasePtr_)
     {
-        FatalErrorIn
-        (
-            "scalarTransportPOD::calcOrthoBase()"
-        )   << "Orthogonal base already calculated"
+        FatalErrorInFunction
+            << "Orthogonal base already calculated"
             << abort(FatalError);
     }
 
@@ -69,89 +164,137 @@ void Foam::scalarTransportPOD::calcOrthoBase() const
     // Remember time index to restore it after the scan
     label origTimeIndex = runTime.timeIndex();
 
-    instantList Times = runTime.times();
+    const instantList& valTimes = validTimes();
 
     // Create a list of snapshots
-    PtrList<volScalarField> fields(Times.size());
+    PtrList<volScalarField> fields(valTimes.size());
 
-    label nSnapshots = 0;
-
-    forAll (Times, i)
+    forAll (valTimes, i)
     {
-        if (Times[i].equal(0) )
-        {
-            Info << "Skipping time " << Times[i] << endl;
+        runTime.setTime(valTimes[i], i);
 
-            continue;
-        }
+        Info<< "    Reading " << fieldName_ << " from time "
+            << runTime.timeName() << endl;
 
-        runTime.setTime(Times[i], i);
-
-        Info<< "Time = " << runTime.timeName() << endl;
-
-        IOobject phiHeader
+        fields.set
         (
-            phiName_,
-            runTime.timeName(),
-            mesh(),
-            IOobject::MUST_READ
+            i,
+            new volScalarField
+            (
+                IOobject
+                (
+                    fieldName_,
+                    runTime.timeName(),
+                    mesh(),
+                    IOobject::MUST_READ
+                ),
+                this->mesh()
+            )
         );
 
-        if (phiHeader.headerOk())
+        // Read the reconstructed field pointer
+        if (!reconFieldPtr_)
         {
-            Info<< "    Reading " << phiName_ << endl;
-
-            fields.set(nSnapshots, new volScalarField(phiHeader, mesh()));
-
-            // Rename the field
-            fields[nSnapshots].rename(phiName_ + name(i));
-            nSnapshots++;
+            Info<< "Setting up " << "recon" << fieldName_
+                << " from " << fields[i].name() << endl;
+            reconFieldPtr_ =
+                new volScalarField
+                (
+                    IOobject
+                    (
+                        "recon" + fieldName_,
+                        runTime.timeName(),
+                        mesh(),
+                        IOobject::NO_READ,
+                        IOobject::AUTO_WRITE
+                    ),
+                    fields[i]
+                );
         }
-        else
+    }
+
+    if (!reconFieldPtr_)
+    {
+        FatalErrorInFunction
+            << "recon" << fieldName_ << " not read"
+            << abort(FatalError);
+    }
+
+    // Reset time index to initial state
+    runTime.setTime(valTimes[0], 0);
+
+    // Create ortho-normal base for transported variable
+    orthoBasePtr_ = new scalarPODOrthoNormalBase(fields, accuracy);
+
+    // Check orthogonality and magnitude of snapshots
+    if (debug)
+    {
+        orthoBasePtr_->checkBase();
+    }
+
+    if (debug)
+    {
+        Info<< "Write reconstructed snapshots: check" << endl;
+        forAll (valTimes, i)
         {
-            Info<< "    No " << phiName_ << endl;
+            runTime.setTime(valTimes[i], i);
+
+            Info<< "Time = " << runTime.timeName() << endl;
+
+            // Field preserves boundary conditions but is reset to zero
+            // for accumulation of ortho base values
+            volScalarField directRecon
+            (
+                IOobject
+                (
+                    "directRecon" + fieldName_,
+                    mesh().time().timeName(),
+                    mesh(),
+                    IOobject::NO_READ,
+                    IOobject::NO_WRITE
+                ),
+                *reconFieldPtr_
+            );
+
+            // Reset entire field, including boundary conditions
+            directRecon ==
+                dimensionedScalar("zero", directRecon.dimensions(), 0);
+
+            // Note: use raw pointer access to orthoBase,
+            // as it has just been calculated
+            for (label obpI = 0; obpI < orthoBasePtr_->baseSize(); obpI++)
+            {
+                directRecon == directRecon
+                  + orthoBasePtr_->interpolationCoeffs()[i][obpI]*
+                    orthoBasePtr_->orthoField(obpI);
+            }
+
+            // Internal field is set.  Correct boundary conditions
+            directRecon.correctBoundaryConditions();
+            directRecon.write();
         }
     }
 
     // Reset time index to initial state
-    runTime.setTime(Times[origTimeIndex], origTimeIndex);
-
-    // Resize snapshots
-    if (nSnapshots < 2)
-    {
-        FatalErrorIn
-        (
-            "scalarTransportPOD::calcOrthoBase()"
-        )   << "Insufficient number of snapshots: " << nSnapshots
-            << abort(FatalError);
-    }
-
-    Info << "Number of snapshots: " << nSnapshots << endl;
-
-    fields.setSize(nSnapshots);
-
-    // Create ortho-normal base for transported variable
-    orthoBasePtr_ = new scalarPODOrthoNormalBase(fields, accuracy);
+    runTime.setTime(runTime.times()[origTimeIndex], origTimeIndex);
 }
 
 
 void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
 {
-    if (derivativeMatrixPtr_)
+    if (derivativePtr_ || lagrangeDerPtr_ || lagrangeSrcPtr_)
     {
-        FatalErrorIn
-        (
-            "void scalarTransportPOD::calcDerivativeCoeffs() const"
-        )   << "Derivative matrix already calculated"
+        FatalErrorInFunction
+            << "Derivative matrix already calculated"
             << abort(FatalError);
     }
 
-    // Calculate coefficients for differential equation
-    // Get times list
     Time& runTime = const_cast<Time&>(this->mesh().time());
 
     // Remember time index to restore it
     label origTimeIndex = runTime.timeIndex();
+
+    runTime.setTime(validTimes()[0], 0);
 
     // Read diffusivity
 
@@ -174,61 +317,43 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
         transportProperties.lookup("DT")
     );
 
-    // Find velocity field
+    // Read first available flux field.  Note: flux is fixed for
+    // scalar transport
 
-    word Uname(this->dict().lookup("velocity"));
-
-    instantList Times = runTime.times();
-
-    volVectorField* Uptr = nullptr;
-
-    forAll (Times, i)
-    {
-        runTime.setTime(Times[i], i);
-
-        Info<< "Time = " << runTime.timeName() << endl;
-
-        IOobject Uheader
+    // Flux field
+    surfaceScalarField phi
+    (
+        IOobject
         (
-            Uname,
+            phiName_,
             runTime.timeName(),
             this->mesh(),
-            IOobject::MUST_READ
-        );
-
-        if (Uheader.headerOk())
-        {
-            Info<< "    Reading " << Uname << endl;
-
-            Uptr = new volVectorField(Uheader, this->mesh());
-            break;
-        }
-        else
-        {
-            Info<< "    No " << Uname << endl;
-        }
-    }
+            IOobject::MUST_READ,
+            IOobject::NO_WRITE
+        ),
+        this->mesh()
+    );
 
     // Reset time index to initial state
-    runTime.setTime(Times[origTimeIndex], origTimeIndex);
-
-    if (!Uptr)
-    {
-        FatalErrorIn
-        (
-            "void scalarTransportPOD::calcDerivativeCoeffs() const"
-        )   << "Cannot find velocity: " << Uname
-            << abort(FatalError);
-    }
-
-    volVectorField& U = *Uptr;
+    runTime.setTime(runTime.times()[origTimeIndex], origTimeIndex);
 
     // Create derivative matrix
 
     const scalarPODOrthoNormalBase& b = orthoBase();
 
-    derivativeMatrixPtr_ = new scalarSquareMatrix(b.baseSize(), 0.0);
-    scalarSquareMatrix& derivative = *derivativeMatrixPtr_;
+    // Derivative
+    derivativePtr_ = new scalarSquareMatrix(b.baseSize(), scalar(0));
+    scalarSquareMatrix& derivative = *derivativePtr_;
+
+    // Lagrange multiplier derivative
+    lagrangeDerPtr_ = new scalarSquareMatrix(b.baseSize(), scalar(0));
+    scalarSquareMatrix& lagrangeDer = *lagrangeDerPtr_;
+
+    // Lagrange multiplier source.  Currently disabled
+    lagrangeSrcPtr_ = new scalarField(b.baseSize(), scalar(0));
+    scalarField& lagrangeSrc = *lagrangeSrcPtr_;
+
+    const volScalarField& field = *reconFieldPtr_;
 
     for (label i = 0; i < b.baseSize(); i++)
     {
@@ -238,14 +363,156 @@ void Foam::scalarTransportPOD::calcDerivativeCoeffs() const
         {
             const volScalarField& snapJ = b.orthoField(j);
 
-            const tmp<volVectorField> gradSnapJ = fvc::grad(snapJ);
-
+            // Calculate derivative by moving equation terms to rhs
+            // Note: both forms of Laplacian work.
+            // Oscillations occur when too many snapshots are used.
+            // HJ, 20/Jan/2021
             derivative[i][j] =
-                DT.value()*POD::projection(fvc::div(gradSnapJ), snapI)
-              - POD::projection((U & gradSnapJ), snapI);
+                POD::projection
+                (
+                    fvc::laplacian
+                    (
+                        DT, snapJ,
+                        "laplacian(" + DT.name() + "," + fieldName_ + ")"
+                    ),
+                    snapI
+                )
+                // -DT.value()*
+                // POD::projection
+                // (
+                //     fvc::grad(snapJ),
+                //     fvc::grad(snapI)
+                // )
+              - POD::projection
+                (
+                    fvc::div
+                    (
+                        phi, snapJ,
+                        "div(" + phiName_ + "," + fieldName_ + ")"
+                    ),
+                    snapI
+                );
+
+            // Lagrange multiplier is calculated on boundaries where
+            // reconField fixes value
+            // Changed form of enforcement of boundary conditions
+            // using ddt(bc) = 0
+            // HJ, 14/Jul/2021
+            forAll (field.boundaryField(), patchI)
+            {
+                if (field.boundaryField()[patchI].fixesValue())
+                {
+                    // Note pre-multiplication by beta and signs
+                    // of derivative and source.  New formulation
+                    // HJ, 14/Jul/2021
+
+                    // Accumulated across multiple patches
+                    lagrangeDer[i][j] += beta_*
+                        POD::projection
+                        (
+                            snapJ.boundaryField()[patchI],
+                            snapI.boundaryField()[patchI]
+                        );
+                }
+            }
+        }
+
+        // Calculate Lagrange source
+        forAll (field.boundaryField(), patchI)
+        {
+            if (field.boundaryField()[patchI].fixesValue())
+            {
+                // Accumulated across multiple patches
+                lagrangeSrc[i] += beta_*
+                    POD::projection
+                    (
+                        field.boundaryField()[patchI],
+                        snapI.boundaryField()[patchI]
+                    );
+            }
+        }
+    }
+
+    // Assemble temporal coefficient
+    // Note: under normal circumstances, the temporal matrix will be the
+    // Cronecker delta.  However, if the field is taken out of the larger
+    // POD base, this is no longer the case.
+    //
+    // Note 2: changing the way the drift in the boundary condition is specified
+    // via the ddt(b.c.) = 0 condition.  This changes the diagonal matrix
+    // of the ddt term and all relevant matrices are re-scaled
+    // HJ, 13/Jul/2021
+    {
+        scalarField diagScale(b.baseSize(), scalar(0));
+
+        for (label i = 0; i < b.baseSize(); i++)
+        {
+            const volScalarField& snapI = b.orthoField(i);
+
+            // Add the sqr(snapUI) in case it is not zero
+            // Since the POD decomposition is the velocity field itself,
+            // this is not strictly needed.  However, for other cases, this
+            // is needed.  HJ, 13/Jul/2021
+            diagScale[i] = POD::projection(snapI, snapI) + lagrangeDer[i][i];
+        }
+
+        // Re-scale the derivatives
+        for (label i = 0; i < b.baseSize(); i++)
+        {
+            const scalar curScale = diagScale[i];
+
+            for (label j = 0; j < b.baseSize(); j++)
+            {
+                derivative[i][j] /= curScale;
+
+                // Rescale Lagrange derivatives
+                lagrangeDer[i][j] /= curScale;
+            }
+
+            // Kill diagonal Lagrange derivative
+            lagrangeDer[i][i] = 0;
+
+            // Rescale Lagrange source
+            lagrangeSrc[i] /= curScale;
         }
     }
 }
+
+
+void Foam::scalarTransportPOD::updateFields() const
+{
+    if (fieldUpdateTimeIndex_ < mesh().time().timeIndex())
+    {
+        // Field update required.  Record update time index
+        fieldUpdateTimeIndex_ = mesh().time().timeIndex();
+
+        if (!reconFieldPtr_)
+        {
+            FatalErrorInFunction
+                << "Reconstructed field not allocated"
+                << abort(FatalError);
+        }
+
+        volScalarField& recon = *reconFieldPtr_;
+
+        const scalarPODOrthoNormalBase& b = orthoBase();
+
+        // Changed the way boundary conditions are handled.  There is no need
+        // for hard reset.  HJ, 29/Mar/2022
+
+        // Reset field
+        recon *= 0;
+
+        forAll (coeffs_, i)
+        {
+            // Update field
+            recon += coeffs_[i]*b.orthoField(i);
+        }
+
+        recon.correctBoundaryConditions();
+    }
+}
+
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
@@ -257,12 +524,29 @@ Foam::scalarTransportPOD::scalarTransportPOD
 )
 :
     PODODE(mesh, dict),
-    phiName_(dict.lookup("field")),
+    fieldName_(dict.lookup("field")),
+    phiName_(dict.lookup("flux")),
+    beta_(readScalar(dict.lookup("beta"))),
+    useZeroField_(dict.lookup("useZeroField")),
+    driftCorrection_(dict.lookup("driftCorrection")),
     coeffs_(),
-    derivativeMatrixPtr_(nullptr),
+    validTimesPtr_(nullptr),
+    derivativePtr_(nullptr),
+    lagrangeDerPtr_(nullptr),
+    lagrangeSrcPtr_(nullptr),
     orthoBasePtr_(nullptr),
-    fieldPtr_(nullptr)
+    reconFieldPtr_(nullptr),
+    fieldUpdateTimeIndex_(-1)
 {
+    // Check beta
+    if (beta_ < 0)
+    {
+        FatalErrorInFunction
+            << "Negative beta: " << beta_
+            << ".  Only positive values are allowed"
+            << abort(FatalError);
+    }
+
     // Grab coefficients from the first snapshot of the ortho-normal base
     coeffs_.setSize(orthoBase().baseSize());
 
@@ -273,6 +557,7 @@ Foam::scalarTransportPOD::scalarTransportPOD
     {
         coeffs_[i] = orthoBaseCoeffs[0][i];
     }
+    Info<< "Zero coeffs: " << coeffs_ << endl;
 }
 
 
@@ -280,10 +565,14 @@ Foam::scalarTransportPOD::scalarTransportPOD
 
 Foam::scalarTransportPOD::~scalarTransportPOD()
 {
-    deleteDemandDrivenData(derivativeMatrixPtr_);
+    deleteDemandDrivenData(validTimesPtr_);
+    deleteDemandDrivenData(derivativePtr_);
+    deleteDemandDrivenData(lagrangeDerPtr_);
+    deleteDemandDrivenData(lagrangeSrcPtr_);
 
-    clearBase();
-    clearFields();
+    deleteDemandDrivenData(orthoBasePtr_);
+
+    deleteDemandDrivenData(reconFieldPtr_);
 }
 
 
@@ -314,20 +603,27 @@ void Foam::scalarTransportPOD::derivatives
     scalarField& dydx
 ) const
 {
-    if (!derivativeMatrixPtr_)
+    if (!derivativePtr_ || !lagrangeDerPtr_ || !lagrangeSrcPtr_)
     {
         calcDerivativeCoeffs();
     }
 
-   const scalarSquareMatrix& derivative = *derivativeMatrixPtr_;
+    // Equation derivative
+    const scalarSquareMatrix& derivative = *derivativePtr_;
+
+    // Lagrange multiplier derivative
+    const scalarSquareMatrix& lagrangeDer = *lagrangeDerPtr_;
+
+    // Lagrange multiplier source
+    const scalarField& lagrangeSrc = *lagrangeSrcPtr_;
 
     forAll (dydx, i)
     {
-        dydx[i] = 0;
+        dydx[i] = lagrangeSrc[i];
 
         forAll (y, j)
         {
-            dydx[i] += derivative[i][j]*y[j];
+            dydx[i] += (derivative[i][j] - lagrangeDer[i][j])*y[j];
         }
     }
 }
@@ -342,7 +638,16 @@ void Foam::scalarTransportPOD::jacobian
 ) const
 {
     derivatives(x, y, dfdx);
-    dfdy = 0;
+
+    // Clear jacobian matrix
+    // Note: this needs to be done component-by-components
+    forAll (y, i)
+    {
+        forAll (y, j)
+        {
+            dfdy[i][j] = 0;
+        }
+    }
 }
 
 
@@ -358,65 +663,86 @@ Foam::scalarTransportPOD::orthoBase() const
 }
 
 
-void Foam::scalarTransportPOD::clearBase() const
+const Foam::volScalarField& Foam::scalarTransportPOD::reconField() const
 {
-    deleteDemandDrivenData(orthoBasePtr_);
+    updateFields();
+
+    return *reconFieldPtr_;
 }
 
 
-const Foam::volScalarField& Foam::scalarTransportPOD::field() const
+void Foam::scalarTransportPOD::update(const scalar delta)
 {
-    if (!fieldPtr_)
+    if (driftCorrection_)
     {
-        updateFields();
-    }
+        // Check (and rescale) Dirichlet boundary condition
 
-    return *fieldPtr_;
-}
+        // Get ortho-normal base
+        const scalarPODOrthoNormalBase& b = orthoBase();
 
+        const volScalarField& field = *reconFieldPtr_;
 
-void Foam::scalarTransportPOD::updateFields() const
-{
-    if (!fieldPtr_)
-    {
-        // Allocate field
-        fieldPtr_ =
-            new volScalarField
+        forAll (field.boundaryField(), patchI)
+        {
+            if
             (
-                IOobject
-                (
-                    phiName_ + "POD",
-                    mesh().time().timeName(),
-                    mesh(),
-                    IOobject::NO_READ,
-                    IOobject::NO_WRITE
-                ),
-                mesh(),
-                dimensionedScalar
-                (
-                    "zero",
-                    orthoBase().orthoField(0).dimensions(),
-                    0
-                )
-            );
+                field.boundaryField()[patchI].fixesValue()
+             && !field.boundaryField()[patchI].empty()
+            )
+            {
+                // Field average
+                const scalar avgFieldBC =
+                    average(field.boundaryField()[patchI]);
+
+                // Zeroth ortho base average
+                const scalar avgBase0BC =
+                    average(b.orthoField(0).boundaryField()[patchI]);
+
+                // Adjust leading coefficient for drift
+
+                if (mag(avgBase0BC) > SMALL)
+                {
+                    scalar avgReconBC = 0;
+
+                    forAll (coeffs_, i)
+                    {
+                        avgReconBC +=
+                            coeffs_[i]*
+                            average(b.orthoField(i).boundaryField()[patchI]);
+                    }
+
+                    // Calculate correction
+                    scalar delta = (avgFieldBC - avgReconBC)/avgBase0BC;
+
+                    Info<< "Correction on patch " << patchI
+                        << " avgFieldBC = " << avgFieldBC
+                        << " avgReconBC = " << avgReconBC
+                        << " avgBase0BC = " << avgBase0BC
+                        << " coeff[0] = " << coeffs_[0]
+                        << " delta: " << delta
+                        << endl;
+
+                    // Correct leading coefficient
+                    coeffs_[0] += delta;
+
+                    // Correction achieved
+                    break;
+                }
+            }
+        }
     }
+}
 
-    volScalarField& phi = *fieldPtr_;
-
+void Foam::scalarTransportPOD::writeSnapshots() const
+{
     const scalarPODOrthoNormalBase& b = orthoBase();
 
-    phi = dimensionedScalar("zero", b.orthoField(0).dimensions(), 0);
+    Info<< "Writing POD base for Time = " << mesh().time().timeName() << endl;
 
-    forAll (coeffs_, i)
+    for (label i = 0; i < b.baseSize(); i++)
     {
-        phi += coeffs_[i]*b.orthoField(i);
+        b.orthoField(i).write();
     }
-}
-
-
-void Foam::scalarTransportPOD::clearFields() const
-{
-    deleteDemandDrivenData(fieldPtr_);
 }
 
 
@@ -424,11 +750,9 @@ void Foam::scalarTransportPOD::write() const
 {
     // Recalculate field and force a write
     updateFields();
-    field().write();
+
+    reconField().write();
 }
-
-
-// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
 
 
 // ************************************************************************* //

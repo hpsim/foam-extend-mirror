@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -90,20 +90,27 @@ class changeMap
 public:
 
     // Constructor
-    changeMap()
-    :
-        index_(-1),
-        pIndex_(-1),
-        type_(-1),
-        addedPoints_(5),
-        addedEdges_(5),
-        addedFaces_(5),
-        addedCells_(5),
-        removedPoints_(5),
-        removedEdges_(5),
-        removedFaces_(5),
-        removedCells_(5)
-    {}
+
+        //- Construct null
+        changeMap()
+        :
+            index_(-1),
+            pIndex_(-1),
+            type_(-1),
+            addedPoints_(5),
+            addedEdges_(5),
+            addedFaces_(5),
+            addedCells_(5),
+            removedPoints_(5),
+            removedEdges_(5),
+            removedFaces_(5),
+            removedCells_(5)
+        {}
+
+        //- Copy constructor
+        // Bugfix, HJ, 5/Jul/2021
+        changeMap(const changeMap&) = default;
+
 
     //- Access
 

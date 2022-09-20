@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -59,14 +59,8 @@ Foam::periodicOscillation::periodicOscillation
     // Rescale direction
     if (mag(dir_) < SMALL)
     {
-        FatalErrorIn
-        (
-            "Foam::periodicOscillation::periodicOscillation"
-            "\n("
-            "\n    const word& name,"
-            "\n    const dictionary& dict"
-            "\n)"
-        )   << "Zero direction specified. This is not allowed."
+        FatalErrorInFunction
+            << "Zero direction specified. This is not allowed."
             << exit(FatalError);
     }
     else
@@ -84,12 +78,6 @@ Foam::periodicOscillation::clone() const
         new periodicOscillation(*this)
     );
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::periodicOscillation::~periodicOscillation()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

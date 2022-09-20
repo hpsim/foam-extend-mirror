@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ Foam::SIBS::SIBS(ODE& ode)
 :
     ODESolver(ode),
     a_(iMaxX_),
-    alpha_(kMaxX_, kMaxX_),
+    alpha_(kMaxX_, scalar(0)),
     d_p_(ode_.nEqns(), kMaxX_),
     x_p_(kMaxX_),
     err_(kMaxX_),
@@ -65,7 +65,7 @@ Foam::SIBS::SIBS(ODE& ode)
     ySeq_(ode_.nEqns()),
     yErr_(ode_.nEqns()),
     dfdx_(ode_.nEqns()),
-    dfdy_(ode_.nEqns(), ode_.nEqns()),
+    dfdy_(ode_.nEqns(), scalar(0)),
     first_(1),
     epsOld_(-1.0),
     xNew_(0.0)

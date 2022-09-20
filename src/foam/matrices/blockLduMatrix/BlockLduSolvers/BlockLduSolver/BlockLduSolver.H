@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -67,6 +67,15 @@ class BlockLduSolver
         dictionary dict_;
 
 
+    // Private Member Functions
+
+        //- Disallow default bitwise copy construct
+        BlockLduSolver(const BlockLduSolver&) = delete;
+
+        //- Disallow default bitwise assignment
+        void operator=(const BlockLduSolver&) = delete;
+
+
 protected:
 
     // Protected data types
@@ -122,7 +131,7 @@ public:
             symMatrix,
             (
                 const word& fieldName,
-                BlockLduMatrix<Type>& matrix,
+                const BlockLduMatrix<Type>& matrix,
                 const dictionary& dict
             ),
             (
@@ -139,7 +148,7 @@ public:
             asymMatrix,
             (
                 const word& fieldName,
-                BlockLduMatrix<Type>& matrix,
+                const BlockLduMatrix<Type>& matrix,
                 const dictionary& dict
             ),
             (
@@ -175,7 +184,7 @@ public:
         static autoPtr<BlockLduSolver<Type> > New
         (
             const word& fieldName,
-            BlockLduMatrix<Type>& matrix,
+            const BlockLduMatrix<Type>& matrix,
             const dictionary& dict
         );
 
@@ -184,14 +193,13 @@ public:
         (
             const word& solverName,
             const word& fieldName,
-            BlockLduMatrix<Type>& matrix,
+            const BlockLduMatrix<Type>& matrix,
             const dictionary& dict
         );
 
 
     //- Destructor
-    virtual ~BlockLduSolver()
-    {}
+    virtual ~BlockLduSolver() = default;
 
 
     // Member functions
@@ -207,7 +215,7 @@ public:
         (
             TypeField& x,
             const TypeField& b
-        ) = 0;
+        ) const = 0;
 
         //- Re-initialise solver after matrix coefficient update
         virtual void initMatrix() = 0;

@@ -18,14 +18,27 @@
           + 3.0*radiation->Rp()*pow4(T)
         );
 
+        if (thermalModelFluid.active())
+        {
+            fvScalarMatrix& TFEqn = *TFluidEqn;
+            TFEqn -=
+                thermalModelFluid.S()/
+                (thermalModelFluid.rho()*thermalModelFluid.C());
+        }
+
         TFluidEqn->relax();
 
         // Solid side
         fvScalarMatrix* TSolidEqn = new fvScalarMatrix
         (
           - fvm::laplacian(kSolidf, Tsolid, "laplacian(k,T)")
-          + fvm::SuSp(-solidThermo.S()/Tsolid, Tsolid)
         );
+
+        if (solidThermalModel.active())
+        {
+            fvScalarMatrix& TSEqn = *TSolidEqn;
+            TSEqn += fvm::SuSp(-solidThermalModel.S()/Tsolid, Tsolid);
+        }
 
         TSolidEqn->relax();
 

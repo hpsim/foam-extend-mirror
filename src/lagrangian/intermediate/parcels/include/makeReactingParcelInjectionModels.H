@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -37,6 +37,7 @@ License
 #include "ManualInjection.H"
 #include "NoInjection.H"
 #include "PatchInjection.H"
+#include "CellZoneInjection.H"
 #include "ReactingLookupTableInjection.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -104,6 +105,13 @@ License
     makeInjectionModelThermoType                                              \
     (                                                                         \
         PatchInjection,                                                       \
+        KinematicCloud,                                                       \
+        ParcelType,                                                           \
+        ThermoType                                                            \
+    );                                                                        \
+    makeInjectionModelThermoType                                              \
+    (                                                                         \
+        CellZoneInjection,                                                    \
         KinematicCloud,                                                       \
         ParcelType,                                                           \
         ThermoType                                                            \

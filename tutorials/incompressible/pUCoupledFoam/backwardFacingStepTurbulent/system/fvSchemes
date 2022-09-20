@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -27,7 +27,7 @@ gradSchemes
 divSchemes
 {
     default         none;
-    div(phi,U)      Gauss linearUpwind Gauss linear;
+    div(phi,U)      Gauss linearUpwindV Gauss linear;
     div(phi,k)      Gauss upwind;
     div(phi,epsilon) Gauss upwind;
     div((nuEff*dev(T(grad(U))))) Gauss linear;
@@ -49,6 +49,5 @@ snGradSchemes
 {
     default         corrected;
 }
-
 
 // ************************************************************************* //

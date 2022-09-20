@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -127,8 +127,8 @@ void Foam::primitiveMesh::clearGeom()
 {
     if (debug)
     {
-        Pout<< "primitiveMesh::clearGeom() : "
-            << "clearing geometric data"
+        InfoInFunction
+            << "Clearing geometric data"
             << endl;
     }
 
@@ -143,8 +143,8 @@ void Foam::primitiveMesh::clearAddressing()
 {
     if (debug)
     {
-        Pout<< "primitiveMesh::clearAddressing() : "
-            << "clearing topology"
+        InfoInFunction
+            << "Clearing topology"
             << endl;
     }
 

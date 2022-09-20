@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -63,6 +63,9 @@ class ImmersedFace
         //- Point field with original face points and intersection points
         pointField facePointsAndIntersections_;
 
+        //- Absolute tolerance, based on min edge length
+        scalar absTol_;
+
         //- Face that describes the submerged part of the original face
         face wetSubface_;
 
@@ -88,12 +91,15 @@ class ImmersedFace
         //- Create wetSubface and drySubface
         void createSubfaces(const face& origFace, const scalarField& depth);
 
+        //- Initialise
+        void init();
+
 
 public:
 
     // Constructors
 
-        //- Construct from components
+        //- Construct from points given in face order
         ImmersedFace
         (
             const label faceID,
@@ -101,8 +107,16 @@ public:
             const Distance& dist
         );
 
+        //- Construct from polyMesh
+        ImmersedFace
+        (
+            const pointField& p,
+            const Distance& dist
+        );
 
-    //- Destructor - default
+
+    //- Destructor
+    ~ImmersedFace() = default;
 
 
     // Public member functions

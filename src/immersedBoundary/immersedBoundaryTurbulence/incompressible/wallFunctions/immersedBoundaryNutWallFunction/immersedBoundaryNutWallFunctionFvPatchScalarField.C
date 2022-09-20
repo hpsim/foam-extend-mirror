@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.0
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -185,11 +185,8 @@ void immersedBoundaryNutWallFunctionFvPatchScalarField::evaluate
         scalarField::operator=(patchInternalField());
     }
 
-    // Get non-constant reference to internal field
-    scalarField& intField = const_cast<scalarField&>(this->internalField());
-
-    // Set dead value
-    this->setDeadValues(intField);
+    // Set dead values
+    this->setDeadValues(*this);
 
     nutkWallFunctionFvPatchScalarField::evaluate(commsType);
 }

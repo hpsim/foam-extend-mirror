@@ -65,12 +65,27 @@
     MRFZones mrfZones(mesh);
     mrfZones.correctBoundaryVelocity(U);
 
-    // Create relative velocity
-    volVectorField Urel
+    // Tangential component of velocity needed for rothalpy
+    volScalarField UTheta
     (
         IOobject
         (
-            "Urel",
+            "UTheta",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mag(U)
+    );
+    UTheta = mrfZones.calcMagUTheta(U);
+
+    // Create relative velocity
+    volVectorField URel
+    (
+        IOobject
+        (
+            "URel",
             runTime.timeName(),
             mesh,
             IOobject::NO_READ,
@@ -78,13 +93,13 @@
         ),
         U
     );
-    mrfZones.relativeVelocity(Urel);
+    mrfZones.relativeVelocity(URel);
 
     // Create rotational velocity (= omega x r)
-    volVectorField Urot
+    volVectorField URot
     (
-        "Urot",
-        U - Urel
+        "URot",
+        U - URel
     );
 
     // Create rothalpy, in two steps to preserve boundary conditions
@@ -95,11 +110,12 @@
             "i",
             runTime.timeName(),
             mesh,
-            IOobject::NO_READ,
+            IOobject::MUST_READ,
             IOobject::AUTO_WRITE
         ),
-        h
+        mesh
     );
-    i == h - 0.5*(magSqr(Urot) - magSqr(Urel));
+
+    i == h + 0.5*magSqr(U) - mag(UTheta)*mag(URot);
 
     mesh.schemesDict().setFluxRequired(p.name());

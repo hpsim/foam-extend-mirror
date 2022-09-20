@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class quadraticDiffusivity Declaration
+                     Class quadraticDiffusivity Declaration
 \*---------------------------------------------------------------------------*/
 
 class quadraticDiffusivity
@@ -59,10 +59,10 @@ class quadraticDiffusivity
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        quadraticDiffusivity(const quadraticDiffusivity&);
+        quadraticDiffusivity(const quadraticDiffusivity&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const quadraticDiffusivity&);
+        void operator=(const quadraticDiffusivity&) = delete;
 
 
 public:
@@ -82,8 +82,7 @@ public:
 
 
     // Destructor
-
-        virtual ~quadraticDiffusivity();
+    virtual ~quadraticDiffusivity() = default;
 
 
     // Member Functions

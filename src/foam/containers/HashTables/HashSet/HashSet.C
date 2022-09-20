@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -76,6 +76,21 @@ template<class Key, class Hash>
 inline bool Foam::HashSet<Key, Hash>::operator[](const Key& key) const
 {
     return this->found(key);
+}
+
+
+template<class Key, class Hash>
+void Foam::HashSet<Key, Hash>::operator=(const HashSet<Key, Hash>& rhs)
+{
+    // Check for assignment to self
+    if (this == &rhs)
+    {
+        FatalErrorInFunction
+            << "attempted assignment to self"
+            << abort(FatalError);
+    }
+
+    HashTable<nil, Key, Hash>::operator=(rhs);
 }
 
 

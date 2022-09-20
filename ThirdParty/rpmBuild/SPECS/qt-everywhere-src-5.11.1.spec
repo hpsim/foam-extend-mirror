@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | foam-extend: Open Source CFD
-#  \\    /   O peration     |
-#   \\  /    A nd           | For copyright notice see file Copyright
-#    \\/     M anipulation  |
+#  \\    /   O peration     | Version:     5.0
+#   \\  /    A nd           | Web:         http://www.foam-extend.org
+#    \\/     M anipulation  | For copyright notice see file Copyright
 #------------------------------------------------------------------------------
 # License
 #     This file is part of foam-extend.
@@ -130,8 +130,8 @@ Group: 			Development/Tools
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:%{_builddir}/%{name}-%{version}/lib
 
     [ -z "$WM_NCOMPPROCS" ] && WM_NCOMPPROCS=1
-    # On a computer with limited memory, say less than 4 GB, you may need to compile 
-    # with only one parallel job to avoid running out of memory. 
+    # On a computer with limited memory, say less than 4 GB, you may need to compile
+    # with only one parallel job to avoid running out of memory.
     # So make sure to adjust $WM_NCOMPPROCS accordingly
     make -j $WM_NCOMPPROCS
 

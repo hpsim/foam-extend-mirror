@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -80,15 +80,8 @@ public:
         {
             if (checkValid && index_ < 0)
             {
-                FatalErrorIn
-                (
-                    "polyPatchID\n"
-                    "(\n"
-                    "    const word& name,\n"
-                    "    const polyBoundaryMesh& bm,\n"
-                    "    bool checkValid = false\n"
-                    ")"
-                )   << "Patch " << name_ << " not found.  Valid patch names: "
+                FatalErrorInFunction
+                    << "Patch " << name_ << " not found.  Valid patch names: "
                     << bm.names()
                     << abort(FatalError);
             }
@@ -107,15 +100,8 @@ public:
         {
             if (checkValid && index_ < 0)
             {
-                FatalErrorIn
-                (
-                    "polyPatchID\n"
-                    "(\n"
-                    "    Istream& is\n"
-                    "    const polyBoundaryMesh& bm,\n"
-                    "    bool checkValid = false\n"
-                    ")"
-                )   << "Patch " << name_ << " not found.  Valid patch names: "
+                FatalErrorInFunction
+                    << "Patch " << name_ << " not found.  Valid patch names: "
                     << bm.names()
                     << abort(FatalError);
             }

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -56,12 +56,6 @@ Foam::constantThermalSource::constantThermalSource
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::constantThermalSource::~constantThermalSource()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void Foam::constantThermalSource::addSource(volScalarField& source) const
@@ -72,10 +66,8 @@ void Foam::constantThermalSource::addSource(volScalarField& source) const
 
         if ( zoneID < 0 )
         {
-            FatalErrorIn
-            (
-                "constantThermalSource::addSourcex()\n"
-            )   << "Zone " << zones_[zoneI]
+            FatalErrorInFunction
+                << "Zone " << zones_[zoneI]
                 << " specified in source " << name()
                 << " does not exist"
                 << abort(FatalError);
@@ -97,10 +89,8 @@ void Foam::constantThermalSource::addSource(volScalarField& source) const
 
         if (sumVolume < SMALL)
         {
-            FatalErrorIn
-            (
-                "constantThermalSource::addSourcex()\n"
-            )   << "Zone " << zones_[zoneI]
+            FatalErrorInFunction
+                << "Zone " << zones_[zoneI]
                 << " specified in source " << name()
                 << " has zero volume: " << sumVolume
                 << abort(FatalError);

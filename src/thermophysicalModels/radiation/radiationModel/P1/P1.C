@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -183,12 +183,6 @@ Foam::radiation::P1::P1(const dictionary& dict, const volScalarField& T)
         mesh_,
         dimensionedScalar("E", dimMass/dimLength/pow3(dimTime), 0.0)
     )
-{}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::radiation::P1::~P1()
 {}
 
 

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -11,15 +11,15 @@
 License
     This file is part of foam-extend.
 
-    foam-extend is free software; you can redistribute it and/or modify it
+    foam-extend is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License as published by the
-    Free Software Foundation; either version 3 of the License, or (at your
+    Free Software Foundation, either version 3 of the License, or (at your
     option) any later version.
 
-    foam-extend is distributed in the hope that it will be useful, but WITHOUT
-    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-    for more details.
+    foam-extend is distributed in the hope that it will be useful, but
+    WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    General Public License for more details.
 
     You should have received a copy of the GNU General Public License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
@@ -47,7 +47,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                Class labelledPair Declaration
+                       Class labelledPair Declaration
 \*---------------------------------------------------------------------------*/
 
 class labelledPair
@@ -81,8 +81,7 @@ class labelledPair
         {}
 
     // Destructor
-        ~labelledPair()
-        {}
+    ~labelledPair() = default;
 
     // Member functions
         //- return pair label
@@ -99,13 +98,7 @@ class labelledPair
 
     // Member operators
 
-        inline void operator=(const labelledPair& lpp)
-        {
-            pLabel_ = lpp.pLabel_;
-            pair_ = lpp.pair_;
-        }
-
-        inline bool operator==
+    inline bool operator==
         (
             const labelledPair& lpp
         ) const
@@ -115,10 +108,23 @@ class labelledPair
 
             const labelPair& op = lpp.pair_;
 
-            if( (pair_.first() == op.first()) && (pair_.second() == op.second()) )
+            if
+            (
+                (pair_.first() == op.first())
+             && (pair_.second() == op.second())
+            )
+            {
                 return true;
-            if( (pair_.first() == op.second()) && (pair_.second() == op.first()) )
+            }
+
+            if
+            (
+                (pair_.first() == op.second())
+             && (pair_.second() == op.first())
+            )
+            {
                 return true;
+            }
 
             return false;
         }

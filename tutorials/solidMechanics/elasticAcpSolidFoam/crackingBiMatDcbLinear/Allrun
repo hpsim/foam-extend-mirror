@@ -7,7 +7,7 @@ application="elasticAcpSolidFoam"
 
 \cp -f 0/org/U 0/U
 \cp -f 0/org/materials 0/materials
-\m4 constant/polyMesh/blockMeshDict.simpleDCB.m4 > constant/polyMesh/blockMeshDict
+m4 system/blockMeshDict.m4 > system/blockMeshDict
 runApplication blockMesh
 runApplication setFields
 runApplication $application

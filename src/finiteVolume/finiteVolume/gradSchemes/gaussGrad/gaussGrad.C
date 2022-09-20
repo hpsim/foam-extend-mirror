@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "gaussGrad.H"
-#include "zeroGradientFvPatchField.H"
+#include "extrapolatedCalculatedFvPatchField.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -75,7 +75,7 @@ gaussGrad<Type>::gradf
                 ssf.dimensions()/dimLength,
                 pTraits<GradType>::zero
             ),
-            zeroGradientFvPatchField<GradType>::typeName
+            extrapolatedCalculatedFvPatchField<GradType>::typeName
         )
     );
     GeometricField<GradType, fvPatchField, volMesh>& gGrad = tgGrad();
@@ -87,26 +87,26 @@ gaussGrad<Type>::gradf
     Field<GradType>& igGrad = gGrad;
     const Field<Type>& issf = ssf;
 
-    forAll(owner, facei)
+    forAll(owner, faceI)
     {
-        GradType Sfssf = Sf[facei]*issf[facei];
+        GradType Sfssf = Sf[faceI]*issf[faceI];
 
-        igGrad[owner[facei]] += Sfssf;
-        igGrad[neighbour[facei]] -= Sfssf;
+        igGrad[owner[faceI]] += Sfssf;
+        igGrad[neighbour[faceI]] -= Sfssf;
     }
 
-    forAll(mesh.boundary(), patchi)
+    forAll(mesh.boundary(), patchI)
     {
         const unallocLabelList& pFaceCells =
-            mesh.boundary()[patchi].faceCells();
+            mesh.boundary()[patchI].faceCells();
 
-        const vectorField& pSf = mesh.Sf().boundaryField()[patchi];
+        const vectorField& pSf = mesh.Sf().boundaryField()[patchI];
 
-        const fvsPatchField<Type>& pssf = ssf.boundaryField()[patchi];
+        const fvsPatchField<Type>& pssf = ssf.boundaryField()[patchI];
 
-        forAll(mesh.boundary()[patchi], facei)
+        forAll(mesh.boundary()[patchI], faceI)
         {
-            igGrad[pFaceCells[facei]] += pSf[facei]*pssf[facei];
+            igGrad[pFaceCells[faceI]] += pSf[faceI]*pssf[faceI];
         }
     }
 

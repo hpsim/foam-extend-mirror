@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -42,7 +42,8 @@ fluxFvPatchField<Type>::fluxFvPatchField
     fixedGradientFvPatchField<Type>(p, iF),
     flux_(p.size(), pTraits<Type>::zero),
     reactivity_(p.size(), 0),
-    gammaName_("gamma")
+    gammaName_("gamma"),
+    fieldBound_(pTraits<Type>::min, pTraits<Type>::max)
 {
     this->gradient() = pTraits<Type>::zero;
 }
@@ -59,7 +60,8 @@ fluxFvPatchField<Type>::fluxFvPatchField
     fixedGradientFvPatchField<Type>(p, iF),
     flux_("flux", dict, p.size()),
     reactivity_("reactivity", dict, p.size()),
-    gammaName_(dict.lookup("gamma"))
+    gammaName_(dict.lookup("gamma")),
+    fieldBound_(dict.lookup("fieldBound"))
 {
     // Set dummy gradient
     this->gradient() = pTraits<Type>::zero;
@@ -74,18 +76,16 @@ fluxFvPatchField<Type>::fluxFvPatchField
     }
     else
     {
-        FatalIOErrorIn
-        (
-            "fluxFvPatchField<Type>::fluxFvPatchField"
-            "("
-            "const fvPatch& p,"
-            "const DimensionedField<Type, volMesh>& iF,"
-            "const dictionary& dict,"
-            "const bool valueRequired"
-            ")",
-            dict
-        )   << "Essential entry 'value' missing"
-            << exit(FatalIOError);
+        FatalIOErrorInFunction(dict)
+            << "Essential entry 'value' missing"
+            << abort(FatalIOError);
+    }
+
+    if (fieldBound_.first() > fieldBound_.second())
+    {
+        FatalIOErrorInFunction(dict)
+            << "Bad field bound: " << fieldBound_
+            << abort(FatalError);
     }
 }
 
@@ -102,7 +102,8 @@ fluxFvPatchField<Type>::fluxFvPatchField
     fixedGradientFvPatchField<Type>(ptf, p, iF, mapper),
     flux_(ptf.flux_),
     reactivity_(ptf.reactivity_),
-    gammaName_(ptf.gammaName_)
+    gammaName_(ptf.gammaName_),
+    fieldBound_(ptf.fieldBound_)
 {}
 
 
@@ -115,7 +116,8 @@ fluxFvPatchField<Type>::fluxFvPatchField
     fixedGradientFvPatchField<Type>(ptf),
     flux_(ptf.flux_),
     reactivity_(ptf.reactivity_),
-    gammaName_(ptf.gammaName_)
+    gammaName_(ptf.gammaName_),
+    fieldBound_(ptf.fieldBound_)
 {}
 
 
@@ -129,7 +131,8 @@ fluxFvPatchField<Type>::fluxFvPatchField
     fixedGradientFvPatchField<Type>(ptf, iF),
     flux_(ptf.flux_),
     reactivity_(ptf.reactivity_),
-    gammaName_(ptf.gammaName_)
+    gammaName_(ptf.gammaName_),
+    fieldBound_(ptf.fieldBound_)
 {}
 
 
@@ -144,14 +147,27 @@ void fluxFvPatchField<Type>::updateCoeffs()
     }
 
     const fvPatchField<scalar>& gammap =
-        this->lookupPatchField
-        (
-            gammaName_,
-            reinterpret_cast<const volScalarField*>(0),
-            reinterpret_cast<const scalar*>(0)
-        );
+        this->template lookupPatchField<volScalarField, scalar>(gammaName_);
 
-    this->gradient() = reactivity_*flux_/gammap;
+    // Calculate minimum and maximum gradient
+    Field<Type> minGrad =
+        (fieldBound_.first() - this->patchInternalField())*
+        this->patch().deltaCoeffs();
+
+    Field<Type> maxGrad =
+        (fieldBound_.second() - this->patchInternalField())*
+        this->patch().deltaCoeffs();
+
+    this->gradient() =
+        max
+        (
+            minGrad,
+            min
+            (
+                maxGrad,
+                reactivity_*flux_/gammap
+            )
+        );
 
     fixedGradientFvPatchField<Type>::updateCoeffs();
 }
@@ -160,10 +176,11 @@ void fluxFvPatchField<Type>::updateCoeffs()
 template<class Type>
 void fluxFvPatchField<Type>::write(Ostream& os) const
 {
-    fixedGradientFvPatchField<Type>::write(os);
+    fvPatchField<Type>::write(os);
     flux_.writeEntry("flux", os);
     reactivity_.writeEntry("reactivity", os);
     os.writeKeyword("gamma") << gammaName_ << token::END_STATEMENT << nl;
+    os.writeKeyword("fieldBound") << fieldBound_ << token::END_STATEMENT << nl;
     this->writeEntry("value", os);
 }
 

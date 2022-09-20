@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -21,17 +21,19 @@ License
     You should have received a copy of the GNU General Public License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
+Namespace
     POD
 
 Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved.
 
 Description
-    Proper Orthogonal Decomposition of fields.
+    Proper Orthogonal Decomposition of fields: helper functions
+
+    Note: projection of volFields can be weighted with V/gSum(V)
+    but I cannot prove it makes a difference in practical cases.
 
 SourceFiles
-    PODI.H
     POD.C
     PODIO.C
 
@@ -53,21 +55,48 @@ namespace Foam
 
 namespace POD
 {
-    //- Dot product of snapshots
+    //- Dot product of snapshots across all fields/components
     template<class Type>
-    Type projection
+    scalar projection(const Field<Type>& a, const Field<Type>& b);
+
+    template<class Type>
+    scalar projection(const tmp<Field<Type> >& ta, const Field<Type>& b);
+
+    template<class Type>
+    scalar projection(const Field<Type>& a, const tmp<Field<Type> >& tb);
+
+    template<class Type>
+    scalar projection(const tmp<Field<Type> >& ta, const tmp<Field<Type> >& tb);
+
+
+    //- Dot product of snapshots across all fields/components
+    template<class Type>
+    scalar projection
     (
         const GeometricField<Type, fvPatchField, volMesh>& a,
         const GeometricField<Type, fvPatchField, volMesh>& b
     );
 
     template<class Type>
-    Type projection
+    scalar projection
     (
         const tmp<GeometricField<Type, fvPatchField, volMesh> >& ta,
         const GeometricField<Type, fvPatchField, volMesh>& b
     );
 
+    template<class Type>
+    scalar projection
+    (
+        const GeometricField<Type, fvPatchField, volMesh>& a,
+        const tmp<GeometricField<Type, fvPatchField, volMesh> >& tb
+    );
+
+    template<class Type>
+    scalar projection
+    (
+        const tmp<GeometricField<Type, fvPatchField, volMesh> >& ta,
+        const tmp<GeometricField<Type, fvPatchField, volMesh> >& tb
+    );
 }
 
 

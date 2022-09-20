@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -212,6 +212,9 @@ void Foam::BlockLduMatrix<Type>::TmulCore
 
     const TypeCoeffField& Diag = this->diag();
     const TypeCoeffField& Upper = this->upper();
+
+    // Create multiplication function object
+    typename BlockCoeff<Type>::multiply mult;
 
     // Diagonal multiplication, no indirection
     multiply(Tx, Diag, x);

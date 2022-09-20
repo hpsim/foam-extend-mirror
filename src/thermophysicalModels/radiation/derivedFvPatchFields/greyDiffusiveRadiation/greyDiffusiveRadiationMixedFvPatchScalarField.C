@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -43,11 +43,8 @@ greyDiffusiveRadiationMixedFvPatchScalarField::calcSumOutgoingAngles() const
 {
     if (sumOutgoingAnglesPtr_)
     {
-        FatalErrorIn
-        (
-            "wideBandDiffusiveRadiationMixedFvPatchScalarField"
-            "::calcSumOutgoingAngles()"
-        )   << "sumOutgoingAnglesPtr_ already calculated"
+        FatalErrorInFunction
+            << "sumOutgoingAnglesPtr_ already calculated"
             << abort(FatalError);
     }
 
@@ -60,7 +57,6 @@ greyDiffusiveRadiationMixedFvPatchScalarField::calcSumOutgoingAngles() const
         db().lookupObject<radiationModel>("radiationProperties");
 
     const fvDOM& dom = dynamic_cast<const fvDOM&>(radiation);
-
 
     for(label rayI = 0; rayI < dom.nRay(); rayI++)
     {
@@ -200,9 +196,6 @@ void greyDiffusiveRadiationMixedFvPatchScalarField::updateCoeffs()
         return;
     }
 
-
-
-
     const label patchI = this->patch().index();
 
     // Access radiation model
@@ -213,11 +206,8 @@ void greyDiffusiveRadiationMixedFvPatchScalarField::updateCoeffs()
 
     if (dom.nLambda() == 0)
     {
-        FatalErrorIn
-        (
-            ""
-            "wideBandDiffusiveRadiationMixedFvPatchScalarField::updateCoeffs"
-        )   << " a non-grey boundary condition is used with a grey "
+        FatalErrorInFunction
+            << " a non-grey boundary condition is used with a grey "
             << "absorption model" << nl << exit(FatalError);
     }
 

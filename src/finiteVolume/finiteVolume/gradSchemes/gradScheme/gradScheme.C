@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -297,9 +297,9 @@ void gradScheme<Type>::correctBoundaryConditions
     }
 
     // Note: coupled boundaries provide patchNeighbourField, which is only
-    // updated on correct boundary conditions.  Therefore, evaluateCoupled()
+    // updated on correct boundary conditions.  Therefore, updateCoupledPatchFields()
     // should be called here. HJ, Apr/2013
-    gGrad.boundaryField().evaluateCoupled();
+    gGrad.boundaryField().updateCoupledPatchFields();
 }
 
 

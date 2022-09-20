@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ void oversetFvPatchField<Type>::oversetInterpolate
 
     // After we have performed overset interpolation, we need to make sure that
     // the data correct data is transferred across processor boundaries
-    psi.boundaryField().evaluateCoupled();
+    psi.boundaryField().updateCoupledPatchFields();
 }
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -135,11 +135,8 @@ void oversetFvPatchField<Type>::setAcceptorValues(Field<Type2>& f) const
     // Check sizes
     if (accValues.size() != acceptors.size())
     {
-        FatalErrorIn
-        (
-            "oversetFvPatchField<Type>::"
-            "setAcceptorValues(Field<Type2>& f) const"
-        )   << "Bad sizes: " << accValues.size()
+        FatalErrorInFunction
+            << "Bad sizes: " << accValues.size()
             << " and " << acceptors.size()
             << abort(FatalError);
     }
@@ -180,13 +177,8 @@ void oversetFvPatchField<Type>::correctDiag
     }
     else
     {
-        FatalErrorIn
-        (
-            "void oversetFvPatchField<Type>::correctDiag\n"
-            "(\n"
-            "    fvMatrix<Type>& eqn\n"
-            ") const"
-        )   << "No live cells in matrix"
+        FatalErrorInFunction
+            << "No live cells in matrix"
             << abort(FatalError);
     }
 
@@ -832,16 +824,8 @@ oversetFvPatchField<Type>::oversetFvPatchField
 {
     if (!isType<oversetFvPatch>(this->patch()))
     {
-        FatalErrorIn
-        (
-            "oversetFvPatchField<Type>::oversetFvPatchField\n"
-            "(\n"
-            "    const oversetFvPatchField<Type>& ptf,\n"
-            "    const fvPatch& p,\n"
-            "    const DimensionedField<Type, volMesh>& iF,\n"
-            "    const fvPatchFieldMapper& mapper\n"
-            ")\n"
-        )   << "\n    patch type '" << p.type()
+        FatalErrorInFunction
+            << "\n    patch type '" << p.type()
             << "' not constraint type '" << typeName << "'"
             << "\n    for patch " << p.name()
             << " of field " << this->dimensionedInternalField().name()
@@ -998,11 +982,7 @@ void oversetFvPatchField<Type>::manipulateMatrix
     );
 
     eqn.setValues(holeCells, holeCellsPsi);
-    Field<Type>& bouCoeffs = eqn.boundaryCoeffs()[this->patch().index()];
-    Field<Type>& intCoeffs = eqn.internalCoeffs()[this->patch().index()];
 
-    Info<< "In manipulateMatrix: " << coupledFringe_
-        << " bou: " << bouCoeffs.size() << " int: " << intCoeffs.size() << endl;
     // If the fringe is not coupled, set values in acceptor cells and do not
     // perform overset interpolation during the solution process. Note that the
     // fringeUpper/Lower coefficients are collected in correctOffDiag member

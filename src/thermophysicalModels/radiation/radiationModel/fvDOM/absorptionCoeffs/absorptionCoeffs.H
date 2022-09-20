@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    Foam::janafThermo
+    Foam::absorptionCoeffs
 
 Description
     Absorption coefficients class used in greyMeanAbsorptionEmission and
@@ -109,9 +109,6 @@ public:
 
         // Initialise from a dictionary
         void initialise(const dictionary&);
-
-        // Initialise from an Istream
-        void initialise(Istream&);
 
 
     // Access Functions

@@ -1,0 +1,3 @@
+sonicDyMIbFoam.C
+
+EXE = $(FOAM_APPBIN)/sonicDyMIbFoam

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ namespace Foam
 // Forward declaration of classes
 
 /*---------------------------------------------------------------------------*\
-                           Class searchablePlate Declaration
+                       Class searchablePlate Declaration
 \*---------------------------------------------------------------------------*/
 
 class searchablePlate
@@ -123,9 +123,9 @@ public:
             const dictionary& dict
         );
 
-    // Destructor
 
-        virtual ~searchablePlate();
+    //- Destructor
+    virtual ~searchablePlate();
 
 
     // Member Functions
@@ -146,9 +146,9 @@ public:
 
         //- Get representative set of element coordinates
         //  Usually the element centres (should be of length size()).
-        virtual pointField coordinates() const
+        virtual tmp<pointField> coordinates() const
         {
-            return pointField(1, origin_);
+            return tmp<pointField>(new pointField(1, origin_));
         }
 
 
@@ -213,7 +213,6 @@ public:
                 notImplemented("searchablePlate::writeData(Ostream&) const");
                 return false;
             }
-
 };
 
 

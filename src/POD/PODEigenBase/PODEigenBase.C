@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -24,8 +24,6 @@ License
 Class
     PODEigenBase
 
-Description
-
 \*---------------------------------------------------------------------------*/
 
 #include "PODEigenBase.H"
@@ -34,7 +32,11 @@ Description
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::PODEigenBase::calcEigenBase(const scalarSquareMatrix& orthMatrix)
+template<class Type>
+void Foam::PODEigenBase<Type>::calcEigenBase
+(
+    const scalarSquareMatrix& orthMatrix
+)
 {
     // Calculate eigen-values
 
@@ -46,24 +48,55 @@ void Foam::PODEigenBase::calcEigenBase(const scalarSquareMatrix& orthMatrix)
 
     forAll (sortedList, i)
     {
-        sortedList[i] = eigenSolver.eigenValue(i);
+        // Note:
+        // For stability under normalisation, make sure that very small
+        // eigen-values remain positive
+        // HJ, 19/Feb/2021
+        sortedList[i] = mag(eigenSolver.eigenValue(i));
     }
 
     // Sort will sort the values in descending order and insert values
     sortedList.sort();
 
+    // Add normalisation to eigenvectors
+    // HJ, 19/Feb/2021
     label n = 0;
-    forAllReverse(sortedList, i)
+    forAllReverse (sortedList, i)
     {
         eigenValues_[n] = sortedList[i];
         eigenVectors_.set
         (
             n,
-            new scalarField(eigenSolver.eigenVector(sortedList.indices()[i]))
+            new scalarField
+            (
+                eigenSolver.eigenVector(sortedList.indices()[i])*
+                sqrt(eigenVectors_.size()*mag(eigenValues_[n]))
+            )
         );
 
         n++;
     }
+
+    // Info<< "Check products of base vectors" << endl;
+    // forAll (eigenVectors_, i)
+    // {
+    //     Info<< " i " << i << " eigenValue " << eigenValues_[i]
+    //         << " scale " << eigenVectors_.size()*mag(eigenValues_[i])
+    //         << nl;
+
+    //         forAll (eigenVectors_, j)
+    //         {
+    //             Info<< "(" << i << ", " << j << ") = "
+    //                 <<
+    //                 POD::projection
+    //                 (
+    //                     eigenVectors_[i],
+    //                     eigenVectors_[j]
+    //                 )
+    //                 << nl;
+    //         }
+    //         Info<< nl << endl;
+    // }
 
     // Assemble cumulative relative eigen-values
     cumEigenValues_[0] = eigenValues_[0];
@@ -76,41 +109,23 @@ void Foam::PODEigenBase::calcEigenBase(const scalarSquareMatrix& orthMatrix)
 
     // Renormalise
     cumEigenValues_ /= sum(eigenValues_);
-
-//     // Check products
-//     for (label i = 0; i < orthMatrix.m(); i++)
-//     {
-//         const scalarField& eVector = eigenVectors_[i];
-
-//         Info<< "Scalar product: "
-//             << eigenValues_[i]*eVector
-//             << endl;
-
-//         scalarField vp(orthMatrix.m(), 0);
-
-//         forAll (vp, i)
-//         {
-//             forAll (vp, j)
-//             {
-//                 vp[i] += orthMatrix[i][j]*eVector[j];
-//             }
-//         }
-
-//         Info << "Vector product: " << vp << nl << endl;
-//     }
 }
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 // Construct given a list of fields
-Foam::PODEigenBase::PODEigenBase(const PtrList<volScalarField>& snapshots)
+template<class Type>
+Foam::PODEigenBase<Type>::PODEigenBase
+(
+    const PtrList<GeometricField<Type, fvPatchField, volMesh> >& snapshots
+)
 :
     eigenValues_(snapshots.size()),
     cumEigenValues_(snapshots.size()),
     eigenVectors_(snapshots.size())
 {
-    // Calculate the snapshot of the field with all available fields
+    // Calculate the snapshot products of the field with all available fields
     label nSnapshots = snapshots.size();
 
     scalarSquareMatrix orthMatrix(nSnapshots);
@@ -120,31 +135,26 @@ Foam::PODEigenBase::PODEigenBase(const PtrList<volScalarField>& snapshots)
         for (label snapJ = 0; snapJ <= snapI; snapJ++)
         {
             // Calculate the inner product and insert it into the matrix
+            // Added normalisation with the number of snapshots
+            // Note projection with cell volumes
             orthMatrix[snapI][snapJ] =
+                1.0/nSnapshots*
                 POD::projection
                 (
-                    snapshots[snapI],
-                    snapshots[snapJ]
+                    snapshots[snapI].internalField(),
+                    snapshots[snapJ].internalField()
                 );
 
+            // Fill in the symmetric part of the matrix
             if (snapI != snapJ)
             {
                 orthMatrix[snapJ][snapI] = orthMatrix[snapI][snapJ];
-
-//                 Info << "Product: " << orthMatrix[snapI][snapJ]
-//                     << " relative: "
-//                     <<
-//                     orthMatrix[snapI][snapJ]/
-//                     (
-//                         Foam::sqrt(sumSqr(snapshots[snapI]))*
-//                         Foam::sqrt(sumSqr(snapshots[snapJ]))
-//                       + SMALL
-//                     ) << endl;
             }
         }
     }
 
-    calcEigenBase(orthMatrix);
+    // Calculate eigenbase: this fills in the eigenvalues and eigenvectors
+    this->calcEigenBase(orthMatrix);
 }
 
 

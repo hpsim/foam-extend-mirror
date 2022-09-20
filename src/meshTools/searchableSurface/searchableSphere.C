@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -24,6 +24,7 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "searchableSphere.H"
+#include "volumeType.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -132,7 +133,13 @@ Foam::searchableSphere::searchableSphere
     searchableSurface(io),
     centre_(centre),
     radius_(radius)
-{}
+{
+    bounds() = boundBox
+    (
+        centre_ - radius_*vector::one,
+        centre_ + radius_*vector::one
+    );
+}
 
 
 Foam::searchableSphere::searchableSphere
@@ -316,7 +323,7 @@ void Foam::searchableSphere::getVolumeType
 ) const
 {
     volType.setSize(points.size());
-    volType = INSIDE;
+    volType = volumeType::INSIDE;
 
     forAll(points, pointI)
     {
@@ -324,11 +331,11 @@ void Foam::searchableSphere::getVolumeType
 
         if (magSqr(pt - centre_) <= sqr(radius_))
         {
-            volType[pointI] = INSIDE;
+            volType[pointI] = volumeType::INSIDE;
         }
         else
         {
-            volType[pointI] = OUTSIDE;
+            volType[pointI] = volumeType::OUTSIDE;
         }
     }
 }

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -68,10 +68,10 @@ class thermalSource
     // Private Member Functions
 
         //- Disallow copy construct
-        thermalSource(const thermalSource&);
+        thermalSource(const thermalSource&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const thermalSource&);
+        void operator=(const thermalSource&) = delete;
 
 
 protected:
@@ -81,6 +81,7 @@ protected:
         {
             return T_.mesh();
         }
+
 
 public:
 
@@ -126,10 +127,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~thermalSource()
-        {}
+    //- Destructor
+    virtual ~thermalSource() = default;
 
 
     // Member Functions

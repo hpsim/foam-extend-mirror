@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ Author
 
 #include "fvCFD.H"
 #include "dynamicFvMesh.H"
-#include "pisoControl.H"
+#include "pimpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 #   include "createTime.H"
 #   include "createDynamicFvMesh.H"
 
-    pisoControl piso(mesh);
+    pimpleControl pimple(mesh);
 
 #   include "initContinuityErrs.H"
 #   include "initTotalVolume.H"
@@ -92,55 +92,16 @@ int main(int argc, char *argv[])
 #           include "meshCourantNo.H"
         }
 
-#       include "UEqn.H"
-
-        // --- PISO loop
-
-        // Prepare clean 1/a_p without time derivative contribution
-        rAU = 1.0/HUEqn.A();
-
-        while (piso.correct())
+        // --- PIMPLE loop
+        while (pimple.loop())
         {
-            // Calculate U from convection-diffusion matrix
-            U = rAU*HUEqn.H();
+#           include "UEqn.H"
 
-            // Consistently calculate flux
-            piso.calcTransientConsistentFlux(phi, U, rAU, ddtUEqn);
-
-            adjustPhi(phi, U, p);
-
-            // Non-orthogonal pressure corrector loop
-            while (piso.correctNonOrthogonal())
+            // --- PISO loop
+            while (pimple.correct())
             {
-                fvScalarMatrix pEqn
-                (
-                    fvm::laplacian
-                    (
-                        fvc::interpolate(rAU)/piso.aCoeff(U.name()),
-                        p,
-                        "laplacian(rAU," + p.name() + ')'
-                    )
-                 ==
-                    fvc::div(phi)
-                );
-
-                pEqn.setReference(pRefCell, pRefValue);
-                pEqn.solve
-                (
-                    mesh.solutionDict().solver(p.select(piso.finalInnerIter()))
-                );
-
-                if (piso.finalNonOrthogonalIter())
-                {
-                    phi -= pEqn.flux();
-                }
+#               include "pEqn.H"
             }
-
-#           include "movingMeshContinuityErrs.H"
-
-            // Consistently reconstruct velocity after pressure equation.
-            // Note: flux is made relative inside the function
-            piso.reconstructTransientVelocity(U, phi, ddtUEqn, rAU, p);
         }
 
         runTime.write();

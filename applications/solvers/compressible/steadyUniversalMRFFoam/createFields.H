@@ -40,16 +40,16 @@
         )
     );
 
- // Create MRF zones
+    // Create MRF zones
     MRFZones mrfZones(mesh);
     mrfZones.correctBoundaryVelocity(U);
 
     // Create relative velocity
-    volVectorField Urel
+    volVectorField URel
     (
         IOobject
         (
-            "Urel",
+            "URel",
             runTime.timeName(),
             mesh,
             IOobject::NO_READ,
@@ -57,13 +57,13 @@
         ),
         U
     );
-    mrfZones.relativeVelocity(Urel);
+    mrfZones.relativeVelocity(URel);
 
     // Create rotational velocity (= omega x r)
     volVectorField Urot
     (
         "Urot",
-        U - Urel
+        U - URel
     );
 
     // Create rothalpy, in two steps to preserve boundary conditions
@@ -79,6 +79,6 @@
         ),
         mesh
     );
-    i == h - 0.5*(magSqr(Urot) - magSqr(Urel));
+    i == h - 0.5*(magSqr(Urot) - magSqr(URel));
 
     mesh.schemesDict().setFluxRequired(p.name());

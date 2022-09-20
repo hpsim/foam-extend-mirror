@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -46,12 +46,6 @@ namespace Foam
     defineTypeNameAndDebug(mixingPlaneFvPatch, 0);
     addToRunTimeSelectionTable(fvPatch, mixingPlaneFvPatch, polyPatch);
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::mixingPlaneFvPatch::~mixingPlaneFvPatch()
-{}
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
@@ -113,6 +107,30 @@ void Foam::mixingPlaneFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
         shadow().makeDeltaCoeffs(masterDeltas);
 
         dc = interpolate(masterDeltas);
+    }
+}
+
+
+void Foam::mixingPlaneFvPatch::makeMagLongDeltas(fvsPatchScalarField& mld) const
+{
+    if (mixingPlanePolyPatch_.master())
+    {
+        vectorField d = fvPatch::delta();
+
+        // NOT stabilised for bad meshes.  HJ, 11/May/2020
+        mld = (mag(Sf() & d) + mag(Sf() & (delta() - d)))/magSf();
+    }
+    else
+    {
+        fvsPatchScalarField masterLongDeltas
+        (
+            shadow(),
+            mld.dimensionedInternalField()
+        );
+
+        shadow().makeDeltaCoeffs(masterLongDeltas);
+
+        mld = interpolate(masterLongDeltas);
     }
 }
 

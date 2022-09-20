@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ Foam::IOList<T>::IOList(const IOobject& io)
      || io.readOpt() == IOobject::READ_IF_PRESENT_IF_MODIFIED
     )
     {
-        WarningIn("IOList::IOList(const IOobject&)")
+        WarningInFunction
             << "IOList " << name()
             << " constructed with IOobject::MUST_READ_IF_MODIFIED"
             " but IOList does not support automatic rereading."
@@ -73,7 +73,7 @@ Foam::IOList<T>::IOList(const IOobject& io, const label size)
      || io.readOpt() == IOobject::READ_IF_PRESENT_IF_MODIFIED
     )
     {
-        WarningIn("IOList::IOList(const IOobject&, const label)")
+        WarningInFunction
             << "IOList " << name()
             << " constructed with IOobject::MUST_READ_IF_MODIFIED"
             " but IOList does not support automatic rereading."
@@ -111,7 +111,7 @@ Foam::IOList<T>::IOList(const IOobject& io, const List<T>& list)
      || io.readOpt() == IOobject::READ_IF_PRESENT_IF_MODIFIED
     )
     {
-        WarningIn("IOList::IOList(const IOobject&, const List<T>&)")
+        WarningInFunction
             << "IOList " << name()
             << " constructed with IOobject::MUST_READ_IF_MODIFIED"
             " but IOList does not support automatic rereading."
@@ -150,10 +150,8 @@ Foam::IOList<T>::IOList(const IOobject& io, const Xfer<List<T> >& list)
      || io.readOpt() == IOobject::READ_IF_PRESENT_IF_MODIFIED
     )
     {
-        WarningIn
-        (
-            "IOList::IOList(const IOobject&, const Xfer<List<T> >&)"
-        )   << "IOList " << name()
+        WarningInFunction
+            << "IOList " << name()
             << " constructed with IOobject::MUST_READ_IF_MODIFIED"
             " but IOList does not support automatic rereading."
             << endl;
@@ -175,14 +173,6 @@ Foam::IOList<T>::IOList(const IOobject& io, const Xfer<List<T> >& list)
         close();
     }
 }
-
-
-// * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * * //
-
-template<class T>
-Foam::IOList<T>::~IOList()
-{}
-
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

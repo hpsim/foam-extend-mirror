@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -74,10 +74,8 @@ Foam::autoPtr<Foam::lduMatrix::solver> Foam::lduMatrix::solver::New
 
         if (constructorIter == symMatrixConstructorTablePtr_->end())
         {
-            FatalIOErrorIn
-            (
-                "lduSolver::New", dict
-            )   << "Unknown symmetric matrix solver " << solverName << nl << nl
+            FatalIOErrorInFunction(dict)
+                << "Unknown symmetric matrix solver " << solverName << nl << nl
                 << "Valid symmetric matrix solvers are :" << endl
                 << symMatrixConstructorTablePtr_->sortedToc()
                 << exit(FatalIOError);
@@ -105,10 +103,8 @@ Foam::autoPtr<Foam::lduMatrix::solver> Foam::lduMatrix::solver::New
 
         if (constructorIter == asymMatrixConstructorTablePtr_->end())
         {
-            FatalIOErrorIn
-            (
-                "lduSolver::New", dict
-            )   << "Unknown asymmetric matrix solver " << solverName << nl
+            FatalIOErrorInFunction(dict)
+                << "Unknown asymmetric matrix solver " << solverName << nl
                 << "Valid asymmetric matrix solvers are :" << endl
                 << asymMatrixConstructorTablePtr_->sortedToc()
                 << exit(FatalIOError);
@@ -129,11 +125,9 @@ Foam::autoPtr<Foam::lduMatrix::solver> Foam::lduMatrix::solver::New
     }
     else
     {
-        FatalIOErrorIn
-        (
-            "lduSolver::New", dict
-        )   << "cannot solve incomplete matrix, "
-               "no diagonal or off-diagonal coefficient"
+        FatalIOErrorInFunction(dict)
+            << "cannot solve incomplete matrix, "
+            << "no diagonal or off-diagonal coefficient"
             << exit(FatalIOError);
 
         return autoPtr<lduSolver>(nullptr);

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -99,6 +99,11 @@ Foam::fvBoundaryMesh::fvBoundaryMesh
 
 void Foam::fvBoundaryMesh::movePoints()
 {
+    // Note:
+    // movePoints() currently does not perform communications and therefore
+    // the comms protection is not needed.
+    // HJ, 17/Sep/2021
+
     forAll(*this, patchi)
     {
         operator[](patchi).initMovePoints();

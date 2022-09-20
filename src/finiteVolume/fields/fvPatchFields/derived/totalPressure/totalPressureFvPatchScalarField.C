@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -230,10 +230,8 @@ void Foam::totalPressureFvPatchScalarField::updateCoeffs(const vectorField& Up)
     }
     else
     {
-        FatalErrorIn
-        (
-            "totalPressureFvPatchScalarField::updateCoeffs()"
-        )   << " rho or psi set inconsistently, rho = " << rhoName_
+        FatalErrorInFunction
+            << " rho or psi set inconsistently, rho = " << rhoName_
             << ", psi = " << psiName_ << ".\n"
             << "    Set either rho or psi or neither depending on the "
                "definition of total pressure." << nl
@@ -250,7 +248,19 @@ void Foam::totalPressureFvPatchScalarField::updateCoeffs(const vectorField& Up)
 
 void Foam::totalPressureFvPatchScalarField::updateCoeffs()
 {
-    updateCoeffs(lookupPatchField<volVectorField, vector>(UName_));
+    if (this->db().objectRegistry::found(UName_))
+    {
+        updateCoeffs(lookupPatchField<volVectorField, vector>(UName_));
+    }
+    else
+    {
+#ifdef FULLDEBUG
+        InfoInFunction
+            << "Cannot find U.  Performing simple update" << endl;
+#endif
+
+        fixedValueFvPatchScalarField::updateCoeffs();
+    }
 }
 
 

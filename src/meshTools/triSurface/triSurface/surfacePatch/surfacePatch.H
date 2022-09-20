@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -67,6 +67,7 @@ class surfacePatch
         //- Start label of this patch in the triSurface face list
         label start_;
 
+
 public:
 
     //- Runtime type information
@@ -98,9 +99,6 @@ public:
             const dictionary& dict,
             const label index
         );
-
-        //- Construct as copy
-        surfacePatch(const surfacePatch&);
 
 
     // Member Functions
@@ -142,6 +140,7 @@ public:
 
         //- compare.
         bool operator==(const surfacePatch&) const;
+
 
     // IOstream Operators
 

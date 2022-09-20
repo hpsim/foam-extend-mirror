@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -224,10 +224,10 @@ void Foam::porousZone::addHeatSource
     // Note: need better relaxation to speed up convergence close
     // to the matching value, when deltaTAux -> 0
     // HJ, 17/Jul/2019
-    
+
     // Limit deltaTAux to 10% of Taux_
     deltaTAux = sign(deltaTAux)*Foam::min(0.1*Taux_, mag(deltaTAux));
-    
+
     // Update Taux for next iteration
     Taux_ += TauxRelax_*deltaTAux;
 }

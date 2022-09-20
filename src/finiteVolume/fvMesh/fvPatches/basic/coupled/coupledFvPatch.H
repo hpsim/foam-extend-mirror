@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -66,8 +66,11 @@ protected:
         //- Make patch weighting factors
         virtual void makeWeights(fvsPatchScalarField&) const = 0;
 
-        //- Make patch face - neighbour cell distances
+        //- Make patch face delta coefficients
         virtual void makeDeltaCoeffs(fvsPatchScalarField&) const = 0;
+
+        //- Make patch face long deltas
+        virtual void makeMagLongDeltas(fvsPatchScalarField&) const = 0;
 
         //- Make patch face non-orthogonality correction vectors
         virtual void makeCorrVecs(fvsPatchVectorField&) const;

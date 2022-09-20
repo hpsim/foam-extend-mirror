@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -139,13 +139,6 @@ processorFvsPatchField<Type>::processorFvsPatchField
 :
     coupledFvsPatchField<Type>(ptf, iF),
     procPatch_(refCast<const processorFvPatch>(ptf.patch()))
-{}
-
-
-// * * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * //
-
-template<class Type>
-processorFvsPatchField<Type>::~processorFvsPatchField()
 {}
 
 

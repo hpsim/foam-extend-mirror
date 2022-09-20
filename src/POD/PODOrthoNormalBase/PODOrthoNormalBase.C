@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -33,108 +33,44 @@ Description
 
 #include "PODOrthoNormalBase.H"
 #include "POD.H"
-#include "PODEigenBase.H"
 #include "IOmanip.H"
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 template<class Type>
+template<class GeoField>
 void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
 (
-    const PtrList<GeometricField<Type, fvPatchField, volMesh> >& snapshots,
-    const scalar accuracy
+    const FieldField<Field, scalar> eigenVectors,
+    const PtrList<GeoField>& snapshots,
+    PtrList<GeoField>& orthoFields
 )
 {
-    // Calculate ortho-normal base for each component
-    PtrList<PODEigenBase> eigenBase(pTraits<Type>::nComponents);
-
-    const label nSnapshots = snapshots.size();
-
-    typename
-    powProduct<Vector<label>, pTraits<Type>::rank>::type validComponents
+    // Check if there are less requested orthoFields than eigen vectors
+    if
     (
-        pow
-        (
-            snapshots[0].mesh().solutionD(),
-            pTraits
-            <
-                typename powProduct<Vector<label>,
-                pTraits<Type>::rank
-            >::type>::zero
-        )
-    );
-
-    label nValidCmpts = 0;
-
-    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+        eigenVectors.empty()
+     || snapshots.empty()
+     || (orthoFields.size() > snapshots.size())
+     || (eigenVectors[0].size() != snapshots.size())
+    )
     {
-        // Component not valid, skipping
-        if (validComponents[cmpt] == -1) continue;
-
-        // Create a list of snapshots
-        PtrList<volScalarField> sf(nSnapshots);
-
-        forAll (snapshots, i)
-        {
-            sf.set(i, new volScalarField(snapshots[i].component(cmpt)));
-        }
-
-        // Create eigen base
-        eigenBase.set(cmpt, new PODEigenBase(sf));
-
-        Info<< "Cumulative eigen-values for component " << cmpt
-            << ": " << setprecision(14)
-            << eigenBase[nValidCmpts].cumulativeEigenValues() << endl;
-
-        nValidCmpts++;
+        FatalErrorInFunction
+            << "Incompatible snapshots, eigenVectors and orthoFields: "
+            << snapshots.size() << ", " << orthoFields.size()
+            << " and " << eigenVectors[0].size()
+            << abort(FatalError);
     }
 
-    eigenBase.setSize(nValidCmpts);
-
-    Info << "Number of valid eigen components: " << nValidCmpts << endl;
-
-    label baseSize = 0;
-    for (label snapI = 0; snapI < nSnapshots; snapI++)
+    forAll (orthoFields, baseI)
     {
-        baseSize++;
+        // Scale the eigenvector before establishing the ortho-normal base
+        const scalarField& eigenVector = eigenVectors[baseI];
 
-        // Get minimum cumulative eigen value for all valid components
-        scalar minCumEigen = 1.0;
-
-        nValidCmpts = 0;
-
-        for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
-        {
-            // Skip invalid components
-            if (validComponents[cmpt] != -1)
-            {
-                minCumEigen =
-                    Foam::min
-                    (
-                        minCumEigen,
-                        eigenBase[nValidCmpts].cumulativeEigenValues()[snapI]
-                    );
-
-                nValidCmpts++;
-            }
-        }
-
-        if (minCumEigen > accuracy)
-        {
-            break;
-        }
-    }
-
-    Info << "Base size: " << baseSize << endl;
-
-    // Establish orthonormal base
-    orthoFields_.setSize(baseSize);
-
-    for (label baseI = 0; baseI < baseSize; baseI++)
-    {
-        GeometricField<Type, fvPatchField, volMesh>* onBasePtr
+        // Use calculated boundary conditions on the eigenbase
+        GeoField* onBasePtr
         (
-            new GeometricField<Type, fvPatchField, volMesh>
+            new GeoField
             (
                 IOobject
                 (
@@ -145,59 +81,99 @@ void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
                     IOobject::NO_WRITE
                 ),
                 snapshots[0].mesh(),
-                dimensioned<Type>
+                dimensioned<typename GeoField::PrimitiveType>
                 (
                     "zero",
                     snapshots[0].dimensions(),
-                    pTraits<Type>::zero
+                    pTraits<typename GeoField::PrimitiveType>::zero
                 )
             )
         );
-        GeometricField<Type, fvPatchField, volMesh>& onBase = *onBasePtr;
+        GeoField& onBase = *onBasePtr;
 
-        nValidCmpts = 0;
-
-        for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
+        forAll (eigenVector, eigenI)
         {
-            if (validComponents[cmpt] != -1)
-            {
-                // Valid component, grab eigen-factors
-
-                const scalarField& eigenVector =
-                    eigenBase[nValidCmpts].eigenVectors()[baseI];
-                nValidCmpts++;
-
-                volScalarField onBaseCmpt = onBase.component(cmpt);
-
-                forAll (eigenVector, eigenI)
-                {
-                    onBaseCmpt +=
-                        eigenVector[eigenI]*snapshots[eigenI].component(cmpt);
-                }
-
-                // Re-normalise ortho-normal vector
-                onBaseCmpt /= Foam::sqrt(sumSqr(onBaseCmpt));
-
-                onBase.replace(cmpt, onBaseCmpt);
-            }
-            else
-            {
-                // Component invalid.  Grab first snapshot.
-                onBase.replace
-                (
-                    cmpt,
-                    snapshots[0].component(cmpt)
-                );
-            }
+            onBase += eigenVector[eigenI]*snapshots[eigenI];
         }
 
-        orthoFields_.set(baseI, onBasePtr);
+        // Note: onBase field is not normalised
+        // This is required when the fields are rebuild using consistent
+        // scaling factors, eg. flux fields from velocity
+        // HJ, 20/Sep/2021
+        orthoFields.set(baseI, onBasePtr);
+    }
+}
+
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+template<class Type>
+Foam::PODOrthoNormalBase<Type>::PODOrthoNormalBase
+(
+    const PtrList<GeometricField<Type, fvPatchField, volMesh> >& snapshots,
+    const scalar accuracy
+)
+:
+    eigenBase_(snapshots),
+    scaledEigenVectors_(eigenBase_.eigenVectors()), // To be scaled later
+    orthoFields_(),
+    interpolationCoeffsPtr_(nullptr)
+{
+    label baseSize = 0;
+
+    const scalarField& cumEigenValues = eigenBase_.cumulativeEigenValues();
+
+    forAll (cumEigenValues, i)
+    {
+        baseSize++;
+
+        if (cumEigenValues[i] > accuracy)
+        {
+            break;
+        }
+    }
+
+    Info<< setprecision(14)
+        << "eigen-values: " << eigenBase_.eigenValues() << nl
+        << "Cumulative eigen-values: " << cumEigenValues << nl
+        << "Base size: " << baseSize << endl;
+
+    // Establish orthonormal base
+    orthoFields_.setSize(baseSize);
+
+    // Calculate orthogonal base
+    calcOrthoBase
+    (
+        scaledEigenVectors_,
+        snapshots,
+        orthoFields_
+    );
+
+    // Scale the eigen-vectors and orthoFields
+    forAll (orthoFields_, baseI)
+    {
+        GeoTypeField& onBase = orthoFields_[baseI];
+
+        scalarField& eigenVector = scaledEigenVectors_[baseI];
+
+        // Re-normalise the ortho-normal vector and eigenVector
+        scalar magSumSquare = Foam::sqrt(sumSqr(onBase));
+
+        if (magSumSquare > SMALL)
+        {
+            // Rescale ortho base
+            onBase /= magSumSquare;
+            onBase.correctBoundaryConditions();
+
+            // Also rescale scaledEigenVectors_ for future use
+            eigenVector /= magSumSquare;
+        }
     }
 
     // Calculate interpolation coefficients
     interpolationCoeffsPtr_ =
-        new RectangularMatrix<Type>(snapshots.size(), orthoFields_.size());
-    RectangularMatrix<Type>& coeffs = *interpolationCoeffsPtr_;
+        new RectangularMatrix<scalar>(snapshots.size(), orthoFields_.size());
+    RectangularMatrix<scalar>& coeffs = *interpolationCoeffsPtr_;
 
     forAll (snapshots, snapshotI)
     {
@@ -214,23 +190,6 @@ void Foam::PODOrthoNormalBase<Type>::calcOrthoBase
 }
 
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-// given list of snapshots and accuracy
-template<class Type>
-Foam::PODOrthoNormalBase<Type>::PODOrthoNormalBase
-(
-    const PtrList<GeometricField<Type, fvPatchField, volMesh> >& snapshots,
-    const scalar accuracy
-)
-:
-    orthoFields_(),
-    interpolationCoeffsPtr_(nullptr)
-{
-    calcOrthoBase(snapshots, accuracy);
-}
-
-
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
 template<class Type>
@@ -241,6 +200,43 @@ Foam::PODOrthoNormalBase<Type>::~PODOrthoNormalBase()
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class Type>
+void Foam::PODOrthoNormalBase<Type>::checkBase() const
+{
+    // Check orthogonality and magnitude of snapshots
+    Info<< "Check orthogonal base: dot-products: " << baseSize() << endl;
+    for (label i = 0; i < baseSize(); i++)
+    {
+        for (label j = 0; j < baseSize(); j++)
+        {
+            Info<< "(" << i << ", " << j << ") = "
+                << POD::projection
+                   (
+                       orthoField(i),
+                       orthoField(j)
+                   )
+                << endl;
+        }
+    }
+}
+
+
+template<class Type>
+template<class GeoField>
+void Foam::PODOrthoNormalBase<Type>::getOrthoBase
+(
+    const PtrList<GeoField>& snapshots,
+    PtrList<GeoField>& orthoFields
+) const
+{
+    calcOrthoBase
+    (
+        this->scaledEigenVectors(),
+        snapshots,
+        orthoFields
+    );
+}
 
 
 // ************************************************************************* //

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -40,6 +40,14 @@ Foam::immersedPoly::tolerance_
 (
     "immersedPolyTolerance",
     1e-4
+);
+
+
+const Foam::debug::tolerancesSwitch
+Foam::immersedPoly::collinearity_
+(
+    "immersedPolyCollinearity",
+    0.99999
 );
 
 

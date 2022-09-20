@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -341,7 +341,7 @@ Foam::displacementInterpolationFvMotionSolver::curPoints() const
     tmp<pointField> tcurPoints(new pointField(points0()));
     pointField& curPoints = tcurPoints();
 
-    // Interpolate the diplacement of the face zones.
+    // Interpolate the displacement of the face zones.
     vectorField zoneDisp(displacements_.size(), vector::zero);
     forAll(zoneDisp, zoneI)
     {

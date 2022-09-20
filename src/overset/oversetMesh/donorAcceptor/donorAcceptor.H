@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -171,10 +171,12 @@ public:
             withinBB_(is)
         {}
 
-        //- Copy constructor - default
+        //- Copy constructor
+        donorAcceptor(const donorAcceptor&) = default;
 
 
-    //- Destructor - default
+    //- Destructor
+    ~donorAcceptor() = default;
 
 
     // Member Functions
@@ -385,25 +387,6 @@ public:
                 donorProcNo_ = -1;
                 donorPoint_ = vector::zero;
             }
-
-
-    // Member Operators
-
-        void operator=(const donorAcceptor& rd)
-        {
-            acceptorCell_ = rd.acceptorCell_;
-            acceptorProcNo_ = rd.acceptorProcNo_;
-            acceptorPoint_ = rd.acceptorPoint_;
-
-            donorCell_ = rd.donorCell_;
-            donorProcNo_ = rd.donorProcNo_;
-            donorPoint_ = rd.donorPoint_;
-
-            extendedDonorCells_ = rd.extendedDonorCells_;
-            extendedDonorPoints_ = rd.extendedDonorPoints_;
-
-            withinBB_ = rd.withinBB_;
-        }
 
 
     // Friend Operators

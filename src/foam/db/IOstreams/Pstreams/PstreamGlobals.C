@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -31,6 +31,8 @@ namespace Foam
 {
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+
+MPI_Comm PstreamGlobals::MPI_COMM_FOAM;
 
 // Outstanding non-blocking operations.
 //! \cond fileScope

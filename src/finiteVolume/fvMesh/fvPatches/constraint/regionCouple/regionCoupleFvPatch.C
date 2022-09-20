@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -45,12 +45,6 @@ namespace Foam
     defineTypeNameAndDebug(regionCoupleFvPatch, 0);
     addToRunTimeSelectionTable(fvPatch, regionCoupleFvPatch, polyPatch);
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::regionCoupleFvPatch::~regionCoupleFvPatch()
-{}
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
@@ -111,7 +105,7 @@ void Foam::regionCoupleFvPatch::makeWeights(fvsPatchScalarField& w) const
 }
 
 
-// Make patch face - neighbour cell distances
+// Make patch face delta coefficients
 void Foam::regionCoupleFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 {
     if (rcPolyPatch_.coupled())
@@ -153,6 +147,55 @@ void Foam::regionCoupleFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
     else
     {
         fvPatch::makeDeltaCoeffs(dc);
+    }
+}
+
+
+// Make patch face long deltas
+void Foam::regionCoupleFvPatch::makeMagLongDeltas
+(
+    fvsPatchScalarField& mld
+) const
+{
+    if (rcPolyPatch_.coupled())
+    {
+        if (rcPolyPatch_.master())
+        {
+            // NOT stabilised for bad meshes.  HJ, 11/May/2020
+            vectorField d = fvPatch::delta();
+
+            mld = (mag(Sf() & d) + mag(Sf() & (delta() - d)))/magSf();
+
+            if (bridgeOverlap())
+            {
+                scalarField bridgeDeltas = nf() & fvPatch::delta();
+
+                setUncoveredFaces(bridgeDeltas, mld);
+            }
+        }
+        else
+        {
+            fvsPatchScalarField masterLongDeltas
+            (
+                shadow(),
+                mld.dimensionedInternalField()
+            );
+
+            shadow().makeMagLongDeltas(masterLongDeltas);
+
+            mld = interpolate(masterLongDeltas);
+
+            if (bridgeOverlap())
+            {
+                scalarField bridgeDeltas = nf() & fvPatch::delta();
+
+                setUncoveredFaces(bridgeDeltas, mld);
+            }
+        }
+    }
+    else
+    {
+        fvPatch::makeMagLongDeltas(mld);
     }
 }
 

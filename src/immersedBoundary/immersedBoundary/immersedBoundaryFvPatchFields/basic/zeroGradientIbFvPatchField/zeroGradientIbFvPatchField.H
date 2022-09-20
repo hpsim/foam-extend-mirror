@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -131,26 +131,25 @@ public:
 
 
     //- Destructor
-    virtual ~zeroGradientIbFvPatchField()
-    {}
+    virtual ~zeroGradientIbFvPatchField() = default;
 
 
     // Member functions
 
         // Mapping functions
 
-            // //- Map (and resize as needed) from self given a mapping object
-            // virtual void autoMap
-            // (
-            //     const fvPatchFieldMapper&
-            // );
+            //- Map (and resize as needed) from self given a mapping object
+            virtual void autoMap
+            (
+                const fvPatchFieldMapper&
+            );
 
-            // //- Reverse map the given fvPatchField onto this fvPatchField
-            // virtual void rmap
-            // (
-            //     const fvPatchField<Type>&,
-            //     const labelList&
-            // );
+            //- Reverse map the given fvPatchField onto this fvPatchField
+            virtual void rmap
+            (
+                const fvPatchField<Type>&,
+                const labelList&
+            );
 
             //- Update on mesh motion
             virtual void updateOnMotion();

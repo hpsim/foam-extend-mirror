@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -57,34 +57,70 @@ class scalarTransportPOD
     // Private data
 
         //- Field name
+        word fieldName_;
+
+        //- Flux field name
         word phiName_;
+
+        //- Lagrange multiplier pre-factor
+        scalar beta_;
+
+        //- Use zero field as snapshot
+        Switch useZeroField_;
+
+        //- Drift correction
+        Switch driftCorrection_;
 
         //- POD coefficients
         scalarField coeffs_;
 
+
+        //- List of valid times for snapshots
+        mutable instantList* validTimesPtr_;
+
         //- Derivative coefficient matrix
-        mutable scalarSquareMatrix* derivativeMatrixPtr_;
+        mutable scalarSquareMatrix* derivativePtr_;
+
+        //- Lagrange multiplier derivative (enforcing boundary conditions)
+        //  (new formulation)
+        mutable scalarSquareMatrix* lagrangeDerPtr_;
+
+        //- Lagrange multiplier source (enforcing boundary conditions)
+        //  (new formulation)
+        mutable scalarField* lagrangeSrcPtr_;
 
         //- Ortho-normal base pointer
         mutable scalarPODOrthoNormalBase* orthoBasePtr_;
 
         //- Reconstructed field pointer
-        mutable volScalarField* fieldPtr_;
+        mutable volScalarField* reconFieldPtr_;
+
+        //- Time index of current field update
+        mutable label fieldUpdateTimeIndex_;
 
 
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        scalarTransportPOD(const scalarTransportPOD&);
+        scalarTransportPOD(const scalarTransportPOD&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const scalarTransportPOD&);
+        void operator=(const scalarTransportPOD&) = delete;
+
+        //- Calculated list valid times for snapshots
+        void calcValidTimes() const;
+
+        //- Return valid times
+        const instantList& validTimes() const;
 
         //- Calculate ortho-normal base
         void calcOrthoBase() const;
 
         //- Calculate coefficients
         void calcDerivativeCoeffs() const;
+
+        //- Update reconstructed fields
+        void updateFields() const;
 
 
 public:
@@ -103,9 +139,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~scalarTransportPOD();
+    //- Destructor
+    virtual ~scalarTransportPOD();
 
 
     // Member Functions
@@ -145,18 +180,19 @@ public:
         const scalarPODOrthoNormalBase& orthoBase() const;
 
         //- Return reconstructed field
-        const volScalarField& field() const;
+        const volScalarField& reconField() const;
 
 
-        //- Clear ortho-normal base
-        virtual void clearBase() const;
+        // Update
 
-        //- Update reconstructed fields
-        virtual void updateFields() const;
+            //- Update ODE after the solution, advancing by delta
+            virtual void update(const scalar delta);
 
-        //- Clear reconstructed field
-        virtual void clearFields() const;
 
+    // Write
+
+        //- Write snapshots
+        virtual void writeSnapshots() const;
 
         //- Write reconstructed fields
         virtual void write() const;

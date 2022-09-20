@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -944,7 +944,7 @@ bool Foam::motionSmoother::scaleMesh
         newPoints = oldPoints_ + totalDisplacement.internalField();
     }
 
-    Info<< "Moving mesh using diplacement scaling :"
+    Info<< "Moving mesh using displacement scaling :"
         << " min:" << gMin(scale_.internalField())
         << "  max:" << gMax(scale_.internalField())
         << endl;

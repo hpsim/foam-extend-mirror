@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -1156,10 +1156,9 @@ void GlobalPointPatchField
 
         // Requires global sync points to flush buffers before gather-scatter
         // communications.  Reconsider.  HJ, 29/Mar/2011
-        if (Pstream::defaultCommsType() == Pstream::nonBlocking)
+        if (Pstream::defaultComms() == Pstream::nonBlocking)
         {
-            IPstream::waitRequests();
-            OPstream::waitRequests();
+            Pstream::waitRequests();
         }
 
         tmp<Field<scalar> > trpf =
@@ -1284,10 +1283,9 @@ void GlobalPointPatchField
 
         // Requires global sync points to flush buffers before gather-scatter
         // communications.  Reconsider.  HJ, 29/Mar/2011
-        if (Pstream::defaultCommsType() == Pstream::nonBlocking)
+        if (Pstream::defaultComms() == Pstream::nonBlocking)
         {
-            IPstream::waitRequests();
-            OPstream::waitRequests();
+            Pstream::waitRequests();
         }
 
         tmp<Field<scalar> > trpf =

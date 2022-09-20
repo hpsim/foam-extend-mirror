@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -121,20 +121,6 @@ bool ignitionSite::ignited() const
     scalar deltaT = db_.deltaT().value();
 
     return(curTime - deltaT >= time_);
-}
-
-
-// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-void ignitionSite::operator=(const ignitionSite& is)
-{
-    location_ = is.location_;
-    diameter_ = is.diameter_;
-    time_ = is.time_;
-    duration_ = is.duration_;
-    strength_ = is.strength_;
-    cells_ = is.cells_;
-    cellVolumes_ = is.cellVolumes_;
 }
 
 

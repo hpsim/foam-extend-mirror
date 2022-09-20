@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -29,6 +29,5 @@ rheology
     a                a [0 0 0 0 0 0 0] 5.5061e-1 ;
     b                b [0 0 0 0 0 0 0] 2.3229e-1;
 }
-
 
 // ************************************************************************* //

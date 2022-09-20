@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -185,6 +185,9 @@ private:
         //- Is this a parallel run?
         static bool parRun_;
 
+        //- Have support for threads?
+        static bool haveThreads_;
+
         //- Default message type info
         static const int msgType_;
 
@@ -210,26 +213,7 @@ private:
     // Private member functions
 
         //- Set data for parallel running
-        static void setParRun(const label nProcs);
-
-        //- Calculate linear communication schedule
-        static List<commsStruct> calcLinearComm(const label nProcs);
-
-        //- Calculate tree communication schedule
-        static List<commsStruct> calcTreeComm(const label nProcs);
-
-        //- Helper function for tree communication schedule determination
-        //  Collects all processorIDs below a processor
-        static void collectReceives
-        (
-            const label procID,
-            const dynamicLabelListList& receives,
-            dynamicLabelList& allReceives
-        );
-
-        //- Initialize all communication schedules. Callback from
-        //  Pstream::init()
-        static void initCommunicationSchedule();
+        static void setParRun(const label nProcs, const bool haveThreads);
 
         //- Allocate a communicator with index
         static void allocatePstreamCommunicator
@@ -277,7 +261,7 @@ public:
         //  to tree
         static const debug::optimisationSwitch nProcsSimpleSum;
 
-        //- Default commsType
+        //- Default commsType.  Do not use: use defaultComms()
         static debug::optimisationSwitch defaultCommsType;
 
         //- Default comms with a cast
@@ -399,7 +383,7 @@ public:
 
         //- Initialisation function called from main
         //  Spawns slave processes and initialises inter-communication
-        static bool init(int& argc, char**& argv);
+        static bool init(int& argc, char**& argv, const bool needsThread);
 
 
         // Non-blocking comms
@@ -432,6 +416,12 @@ public:
         static bool& parRun()
         {
             return parRun_;
+        }
+
+        //- Have support for threads
+        static bool haveThreads()
+        {
+            return haveThreads_;
         }
 
         //- Number of processes in parallel run for a given communicator
@@ -774,6 +764,16 @@ inline void Pstream::enlargeBuffer(size_t count)
 
 
 Ostream& operator<<(Ostream&, const Pstream::commsStruct&);
+
+// Template specialisation for access of commsStruct from the commucator list.
+// Evaluates commsStruct on the fly if this is not present in the list.
+template<>
+Pstream::commsStruct&
+UList<Pstream::commsStruct>::operator[](const label);
+
+template<>
+const Pstream::commsStruct&
+UList<Pstream::commsStruct>::operator[](const label) const;
 
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

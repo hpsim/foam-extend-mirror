@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -195,21 +195,6 @@ inline scalar sutherlandTransport<thermo>::alpha
 
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-template<class thermo>
-inline sutherlandTransport<thermo>& sutherlandTransport<thermo>::operator=
-(
-    const sutherlandTransport<thermo>& st
-)
-{
-    thermo::operator=(st);
-
-    As = st.As;
-    Ts = st.Ts;
-
-    return *this;
-}
-
 
 template<class thermo>
 inline void Foam::sutherlandTransport<thermo>::operator+=

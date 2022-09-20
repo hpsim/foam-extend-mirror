@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -69,6 +69,8 @@ private:
             const point& end
         ) const;
 
+        //- Return the boundBox of the plane
+        boundBox calcBounds() const;
 
         //- Disallow default bitwise copy construct
         searchablePlane(const searchablePlane&);
@@ -100,9 +102,8 @@ public:
             const dictionary& dict
         );
 
-    // Destructor
-
-        virtual ~searchablePlane();
+    //- Destructor
+    virtual ~searchablePlane();
 
 
     // Member Functions
@@ -123,10 +124,10 @@ public:
 
         //- Get representative set of element coordinates
         //  Usually the element centres (should be of length size()).
-        virtual pointField coordinates() const
+        virtual tmp<pointField> coordinates() const
         {
             //notImplemented("searchablePlane::coordinates()")
-            return pointField(1, refPoint());
+            return tmp<pointField>(new pointField(1, refPoint()));
         }
 
 
@@ -188,7 +189,7 @@ public:
 
             bool writeData(Ostream&) const
             {
-                notImplemented("searchablePlane::writeData(Ostream&) const");
+                NotImplemented;
                 return false;
             }
 

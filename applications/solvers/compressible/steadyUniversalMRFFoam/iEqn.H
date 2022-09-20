@@ -1,25 +1,25 @@
 {
     // Create relative velocity
-    Urel == U;
-    mrfZones.relativeVelocity(Urel);
+    URel == U;
+    mrfZones.relativeVelocity(URel);
 
     // Bound the relative velocity to preserve the i to h conversion bound
     // HJ, 22/Mar/2017
-    volScalarField magUrel = mag(Urel);
+    volScalarField magURel = mag(URel);
 
-    if (max(magUrel) > UMax)
+    if (max(magURel) > UMax)
     {
-        volScalarField UrelLimiter = pos(magUrel - UMax)*UMax/(magUrel + smallU)
-            + neg(magUrel - UMax);
-        UrelLimiter.max(scalar(0));
-        UrelLimiter.min(scalar(1));
+        volScalarField URelLimiter = pos(magURel - UMax)*UMax/(magURel + smallU)
+            + neg(magURel - UMax);
+        URelLimiter.max(scalar(0));
+        URelLimiter.min(scalar(1));
 
-        Urel *= UrelLimiter;
-        Urel.correctBoundaryConditions();
+        URel *= URelLimiter;
+        URel.correctBoundaryConditions();
     }
 
     // Create rotational velocity (= omega x r)
-    Urot == U - Urel;
+    Urot == U - URel;
 
     fvScalarMatrix iEqn
     (
@@ -36,7 +36,7 @@
     iEqn.solve();
 
     // From rothalpy, calculate enthalpy after solution of rothalpy equation
-    h = i + 0.5*(magSqr(Urot) - magSqr(Urel));
+    h = i + 0.5*(magSqr(Urot) - magSqr(URel));
     h.correctBoundaryConditions();
 
     // Update thermo for new h

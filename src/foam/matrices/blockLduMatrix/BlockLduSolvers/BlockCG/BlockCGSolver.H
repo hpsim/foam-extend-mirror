@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -65,10 +65,10 @@ class BlockCGSolver
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        BlockCGSolver(const BlockCGSolver<Type>&);
+        BlockCGSolver(const BlockCGSolver<Type>&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const BlockCGSolver<Type>&);
+        void operator=(const BlockCGSolver<Type>&) = delete;
 
 
 public:
@@ -89,8 +89,7 @@ public:
 
 
     //- Destructor
-    virtual ~BlockCGSolver()
-    {}
+    virtual ~BlockCGSolver() = default;
 
 
     // Member Functions
@@ -100,7 +99,7 @@ public:
         (
             Field<Type>& x,
             const Field<Type>& b
-        );
+        ) const;
 
         //- Re-initialise solver after matrix coefficient update
         virtual void initMatrix()

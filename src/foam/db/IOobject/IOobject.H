@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -251,6 +251,9 @@ public:
             bool registerObject = true
         );
 
+        //- Copy construct
+        IOobject(const IOobject&) = default;
+
         //- Clone
         Foam::autoPtr<IOobject> clone() const
         {
@@ -259,7 +262,7 @@ public:
 
 
     //- Destructor
-    virtual ~IOobject();
+    virtual ~IOobject() = default;
 
 
     // Member Functions

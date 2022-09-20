@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -71,12 +71,8 @@ public:
 
             if (Mesh::debug)
             {
-                InfoIn
-                (
-                    "static void meshObjectBase::"
-                    "allUpdateTopology(const Mesh& mesh, "
-                    "const mapPolyMesh& mpm)"
-                )   << "Mesh objects to update: " << tbl.toc() << endl;
+                InfoInFunction
+                    << "Mesh objects to update: " << tbl.toc() << endl;
             }
 
             for
@@ -91,7 +87,7 @@ public:
 
                 if (Mesh::debug)
                 {
-                    Info << "Updating object " << obj.type() << endl;
+                    Info<< "Updating object " << obj.type() << endl;
                 }
 
                 obj.updateMesh(mpm);
@@ -99,7 +95,7 @@ public:
 
             if (Mesh::debug)
             {
-                Info << "Done update topology" << endl;
+                Info<< "Done update topology" << endl;
             }
         }
 
@@ -115,11 +111,8 @@ public:
 
                 if (Mesh::debug)
                 {
-                    InfoIn
-                    (
-                        "static void meshObjectBase::"
-                        "allMovePoints(const Mesh& mesh)"
-                    )   << "Mesh objects to move: " << tbl.toc() << endl;
+                    InfoInFunction
+                        << "Mesh objects to move: " << tbl.toc() << endl;
                 }
 
                 for
@@ -143,7 +136,7 @@ public:
 
                 if (Mesh::debug)
                 {
-                    Info << "Done moving" << endl;
+                    Info<< "Done moving" << endl;
                 }
             }
         }
@@ -167,7 +160,7 @@ public:
 
                 if (Mesh::debug)
                 {
-                    Info << "Deleting object " << obj.type() << endl;
+                    Info<< "Deleting object " << obj.type() << endl;
                 }
 
                 obj.deleteObject();
@@ -176,8 +169,7 @@ public:
 
 
     //- Destructor
-    virtual ~meshObjectBase()
-    {}
+    virtual ~meshObjectBase() = default;
 
 
     // Member Functions

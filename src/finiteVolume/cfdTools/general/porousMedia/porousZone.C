@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -37,11 +37,8 @@ void Foam::porousZone::adjustNegativeResistance(dimensionedVector& resist)
 
     if (maxCmpt < 0)
     {
-        FatalErrorIn
-        (
-            "Foam::porousZone::porousZone::adjustNegativeResistance"
-            "(dimensionedVector&)"
-        )   << "negative resistances! " << resist
+        FatalErrorInFunction
+            << "negative resistances! " << resist
             << exit(FatalError);
     }
     else
@@ -97,11 +94,8 @@ Foam::porousZone::porousZone
 
     if (!foundZone && Pstream::master())
     {
-        FatalErrorIn
-        (
-            "Foam::porousZone::porousZone"
-            "(const fvMesh&, const word&, const dictionary&)"
-        )   << "cannot find porous cellZone " << name_
+        FatalErrorInFunction
+            << "cannot find porous cellZone " << name_
             << exit(FatalError);
     }
 
@@ -413,7 +407,7 @@ void Foam::porousZone::addResistance
 }
 
 
-void Foam::porousZone::addHeatResistance
+void Foam::porousZone::addHeatSource
 (
     fvScalarMatrix& hTEqn,
     const volScalarField& T,
@@ -436,7 +430,6 @@ void Foam::porousZone::addHeatResistance
     const vectorField& Ui = U.internalField();
     const scalarField& Macroi = Macro.internalField();
     const scalarField& posFluxi = posFlux.internalField();
-
 
 
     if (hTEqn.dimensions() == dimensionSet(1, -2, -3, 0, 0))
@@ -473,6 +466,7 @@ void Foam::porousZone::addHeatResistance
         return;
     }
 }
+
 
 void Foam::porousZone::macroCellOrder
 (

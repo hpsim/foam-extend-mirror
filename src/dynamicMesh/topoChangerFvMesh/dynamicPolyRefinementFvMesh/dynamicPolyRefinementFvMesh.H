@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -62,10 +62,17 @@ class dynamicPolyRefinementFvMesh
 :
     public topoChangerFvMesh
 {
-    // Private data
+protected:
+
+    // Protected data
 
         //- Dictionary containing dynamic mesh coefficient controls
         dictionary refinementDict_;
+
+
+private:
+
+    // Private data
 
         //- Refinement interval
         label refineInterval_;
@@ -97,10 +104,13 @@ class dynamicPolyRefinementFvMesh
         // Copy control
 
             //- Disallow default bitwise copy construct
-            dynamicPolyRefinementFvMesh(const dynamicPolyRefinementFvMesh&);
+            dynamicPolyRefinementFvMesh
+            (
+                const dynamicPolyRefinementFvMesh&
+            ) = delete;
 
             //- Disallow default bitwise assignment
-            void operator=(const dynamicPolyRefinementFvMesh&);
+            void operator=(const dynamicPolyRefinementFvMesh&) = delete;
 
 
 public:
@@ -123,16 +133,10 @@ public:
 
 
     //- Destructor
-    virtual ~dynamicPolyRefinementFvMesh();
+    virtual ~dynamicPolyRefinementFvMesh() = default;
 
 
     // Member Functions
-
-        //- Return access to dictionary
-        inline const dictionary& refinementDict() const
-        {
-            return refinementDict_;
-        }
 
         //- Is this the first update in the current time-step?
         bool firstUpdate() const;

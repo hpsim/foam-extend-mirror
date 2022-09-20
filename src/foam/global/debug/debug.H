@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -139,7 +139,8 @@ namespace debug
     //- Dump the central controlDict variables to the console using a standard
     // dictionary format. If a description is available for a given switch, a
     // comment will be added just besides the switch name and value.
-    void dumpControlSwitchesToConsole();
+    // A subset of the whole controlDict can be specified (debug, info, etc.)
+    void dumpControlSwitchesToConsole(const Foam::string& switchesSubSetName);
 
 } // End namespace debug
 

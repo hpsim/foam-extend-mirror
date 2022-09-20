@@ -14,21 +14,3 @@
         pRefCell,
         pRefValue
     );
-
-    mesh.solutionDict().subDict("blockSolver").readIfPresent
-    (
-        "convergence",
-        convergenceCriterion
-    );
-
-    mesh.solutionDict().subDict("blockSolver").readIfPresent
-    (
-        "convergence",
-        convergenceCriterion
-    );
-
-    mesh.solutionDict().subDict("blockSolver").readIfPresent
-    (
-        "convergence",
-        convergenceCriterion
-    );

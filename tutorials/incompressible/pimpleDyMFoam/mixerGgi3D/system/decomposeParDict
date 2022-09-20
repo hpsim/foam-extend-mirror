@@ -1,0 +1,50 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     5.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      decomposeParDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+numberOfSubdomains 5;
+
+//method          simple;
+method          metis;
+//method    patchConstrained;
+
+globalFaceZones ( insideZone outsideZone );
+
+simpleCoeffs
+{
+    n               (5 1 1);
+    delta           0.001;
+}
+
+patchConstrainedCoeffs
+{
+    method            metis;
+    numberOfSubdomains    5;
+    patchConstraints // GGI pairs on same processor
+    (
+        (insideSlider 1)
+        (outsideSlider 1)
+    );
+}
+
+/*
+distributed     no;
+
+roots
+(
+);
+*/
+
+// ************************************************************************* //

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ void volPointInterpolation::makeWeights() const
 {
     if (debug)
     {
-        Info<< "volPointInterpolation::makeWeights() : "
+        InfoInFunction
             << "constructing weighting factors"
             << endl;
     }
@@ -55,7 +55,7 @@ void volPointInterpolation::makeWeights() const
     // It is an error to attempt to recalculate if the pointer is already set
     if (pointWeightsPtr_)
     {
-        FatalErrorIn("volPointInterpolation::makeWeights() const")
+        FatalErrorInFunction
             << "Point weights already calculated."
             << abort(FatalError);
     }
@@ -140,7 +140,7 @@ void volPointInterpolation::makeWeights() const
 
     if (debug)
     {
-        Info<< "volPointInterpolation::makeWeights() : "
+        InfoInFunction
             << "finished constructing weighting factors"
             << endl;
     }

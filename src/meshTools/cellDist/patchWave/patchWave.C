@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -152,21 +152,13 @@ Foam::patchWave::patchWave
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::patchWave::~patchWave()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 // Correct for mesh geom/topo changes. Might be more intelligent in the
 // future (if only small topology change)
 void Foam::patchWave::correct()
 {
-    //
     // Set initial changed faces: set wallPoint for wall faces to wall centre
-    //
 
     // Count walls
     label nWalls = sumPatchSize(patchIDs_);

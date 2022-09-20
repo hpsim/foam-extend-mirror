@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -44,6 +44,7 @@ Description
 #include "chemistrySolver.H"
 #include "timeActivatedExplicitSource.H"
 #include "radiationModel.H"
+#include "porousZones.H"
 #include "pimpleControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -61,6 +62,7 @@ int main(int argc, char *argv[])
     #include "readGravitationalAcceleration.H"
     #include "createFields.H"
     #include "createClouds.H"
+    #include "createExplicitSources.H"
     #include "createRadiationModel.H"
     #include "initContinuityErrs.H"
     #include "createTimeControls.H"

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ Foam::BlockAMGSolver<Type>::solve
 (
     Field<Type>& x,
     const Field<Type>& b
-)
+) const
 {
     // Prepare solver performance
     BlockSolverPerformance<Type> solverPerf
@@ -75,7 +75,9 @@ Foam::BlockAMGSolver<Type>::solve
     Type norm = this->normFactor(x, b);
 
     // Calculate initial residual
-    solverPerf.initialResidual() = cmptDivide(gSum(cmptMag(amg_.residual(x, b))),norm);
+    solverPerf.initialResidual() =
+        cmptDivide(gSum(cmptMag(amg_.residual(x, b))),norm);
+
     solverPerf.finalResidual() = solverPerf.initialResidual();
 
     // Stop solver on divergence
@@ -92,6 +94,18 @@ Foam::BlockAMGSolver<Type>::solve
                   cmptDivide(gSum(cmptMag(amg_.residual(x, b))), norm);
 
             solverPerf.nIterations()++;
+
+            // AMG initialisation check
+            if (amg_.nLevels() < 2)
+            {
+                InfoInFunction
+                    << "AMG levels not initialised properly.  nLevels = "
+                        << amg_.nLevels()
+                        << endl;
+
+                // Do not cycle: AMG coarse level creation failed
+                break;
+            }
 
             // Divergence check
             if

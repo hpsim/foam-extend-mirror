@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -141,7 +141,6 @@ mixedIbFvPatchField<Type>::mixedIbFvPatchField
             << exit(FatalIOError);
     }
 
-    // Copy the patch type since mixed data was not mapped
     this->setPatchType(ptf);
 
     // Re-interpolate the data related to immersed boundary
@@ -170,7 +169,9 @@ mixedIbFvPatchField<Type>::mixedIbFvPatchField
     triValue_(ptf.triValue()),
     triGrad_(ptf.triGrad()),
     triValueFraction_(ptf.triValueFraction())
-{}
+{
+    this->setPatchType(ptf);
+}
 
 
 template<class Type>
@@ -190,7 +191,9 @@ mixedIbFvPatchField<Type>::mixedIbFvPatchField
     triValue_(ptf.triValue()),
     triGrad_(ptf.triGrad()),
     triValueFraction_(ptf.triValueFraction())
-{}
+{
+    this->setPatchType(ptf);
+}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -246,11 +249,8 @@ void mixedIbFvPatchField<Type>::evaluate
 {
     this->updateIbValues();
 
-    // Get non-constant reference to internal field
-    Field<Type>& intField = const_cast<Field<Type>&>(this->internalField());
-
     // Set dead value
-    this->setDeadValues(intField);
+    this->setDeadValues(*this);
 
     // Evaluate mixed condition
     mixedFvPatchField<Type>::evaluate();

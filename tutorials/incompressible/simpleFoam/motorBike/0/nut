@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -23,19 +23,19 @@ boundaryField
 {
     frontAndBack
     {
-        type            calculated;
+        type            zeroGradient;
         value           uniform 0;
     }
 
     inlet
     {
-        type            calculated;
+        type            zeroGradient;
         value           uniform 0;
     }
 
     outlet
     {
-        type            calculated;
+        type            zeroGradient;
         value           uniform 0;
     }
 
@@ -47,7 +47,7 @@ boundaryField
 
     upperWall
     {
-        type            calculated;
+        type            zeroGradient;
         value           uniform 0;
     }
 
@@ -57,6 +57,5 @@ boundaryField
         value           uniform 0;
     }
 }
-
 
 // ************************************************************************* //

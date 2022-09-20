@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -60,20 +60,19 @@ protected:
     // Protected Member Functions
 
         //- Read controls from fvSolution dictionary
-        void read();
+        virtual void read();
 
         //- Return true if all convergence checks are satisfied
-        bool criteriaSatisfied();
+        virtual bool criteriaSatisfied();
 
         //- Disallow default bitwise copy construct
-        simpleControl(const simpleControl&);
+        simpleControl(const simpleControl&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const simpleControl&);
+        void operator=(const simpleControl&) = delete;
 
 
 public:
-
 
     // Static Data Members
 
@@ -88,7 +87,7 @@ public:
 
 
     //- Destructor
-    virtual ~simpleControl();
+    virtual ~simpleControl() = default;
 
 
     // Member Functions

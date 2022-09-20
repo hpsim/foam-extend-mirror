@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -48,11 +48,8 @@ tmp<surfaceInterpolationScheme<Type> > surfaceInterpolationScheme<Type>::New
 {
     if (schemeData.eof())
     {
-        FatalIOErrorIn
-        (
-            "surfaceInterpolationScheme<Type>::New(const fvMesh&, Istream&)",
-            schemeData
-        )   << "Discretisation scheme not specified"
+        FatalIOErrorInFunction(schemeData)
+            << "Discretisation scheme not specified"
             << endl << endl
             << "Valid schemes are :" << endl
             << MeshConstructorTablePtr_->sortedToc()
@@ -63,9 +60,8 @@ tmp<surfaceInterpolationScheme<Type> > surfaceInterpolationScheme<Type>::New
 
     if (surfaceInterpolation::debug || surfaceInterpolationScheme<Type>::debug)
     {
-        Info<< "surfaceInterpolationScheme<Type>::New"
-               "(const fvMesh&, Istream&)"
-               " : discretisation scheme = "
+        InfoInFunction
+            << " : discretisation scheme = "
             << schemeName
             << endl;
     }
@@ -75,11 +71,8 @@ tmp<surfaceInterpolationScheme<Type> > surfaceInterpolationScheme<Type>::New
 
     if (constructorIter == MeshConstructorTablePtr_->end())
     {
-        FatalIOErrorIn
-        (
-            "surfaceInterpolationScheme<Type>::New(const fvMesh&, Istream&)",
-            schemeData
-        )   << "Unknown discretisation scheme "
+        FatalIOErrorInFunction(schemeData)
+            << "Unknown discretisation scheme "
             << schemeName << nl << nl
             << "Valid schemes are :" << endl
             << MeshConstructorTablePtr_->sortedToc()
@@ -101,12 +94,8 @@ tmp<surfaceInterpolationScheme<Type> > surfaceInterpolationScheme<Type>::New
 {
     if (schemeData.eof())
     {
-        FatalIOErrorIn
-        (
-            "surfaceInterpolationScheme<Type>::New"
-            "(const fvMesh&, const surfaceScalarField&, Istream&)",
-            schemeData
-        )   << "Discretisation scheme not specified"
+        FatalIOErrorInFunction(schemeData)
+            << "Discretisation scheme not specified"
             << endl << endl
             << "Valid schemes are :" << endl
             << MeshConstructorTablePtr_->sortedToc()
@@ -117,9 +106,8 @@ tmp<surfaceInterpolationScheme<Type> > surfaceInterpolationScheme<Type>::New
 
     if (surfaceInterpolation::debug || surfaceInterpolationScheme<Type>::debug)
     {
-        Info<< "surfaceInterpolationScheme<Type>::New"
-               "(const fvMesh&, const surfaceScalarField&, Istream&)"
-               " : discretisation scheme = "
+        InfoInFunction
+            << " : discretisation scheme = "
             << schemeName
             << endl;
     }
@@ -129,12 +117,8 @@ tmp<surfaceInterpolationScheme<Type> > surfaceInterpolationScheme<Type>::New
 
     if (constructorIter == MeshFluxConstructorTablePtr_->end())
     {
-        FatalIOErrorIn
-        (
-            "surfaceInterpolationScheme<Type>::New"
-            "(const fvMesh&, const surfaceScalarField&, Istream&)",
-            schemeData
-        )   << "Unknown discretisation scheme "
+        FatalIOErrorInFunction(schemeData)
+            << "Unknown discretisation scheme "
             << schemeName << nl << nl
             << "Valid schemes are :" << endl
             << MeshFluxConstructorTablePtr_->sortedToc()
@@ -143,13 +127,6 @@ tmp<surfaceInterpolationScheme<Type> > surfaceInterpolationScheme<Type>::New
 
     return constructorIter()(mesh, faceFlux, schemeData);
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class Type>
-surfaceInterpolationScheme<Type>::~surfaceInterpolationScheme()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -167,11 +144,8 @@ surfaceInterpolationScheme<Type>::interpolate
 {
     if (surfaceInterpolation::debug)
     {
-        Info<< "surfaceInterpolationScheme<Type>::uncorrectedInterpolate"
-               "(const GeometricField<Type, fvPatchField, volMesh>&, "
-               "const tmp<surfaceScalarField>&, "
-               "const tmp<surfaceScalarField>&) : "
-               "interpolating "
+        InfoInFunction
+            << "interpolating "
             << vf.type() << " "
             << vf.name()
             << " from cells to faces "
@@ -206,13 +180,16 @@ surfaceInterpolationScheme<Type>::interpolate
     );
     GeometricField<Type, fvsPatchField, surfaceMesh>& sf = tsf();
 
+    // updateCoupledPatchFields for patchNeighbourField update
+    // HJ, 10/Sep/2021
+    vf.boundaryField().updateCoupledPatchFields();
+
     Field<Type>& sfi = sf.internalField();
 
     for (label fi=0; fi<P.size(); fi++)
     {
         sfi[fi] = lambda[fi]*vfi[P[fi]] + y[fi]*vfi[N[fi]];
     }
-
 
     // Interpolate across coupled patches using given lambdas and ys
 
@@ -245,10 +222,8 @@ surfaceInterpolationScheme<Type>::interpolate
 {
     if (surfaceInterpolation::debug)
     {
-        Info<< "surfaceInterpolationScheme<Type>::interpolate"
-               "(const GeometricField<Type, fvPatchField, volMesh>&, "
-               "const tmp<surfaceScalarField>&) : "
-               "interpolating "
+        InfoInFunction
+            << "interpolating "
             << vf.type() << " "
             << vf.name()
             << " from cells to faces "
@@ -281,9 +256,13 @@ surfaceInterpolationScheme<Type>::interpolate
     );
     GeometricField<Type, fvsPatchField, surfaceMesh>& sf = tsf();
 
+    // updateCoupledPatchFields for patchNeighbourField update
+    // HJ, 10/Sep/2021
+    vf.boundaryField().updateCoupledPatchFields();
+
     Field<Type>& sfi = sf.internalField();
 
-    for (label fi=0; fi<P.size(); fi++)
+    for (label fi = 0; fi < P.size(); fi++)
     {
         sfi[fi] = lambda[fi]*(vfi[P[fi]] - vfi[N[fi]]) + vfi[N[fi]];
     }
@@ -317,17 +296,16 @@ surfaceInterpolationScheme<Type>::interpolate
 {
     if (surfaceInterpolation::debug)
     {
-        Info<< "surfaceInterpolationScheme<Type>::interpolate"
-               "(const GeometricField<Type, fvPatchField, volMesh>&) : "
-               "interpolating "
+        InfoInFunction
+            << "interpolating "
             << vf.type() << " "
             << vf.name()
             << " from cells to faces"
             << endl;
     }
 
-    tmp<GeometricField<Type, fvsPatchField, surfaceMesh> > tsf
-        = interpolate(vf, weights(vf));
+    tmp<GeometricField<Type, fvsPatchField, surfaceMesh> > tsf =
+        interpolate(vf, weights(vf));
 
     if (corrected())
     {

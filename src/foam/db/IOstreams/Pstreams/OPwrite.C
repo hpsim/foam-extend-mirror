@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ Foam::OPstream::~OPstream()
         )
     )
     {
-        FatalErrorIn("OPstream::~OPstream()")
+        FatalErrorInFunction
             << "MPI_Bsend cannot send outgoing message"
             << Foam::abort(FatalError);
     }
@@ -75,6 +75,7 @@ bool Foam::OPstream::write
             << " commsType:" << Pstream::commsTypeNames[commsType]
             << Foam::endl;
     }
+
     if (Pstream::warnComm != -1 && comm != Pstream::warnComm)
     {
         Pout<< "OPstream::write : starting write to:" << toProcNo
@@ -160,11 +161,9 @@ bool Foam::OPstream::write
     }
     else
     {
-        FatalErrorIn
-        (
-            "OPstream::write"
-            "(const int fromProcNo, char* buf, std::streamsize bufSize)"
-        )   << "Unsupported communications type " << commsType
+        FatalErrorInFunction
+            << "Unsupported communications type "
+            << Pstream::commsTypeNames[commsType]
             << Foam::abort(FatalError);
     }
 

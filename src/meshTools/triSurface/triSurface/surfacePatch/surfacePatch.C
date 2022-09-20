@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -85,15 +85,6 @@ Foam::surfacePatch::surfacePatch
     geometricSurfacePatch(name, dict, index),
     size_(readLabel(dict.lookup("nFaces"))),
     start_(readLabel(dict.lookup("startFace")))
-{}
-
-
-// Construct as copy
-Foam::surfacePatch::surfacePatch(const Foam::surfacePatch& sp)
-:
-    geometricSurfacePatch(sp),
-    size_(sp.size()),
-    start_(sp.start())
 {}
 
 

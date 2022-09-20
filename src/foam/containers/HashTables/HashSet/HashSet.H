@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -155,6 +155,9 @@ public:
 
         //- Return true if the entry exists, same as found()
         inline bool operator[](const Key&) const;
+
+        //- Assignment operator
+        void operator=(const HashSet<Key, Hash>&);
 
         //- Equality. Two hashtables are equal when their contents are equal.
         //  Independent of table size or order.

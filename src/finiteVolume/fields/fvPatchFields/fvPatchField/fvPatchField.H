@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -277,8 +277,7 @@ public:
 
 
     //- Destructor
-    virtual ~fvPatchField<Type>()
-    {}
+    virtual ~fvPatchField<Type>() = default;
 
 
     // Member functions
@@ -349,6 +348,13 @@ public:
             virtual bool blockCoupled() const
             {
                 return false;
+            }
+
+            //- Return true if this coupled patch fields are updated
+            virtual bool couplesUpdated() const
+            {
+                notImplemented(type() + "::couplesUpdated()");
+                return true;
             }
 
             //- Return true if the boundary condition has already been updated
@@ -429,6 +435,11 @@ public:
             (
                 const Pstream::commsTypes commsType = Pstream::blocking
             );
+
+            //- Clear field caches.  Management for patchNeighbourField
+            //  for coupled patches involving communication
+            virtual void clearCaches() const
+            {}
 
 
             // Decoupled matrix coefficients

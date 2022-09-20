@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ void Foam::polyMesh::initMesh()
 {
     if (debug)
     {
-        Info<< "void polyMesh::initMesh() : "
+        InfoInFunction
             << "initialising primitiveMesh" << endl;
     }
 
@@ -53,7 +53,7 @@ void Foam::polyMesh::initMesh()
             }
         }
 
-        InfoIn("void polyMesh::initMesh()")
+        InfoInFunction
             << "Truncating owner list at " << nActiveFaces
             << " for backward compatibility" << endl;
 
@@ -121,8 +121,8 @@ void Foam::polyMesh::initMesh()
     {
         if (debug)
         {
-            Info<< "void polyMesh::initMesh() : "
-                << "unused faces detected.  "
+            InfoInFunction
+                << "Unused faces detected.  "
                 << "Number of used faces: " << nUsedFaces
                 << ".  Total number of faces: " << allFaces_.size() << endl;
         }
@@ -153,8 +153,8 @@ void Foam::polyMesh::initMesh()
         {
             if (debug)
             {
-                Info<< "void polyMesh::initMesh() : unused points "
-                    << "detected.  Number of used points: "
+                InfoInFunction
+                    << "Unused points detected.  Number of used points: "
                     << nUsedPoints << ". Total number of points: "
                     << allPoints_.size() << endl;
             }
@@ -163,7 +163,7 @@ void Foam::polyMesh::initMesh()
             {
                 if (usedPoints[i])
                 {
-                    FatalErrorIn("void polyMesh::initMesh()")
+                    FatalErrorInFunction
                         << "Error in point ordering: mixed used and unused "
                         << "points at the end of point list." << nl
                         << "Last used point: " << nUsedPoints
@@ -234,7 +234,7 @@ void Foam::polyMesh::initMesh(cellList& c)
 {
     if (debug)
     {
-        Info<< "void polyMesh::initMesh(cellList& c) : "
+        InfoInFunction
             << "calculating owner-neighbour arrays" << endl;
     }
 
@@ -291,7 +291,7 @@ void Foam::polyMesh::initMesh(cellList& c)
     {
         if (debug)
         {
-            Info<< "void polyMesh::initMesh(cellList& c) : "
+            InfoInFunction
                 << "unused faces detected.  "
                 << "Number of used faces: " << nUsedFaces
                 << ".  Total number of faces: " << owner_.size() << endl;
@@ -301,7 +301,7 @@ void Foam::polyMesh::initMesh(cellList& c)
         {
             if (owner_[i] >= 0)
             {
-                FatalErrorIn("void polyMesh::initMesh(cellList& c)")
+                FatalErrorInFunction
                     << "Error in face ordering: mixed used and unused "
                     << "faces at the end of face list." << nl
                     << "Number of used faces: " << nUsedFaces
@@ -339,8 +339,8 @@ void Foam::polyMesh::initMesh(cellList& c)
         {
             if (debug)
             {
-                Info<< "void polyMesh::initMesh(cellList& c) : unused points "
-                    << "detected.  Number of used points: "
+                InfoInFunction
+                    << "Unused points detected.  Number of used points: "
                     << nUsedPoints << ". Total number of points: "
                     << allPoints_.size() << endl;
             }
@@ -349,7 +349,7 @@ void Foam::polyMesh::initMesh(cellList& c)
             {
                 if (usedPoints[i])
                 {
-                    FatalErrorIn("void polyMesh::initMesh(cellList& c)")
+                    FatalErrorInFunction
                         << "Error in point ordering: mixed used and unused "
                         << "points at the end of point list." << nl
                         << "Number of used points: " << nUsedPoints

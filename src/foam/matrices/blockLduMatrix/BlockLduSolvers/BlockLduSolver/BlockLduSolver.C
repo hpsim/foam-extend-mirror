@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ Foam::autoPtr<typename Foam::BlockLduSolver<Type> >
 Foam::BlockLduSolver<Type>::New
 (
     const word& fieldName,
-    BlockLduMatrix<Type>& matrix,
+    const BlockLduMatrix<Type>& matrix,
     const dictionary& dict
 )
 {
@@ -130,15 +130,8 @@ Foam::BlockLduSolver<Type>::New
     }
     else
     {
-        FatalErrorIn
-        (
-            "BlockLduSolver<Type>::New\n"
-            "(\n"
-            "    const word& fieldName,\n"
-            "    BlockLduMatrix<Type>& matrix,\n"
-            "    const dictionary& dict\n"
-            ")"
-        )   << "cannot solve incomplete matrix, "
+        FatalErrorInFunction
+            << "cannot solve incomplete matrix, "
                "no diagonal or off-diagonal coefficient"
             << exit(FatalError);
 
@@ -153,7 +146,7 @@ Foam::BlockLduSolver<Type>::New
 (
     const word& solverName,
     const word& fieldName,
-    BlockLduMatrix<Type>& matrix,
+    const BlockLduMatrix<Type>& matrix,
     const dictionary& dict
 )
 {
@@ -168,15 +161,8 @@ Foam::BlockLduSolver<Type>::New
     {
         if (!symMatrixConstructorTablePtr_)
         {
-            FatalErrorIn
-            (
-                "BlockLduSolver<Type>::New\n"
-                "(\n"
-                "    const word& fieldName,\n"
-                "    BlockLduMatrix<Type>& matrix,\n"
-                "    const dictionary& dict\n"
-                ")"
-            )   << "Initialization problem." << endl;
+            FatalErrorInFunction
+                << "Initialization problem." << endl;
         }
 
         typename symMatrixConstructorTable::iterator constructorIter =
@@ -184,17 +170,8 @@ Foam::BlockLduSolver<Type>::New
 
         if (constructorIter == symMatrixConstructorTablePtr_->end())
         {
-            FatalIOErrorIn
-            (
-                "BlockLduSolver<Type>::New\n"
-                "(\n"
-                "    const word& solverName,\n"
-                "    const word& fieldName,\n"
-                "    BlockLduMatrix<Type>& matrix,\n"
-                "    const dictionary& dict\n"
-                ")",
-                dict
-            )   << "Unknown symmetric matrix solver " << solverName
+            FatalIOErrorInFunction(dict)
+                << "Unknown symmetric matrix solver " << solverName
                 << endl << endl
                 << "Valid symmetric matrix solvers are :" << endl
                 << symMatrixConstructorTablePtr_->sortedToc()
@@ -215,16 +192,8 @@ Foam::BlockLduSolver<Type>::New
     {
         if (!asymMatrixConstructorTablePtr_)
         {
-            FatalErrorIn
-            (
-                "BlockLduSolver<Type>::New\n"
-                "(\n"
-                "    const word& solverName,\n"
-                "    const word& fieldName,\n"
-                "    BlockLduMatrix<Type>& matrix,\n"
-                "    const dictionary& dict\n"
-                ")"
-            )   << "Initialization problem." << endl;
+            FatalErrorInFunction
+                << "Initialization problem." << endl;
         }
 
         typename asymMatrixConstructorTable::iterator constructorIter =
@@ -232,17 +201,8 @@ Foam::BlockLduSolver<Type>::New
 
         if (constructorIter == asymMatrixConstructorTablePtr_->end())
         {
-            FatalIOErrorIn
-            (
-                "BlockLduSolver<Type>::New\n"
-                "(\n"
-                "    const word& solverName,\n"
-                "    const word& fieldName,\n"
-                "    BlockLduMatrix<Type>& matrix,\n"
-                "    const dictionary& dict\n"
-                ")",
-                dict
-            )   << "Unknown asymmetric matrix solver " << solverName
+            FatalIOErrorInFunction(dict)
+                << "Unknown asymmetric matrix solver " << solverName
                 << endl << endl
                 << "Valid asymmetric matrix solvers are :" << endl
                 << asymMatrixConstructorTablePtr_->sortedToc()
@@ -261,16 +221,8 @@ Foam::BlockLduSolver<Type>::New
     }
     else
     {
-        FatalErrorIn
-        (
-            "BlockLduSolver<Type>::New\n"
-            "(\n"
-            "    const word& solverName,\n"
-            "    const word& fieldName,\n"
-            "    BlockLduMatrix<Type>& matrix,\n"
-            "    const dictionary& dict\n"
-            ")"
-        )   << "cannot solve incomplete matrix, "
+        FatalErrorInFunction
+            << "cannot solve incomplete matrix, "
                "no diagonal or off-diagonal coefficient"
             << exit(FatalError);
 

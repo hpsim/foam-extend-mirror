@@ -172,8 +172,8 @@
     #define TP_GIVES
     #define TP_RECEIVES
     #define TP_RECEIVES_GIVES
-    #define TP_ARRAY_GIVES         
-    #define TP_ARRAY_RECEIVES      
+    #define TP_ARRAY_GIVES
+    #define TP_ARRAY_RECEIVES
     #define TP_ARRAY_RECEIVES_GIVES
 #endif
 
@@ -390,18 +390,18 @@
 
 #pragma warning(disable: 4018)  // signed/unsigned mismatch
 #pragma warning(disable: 4100)  // unreferenced formal parameter
-#pragma warning(disable: 4146)  // unary minus operator applied to unsigned type, 
+#pragma warning(disable: 4146)  // unary minus operator applied to unsigned type,
     // result still unsigned
-#pragma warning(disable: 4244)  // 'conversion' conversion from 'type1' to 'type2', 
+#pragma warning(disable: 4244)  // 'conversion' conversion from 'type1' to 'type2',
     // possible loss of data
-#pragma warning(disable: 4245)  // conversion from 'type1' to 'type2', signed/unsigned 
+#pragma warning(disable: 4245)  // conversion from 'type1' to 'type2', signed/unsigned
     // mismatch
 #pragma warning(disable: 4511)  // 'class' : copy constructor could not be generated
 #pragma warning(disable: 4512)  // 'class' : assignment operator could not be generated
-#pragma warning(disable: 4663)  // C++ language change: to explicitly specialize class 
+#pragma warning(disable: 4663)  // C++ language change: to explicitly specialize class
     // template 'vector'
 #pragma warning(disable: 4710)  // 'function' : function not inlined
-#pragma warning(disable: 4786)  // identifier was truncated to 'number' characters 
+#pragma warning(disable: 4786)  // identifier was truncated to 'number' characters
     // in the debug information
 #endif
 

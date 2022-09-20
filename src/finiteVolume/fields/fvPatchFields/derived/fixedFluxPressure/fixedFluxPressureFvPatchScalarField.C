@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -162,10 +162,8 @@ void Foam::fixedFluxPressureFvPatchScalarField::updateCoeffs()
     }
     else
     {
-        FatalErrorIn
-        (
-            "void fixedFluxPressureFvPatchScalarField::updateCoeffs()"
-        )   << " Field " << rAUName_ << " not found for patch "
+        FatalErrorInFunction
+            << " Field " << rAUName_ << " not found for patch "
             << patch().name() << " and field "
             << dimensionedInternalField().name()
             << abort(FatalError);

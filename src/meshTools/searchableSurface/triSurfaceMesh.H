@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                           Class triSurfaceMesh Declaration
+                       Class triSurfaceMesh Declaration
 \*---------------------------------------------------------------------------*/
 
 class triSurfaceMesh
@@ -127,10 +127,10 @@ private:
         );
 
         //- Disallow default bitwise copy construct
-        triSurfaceMesh(const triSurfaceMesh&);
+        triSurfaceMesh(const triSurfaceMesh&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const triSurfaceMesh&);
+        void operator=(const triSurfaceMesh&) = delete;
 
 
 protected:
@@ -150,7 +150,7 @@ public:
         triSurfaceMesh(const IOobject&, const triSurface&);
 
         //- Construct read.
-        triSurfaceMesh(const IOobject& io);
+        explicit triSurfaceMesh(const IOobject& io);
 
         //- Construct from IO and dictionary (used by searchableSurface).
         //  Dictionary may contain a 'scale' entry (eg, 0.001: mm -> m)
@@ -162,8 +162,7 @@ public:
 
 
     // Destructor
-
-        virtual ~triSurfaceMesh();
+    virtual ~triSurfaceMesh();
 
         //- Clear storage
         void clearOut();
@@ -196,7 +195,7 @@ public:
 
             //- Get representative set of element coordinates
             //  Usually the element centres (should be of length size()).
-            virtual pointField coordinates() const;
+            virtual tmp<pointField> coordinates() const;
 
             virtual void findNearest
             (

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -115,13 +115,8 @@ Foam::labelList Foam::polyMesh::facePatchFaceCells
 
         if (!found)
         {
-            FatalErrorIn
-            (
-                "polyMesh::facePatchFaceCells(const faceList& patchFaces,"
-                "const labelListList& pointCells,"
-                "const faceListList& cellsFaceShapes,"
-                "const label patchID)"
-            )   << "face " << fI << " in patch " << patchID
+            FatalErrorInFunction
+                << "face " << fI << " in patch " << patchID
                 << " does not have neighbour cell"
                 << " face: " << patchFaces[fI]
                 << abort(FatalError);
@@ -282,20 +277,8 @@ void Foam::polyMesh::setTopology
             }
             else
             {
-                FatalErrorIn
-                (
-                    "polyMesh::setTopology\n"
-                    "(\n"
-                    "    const cellShapeList& cellsAsShapes,\n"
-                    "    const faceListList& boundaryFaces,\n"
-                    "    const wordList& boundaryPatchNames,\n"
-                    "    labelList& patchSizes,\n"
-                    "    labelList& patchStarts,\n"
-                    "    label& defaultPatchStart,\n"
-                    "    label& nFaces,\n"
-                    "    cellList& cells\n"
-                    ")"
-                )   << "Error in internal face insertion"
+                FatalErrorInFunction
+                    << "Error in internal face insertion"
                     << abort(FatalError);
             }
         }
@@ -341,20 +324,8 @@ void Foam::polyMesh::setTopology
                 {
                     if (cells[cellInside][cellFaceI] >= 0)
                     {
-                        FatalErrorIn
-                        (
-                            "polyMesh::setTopology\n"
-                            "(\n"
-                            "    const cellShapeList& cellsAsShapes,\n"
-                            "    const faceListList& boundaryFaces,\n"
-                            "    const wordList& boundaryPatchNames,\n"
-                            "    labelList& patchSizes,\n"
-                            "    labelList& patchStarts,\n"
-                            "    label& defaultPatchStart,\n"
-                            "    label& nFaces,\n"
-                            "    cellList& cells\n"
-                            ")"
-                        )   << "Trying to specify a boundary face " << curFace
+                        FatalErrorInFunction
+                            << "Trying to specify a boundary face " << curFace
                             << " on the face on cell " << cellInside
                             << " which is either an internal face or already "
                             << "belongs to some other patch.  This is face "
@@ -374,7 +345,7 @@ void Foam::polyMesh::setTopology
 
             if (!found)
             {
-                FatalErrorIn("polyMesh::polyMesh(... construct from shapes...)")
+                FatalErrorInFunction
                     << "face " << faceI << " of patch " << patchI
                     << " does not seem to belong to cell " << cellInside
                     << " which, according to the addressing, "
@@ -636,7 +607,7 @@ Foam::polyMesh::polyMesh
         {
             if (patchI != boundaryFaces.size()-1 || boundary_[patchI].size())
             {
-                FatalErrorIn("polyMesh::polyMesh(... construct from shapes...)")
+                FatalErrorInFunction
                     << "Default patch " << boundary_[patchI].name()
                     << " already has faces in it or is not"
                     << " last in list of patches." << exit(FatalError);
@@ -914,7 +885,7 @@ Foam::polyMesh::polyMesh
         {
             if (patchI != boundaryFaces.size()-1 || boundary_[patchI].size())
             {
-                FatalErrorIn("polyMesh::polyMesh(... construct from shapes...)")
+                FatalErrorInFunction
                     << "Default patch " << boundary_[patchI].name()
                     << " already has faces in it or is not"
                     << " last in list of patches." << exit(FatalError);
@@ -968,9 +939,6 @@ Foam::polyMesh::polyMesh
     {
         // Calculate topology for the patches (processor-processor comms etc.)
         boundary_.updateMesh();
-
-        // Calculate the geometry for the patches (transformation tensors etc.)
-        boundary_.calcGeometry();
     }
 
     if (debug)

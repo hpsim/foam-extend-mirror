@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -69,10 +69,13 @@ class PrimitivePatchInterpolation
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        PrimitivePatchInterpolation(const PrimitivePatchInterpolation&);
+        PrimitivePatchInterpolation
+        (
+            const PrimitivePatchInterpolation&
+        ) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const PrimitivePatchInterpolation&);
+        void operator=(const PrimitivePatchInterpolation&) = delete;
 
 
         //- Face-to-point weights
@@ -96,12 +99,11 @@ public:
     // Constructors
 
         //- Construct from PrimitivePatch
-        PrimitivePatchInterpolation(const Patch& p);
+        explicit PrimitivePatchInterpolation(const Patch& p);
 
 
-    // Destructor
-
-        ~PrimitivePatchInterpolation();
+    //- Destructor
+    ~PrimitivePatchInterpolation();
 
 
     // Member Functions

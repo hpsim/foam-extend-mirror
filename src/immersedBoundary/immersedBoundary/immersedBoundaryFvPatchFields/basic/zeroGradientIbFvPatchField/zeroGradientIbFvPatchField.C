@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -170,34 +170,27 @@ zeroGradientIbFvPatchField<Type>::zeroGradientIbFvPatchField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-// template<class Type>
-// void zeroGradientIbFvPatchField<Type>::autoMap
-// (
-//     const fvPatchFieldMapper& m
-// )
-// {
-//     // Base fields do not map: re-interpolate them from tri data
-//     this->updateIbValues();
-// }
+template<class Type>
+void zeroGradientIbFvPatchField<Type>::autoMap
+(
+    const fvPatchFieldMapper& m
+)
+{
+    // Base fields do not map: re-interpolate them from tri data
+    this->updateIbValues();
+}
 
 
-// template<class Type>
-// void zeroGradientIbFvPatchField<Type>::rmap
-// (
-//     const fvPatchField<Type>& ptf,
-//     const labelList&
-// )
-// {
-//     // Base fields do not rmap: re-interpolate them from tri data
-
-//     const zeroGradientIbFvPatchField<Type>& mptf =
-//         refCast<const zeroGradientIbFvPatchField<Type> >(ptf);
-
-//     // Set rmap tri data
-//     triValue_ = mptf.triValue_;
-
-//     this->updateIbValues();
-// }
+template<class Type>
+void zeroGradientIbFvPatchField<Type>::rmap
+(
+    const fvPatchField<Type>& ptf,
+    const labelList&
+)
+{
+    // Base fields do not rmap: re-interpolate them from tri data
+    this->updateIbValues();
+}
 
 
 template<class Type>
@@ -218,11 +211,8 @@ void zeroGradientIbFvPatchField<Type>::evaluate
 {
     this->updateIbValues();
 
-    // Get non-constant reference to internal field
-    Field<Type>& intField = const_cast<Field<Type>&>(this->internalField());
-
     // Set dead value
-    this->setDeadValues(intField);
+    this->setDeadValues(*this);
 
     // Evaluate fixed value condition
     zeroGradientFvPatchField<Type>::evaluate();

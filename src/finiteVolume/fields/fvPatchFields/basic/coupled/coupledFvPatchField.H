@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -132,6 +132,11 @@ public:
             {
                 return true;
             }
+
+            //- Return true if this coupled patch fields are updated
+            //  Return true if cached patchNeighbourField is available
+            //  or if the patch field does not cache it
+            virtual bool couplesUpdated() const = 0;
 
             //- Return neighbour field of internal field
             virtual tmp<Field<Type> > patchNeighbourField() const = 0;

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -23,6 +23,7 @@ License
 
 Author
     Henrik Rusche, Wikki GmbH.  All rights reserved
+    Refactoring by Hrvoje Jasak
 
 \*---------------------------------------------------------------------------*/
 
@@ -36,14 +37,9 @@ Author
 #include "radiationConstants.H"
 #include "VectorN.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
-
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-chtRcThermalDiffusivityResistanceFvPatchScalarField::
+Foam::chtRcThermalDiffusivityResistanceFvPatchScalarField::
 chtRcThermalDiffusivityResistanceFvPatchScalarField
 (
     const fvPatch& p,
@@ -55,7 +51,7 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField
 {}
 
 
-chtRcThermalDiffusivityResistanceFvPatchScalarField::
+Foam::chtRcThermalDiffusivityResistanceFvPatchScalarField::
 chtRcThermalDiffusivityResistanceFvPatchScalarField
 (
     const fvPatch& p,
@@ -68,7 +64,7 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField
 {}
 
 
-chtRcThermalDiffusivityResistanceFvPatchScalarField::
+Foam::chtRcThermalDiffusivityResistanceFvPatchScalarField::
 chtRcThermalDiffusivityResistanceFvPatchScalarField
 (
     const chtRcThermalDiffusivityResistanceFvPatchScalarField& ptf,
@@ -82,7 +78,7 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField
 {}
 
 
-chtRcThermalDiffusivityResistanceFvPatchScalarField::
+Foam::chtRcThermalDiffusivityResistanceFvPatchScalarField::
 chtRcThermalDiffusivityResistanceFvPatchScalarField
 (
     const chtRcThermalDiffusivityResistanceFvPatchScalarField& ptf,
@@ -96,7 +92,7 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
-void chtRcThermalDiffusivityResistanceFvPatchScalarField::evaluate
+void Foam::chtRcThermalDiffusivityResistanceFvPatchScalarField::evaluate
 (
     const Pstream::commsTypes
 )
@@ -105,7 +101,7 @@ void chtRcThermalDiffusivityResistanceFvPatchScalarField::evaluate
 }
 
 
-void chtRcThermalDiffusivityResistanceFvPatchScalarField::updateCoeffs()
+void Foam::chtRcThermalDiffusivityResistanceFvPatchScalarField::updateCoeffs()
 {
     if (updated())
     {
@@ -117,7 +113,8 @@ void chtRcThermalDiffusivityResistanceFvPatchScalarField::updateCoeffs()
 
 
 void
-chtRcThermalDiffusivityResistanceFvPatchScalarField::calcThermalDiffusivity
+Foam::chtRcThermalDiffusivityResistanceFvPatchScalarField::
+calcThermalDiffusivity
 (
     chtRegionCoupleBase& owner,
     const chtRegionCoupleBase& neighbour
@@ -125,7 +122,6 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcThermalDiffusivity
 {
     const fvPatch& p = owner.patch();
     const fvMesh& mesh = p.boundaryMesh().mesh();
-    const magLongDelta& mld = magLongDelta::New(mesh);
 
     const chtRcTemperatureFvPatchScalarField& TwOwn =
         dynamic_cast<const chtRcTemperatureFvPatchScalarField&>
@@ -225,40 +221,10 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcThermalDiffusivity
     scalarField kHarm = weights*fOwn + (1.0 - weights)*fNei;
     kHarm *= cond/(kHarm*p.deltaCoeffs() + cond);
 
-    const scalarField kOwn = fOwn/(1.0 - p.weights())/mld.magDelta(p.index());
-    const scalarField kNei = fNei/p.weights()/mld.magDelta(p.index());
-
-    //Info << "kOwn = " << kOwn << endl;
-    //Info << "kNei = " << kNei << endl;
-    //Info << "TcOwn = " << TcOwn << endl;
-    //Info << "TcNei = " << TcNei << endl;
-    //Info << "DeltaT = " << TcNei - TcOwn << endl;
-    //Info << "TwOwn = " << TwOwn << endl;
-    //Info << "TwNei = " << TwNei << endl;
-
-    //Info << "QrOwn = " << QrOwn << endl;
-    //Info << "Qr = " << Qr << endl;
-    //Info << "kOwn + kNei = " << (kOwn + kNei) << endl;
-    //Info << "f1 = " << fourQroOwn << endl;
-    //Info << "f2 = " << fourQroNei << endl;
+    const scalarField kOwn = fOwn/((1.0 - p.weights())*p.magLongDeltas());
+    const scalarField kNei = fNei/(p.weights()*p.magLongDeltas());
 
     scalarField temp = TwNei*(cond + kNei) + fourQroNei;
-
-/*
-    k = -TwOwn*
-    (
-        kOwn*
-        (
-            TwNei*(cond*(kNei*TcNei + fourQroOwn + fourQroNei + Qr) + kNei*(fourQroOwn + QrOwn))
-          + fourQroNei*(fourQroOwn + QrOwn)
-        )
-        + kOwn*kOwn*TcOwn*temp
-    );
-
-    k /= stabilise(TwOwn*(kOwn*temp + cond*(TwNei*kNei + fourQroNei)) + fourQroOwn*temp, SMALL);
-    k += kOwn*TcOwn;
-    k /= stabilise(TcOwn - TcNei, SMALL)*p.deltaCoeffs();
-*/
 
     // Expression is equivalent to the one above
     k = kOwn*
@@ -290,21 +256,17 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcThermalDiffusivity
 
     k /= p.deltaCoeffs();
 
-    //Info << "k = " << k << endl;
-
     forAll(k, facei)
     {
         k[facei] = max(min(k[facei], 100*kHarm[facei]), 0.01*kHarm[facei]);
     }
-
-    //Info << "k = " << k << endl;
 
     owner.fvPatchScalarField::updateCoeffs();
 }
 
 
 void
-chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
+Foam::chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
 (
     chtRcTemperatureFvPatchScalarField& TwOwn,
     const chtRcTemperatureFvPatchScalarField& neighbour,
@@ -312,8 +274,6 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
 ) const
 {
     const fvPatch& p = TwOwn.patch();
-    const fvMesh& mesh = p.boundaryMesh().mesh();
-    const magLongDelta& mld = magLongDelta::New(mesh);
 
     const scalarField& fOwn = ownerK.originalPatchField();
     const scalarField TcOwn = TwOwn.patchInternalField();
@@ -404,15 +364,8 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
         }
     }
 
-    const scalarField kOwn = fOwn/(1.0 - p.weights())/mld.magDelta(p.index());
-    const scalarField kNei = fNei/p.weights()/mld.magDelta(p.index());
-
-    //Info << "kOwn = " << kOwn << endl;
-    //Info << "kNei = " << kNei << endl;
-    //Info << "TcOwn = " << TcOwn << endl;
-    //Info << "TcNei = " << TcNei << endl;
-    //Info << "QrOwn = " << QrOwn << " Sum = " << sum(QrOwn*p.magSf()) << endl;
-    //Info << "Qr = " << Qr << " Sum = " << sum(Qr*p.magSf()) << endl;
+    const scalarField kOwn = fOwn/((1.0 - p.weights())*p.magLongDeltas());
+    const scalarField kNei = fNei/(p.weights()*p.magLongDeltas());
 
     scalarField temp = fourQroOwn + QrOwn + kOwn*TcOwn;
 
@@ -438,19 +391,12 @@ chtRcThermalDiffusivityResistanceFvPatchScalarField::calcTemperature
       + fourQroOwn*(TwNei*(cond + kNei) + fourQroNei)
     );
 
-    //Info << "TwOwn = " << TwOwn << endl;
-
-    //scalarField q1 = (TwOwn - TcOwn)*kOwn;
-    //Info << "q1 = " << q1 << " Sum = " << sum(q1*p.magSf()) << endl;
-
-    //scalarField q2 = (TcNei - TcOwn)*ownerK*p.deltaCoeffs();
-    //Info << "q2 = " << q2 << " Sum = " << sum(q2*p.magSf()) << endl;
-
     TwOwn.fvPatchScalarField::updateCoeffs();
 }
 
 
-void chtRcThermalDiffusivityResistanceFvPatchScalarField::write(Ostream& os) const
+void Foam::chtRcThermalDiffusivityResistanceFvPatchScalarField::
+write(Ostream& os) const
 {
     fvPatchScalarField::write(os);
     conductivity_.writeEntry("conductivity", os);
@@ -460,19 +406,17 @@ void chtRcThermalDiffusivityResistanceFvPatchScalarField::write(Ostream& os) con
 }
 
 
-//- Specify data associated with VectorN<scalar, 5> type is contiguous
-template<>
-inline bool contiguous<VectorN<scalar, 5> >() {return true;}
-
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-makePatchTypeField
-(
-    fvPatchScalarField,
-    chtRcThermalDiffusivityResistanceFvPatchScalarField
-);
+namespace Foam
+{
+    makePatchTypeField
+    (
+        fvPatchScalarField,
+        chtRcThermalDiffusivityResistanceFvPatchScalarField
+    );
 
 } // End namespace Foam
+
 
 // ************************************************************************* //

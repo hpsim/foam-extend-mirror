@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -234,7 +234,7 @@ bool Foam::ggiCheckFunctionObject::execute(const bool forceWrite)
                     << mag(localArea - shadowArea)/
                        (Foam::max(localArea, shadowArea) + SMALL)*100
                     << " % " << nl
-                    << "Flux: " << localFluxMag << " " << shadowFluxMag
+                    << "Flux: " << localFlux << " " << shadowFlux
                     << " Diff = " << localFlux + shadowFlux << " or "
                     << mag(localFlux + shadowFlux)/
                        (localFluxMag + SMALL)*100

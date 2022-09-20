@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -393,11 +393,8 @@ Foam::sixDOFODE::sixDOFODE(const IOobject& io)
 
     if (cmptMin(momentOfInertia_.value()) < SMALL)
     {
-        FatalIOErrorIn
-        (
-            "sixDOFODE::sixDOFODE(const IOobject& io)",
-            dict_
-        )   << "Zero or negative moment of inertia detected: "
+        FatalIOErrorInFunction(dict_)
+            << "Zero or negative moment of inertia detected: "
             << momentOfInertia_.value()
             << nl << "Please check " << dict_.name() << "dictionary."
             << exit(FatalIOError);
@@ -410,11 +407,8 @@ Foam::sixDOFODE::sixDOFODE(const IOobject& io)
      || ((maxRelaxFactor_ - minRelaxFactor_) < 0)
     )
     {
-        FatalIOErrorIn
-        (
-            "sixDOFODE::sixDOFODE(const IOobject& io)",
-            dict_
-        )   << "Invalid minRelaxFactor and maxRelaxFactor specified."
+        FatalIOErrorInFunction(dict_)
+            << "Invalid minRelaxFactor and maxRelaxFactor specified."
             << nl << "Please use values within 0 and 1."
             << exit(FatalIOError);
     }
@@ -514,12 +508,6 @@ Foam::sixDOFODE::sixDOFODE(const word& name, const sixDOFODE& sd)
     translationalRestraints_(sd.translationalRestraints_),
     rotationalRestraints_(sd.rotationalRestraints_),
     combinedRestraints_(sd.combinedRestraints_)
-{}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::sixDOFODE::~sixDOFODE()
 {}
 
 

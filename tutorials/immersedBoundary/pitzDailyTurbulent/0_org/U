@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -22,11 +22,9 @@ boundaryField
 {
     pitzDailyIB
     {
-        type mixedIb;
+        type fixedValueIb;
         patchType immersedBoundary;
         triValue uniform (0 0 0);
-        triGradient uniform (0 0 0);
-        triValueFraction uniform 1;
         setDeadValue yes;
         deadValue (0 0 0);
         value uniform (0 0 0);
@@ -57,6 +55,5 @@ boundaryField
         type empty;
     }
 }
-
 
 // ************************************************************************* //

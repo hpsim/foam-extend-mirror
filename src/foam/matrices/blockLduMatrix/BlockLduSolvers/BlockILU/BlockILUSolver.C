@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ Foam::BlockILUSolver<Type>::solve
 (
     Field<Type>& x,
     const Field<Type>& b
-)
+) const
 {
     // Create local references to avoid the spread this-> ugliness
     const BlockLduMatrix<Type>& matrix = this->matrix_;
@@ -114,7 +114,9 @@ Foam::BlockILUSolver<Type>::solve
                 residual[i] = b[i] - residual[i];
             }
 
-            solverPerf.finalResidual() = cmptDivide(gSum(cmptMag(residual)), norm);
+            solverPerf.finalResidual() =
+                cmptDivide(gSum(cmptMag(residual)), norm);
+
         } while (!this->stop(solverPerf));
     }
 

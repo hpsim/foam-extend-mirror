@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -62,10 +62,8 @@ Foam::multiMaterialZonesThermal::multiMaterialZonesThermal
 
             if (zoneID < 0)
             {
-                FatalErrorIn
-                (
-                    "multiMaterialZonesThermal::multiMaterialZonesThermal()\n"
-                )   << "Zone " << zones[zoneI]
+                FatalIOErrorInFunction(lawEntries[lawI].dict())
+                    << "Zone " << zones[zoneI]
                     << " specified in material " << lawEntries[lawI].keyword()
                     << " does not exist"
                     << abort(FatalError);
@@ -86,10 +84,5 @@ Foam::multiMaterialZonesThermal::multiMaterialZonesThermal
     checkLaws();
 }
 
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::multiMaterialZonesThermal::~multiMaterialZonesThermal()
-{}
 
 // ************************************************************************* //

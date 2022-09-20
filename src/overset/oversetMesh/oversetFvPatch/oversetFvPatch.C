@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -52,6 +52,12 @@ void Foam::oversetFvPatch::makeWeights(fvsPatchScalarField& w) const
 void Foam::oversetFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 {
     fvPatch::makeDeltaCoeffs(dc);
+}
+
+
+void Foam::oversetFvPatch::makeMagLongDeltas(fvsPatchScalarField& dc) const
+{
+    fvPatch::makeMagLongDeltas(dc);
 }
 
 

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ void Foam::porousZones::addResistance
 }
 
 
-void Foam::porousZones::addHeatResistance
+void Foam::porousZones::addHeatSource
 (
     fvScalarMatrix& hTEqn,
     const volScalarField& T,
@@ -101,7 +101,7 @@ void Foam::porousZones::addHeatResistance
 {
     forAll(*this, i)
     {
-        operator[](i).addHeatResistance
+        operator[](i).addHeatSource
         (
             hTEqn,
             T,

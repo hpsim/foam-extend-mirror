@@ -7,11 +7,11 @@
         rho.dimensionedInternalField()*g
       + coalParcels.SU()
       + limestoneParcels.SU()
+      + massSource.Su()*momentumSource.Su()
     );
 
     UEqn.relax();
 
-    if (pimple.momentumPredictor())
-    {
-        solve(UEqn == -fvc::grad(p));
-    }
+    pZones.addResistance(UEqn);
+
+    solve(UEqn == -fvc::grad(p));

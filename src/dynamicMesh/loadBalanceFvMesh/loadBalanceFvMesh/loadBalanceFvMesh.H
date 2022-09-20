@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -63,10 +63,10 @@ class loadBalanceFvMesh
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        loadBalanceFvMesh(const loadBalanceFvMesh&);
+        loadBalanceFvMesh(const loadBalanceFvMesh&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const loadBalanceFvMesh&);
+        void operator=(const loadBalanceFvMesh&) = delete;
 
         //- Check balance.  Return true if re-balancing is required
         bool checkLoadBalance(const scalarField& weights) const;
@@ -85,7 +85,7 @@ public:
 
 
     //- Destructor
-    virtual ~loadBalanceFvMesh();
+    virtual ~loadBalanceFvMesh() = default;
 
 
     // Member Functions

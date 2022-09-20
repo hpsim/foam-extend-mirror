@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -29,25 +29,27 @@ Description
 
     Uses the Boussinesq approximation:
     \f[
-        rho_{k} = 1 - beta(T - T_{ref})
+        rho_{eff} = 1 - beta(T - T_{ref})
     \f]
 
     where:
-        \f$ rho_{k} \f$ = the effective (driving) kinematic density
+        \f$ rho_{eff} \f$ = the effective (driving) density
         beta = thermal expansion coefficient [1/K]
         T = temperature [K]
         \f$ T_{ref} \f$ = reference temperature [K]
 
     Valid when:
     \f[
-        rho_{k} << 1
+        rho_{eff} << 1
     \f]
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
 #include "singlePhaseTransportModel.H"
+#include "fluidThermalModel.H"
 #include "turbulenceModel.H"
+#include "porousZones.H"
 #include "pisoControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

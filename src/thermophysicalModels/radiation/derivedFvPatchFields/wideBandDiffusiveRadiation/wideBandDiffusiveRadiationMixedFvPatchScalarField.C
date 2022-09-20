@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -43,11 +43,8 @@ wideBandDiffusiveRadiationMixedFvPatchScalarField::calcSumOutgoingAngles() const
 {
     if (sumOutgoingAnglesPtr_)
     {
-        FatalErrorIn
-        (
-            "wideBandDiffusiveRadiationMixedFvPatchScalarField"
-            "::calcSumOutgoingAngles()"
-        )   << "sumOutgoingAnglesPtr_ already calculated"
+        FatalErrorInFunction
+            << "sumOutgoingAnglesPtr_ already calculated"
             << abort(FatalError);
     }
 
@@ -209,12 +206,10 @@ void wideBandDiffusiveRadiationMixedFvPatchScalarField::updateCoeffs()
 
     if (dom.nLambda() == 0)
     {
-        FatalErrorIn
-        (
-            ""
-            "wideBandDiffusiveRadiationMixedFvPatchScalarField::updateCoeffs"
-        )   << " a non-grey boundary condition is used with a grey "
-            << "absorption model" << nl << exit(FatalError);
+        FatalErrorInFunction
+            << " a non-grey boundary condition is used with a grey "
+            << "absorption model" << nl
+            << abort(FatalError);
     }
 
     // Get rayId and lambda Id for this ray

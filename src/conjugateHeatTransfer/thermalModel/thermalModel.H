@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -25,7 +25,8 @@ Class
     thermalModel
 
 Description
-    Thermal material properties for solids.
+    Thermal model for solids, including material properties, thermal sources
+    and gaps.
 
 Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved.
@@ -73,17 +74,17 @@ class thermalModel
         //- Contact resistance
         PtrList<thermalGap> gapPtr_;
 
-        //- Thermal Source
+        //- Thermal source
         PtrList<thermalSource> sourcePtr_;
 
 
     // Private Member Functions
 
         //- Disallow copy construct
-        thermalModel(const thermalModel&);
+        thermalModel(const thermalModel&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const thermalModel&);
+        void operator=(const thermalModel&) = delete;
 
 
 public:
@@ -97,13 +98,17 @@ public:
         thermalModel(const volScalarField& T);
 
 
-    // Destructor
-
-        virtual ~thermalModel()
-        {}
+    //- Destructor
+    virtual ~thermalModel() = default;
 
 
     // Member Functions
+
+        //- Is the thermal model active?
+        inline bool active() const
+        {
+            return lawPtr_.valid();
+        }
 
         //- Return thermal law
         const thermalLaw& law() const

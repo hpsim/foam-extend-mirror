@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -420,7 +420,7 @@ Foam::label Foam::removeFaces::compatibleRemoves
     // It is legal to have cellRegionMaster = -1 if the region has been created
     // and then abandoned because it has been merged with another region
     // HJ, 6/Sep/2019
-    
+
     // Various checks, additional scope for clarity and memory management
     // - master is lowest numbered in any region
     // - regions have more than 1 cell

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -312,5 +312,36 @@ Foam::tmp<Foam::volVectorField> Foam::MRFZones::Su
     return tPhiSource;
 }
 
+
+Foam::tmp<Foam::volScalarField> Foam::MRFZones::calcMagUTheta
+(
+    const volVectorField& U
+)
+{
+    tmp<volScalarField> tMRFZonesUTheta
+    (
+        new volScalarField
+        (
+            IOobject
+            (
+                "MRFZonesUTheta",
+                mesh_.time().timeName(),
+                mesh_,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh_,
+            dimensionedScalar("zero", dimVelocity, 0.0)
+        )
+    );
+    volScalarField& MRFZonesUTheta = tMRFZonesUTheta();
+
+    forAll (*this, i)
+    {
+        operator[](i).calcMagUTheta(U, MRFZonesUTheta);
+    }
+
+    return tMRFZonesUTheta;
+}
 
 // ************************************************************************* //

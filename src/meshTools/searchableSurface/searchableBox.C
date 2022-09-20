@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -24,8 +24,9 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "searchableBox.H"
-#include "addToRunTimeSelectionTable.H"
+#include "volumeType.H"
 #include "SortableList.H"
+#include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -182,6 +183,8 @@ Foam::searchableBox::searchableBox
         )   << "Illegal bounding box specification : "
             << static_cast<const treeBoundBox>(*this) << exit(FatalError);
     }
+
+    bounds() = static_cast<boundBox>(*this);
 }
 
 
@@ -206,6 +209,8 @@ Foam::searchableBox::searchableBox
         )   << "Illegal bounding box specification : "
             << static_cast<const treeBoundBox>(*this) << exit(FatalError);
     }
+
+    bounds() = static_cast<boundBox>(*this);
 }
 
 
@@ -228,9 +233,10 @@ const Foam::wordList& Foam::searchableBox::regions() const
 }
 
 
-Foam::pointField Foam::searchableBox::coordinates() const
+Foam::tmp<Foam::pointField> Foam::searchableBox::coordinates() const
 {
-    pointField ctrs(6);
+    tmp<pointField> tCtrs(new pointField(6));
+    pointField& ctrs = tCtrs();
 
     const pointField pts = treeBoundBox::points();
     const faceList& fcs = treeBoundBox::faces;
@@ -239,7 +245,8 @@ Foam::pointField Foam::searchableBox::coordinates() const
     {
         ctrs[i] = fcs[i].centre(pts);
     }
-    return ctrs;
+
+    return tCtrs;
 }
 
 
@@ -571,7 +578,7 @@ void Foam::searchableBox::getVolumeType
 ) const
 {
     volType.setSize(points.size());
-    volType = INSIDE;
+    volType = volumeType::INSIDE;
 
     forAll(points, pointI)
     {
@@ -581,7 +588,7 @@ void Foam::searchableBox::getVolumeType
         {
             if (pt[dir] < min()[dir] || pt[dir] > max()[dir])
             {
-                volType[pointI] = OUTSIDE;
+                volType[pointI] = volumeType::OUTSIDE;
                 break;
             }
         }

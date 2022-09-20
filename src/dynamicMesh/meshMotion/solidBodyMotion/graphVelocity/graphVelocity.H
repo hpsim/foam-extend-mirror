@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -34,6 +34,9 @@ SourceFiles
 
 Author
     Vuko Vukcevic, FMENA Zagreb.  All rights reserved.
+
+Contributors
+    Bug fixes by Hrvoje Jasak
 
 \*---------------------------------------------------------------------------*/
 
@@ -109,16 +112,19 @@ class graphVelocity
             Switch inDegrees_;
 
 
-        //- Member functions
+    //- Private member functions
 
-            //- Return translational velocity vector
-            vector translationalVelocity() const;
+        //- Integrate motion to start time
+        void integrateMotionToStartTime();
 
-            // -Return rotational velocity vector
-            vector rotationalVelocity() const;
+        //- Return translational velocity vector
+        vector translationalVelocity() const;
 
-            //- Calculate transformation septernion
-            septernion calcTransformation() const;
+        // -Return rotational velocity vector
+        vector rotationalVelocity() const;
+
+        //- Calculate transformation septernion
+        septernion calcTransformation() const;
 
 
 public:
@@ -138,8 +144,7 @@ public:
 
 
     //- Destructor
-    virtual ~graphVelocity()
-    {}
+    virtual ~graphVelocity() = default;
 
 
     // Member Functions

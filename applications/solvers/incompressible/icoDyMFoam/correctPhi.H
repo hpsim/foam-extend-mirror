@@ -1,7 +1,7 @@
 {
     wordList pcorrTypes(p.boundaryField().types());
 
-    for (label i=0; i<p.boundaryField().size(); i++)
+    for (label i = 0; i < p.boundaryField().size(); i++)
     {
         if (p.boundaryField()[i].fixesValue())
         {
@@ -36,7 +36,7 @@
 
     mesh.schemesDict().setFluxRequired(pcorr.name());
 
-    while (piso.correctNonOrthogonal())
+    while (pimple.correctNonOrthogonal())
     {
         fvScalarMatrix pcorrEqn
         (
@@ -46,7 +46,7 @@
         pcorrEqn.setReference(pRefCell, pRefValue);
         pcorrEqn.solve();
 
-        if (piso.finalNonOrthogonalIter())
+        if (pimple.finalNonOrthogonalIter())
         {
             phi -= pcorrEqn.flux();
         }

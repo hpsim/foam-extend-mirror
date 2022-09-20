@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -1148,7 +1148,6 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
 
             if (rotate != 0)
             {
-                Pout<< "Rotating face" << endl;
                 newFaces[faceI] = rotateFace(newFaces[faceI], rotate);
             }
         }

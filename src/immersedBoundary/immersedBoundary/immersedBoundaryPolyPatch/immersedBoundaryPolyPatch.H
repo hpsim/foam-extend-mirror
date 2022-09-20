@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -50,7 +50,6 @@ SourceFiles
 #include "standAlonePatch.H"
 #include "Switch.H"
 #include "volFields.H"
-#include "immersedBoundaryCorrectedMeshFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -139,17 +138,8 @@ class immersedBoundaryPolyPatch
 
         // Corrected mesh geometry
 
-            // MeshObject derived object that holds corrected global field data
-            const immersedBoundaryCorrectedMeshFields& correctedFields_;
-
             //- Corrected face areas for the immersed boundary patch
             mutable vectorField* correctedIbPatchFaceAreasPtr_;
-
-            //- Topo change index, used to update the corrected fields
-            //  MeshObject consistently.
-            //  NOTE: time index cannot be used since multiple topo changes per
-            //  time-step are possible (IG 28/OCT/2018)
-            mutable label topoChangeIndex_;
 
 
         // Immersed boundary motion
@@ -179,6 +169,14 @@ class immersedBoundaryPolyPatch
 protected:
 
     // Protected Member Functions
+
+        //- Init addressing
+        virtual void initAddressing();
+
+        //- Calculate the patch geometry.  Needs to be at init level
+        //  because IB cuts faces of other patches
+        //  HJ, 17/Sep/2021
+        virtual void initGeometry();
 
         //- Correct patch after moving points
         virtual void movePoints(const pointField& p);
@@ -345,21 +343,6 @@ public:
 
             //- Return dead faces
             const labelList& deadFaces() const;
-
-
-        // Corrected mesh geometry
-
-            //- Corrected cell centres
-            const vectorField& correctedCellCentres() const;
-
-            //- Corrected face centres
-            const vectorField& correctedFaceCentres() const;
-
-            //- Corrected cell volumes
-            const scalarField& correctedCellVolumes() const;
-
-            //- Corrected face areas
-            const vectorField& correctedFaceAreas() const;
 
 
         // Corrected immersed patch geometry

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -41,6 +41,7 @@ SourceFiles
 
 #include "dictionary.H"
 #include "regIOobject.H"
+#include "infoSwitch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -58,8 +59,6 @@ class IOdictionary
 {
     // Private data
 
-        static bool writeDictionaries;
-
 
     // Private Member Functions
 
@@ -71,6 +70,8 @@ public:
 
     TypeName("dictionary");
 
+    //- If true, write IOdictionary to console
+    static debug::infoSwitch writeDictionaries;
 
     // Constructors
 
@@ -82,6 +83,9 @@ public:
 
         //- Construct given an IOobject and Istream
         IOdictionary(const IOobject&, Istream&);
+
+        //- Copy constructor
+        IOdictionary(const IOdictionary&);
 
 
     //- Destructor

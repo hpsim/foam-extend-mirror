@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -25,13 +25,13 @@ Application
     potentialFoam
 
 Description
-    Simple potential flow solver which can be used to generate starting fields
+    Potential flow solver which can be used to generate starting fields
     for full Navier-Stokes codes.
 
 \*---------------------------------------------------------------------------*/
 
 #include "fvCFD.H"
-#include "simpleControl.H"
+#include "potentialControl.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 #   include "createTime.H"
 #   include "createMesh.H"
 
-    simpleControl simple(mesh);
+    potentialControl potential(mesh);
 
 #   include "createFields.H"
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
     adjustPhi(phi, U, p);
 
-    while (simple.correctNonOrthogonal())
+    while (potential.correctNonOrthogonal())
     {
         p.storePrevIter();
 
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
         pEqn.setReference(pRefCell, pRefValue);
         pEqn.solve();
 
-        if (simple.finalNonOrthogonalIter())
+        if (potential.finalNonOrthogonalIter())
         {
             phi -= pEqn.flux();
         }

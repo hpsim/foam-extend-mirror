@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -165,6 +165,9 @@ public:
 
 
     // Member Operators
+
+        //- Copy assignment
+        void operator=(const interpolationTable<Type>& rhs);
 
         //- Return an element of constant Tuple2<scalar, Type>
         const Tuple2<scalar, Type>& operator[](const label) const;

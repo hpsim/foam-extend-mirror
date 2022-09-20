@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -14,20 +14,22 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-type       scalarTransport;
+type scalarTransport;
 
-//solver     RK;
-solver     Euler;
+solver KRR4;
 
-eps        0.0001;
+eps 0.0001;
 
 scalarTransportCoeffs
 {
-    field      T;
-    accuracy   0.9999;
+    field T;
+    flux phi;
 
-    velocity   U;
+    accuracy 1;
+    beta 0.01;
+
+    useZeroField yes;
+    driftCorrection yes;
 }
-
 
 // ************************************************************************* //

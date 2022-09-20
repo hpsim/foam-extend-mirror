@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -51,12 +51,28 @@ class wallFvPatch
 :
     public fvPatch
 {
+    // Private Data
+
+        //- Reference to polyPatch
+        const wallPolyPatch& wallPolyPatch_;
+
+
 protected:
 
     // Protected Member Functions
 
-        //- Make patch face non-orthogonality correction vectors
-        virtual void makeCorrVecs(fvsPatchVectorField&) const;
+        // Geometry correction functions
+
+            //- Make patch face non-orthogonality correction vectors
+            virtual void makeCorrVecs(fvsPatchVectorField&) const;
+
+            //- Update mesh motion fluxes
+            virtual void updatePhi
+            (
+                DimensionedField<scalar, volMesh>& V,
+                DimensionedField<scalar, volMesh>& V0,
+                surfaceScalarField& phi
+            ) const;
 
 
 public:
@@ -70,14 +86,13 @@ public:
         //- Construct from components
         wallFvPatch(const polyPatch& patch, const fvBoundaryMesh& bm)
         :
-            fvPatch(patch, bm)
+            fvPatch(patch, bm),
+            wallPolyPatch_(refCast<const wallPolyPatch>(patch))
         {}
 
 
-    // Destructor
-
-        virtual ~wallFvPatch()
-        {}
+    //- Destructor
+    virtual ~wallFvPatch() = default;
 };
 
 

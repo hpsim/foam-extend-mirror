@@ -17,7 +17,7 @@
  */
 
 /*
- * Must include locale before MFC includes to avoid a conflict 
+ * Must include locale before MFC includes to avoid a conflict
  * between xlocale and MFC debug new.
  */
 #include <locale>

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -552,7 +552,7 @@ void Foam::radiation::fvDOM::calculate()
                             neg(incomingAngle)*curPatch*(-incomingAngle);
                     }
 
-                    Info << "Patch " << Qem_[lambdaI][patchI].patch().name()
+                    Info<< "Patch " << Qem_[lambdaI][patchI].patch().name()
                         << " band " << lambdaI
                         << ": Radiation incoming "
                         << sum(Qin_[lambdaI][patchI])
@@ -630,15 +630,16 @@ Foam::tmp<Foam::volScalarField> Foam::radiation::fvDOM::Rp() const
 Foam::tmp<Foam::DimensionedField<Foam::scalar, Foam::volMesh> >
 Foam::radiation::fvDOM::Ru() const
 {
-
     const DimensionedField<scalar, volMesh>& G =
         G_.dimensionedInternalField();
+
     const DimensionedField<scalar, volMesh> E =
         absorptionEmission_->ECont()().dimensionedInternalField();
+
     const DimensionedField<scalar, volMesh> a =
         a_.dimensionedInternalField();
 
-    return  a*G - E;
+    return a*G - E;
 }
 
 

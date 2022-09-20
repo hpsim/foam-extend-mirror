@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -97,7 +97,18 @@ void Foam::MRFZone::setMRFFaces()
     {
         const polyPatch& pp = patches[patchI];
 
-        if (pp.isWall() && !excludedPatches.found(patchI))
+        // Note: coupled patches should be rotated.
+        // However, sometimes it is difficult to create a mesh with the
+        // GGI sitting properly on a cylinder or a sphere.  In such cases
+        // planar/cylindrical GGIs can be excluded, and cyclic GGIs can
+        // be preserved.  I am not happy about this, but if left uncorrected
+        // it causes a massive conservation issue on rotating GGI pairs
+        // HJ, 16/Feb/2021
+        if
+        (
+            (pp.isWall() && !excludedPatches.found(patchI))
+         || (pp.coupled() && !excludedPatches.found(patchI))
+        )
         {
             forAll (pp, i)
             {
@@ -256,7 +267,7 @@ void Foam::MRFZone::calcMeshVelocity() const
 
     if (meshVelocityPtr_)
     {
-        FatalErrorIn("void MRFZone::calcMeshVelocity() const")
+        FatalErrorInFunction
             << "Mesh velocity for zone " << name_
             << " already calculated"
             << abort(FatalError);
@@ -328,7 +339,7 @@ void Foam::MRFZone::calcMeshVelocity() const
     }
     else
     {
-        FatalErrorIn("void MRFZone::calcMeshVelocity() const")
+        FatalErrorInFunction
             << "Cannot transpose axis: " << axis_.value()
             << " for MRF zone " << name_
             << abort(FatalError);
@@ -363,7 +374,8 @@ void Foam::MRFZone::calcMeshVelocity() const
         cs.globalPosition
         (
             cs.localPosition(p)
-          + vector(0, mag(Omega())*deltaT*sign(omega_.value()), 0)*movingPointsMask
+          + vector(0, mag(Omega())*deltaT*sign(omega_.value()), 0)*
+            movingPointsMask
         );
 
     // Calculate mesh velocity for all moving faces
@@ -377,8 +389,7 @@ void Foam::MRFZone::calcMeshVelocity() const
         meshVelIn[faceI] = f[faceI].sweptVol(p, newP)/deltaT;
     }
 
-    // Included patches
-
+    // Included faces
     forAll (includedFaces_, patchI)
     {
         const label patchStart = mesh_.boundaryMesh()[patchI].start();
@@ -392,7 +403,7 @@ void Foam::MRFZone::calcMeshVelocity() const
         }
     }
 
-    // Excluded patches
+    // Excluded faces - same as included patches
     forAll (excludedFaces_, patchI)
     {
         const label patchStart = mesh_.boundaryMesh()[patchI].start();
@@ -429,7 +440,7 @@ Foam::MRFZone::MRFZone(const fvMesh& mesh, Istream& is)
 {
     if (dict_.found("patches"))
     {
-        WarningIn("MRFZone(const fvMesh&, Istream&)")
+        WarningInFunction
             << "Ignoring entry 'patches'\n"
             << "    By default all patches within the rotating region rotate."
             << nl << "    Optionally supply excluded patches using "
@@ -441,7 +452,7 @@ Foam::MRFZone::MRFZone(const fvMesh& mesh, Istream& is)
 
     if (mag(axis_.value()) < SMALL)
     {
-        FatalErrorIn("MRFZone(const fvMesh&, Istream&)")
+        FatalErrorInFunction
             << "Axis vector has zero magnitude: " << axis_
             << ".  This is not allowed"
             << abort(FatalError);
@@ -457,10 +468,8 @@ Foam::MRFZone::MRFZone(const fvMesh& mesh, Istream& is)
 
         if (excludedPatchLabels_[i] == -1)
         {
-            FatalErrorIn
-            (
-                "Foam::MRFZone::MRFZone(const fvMesh&, Istream&)"
-            )   << "cannot find MRF patch " << excludedPatchNames_[i]
+            FatalErrorInFunction
+               << "cannot find MRF patch " << excludedPatchNames_[i]
                 << exit(FatalError);
         }
     }
@@ -470,10 +479,8 @@ Foam::MRFZone::MRFZone(const fvMesh& mesh, Istream& is)
 
     if (!cellZoneFound)
     {
-        FatalErrorIn
-        (
-            "Foam::MRFZone::MRFZone(const fvMesh&, Istream&)"
-        )   << "cannot find MRF cellZone " << name_
+        FatalErrorInFunction
+            << "cannot find MRF cellZone " << name_
             << exit(FatalError);
     }
 
@@ -532,7 +539,7 @@ Foam::vector Foam::MRFZone::Omega() const
         // Ramping
         const scalar t = mesh_.time().value();
         const scalar ramp = sin(2*pi/(4*rampTime_)*Foam::min(rampTime_, t));
-        Info<< "ramp: " << ramp << endl;
+        Info<< "ramp: " << ramp << " Omega: " << ramp*omega_.value() << endl;
         return ramp*omega_.value()*axis_.value();
     }
 }
@@ -616,10 +623,10 @@ void Foam::MRFZone::relativeVelocity(volVectorField& U) const
     // Included faces
     forAll (includedFaces_, patchI)
     {
-        forAll (includedFaces_[patchI], i)
+        forAll (includedFaces_[patchi], i)
         {
-            label patchFaceI = includedFaces_[patchI][i];
-            U.boundaryField()[patchI][patchFaceI] = vector::zero;
+            label patchFaceI = includedFaces_[patchi][i];
+            U.boundaryField()[patchi][patchFaceI] = vector::zero;
         }
     }
 
@@ -661,20 +668,11 @@ void Foam::MRFZone::absoluteVelocity(volVectorField& U) const
     // Included faces
     forAll (includedFaces_, patchI)
     {
-        vectorField n = mesh_.boundary()[patchI].nf();
-
-        forAll (includedFaces_[patchI], i)
+        forAll (includedFaces_[patchi], i)
         {
-            label patchFaceI = includedFaces_[patchI][i];
-
-            vector Up =
-                rotVel ^ (C.boundaryField()[patchI][patchFaceI] - origin);
-
-            scalar Un = meshVel.boundaryField()[patchI][patchFaceI]/
-                magSf.boundaryField()[patchI][patchFaceI];
-
-            U.boundaryField()[patchI][patchFaceI] =
-                (Up + n[patchFaceI]*(Un - (n[patchFaceI] & Up)));
+            label patchFaceI = includedFaces_[patchi][i];
+            U.boundaryField()[patchi][patchFaceI] =
+                (rotVel ^ (C.boundaryField()[patchi][patchFaceI] - origin));
         }
     }
 
@@ -741,8 +739,7 @@ void Foam::MRFZone::meshPhi
         phiIn[faceI] = meshVelIn[faceI];
     }
 
-    // Included patches
-
+    // Included faces
     forAll (includedFaces_, patchI)
     {
         forAll (includedFaces_[patchI], i)
@@ -754,7 +751,7 @@ void Foam::MRFZone::meshPhi
         }
     }
 
-    // Excluded patches
+    // Excluded faces - same as included patches
     forAll (excludedFaces_, patchI)
     {
         forAll (excludedFaces_[patchI], i)
@@ -782,14 +779,18 @@ void Foam::MRFZone::correctBoundaryVelocity(volVectorField& U) const
 
         vectorField pfld(U.boundaryField()[patchI]);
 
-        forAll (includedFaces_[patchI], i)
+        // Correct velocity for non-coupled patches
+        if (!mesh_.boundaryMesh()[patchI].coupled())
         {
-            patchFaceI = includedFaces_[patchI][i];
+            forAll (includedFaces_[patchI], i)
+            {
+                patchFaceI = includedFaces_[patchI][i];
 
-            pfld[patchFaceI] = (rotVel ^ (patchC[patchFaceI] - origin));
+                pfld[patchFaceI] = (rotVel ^ (patchC[patchFaceI] - origin));
+            }
+
+            U.boundaryField()[patchI] == pfld;
         }
-
-        U.boundaryField()[patchI] == pfld;
     }
 }
 
@@ -836,5 +837,102 @@ void Foam::MRFZone::Su
     }
 }
 
+
+void Foam::MRFZone::calcMagUTheta
+(
+    const volVectorField& U,
+    volScalarField& cumulativeUTheta
+)
+{
+    volScalarField includedExcludedMask
+    (
+        IOobject
+        (
+            "includedExcludedMask",
+            mesh_.time().timeName(),
+            mesh_,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh_,
+        dimensionedScalar("zero", dimless, 0.0)
+    );
+
+    // Mark internal cells
+    const labelList& cells = mesh_.cellZones()[cellZoneID_];
+
+    forAll (cells, i)
+    {
+        const label cellI = cells[i];
+        includedExcludedMask[cellI] = 1.0;
+    }
+
+    // Included faces
+    forAll (includedFaces_, patchI)
+    {
+        forAll (includedFaces_[patchI], i)
+        {
+            label patchFaceI = includedFaces_[patchI][i];
+
+            includedExcludedMask.boundaryField()[patchI][patchFaceI] = 1.0;
+        }
+    }
+
+    // Excluded faces - same as included faces
+    forAll (excludedFaces_, patchI)
+    {
+        forAll (excludedFaces_[patchI], i)
+        {
+            label patchFaceI = excludedFaces_[patchI][i];
+
+            includedExcludedMask.boundaryField()[patchI][patchFaceI] = 1.0;
+        }
+    }
+
+    vector dir;
+
+    if (mag(axis_.value().x()) > SMALL || mag(axis_.value().y()) > SMALL)
+    {
+        dir = vector(axis_.value().y(), axis_.value().x(), axis_.value().z());
+    }
+    else if (mag(axis_.value().z()) > SMALL)
+    {
+        dir = vector(axis_.value().x(), axis_.value().z(), axis_.value().y());
+    }
+
+    cylindricalCS cs
+    (
+        "cs",
+        origin_.value(),
+        axis_.value(),
+        dir,
+        false
+    );
+
+    volVectorField ULocalCS("ULocalCS", U);
+
+    const vectorField newPin =
+        cs.globalPosition
+        (
+            cs.localPosition(ULocalCS.internalField())
+        );
+
+    ULocalCS.internalField() = newPin;
+
+    forAll (ULocalCS.boundaryField(), patchI)
+    {
+        const vectorField newPp =
+            cs.globalPosition
+            (
+                cs.localPosition(ULocalCS.boundaryField()[patchI])
+            );
+
+        ULocalCS.boundaryField()[patchI] = newPp;
+    }
+
+    // Vector::Y is tangential component of velocity in cylindrical CS
+    cumulativeUTheta ==
+        cumulativeUTheta + ULocalCS.component(vector::Y)*includedExcludedMask;
+}
 
 // ************************************************************************* //

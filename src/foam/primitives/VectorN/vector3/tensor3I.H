@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -55,13 +55,15 @@ inline tensor3 inv(const tensor3& t)
     tensor3 cofactor;
 
     cofactor[0] = t[4]*t[8] - t[7]*t[5];
-    cofactor[1] = t[6]*t[5] - t[3]*t[8];
-    cofactor[2] = t[3]*t[7] - t[4]*t[6];
-    cofactor[3] = t[2]*t[7] - t[1]*t[8];
+    cofactor[1] = t[2]*t[7] - t[1]*t[8];
+    cofactor[2] = t[1]*t[5] - t[2]*t[4];
+
+    cofactor[3] = t[6]*t[5] - t[3]*t[8];
     cofactor[4] = t[0]*t[8] - t[2]*t[6];
-    cofactor[5] = t[1]*t[6] - t[0]*t[7];
-    cofactor[6] = t[1]*t[5] - t[2]*t[4];
-    cofactor[7] = t[3]*t[2] - t[0]*t[5];
+    cofactor[5] = t[3]*t[2] - t[0]*t[5];
+
+    cofactor[6] = t[3]*t[7] - t[4]*t[6];
+    cofactor[7] = t[1]*t[6] - t[0]*t[7];
     cofactor[8] = t[0]*t[4] - t[3]*t[1];
 
     return cofactor/det(t);

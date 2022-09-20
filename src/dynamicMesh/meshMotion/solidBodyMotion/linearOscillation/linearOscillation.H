@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -64,10 +64,10 @@ class linearOscillation
     // Private Member Functions
 
         //- Disallow copy construct
-        linearOscillation(const linearOscillation&);
+        linearOscillation(const linearOscillation&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const linearOscillation&);
+        void operator=(const linearOscillation&) = delete;
 
 
         //- Calculate position
@@ -90,9 +90,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~linearOscillation();
+    //- Destructor
+    virtual ~linearOscillation() = default;
 
 
     // Member Functions

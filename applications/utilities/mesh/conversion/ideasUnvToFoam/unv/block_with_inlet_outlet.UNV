@@ -137,7 +137,7 @@ MODULUS OF ELASTICITY
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-PRESSURE                                PASCAL                                  
+PRESSURE                                PASCAL
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -145,7 +145,7 @@ SHEAR MODULUS
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-PRESSURE                                PASCAL                                  
+PRESSURE                                PASCAL
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ POISSONS RATIO
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-DIMENSIONLESS                           UNITLESS                                
+DIMENSIONLESS                           UNITLESS
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -161,7 +161,7 @@ COEFFICIENT OF THERMAL EXPANSION
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-COEFFICIENT OF THERMAL EXPANSION        1/KELVIN                                
+COEFFICIENT OF THERMAL EXPANSION        1/KELVIN
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -169,7 +169,7 @@ THERMAL CONDUCTIVITY
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-CONDUCTIVITY                            J/M/K/SEC                               
+CONDUCTIVITY                            J/M/K/SEC
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ SPECIFIC HEAT
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-SPECIFIC HEAT                           J/KG/K                                  
+SPECIFIC HEAT                           J/KG/K
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -185,7 +185,7 @@ HEAT GENERATION RATE
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-HEAT FLUX PER UNIT VOLUME               J/M^3/SEC                               
+HEAT FLUX PER UNIT VOLUME               J/M^3/SEC
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -193,7 +193,7 @@ MASS DENSITY
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-MASS DENSITY                            KILOGRAM/METER^3                        
+MASS DENSITY                            KILOGRAM/METER^3
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -201,7 +201,7 @@ STRUCTURAL ELEMENT DAMPING COEFFICIENT
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-DIMENSIONLESS                           UNITLESS                                
+DIMENSIONLESS                           UNITLESS
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -209,7 +209,7 @@ THERMAL EXPANSION REFERENCE TEMPERATURE
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-TEMPERATURE                             KELVIN                                  
+TEMPERATURE                             KELVIN
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -217,15 +217,15 @@ ALLOWABLE STRESS IN TENSION X-DIR
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-PRESSURE                                PASCAL                                  
+PRESSURE                                PASCAL
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
-ALLOWABLE STRESS IN COMPRESSION X-DIR 
+ALLOWABLE STRESS IN COMPRESSION X-DIR
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-PRESSURE                                PASCAL                                  
+PRESSURE                                PASCAL
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -233,15 +233,15 @@ ALLOWABLE STRESS IN TENSION Y-DIR
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-PRESSURE                                PASCAL                                  
+PRESSURE                                PASCAL
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
-ALLOWABLE STRESS IN COMPRESSION Y-DIR 
+ALLOWABLE STRESS IN COMPRESSION Y-DIR
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-PRESSURE                                PASCAL                                  
+PRESSURE                                PASCAL
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -249,7 +249,7 @@ ALLOWABLE IN-PLANE SHEAR STRESS
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-PRESSURE                                PASCAL                                  
+PRESSURE                                PASCAL
 CONSTANT
    0.00000000000000000E+0
 --------------------------------------------------------------------------------
@@ -257,84 +257,84 @@ YIELD STRESS
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-PRESSURE                                PASCAL                                  
+PRESSURE                                PASCAL
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 CONVECTIVE FILM COEFFICIENT
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-CONVECTION COEFFICIENT                  J/M^2/K/SEC                             
+CONVECTION COEFFICIENT                  J/M^2/K/SEC
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 THERMAL CAPACITY PER UNIT AREA
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-THERMAL CAPACITY PER UNIT AREA          J/M^2/K                                 
+THERMAL CAPACITY PER UNIT AREA          J/M^2/K
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 SURFACE HEAT FLUX RATE
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-HEAT FLUX PER UNIT AREA                 J/M^2/SEC                               
+HEAT FLUX PER UNIT AREA                 J/M^2/SEC
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 VISCOSITY
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-VISCOSITY                               KG/M/SEC                                
+VISCOSITY                               KG/M/SEC
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 COEFFICIENT OF FRICTION
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-DIMENSIONLESS                           UNITLESS                                
+DIMENSIONLESS                           UNITLESS
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 AREA FACTOR
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-DIMENSIONLESS                           UNITLESS                                
+DIMENSIONLESS                           UNITLESS
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 EMISSIVITY
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-DIMENSIONLESS                           UNITLESS                                
+DIMENSIONLESS                           UNITLESS
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 ABSORPTIVITY
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-DIMENSIONLESS                           UNITLESS                                
+DIMENSIONLESS                           UNITLESS
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 HEAT FLUX RATE
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-HEAT FLUX PER UNIT LENGTH               J/M/SEC                                 
+HEAT FLUX PER UNIT LENGTH               J/M/SEC
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 INTERACTION TERM FOR TSAI-WU
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-DIMENSIONLESS                           UNITLESS                                
+DIMENSIONLESS                           UNITLESS
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 SWELLING COEFFICIENT
          1  VERSION NUMBER
          0  LINE(S) OF TEXT
 DIMENSIONS AND UNITS:
-DIMENSIONLESS                           UNITLESS                                
+DIMENSIONLESS                           UNITLESS
 NULL_PROPERTY
 --------------------------------------------------------------------------------
 DEFAULT MATERIAL PROPERT(IES):

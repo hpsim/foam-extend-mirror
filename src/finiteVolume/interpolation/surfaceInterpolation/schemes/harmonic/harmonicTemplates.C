@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -58,11 +58,14 @@ Foam::tmp<Foam::surfaceScalarField> Foam::harmonic<Type>::weights
         )
     );
 
+    // updateCoupledPatchFields for patchNeighbourField update
+    // HJ, 21/Apr/2022
+    phi.boundaryField().updateCoupledPatchFields();
+
     const surfaceScalarField& deltaCoeffs = this->mesh().deltaCoeffs();
     const surfaceScalarField& weights = this->mesh().weights();
 
-    const magLongDelta& mld = magLongDelta::New(this->mesh());
-    const surfaceScalarField& longDelta = mld.magDelta();
+    const surfaceScalarField& longDelta = this->mesh().magLongDeltas();
 
     surfaceScalarField& w = tw();
 
@@ -155,14 +158,13 @@ Foam::tmp<Foam::scalarField> Foam::harmonic<Type>::weights
     const scalar kSmall = 1000*SMALL;
 
     // Mag long deltas are identical on both sides.  HJ, 28/Sep/2011
-    const magLongDelta& mld = magLongDelta::New(this->mesh());
 
     scalarField magPhiOwn = mag(fOwn);
     scalarField magPhiNei = mag(fNei);
 
     const scalarField& pWeights = patch.weights();
     const scalarField& pDeltaCoeffs = patch.deltaCoeffs();
-    const scalarField& pLongDelta = mld.magDelta(patch.index());
+    const scalarField& pLongDelta = patch.magLongDeltas();
 
     forAll (weights, faceI)
     {

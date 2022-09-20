@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -79,6 +79,7 @@ class triSurfaceTools
                 const label faceI,
                 List<refineType>& refine
             );
+
             static void greenRefine
             (
                 const triSurface& surf,
@@ -87,6 +88,7 @@ class triSurfaceTools
                 const label newPointI,
                 DynamicList<labelledTri>& newFaces
             );
+
             static triSurface doRefine
             (
                 const triSurface& surf,

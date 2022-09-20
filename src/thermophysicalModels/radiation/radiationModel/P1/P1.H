@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -79,10 +79,10 @@ class P1
     // Private member functions
 
         //- Disallow default bitwise copy construct
-        P1(const P1&);
+        P1(const P1&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const P1&);
+        void operator=(const P1&) = delete;
 
 
 public:
@@ -94,13 +94,13 @@ public:
     // Constructors
 
         //- Construct from components
-        P1(const volScalarField& T);
+        explicit P1(const volScalarField& T);
 
         //- Construct from components
         P1(const dictionary& dict, const volScalarField& T);
 
     // Destructor
-    virtual ~P1();
+    virtual ~P1() = default;
 
 
     // Member functions

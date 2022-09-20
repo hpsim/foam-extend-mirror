@@ -2,9 +2,9 @@
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | foam-extend: Open Source CFD
-#  \\    /   O peration     |
-#   \\  /    A nd           | For copyright notice see file Copyright
-#    \\/     M anipulation  |
+#  \\    /   O peration     | Version:     5.0
+#   \\  /    A nd           | Web:         http://www.foam-extend.org
+#    \\/     M anipulation  | For copyright notice see file Copyright
 #------------------------------------------------------------------------------
 # License
 #     This file is part of foam-extend.
@@ -50,7 +50,7 @@ echo ========================================
 echo
 
 # swak4foam
-pkg=swak4Foam-0.3.0
+pkg=swak4Foam-0.4.2
 set -x
 rm -rf $WM_THIRD_PARTY_DIR/rpmBuild/BUILD/${pkg}*
 set +x

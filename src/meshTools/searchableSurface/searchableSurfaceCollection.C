@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -247,6 +247,35 @@ Foam::searchableSurfaceCollection::searchableSurfaceCollection
     transform_.setSize(surfI);
     subGeom_.setSize(surfI);
     indexOffset_.setSize(surfI+1);
+
+    // Bounds is the overall bounds
+    bounds() = boundBox(point::max, point::min);
+
+    forAll(subGeom_, surfI)
+    {
+        const boundBox& surfBb = subGeom_[surfI].bounds();
+
+        // Transform back to global coordinate sys.
+        const point surfBbMin = transform_[surfI].globalPosition
+        (
+            cmptMultiply
+            (
+                surfBb.min(),
+                scale_[surfI]
+            )
+        );
+        const point surfBbMax = transform_[surfI].globalPosition
+        (
+            cmptMultiply
+            (
+                surfBb.max(),
+                scale_[surfI]
+            )
+        );
+
+        bounds().min() = min(bounds().min(), surfBbMin);
+        bounds().max() = max(bounds().max(), surfBbMax);
+    }
 }
 
 
@@ -296,10 +325,12 @@ Foam::label Foam::searchableSurfaceCollection::size() const
 }
 
 
-Foam::pointField Foam::searchableSurfaceCollection::coordinates() const
+Foam::tmp<Foam::pointField>
+Foam::searchableSurfaceCollection::coordinates() const
 {
     // Get overall size
-    pointField coords(size());
+    tmp<pointField> tCoords(new pointField(size()));
+    pointField& coords = tCoords();
 
     // Append individual coordinates
     label coordI = 0;
@@ -321,7 +352,7 @@ Foam::pointField Foam::searchableSurfaceCollection::coordinates() const
         }
     }
 
-    return coords;
+    return tCoords;
 }
 
 

@@ -13,7 +13,7 @@ export caseName=`basename $PWD`
 #trap "exit -1" ERR
 
 echo "$caseName: Creating the file blockMeshDict using m4"
-(cd constant/polyMesh; m4 -P blockMeshDict.m4 > blockMeshDict)
+m4 -P system/blockMeshDict.m4 > system/blockMeshDict
 
 echo "$caseName: Running blockMesh"
 runApplicationAndReportOnError blockMesh

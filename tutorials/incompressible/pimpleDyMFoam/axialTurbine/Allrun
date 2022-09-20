@@ -6,14 +6,14 @@
 application=`getApplication`
 
 #Create the mesh:
-m4 < constant/polyMesh/blockMeshDict.m4 > constant/polyMesh/blockMeshDict
+m4 < system/blockMeshDict.m4 > system/blockMeshDict
 runApplication blockMesh
 transformPoints -scale "(1 20 1)"
 transformPoints -cylToCart "((0 0 0) (0 0 1) (1 0 0))"
 
 # Set 0-directory and create GGI set:
-cp -r 0_orig 0
-runApplication setSet -batch setBatchGgi
+cp -r save 0
+runApplication setSet -batch setBatchGgi.batch
 runApplication setsToZones -noFlipMap
 
 runApplication $application

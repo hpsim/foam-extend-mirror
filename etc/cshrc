@@ -1,7 +1,7 @@
 #----------------------------------*-sh-*--------------------------------------
 # =========                 |
 # \\      /  F ield         | foam-extend: Open Source CFD
-#  \\    /   O peration     | Version:     4.1
+#  \\    /   O peration     | Version:     5.0
 #   \\  /    A nd           | Web:         http://www.foam-extend.org
 #    \\/     M anipulation  | For copyright notice see file Copyright
 #------------------------------------------------------------------------------
@@ -32,7 +32,7 @@
 
 setenv WM_PROJECT foam
 setenv WM_FORK extend
-setenv WM_PROJECT_VERSION 4.1
+setenv WM_PROJECT_VERSION 5.0
 
 # helps to easily write #ifdefs to detect a foam-extend version
 setenv FOAM_DEV 1
@@ -82,16 +82,19 @@ setenv WM_THIRD_PARTY_DIR $WM_PROJECT_DIR/ThirdParty
 
 #
 # For AllMake.stage2
-setenv WM_THIRD_PARTY_USE_OPENMPI_188 1
+#setenv WM_THIRD_PARTY_USE_OPENMPI_188 1
 
 #
 # For AllMake.stage3
-setenv WM_THIRD_PARTY_USE_METIS_510 1
+setenv METIS_SYSTEM 1
+#setenv WM_THIRD_PARTY_USE_METIS_510 1
 setenv WM_THIRD_PARTY_USE_PARMGRIDGEN_10 1
 setenv WM_THIRD_PARTY_USE_LIBCCMIO_261 1
 setenv WM_THIRD_PARTY_USE_MESQUITE_230 1
-setenv WM_THIRD_PARTY_USE_SCOTCH_604 1
-setenv WM_THIRD_PARTY_USE_PARMETIS_403 1
+setenv SCOTCH_SYSTEM 1
+#setenv WM_THIRD_PARTY_USE_SCOTCH_604 1
+setenv PARMETIS_SYSTEM 1
+#setenv WM_THIRD_PARTY_USE_PARMETIS_403 1
 setenv WM_THIRD_PARTY_USE_PYFOAM_069 1
 setenv WM_THIRD_PARTY_USE_HWLOC_201 1
 
@@ -162,7 +165,8 @@ if ( ! $?WM_COMPILE_OPTION ) setenv WM_COMPILE_OPTION Opt
 #setenv WM_COMPILE_OPTION Debug
 
 # WM_MPLIB = SYSTEMOPENMPI | OPENMPI | MPICH | MPICH-GM | HPMPI | GAMMA | MPI | QSMPI | MVAPICH2
-if ( ! $?WM_MPLIB ) setenv WM_MPLIB OPENMPI
+setenv WM_MPLIB SYSTEMOPENMPI
+#if ( ! $?WM_MPLIB ) setenv WM_MPLIB SYSTEMOPENMPI
 
 # WM_NCOMPPROCS = <number of processes to use>
 # Warning: Need to use a complete path for foamGetSystemInfo because the PATH

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ void fvMesh::makeSf() const
 {
     if (debug)
     {
-        Info<< "void fvMesh::makeSf() const : "
+        InfoInFunction
             << "assembling face areas"
             << endl;
     }
@@ -51,7 +51,7 @@ void fvMesh::makeSf() const
     // if the pointer is already set
     if (SfPtr_)
     {
-        FatalErrorIn("fvMesh::makeSf() const")
+        FatalErrorInFunction
             << "face areas already exist"
             << abort(FatalError);
     }
@@ -85,7 +85,7 @@ void fvMesh::makeMagSf() const
 {
     if (debug)
     {
-        Info<< "void fvMesh::makeMagSf() const : "
+        InfoInFunction
             << "assembling mag face areas"
             << endl;
     }
@@ -94,7 +94,7 @@ void fvMesh::makeMagSf() const
     // if the pointer is already set
     if (magSfPtr_)
     {
-        FatalErrorIn("void fvMesh::makeMagSf() const")
+        FatalErrorInFunction
             << "mag face areas already exist"
             << abort(FatalError);
     }
@@ -126,7 +126,7 @@ void fvMesh::makeC() const
 {
     if (debug)
     {
-        Info<< "void fvMesh::makeC() const : "
+        InfoInFunction
             << "assembling cell centres"
             << endl;
     }
@@ -135,7 +135,7 @@ void fvMesh::makeC() const
     // if the pointer is already set
     if (CPtr_)
     {
-        FatalErrorIn("fvMesh::makeC() const")
+        FatalErrorInFunction
             << "cell centres already exist"
             << abort(FatalError);
     }
@@ -204,7 +204,7 @@ void fvMesh::makeCf() const
 {
     if (debug)
     {
-        Info<< "void fvMesh::makeCf() const : "
+        InfoInFunction
             << "assembling face centres"
             << endl;
     }
@@ -213,7 +213,7 @@ void fvMesh::makeCf() const
     // if the pointer is already set
     if (CfPtr_)
     {
-        FatalErrorIn("fvMesh::makeCf() const")
+        FatalErrorInFunction
             << "face centres already exist"
             << abort(FatalError);
     }
@@ -251,7 +251,7 @@ void fvMesh::makePhi() const
 {
     if (debug)
     {
-        InfoIn("void fvMesh::makePhi() const")
+        InfoInFunction
             << "Preparing mesh flux field"
             << endl;
     }
@@ -260,7 +260,7 @@ void fvMesh::makePhi() const
     // if the pointer is already set
     if (phiPtr_)
     {
-        FatalErrorIn("fvMesh::makePhi() const")
+        FatalErrorInFunction
             << "flux field already exists"
             << abort(FatalError);
     }
@@ -282,7 +282,7 @@ void fvMesh::makePhi() const
     {
         if (debug)
         {
-            InfoIn("void fvMesh::makePhi()")
+            InfoInFunction
                 << "Reading mesh fluxes" << endl;
         }
 
@@ -386,11 +386,8 @@ const volScalarField::DimensionedInternalField& fvMesh::V() const
     {
         if (debug)
         {
-            InfoIn
-            (
-                "const volScalarField::DimensionedInternalField& "
-                "fvMesh::V() const"
-            )   << "Calculating cell volumes." << endl;
+            InfoInFunction
+                << "Calculating cell volumes." << endl;
         }
 
         VPtr_ = new DimensionedField<scalar, volMesh>
@@ -426,7 +423,7 @@ const volScalarField::DimensionedInternalField& fvMesh::V0() const
 {
     if (!V0Ptr_)
     {
-        FatalErrorIn("fvMesh::V0() const")
+        FatalErrorInFunction
             << "V0 is not available"
             << abort(FatalError);
     }
@@ -444,7 +441,7 @@ DimensionedField<scalar, volMesh>& fvMesh::setV0()
 
     if (debug)
     {
-        InfoIn("DimensionedField<scalar, volMesh>& fvMesh::setV0()")
+        InfoInFunction
             << "Setting old cell volumes" << endl;
     }
 

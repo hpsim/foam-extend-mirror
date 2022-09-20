@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -89,13 +89,6 @@ immersedBoundarySolidBodyMotionFvMesh
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::immersedBoundarySolidBodyMotionFvMesh::
-~immersedBoundarySolidBodyMotionFvMesh()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool Foam::immersedBoundarySolidBodyMotionFvMesh::update()
@@ -103,10 +96,12 @@ bool Foam::immersedBoundarySolidBodyMotionFvMesh::update()
     // Move points based on new motion
     if (curTimeIndex_ < this->time().timeIndex())
     {
-        // Grab old volumes before moving the mesh
-        setV0();
-
         curTimeIndex_ = this->time().timeIndex();
+    }
+    else
+    {
+        // Multiple mesh motion within a time-step is not allowed
+        return false;
     }
 
     forAll (ibMotions_, ibI)

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
     while (runTime.run())
     {
 #       include "readControls.H"
+#       include "readFieldBounds.H"
 #       include "CourantNo.H"
 #       include "setDeltaT.H"
 

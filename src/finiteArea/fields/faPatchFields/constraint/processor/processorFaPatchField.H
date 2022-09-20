@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -45,7 +45,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                  Class processorFaPatchField Declaration
+                    Class processorFaPatchField Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
@@ -58,6 +58,9 @@ class processorFaPatchField
 
         //- Local reference cast into the processor patch
         const processorFaPatch& procPatch_;
+
+        //- Cached patch neighbour field
+        mutable Field<Type> pnf_;
 
 
 public:
@@ -132,9 +135,8 @@ public:
         }
 
 
-    // Destructor
-
-        ~processorFaPatchField();
+    //- Destructor
+    ~processorFaPatchField() = default;
 
 
     // Member functions
@@ -154,7 +156,15 @@ public:
                 }
             }
 
-            //- Return neighbour field given internal field
+            //- Return true if this coupled patch fields are updated
+            virtual bool couplesUpdated() const
+            {
+                return !pnf_.empty();
+            }
+
+            //- Return neighbour field of internal field
+            //  Returning correct patch neighbour field data
+            //  HJ, 10/Sep/2021
             tmp<Field<Type> > patchNeighbourField() const;
 
 
@@ -236,6 +246,39 @@ public:
             {
                 return pTraits<Type>::rank;
             }
+
+
+    // Member operators
+
+        // Note: all field operators need to handle cached patchNeighbourField
+        // HJ, 8/Sep/2021
+
+        virtual void operator=(const UList<Type>&);
+
+        virtual void operator=(const faPatchField<Type>&);
+        virtual void operator+=(const faPatchField<Type>&);
+        virtual void operator-=(const faPatchField<Type>&);
+        virtual void operator*=(const faPatchField<scalar>&);
+        virtual void operator/=(const faPatchField<scalar>&);
+
+        virtual void operator+=(const Field<Type>&);
+        virtual void operator-=(const Field<Type>&);
+
+        virtual void operator*=(const Field<scalar>&);
+        virtual void operator/=(const Field<scalar>&);
+
+        virtual void operator=(const Type&);
+        virtual void operator+=(const Type&);
+        virtual void operator-=(const Type&);
+        virtual void operator*=(const scalar);
+        virtual void operator/=(const scalar);
+
+
+        // Force an assignment irrespective of form of patch
+
+        virtual void operator==(const faPatchField<Type>&);
+        virtual void operator==(const Field<Type>&);
+        virtual void operator==(const Type&);
 };
 
 

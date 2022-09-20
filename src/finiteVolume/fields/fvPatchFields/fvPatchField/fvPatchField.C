@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -107,17 +107,8 @@ Foam::fvPatchField<Type>::fvPatchField
     }
     else
     {
-        FatalIOErrorIn
-        (
-            "fvPatchField<Type>::fvPatchField"
-            "("
-            "const fvPatch& p,"
-            "const DimensionedField<Type, volMesh>& iF,"
-            "const dictionary& dict,"
-            "const bool valueRequired"
-            ")",
-            dict
-        )   << "Essential entry 'value' missing"
+        FatalIOErrorInFunction(dict)
+            << "Essential entry 'value' missing"
             << exit(FatalIOError);
     }
 }
@@ -198,7 +189,7 @@ void Foam::fvPatchField<Type>::check(const fvPatchField<Type>& ptf) const
 {
     if (&patch_ != &(ptf.patch_))
     {
-        FatalErrorIn("PatchField<Type>::check(const fvPatchField<Type>&)")
+        FatalErrorInFunction
             << "different patches for fvPatchField<Type>s"
             << abort(FatalError);
     }
@@ -461,10 +452,8 @@ void Foam::fvPatchField<Type>::operator*=
 {
     if (&patch_ != &ptf.patch())
     {
-        FatalErrorIn
-        (
-            "PatchField<Type>::operator*=(const fvPatchField<scalar>& ptf)"
-        )   << "incompatible patches for patch fields"
+        FatalErrorInFunction
+            << "incompatible patches for patch fields"
             << abort(FatalError);
     }
 
@@ -480,10 +469,8 @@ void Foam::fvPatchField<Type>::operator/=
 {
     if (&patch_ != &ptf.patch())
     {
-        FatalErrorIn
-        (
-            "PatchField<Type>::operator/=(const fvPatchField<scalar>& ptf)"
-        )   << "    incompatible patches for patch fields"
+        FatalErrorInFunction
+            << "    incompatible patches for patch fields"
             << abort(FatalError);
     }
 

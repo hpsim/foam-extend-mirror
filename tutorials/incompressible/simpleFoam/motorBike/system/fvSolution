@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -20,8 +20,8 @@ solvers
     {
         solver           GAMG;
         tolerance        1e-7;
-        relTol           0.1;
-        smoother         GaussSeidel;
+        relTol           0.001;
+        smoother         symGaussSeidel;
         nPreSweeps       0;
         nPostSweeps      2;
         cacheAgglomeration on;
@@ -31,41 +31,35 @@ solvers
     }
     U
     {
-        solver           smoothSolver;
-        smoother         GaussSeidel;
+        solver           BiCGStab;
+        preconditioner   ILU0;
         tolerance        1e-8;
-        relTol           0.1;
-        nSweeps          1;
+        relTol           0.01;
     }
     k
     {
-        solver           smoothSolver;
-        smoother         GaussSeidel;
+        solver           BiCGStab;
+        preconditioner   ILU0;
         tolerance        1e-8;
-        relTol           0.1;
-        nSweeps          1;
-    }
-    epsilon
-    {
-        solver           smoothSolver;
-        smoother         GaussSeidel;
-        tolerance        1e-8;
-        relTol           0.1;
-        nSweeps          1;
+        relTol           0.01;
     }
     omega
     {
-        solver           smoothSolver;
-        smoother         GaussSeidel;
+        solver           BiCGStab;
+        preconditioner   ILU0;
         tolerance        1e-8;
-        relTol           0.1;
-        nSweeps          1;
+        relTol           0.01;
     }
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 2;
 }
 
 SIMPLE
 {
-    nNonOrthogonalCorrectors 2;
+    nNonOrthogonalCorrectors 1;
 }
 
 relaxationFactors
@@ -83,6 +77,5 @@ cache
     grad(k);
     grad(omega);
 }
-
 
 // ************************************************************************* //

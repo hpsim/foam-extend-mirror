@@ -1,9 +1,9 @@
 # --------------------------------------------------------------------------
-#   ========                 |
-#   \      /  F ield         | foam-extend: Open Source CFD
-#    \    /   O peration     | Version:     4.1
-#     \  /    A nd           | Web:         http://www.foam-extend.org
-#      \/     M anipulation  | For copyright notice see file Copyright
+#   =========                 |
+#   \\      /  F ield         | foam-extend: Open Source CFD
+#    \\    /   O peration     | Version:     5.0
+#     \\  /    A nd           | Web:         http://www.foam-extend.org
+#      \\/     M anipulation  | For copyright notice see file Copyright
 # --------------------------------------------------------------------------
 # License
 #     This file is part of foam-extend.
@@ -30,5 +30,4 @@
 #
 # --------------------------------------------------------------------------
 
-add_subdirectory(vectorSnapshots)
-add_subdirectory(scalarSnapshots)
+add_subdirectory({PODSnapshots)

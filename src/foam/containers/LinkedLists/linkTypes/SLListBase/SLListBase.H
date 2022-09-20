@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -188,6 +188,10 @@ public:
             //- Construct for a given SLListBase and link
             inline iterator(SLListBase&, link*);
 
+            //- Construct as copy
+            inline iterator(const iterator&) = default;
+
+
             // Member operators
 
                 inline void operator=(const iterator&);
@@ -222,6 +226,9 @@ public:
 
             //- Construct for a given SLListBase and link
             inline const_iterator(const SLListBase&, const link*);
+
+            //- Construct from a const iterator
+            inline const_iterator(const const_iterator&) = default;
 
             //- Construct from a non-const iterator
             inline const_iterator(const iterator&);

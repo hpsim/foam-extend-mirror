@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -31,12 +31,14 @@ License
 
 namespace Foam
 {
-defineTypeNameAndDebug(IOdictionary, 0);
+    defineTypeNameAndDebug(IOdictionary, 0);
 
-bool IOdictionary::writeDictionaries
-(
-    debug::infoSwitch("writeDictionaries", 0)
-);
+    debug::infoSwitch
+    IOdictionary::writeDictionaries
+    (
+        "writeDictionaries",
+        0
+    );
 }
 
 
@@ -177,6 +179,14 @@ Foam::IOdictionary::IOdictionary(const IOobject& io, Istream& is)
     // so that if there is some fancy massaging due to a functionEntry in
     // the dictionary at least the type information is already complete.
     is  >> *this;
+}
+
+
+Foam::IOdictionary::IOdictionary(const IOdictionary& dict)
+:
+    regIOobject(dict),
+    dictionary(dict)
+{
 }
 
 

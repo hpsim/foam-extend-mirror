@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ License
 #include "volMesh.H"
 #include "surfaceMesh.H"
 #include "GeometricField.H"
-#include "zeroGradientFvPatchField.H"
+#include "extrapolatedCalculatedFvPatchFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -81,7 +81,7 @@ leastSquaresGrad<Type>::calcGrad
                 vsf.dimensions()/dimLength,
                 pTraits<GradType>::zero
             ),
-            zeroGradientFvPatchField<GradType>::typeName
+            extrapolatedCalculatedFvPatchField<GradType>::typeName
         )
     );
     GeometricField<GradType, fvPatchField, volMesh>& lsGrad = tlsGrad();
@@ -94,6 +94,10 @@ leastSquaresGrad<Type>::calcGrad
 
     const unallocLabelList& own = mesh.owner();
     const unallocLabelList& nei = mesh.neighbour();
+
+    // updateCoupledPatchFields for patchNeighbourField update
+    // HJ, 10/Sep/2021
+    vsf.boundaryField().updateCoupledPatchFields();
 
     // Get access to internal field
 

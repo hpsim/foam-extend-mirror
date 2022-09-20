@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -58,13 +58,35 @@ Foam::NamedEnum
     "DimensionedConstants"
 };
 
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 namespace Foam
 {
 namespace debug
 {
+// enum for selecting which part of the globalControlDict to dump to the console
+enum globalControlDictSubDict
+{
+    allDict,
+    debugDict,
+    infoDict,
+    optimisationDict,
+    tolerancesDict,
+    constantsDict
+};
+
+// Accepted parameters for the command-line option -dumpControlSwitches
+template<>
+const char*
+Foam::NamedEnum<globalControlDictSubDict, 6>::names[] =
+{
+    "all",
+    "debug",
+    "info",
+    "optimisation",
+    "tolerances",
+    "constants"
+};
 
 //! @cond ignoreDocumentation - local scope
 dictionary* controlDictPtr_(nullptr);
@@ -999,7 +1021,10 @@ void Foam::debug::updateCentralDictVars
     }
 }
 
-void Foam::debug::dumpControlSwitchesToConsole()
+void Foam::debug::dumpControlSwitchesToConsole
+(
+    const Foam::string& switchesSubSetName
+)
 {
     const NamedEnum
     <
@@ -1008,45 +1033,65 @@ void Foam::debug::dumpControlSwitchesToConsole()
     >
     globalControlDictSwitchSetNames;
 
+    // Accepted options for -dumpControlSwitches
+    const NamedEnum<globalControlDictSubDict, 6> globalControlDictSubDictNames;
+
     Info << endl;
 
-    debug::printControlSwitches
-    (
-        globalControlDictSwitchSetNames[debug::DEBUG_SWITCHES],
-        debug::debugSwitchValues_
-    );
+    globalControlDictSubDict dumpThisDict =
+        globalControlDictSubDictNames[switchesSubSetName];
 
-    debug::printControlSwitches
-    (
-        globalControlDictSwitchSetNames[debug::INFO_SWITCHES],
-        debug::infoSwitchValues_
-    );
+    if(dumpThisDict == debugDict || dumpThisDict == allDict)
+    {
+        debug::printControlSwitches
+        (
+            globalControlDictSwitchSetNames[debug::DEBUG_SWITCHES],
+            debug::debugSwitchValues_
+        );
+    }
 
-    // We are forced to pass the string descriptions of the
-    // Pstream::commsTypes for the optimisationSwitches group because
-    // this switch is in fact an enum but we need to specify its
-    // corresponding string equivalent in a controlDict
-    // dictionary. And at the low level we are playing, including
-    // Pstream.H is out of the question.  MB 2015
-    debug::printControlSwitches
-    (
-        globalControlDictSwitchSetNames[debug::OPTIMISATION_SWITCHES],
-        debug::optimisationSwitchValues_,
-        Pstream::commsTypeNames.names
-    );
+    if(dumpThisDict == infoDict || dumpThisDict == allDict)
+    {
+        debug::printControlSwitches
+        (
+            globalControlDictSwitchSetNames[debug::INFO_SWITCHES],
+            debug::infoSwitchValues_
+        );
+    }
 
-    debug::printControlSwitches
-    (
-        globalControlDictSwitchSetNames[debug::TOLERANCES],
-        debug::tolerancesSwitchValues_
-    );
+    if(dumpThisDict == optimisationDict || dumpThisDict == allDict)
+    {
+        // We are forced to pass the string descriptions of the
+        // Pstream::commsTypes for the optimisationSwitches group because
+        // this switch is in fact an enum but we need to specify its
+        // corresponding string equivalent in a controlDict
+        // dictionary. And at the low level we are playing, including
+        // Pstream.H is out of the question.  MB 2015
+        debug::printControlSwitches
+        (
+            globalControlDictSwitchSetNames[debug::OPTIMISATION_SWITCHES],
+            debug::optimisationSwitchValues_,
+            Pstream::commsTypeNames.names
+        );
+    }
 
-    debug::printControlSwitches
-    (
-        globalControlDictSwitchSetNames[debug::DIMENSIONED_CONSTANTS],
-        debug::constantsSwitchValues_
-    );
+    if(dumpThisDict == tolerancesDict || dumpThisDict == allDict)
+    {
+        debug::printControlSwitches
+        (
+            globalControlDictSwitchSetNames[debug::TOLERANCES],
+            debug::tolerancesSwitchValues_
+        );
+    }
 
+    if(dumpThisDict == constantsDict || dumpThisDict == allDict)
+    {
+        debug::printControlSwitches
+        (
+            globalControlDictSwitchSetNames[debug::DIMENSIONED_CONSTANTS],
+            debug::constantsSwitchValues_
+        );
+    }
     Info << endl;
 
     return;

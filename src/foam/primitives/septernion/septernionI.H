@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -86,12 +86,6 @@ inline Foam::vector Foam::septernion::invTransform(const vector& v) const
 
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-inline void Foam::septernion::operator=(const septernion& tr)
-{
-    t_ = tr.t_;
-    r_ = tr.r_;
-}
 
 inline void Foam::septernion::operator*=(const septernion& tr)
 {

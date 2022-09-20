@@ -1,0 +1,97 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     5.0                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    pcorr
+    {
+        solver           CG;
+        preconditioner   Cholesky;
+
+        minIter          0;
+        maxIter          1000;
+        tolerance        1e-07;
+        relTol           0;
+    }
+    p
+    {
+        solver           CG;
+        preconditioner   Cholesky;
+
+        minIter          0;
+        maxIter          1000;
+        tolerance        1e-07;
+        relTol           0.0;
+    }
+    pFinal
+    {
+        solver           CG;
+        preconditioner   Cholesky;
+
+        minIter          0;
+        maxIter          1000;
+        tolerance        1e-07;
+        relTol           0;
+    }
+
+    U
+    {
+        solver            BiCGStab;
+        preconditioner    DILU;
+
+        minIter          0;
+        maxIter          1000;
+        tolerance        1e-07;
+        relTol           0;
+    }
+
+    UFinal
+    {
+        solver            BiCGStab;
+        preconditioner    DILU;
+
+        minIter          0;
+        maxIter          1000;
+        tolerance        1e-07;
+        relTol           0;
+    }
+}
+
+PIMPLE
+{
+    //correctPhi          no;
+    nOuterCorrectors    1;
+    nCorrectors         4;
+    nNonOrthogonalCorrectors 0;
+    //pRefCell 		0;
+    //pRefValue		0;
+}
+
+relaxationFactors
+{
+    p               0.3;
+    U               0.7;
+    UFinal          0.7; // To avoid sudden increase in pressure residual
+    k               0.7;
+    epsilon         0.7;
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 0;
+}
+
+// ************************************************************************* //

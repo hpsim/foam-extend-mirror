@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -70,6 +70,7 @@ void Foam::ImmersedFace<Distance>::createSubfaces
         const label start = curEdge.start();
         const label end = curEdge.end();
 
+        // Length of current edge
         const scalar edgeLength = curEdge.mag(localPoints);
 
         // Check if there is a legitimate cut to be found
@@ -147,7 +148,6 @@ void Foam::ImmersedFace<Distance>::createSubfaces
 
                     iters++;
                 }
-
             }
 
             // Store first point of edge
@@ -190,11 +190,14 @@ void Foam::ImmersedFace<Distance>::createSubfaces
             // NOTE: now it can be any of the options since end or start is
             // sitting on the surface, othervise the if statement above would
             // have been true.(IG 14/May/2019)
-            if
-            (
-                mag(depth[curEdge.start()])
-              < edgeLength*immersedPoly::tolerance_()
-            )
+            // NOTE:
+            // Old check depended on the length of the current edge, meaning
+            // that the tolerance depends on the order the face is visited
+            // (consider pair of faces on the processor boundary.
+            // This is incorrect: use absolute tolerance instead, consistent
+            // with the wet/dry test in the constructor
+            // HJ, 10/May/2022
+            if (mag(depth[curEdge.start()]) < absTol_)
             {
                 isSubmerged[nNewPoints] = 0;
             }
@@ -290,30 +293,13 @@ void Foam::ImmersedFace<Distance>::createSubfaces
 }
 
 
-// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
 template<class Distance>
-Foam::ImmersedFace<Distance>::ImmersedFace
-(
-    const label faceID,
-    const polyMesh& mesh,
-    const Distance& dist
-)
-:
-    dist_(dist),
-    wetSubface_(),
-    drySubface_(),
-    isAllWet_(false),
-    isAllDry_(false)
+void Foam::ImmersedFace<Distance>::init()
 {
-    const face& origFace = mesh.faces()[faceID];
-
-    // Store face points locally
-    facePointsAndIntersections_ = origFace.points(mesh.points());
-    face localFace(origFace.size());
+    face localFace(facePointsAndIntersections_.size());
 
     // Local face addresses into local points
-    forAll (origFace, pointI)
+    forAll (localFace, pointI)
     {
         localFace[pointI]  = pointI;
     }
@@ -322,7 +308,8 @@ Foam::ImmersedFace<Distance>::ImmersedFace
     scalarField depth = dist_.distance(facePointsAndIntersections_);
 
     // Calculating absolute tolerances based on minimum edge length
-    scalar absTol = 0.0;
+    absTol_ = 0;
+
     {
         // Use local edges
         const edgeList edges = localFace.edges();
@@ -341,11 +328,11 @@ Foam::ImmersedFace<Distance>::ImmersedFace
                 );
         }
 
-        absTol = minEdgeLength*immersedPoly::tolerance_();
+        absTol_ = minEdgeLength*immersedPoly::tolerance_();
     }
 
     // Check if all points are wet or dry, using absolute tolerance
-    if (max(depth) < absTol)
+    if (max(depth) < absTol_)
     {
         // All points are wet within a tolerance: face is wet
         isAllWet_ = true;
@@ -353,7 +340,7 @@ Foam::ImmersedFace<Distance>::ImmersedFace
 
         wetSubface_ = localFace;
     }
-    else if (min(depth) > -absTol)
+    else if (min(depth) > -absTol_)
     {
         // All points are dry within a tolerance: face is dry
         isAllWet_ = false;
@@ -367,6 +354,46 @@ Foam::ImmersedFace<Distance>::ImmersedFace
         // Perform detailed analysis to create dry and wet sub-face
         createSubfaces(localFace, depth);
     }
+}
+
+
+// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
+
+template<class Distance>
+Foam::ImmersedFace<Distance>::ImmersedFace
+(
+    const pointField& p,
+    const Distance& dist
+)
+:
+    dist_(dist),
+    facePointsAndIntersections_(p),
+    wetSubface_(),
+    drySubface_(),
+    isAllWet_(false),
+    isAllDry_(false)
+{
+    init();
+}
+
+
+template<class Distance>
+Foam::ImmersedFace<Distance>::ImmersedFace
+(
+    const label faceID,
+    const polyMesh& mesh,
+    const Distance& dist
+)
+:
+    dist_(dist),
+    facePointsAndIntersections_(mesh.faces()[faceID].points(mesh.points())),
+    wetSubface_(),
+    drySubface_(),
+    isAllWet_(false),
+    isAllDry_(false)
+{
+    // Initialised immersed face
+    init();
 }
 
 

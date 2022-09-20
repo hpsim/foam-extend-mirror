@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -25,11 +25,15 @@ Class
     PODEigenBase
 
 Description
-    Class which assembles scalar eigen-base given a set of scalar fields.
+    Class which assembles scalar eigen-base given a set of fields.
     This is performed by establishing a matrix of snapshots, calculating and
     sorting them and providing corresponding eigen-vectors.  Eigen-values are
     sorted in increasing order.  Snapshots are added one at a time and
-    when the base is completed, the calculation is triggered
+    when the base is completed, the calculation is triggered.
+
+    The scaling factors ai in the decomposition apply over the complete set
+    of fields.  Currently weighting factors for individual fields are
+    not supported but may be needed in the future.
 
 Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved.
@@ -55,9 +59,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                       Class PODEigenBase Declaration
+                         Class PODEigenBase Declaration
 \*---------------------------------------------------------------------------*/
 
+template<class Type>
 class PODEigenBase
 {
     // Private data
@@ -75,10 +80,10 @@ class PODEigenBase
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        PODEigenBase(const PODEigenBase&);
+        PODEigenBase(const PODEigenBase&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const PODEigenBase&);
+        void operator=(const PODEigenBase&) = delete;
 
 
         //- Calculate eigen base
@@ -90,10 +95,14 @@ public:
     // Constructors
 
         //- Construct given a list of fields
-        PODEigenBase(const PtrList<volScalarField>& snapshots);
+        PODEigenBase
+        (
+            const PtrList<GeometricField<Type, fvPatchField, volMesh> >& snaps
+        );
 
 
-    // Destructor - default
+    //- Destructor
+    ~PODEigenBase() = default;
 
 
     // Member Functions
@@ -121,6 +130,13 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#ifdef NoRepository
+#   include "PODEigenBase.C"
+#endif
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

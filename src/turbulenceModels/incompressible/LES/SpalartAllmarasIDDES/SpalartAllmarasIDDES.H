@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ namespace LESModels
 {
 
 /*---------------------------------------------------------------------------*\
-                        Class SpalartAllmarasIDDES Declaration
+                  Class SpalartAllmarasIDDES Declaration
 \*---------------------------------------------------------------------------*/
 
 class SpalartAllmarasIDDES
@@ -78,9 +78,11 @@ class SpalartAllmarasIDDES
         //- Delay function
         tmp<volScalarField> fd(const volScalarField& S) const;
 
-        // Disallow default bitwise copy construct and assignment
-        SpalartAllmarasIDDES(const SpalartAllmarasIDDES&);
-        SpalartAllmarasIDDES& operator=(const SpalartAllmarasIDDES&);
+        //- Disallow default bitwise copy construct
+        SpalartAllmarasIDDES(const SpalartAllmarasIDDES&) = delete;
+
+        //- Disallow default bitwise assignment
+        SpalartAllmarasIDDES& operator=(const SpalartAllmarasIDDES&) = delete;
 
 
 protected:
@@ -111,8 +113,7 @@ public:
 
 
     //- Destructor
-    virtual ~SpalartAllmarasIDDES()
-    {}
+    virtual ~SpalartAllmarasIDDES() = default;
 
 
     // Member Functions

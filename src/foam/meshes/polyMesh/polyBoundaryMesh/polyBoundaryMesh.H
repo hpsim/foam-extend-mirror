@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -82,6 +82,9 @@ class polyBoundaryMesh
 
         //- Create identity map
         static labelList ident(const label len);
+
+        //- Calculate the addressing for the patches,
+        void calcAddressing();
 
         //- Calculate the geometry for the patches,
         //  eg transformation tensors etc.

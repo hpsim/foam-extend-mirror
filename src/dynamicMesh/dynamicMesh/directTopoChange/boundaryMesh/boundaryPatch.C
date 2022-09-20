@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -44,14 +44,6 @@ Foam::boundaryPatch::boundaryPatch
 {}
 
 
-Foam::boundaryPatch::boundaryPatch(const boundaryPatch& sp)
-:
-    patchIdentifier(sp.name(), sp.index(), sp.physicalType()),
-    size_(sp.size()),
-    start_(sp.start())
-{}
-
-
 Foam::boundaryPatch::boundaryPatch
 (
     const word& name,
@@ -69,12 +61,6 @@ Foam::autoPtr<Foam::boundaryPatch> Foam::boundaryPatch::clone() const
 {
     return autoPtr<boundaryPatch>(new boundaryPatch(*this));
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::boundaryPatch::~boundaryPatch()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

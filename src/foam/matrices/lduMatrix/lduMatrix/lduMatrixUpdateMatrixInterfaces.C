@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -90,9 +90,9 @@ void Foam::lduMatrix::initMatrixInterfaces
     }
     else
     {
-        FatalErrorIn("lduMatrix::initMatrixInterfaces")
+        FatalErrorInFunction
             << "Unsuported communications type "
-            << Pstream::commsTypeNames[Pstream::defaultCommsType()]
+            << Pstream::commsTypeNames[Pstream::defaultComms()]
             << exit(FatalError);
     }
 }
@@ -184,8 +184,7 @@ void Foam::lduMatrix::updateMatrixInterfaces
             else
             {
                 // Block for all requests and remove storage
-                IPstream::waitRequests();
-                OPstream::waitRequests();
+                Pstream::waitRequests();
             }
         }
 
@@ -277,9 +276,9 @@ void Foam::lduMatrix::updateMatrixInterfaces
     }
     else
     {
-        FatalErrorIn("lduMatrix::updateMatrixInterfaces")
+        FatalErrorInFunction
             << "Unsuported communications type "
-            << Pstream::commsTypeNames[Pstream::defaultCommsType()]
+            << Pstream::commsTypeNames[Pstream::defaultComms()]
             << exit(FatalError);
     }
 }

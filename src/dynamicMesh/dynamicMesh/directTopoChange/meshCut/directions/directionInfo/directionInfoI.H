@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -47,14 +47,6 @@ inline Foam::directionInfo::directionInfo
 :
     index_(index),
     n_(n)
-{}
-
-
-// Construct as copy
-inline Foam::directionInfo::directionInfo(const directionInfo& w2)
-:
-    index_(w2.index()),
-    n_(w2.n())
 {}
 
 

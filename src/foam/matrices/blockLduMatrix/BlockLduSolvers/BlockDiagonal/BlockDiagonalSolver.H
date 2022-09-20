@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -67,10 +67,10 @@ class BlockDiagonalSolver
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        BlockDiagonalSolver(const BlockDiagonalSolver<Type>&);
+        BlockDiagonalSolver(const BlockDiagonalSolver<Type>&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const BlockDiagonalSolver<Type>&);
+        void operator=(const BlockDiagonalSolver<Type>&) = delete;
 
 
 public:
@@ -90,6 +90,10 @@ public:
         );
 
 
+    //- Destructor
+    virtual ~BlockDiagonalSolver() = default;
+
+
     // Member Functions
 
         //- Solve the matrix with this solver
@@ -97,7 +101,7 @@ public:
         (
             Field<Type>& x,
             const Field<Type>& b
-        );
+        ) const;
 
         //- Re-initialise solver after matrix coefficient update
         virtual void initMatrix()

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -106,9 +106,6 @@ public:
 
         //- Construct null, with all coefficients = 0.0
         Polynomial();
-
-        //- Copy constructor
-        Polynomial(const Polynomial&);
 
         //- Construct from C-array of coefficients
         explicit Polynomial(const scalar coeffs[PolySize]);

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -48,11 +48,8 @@ void Foam::fvMatrix<Type>::addToInternalField
 {
     if (addr.size() != pf.size())
     {
-        FatalErrorIn
-        (
-            "fvMatrix<Type>::addToInternalField(const unallocLabelList&, "
-            "const Field&, Field&)"
-        )   << "sizes of addressing and field are different.  Addr: "
+        FatalErrorInFunction
+            << "sizes of addressing and field are different.  Addr: "
             << addr.size() << " pf: " << pf.size()
             << abort(FatalError);
     }
@@ -89,11 +86,8 @@ void Foam::fvMatrix<Type>::subtractFromInternalField
 {
     if (addr.size() != pf.size())
     {
-        FatalErrorIn
-        (
-            "fvMatrix<Type>::addToInternalField(const unallocLabelList&, "
-            "const Field&, Field&)"
-        )   << "sizes of addressing and field are different.  Addr: "
+        FatalErrorInFunction
+            << "sizes of addressing and field are different.  Addr: "
             << addr.size() << " pf: " << pf.size()
             << abort(FatalError);
     }
@@ -160,6 +154,11 @@ void Foam::fvMatrix<Type>::addBoundarySource
     const bool couples
 ) const
 {
+    if (couples)
+    {
+        psi_.boundaryField().updateCoupledPatchFields();
+    }
+
     forAll (psi_.boundaryField(), patchI)
     {
         const fvPatchField<Type>& ptf = psi_.boundaryField()[patchI];
@@ -251,12 +250,8 @@ Foam::fvMatrix<Type>::fvMatrix
 {
     if (debug)
     {
-        InfoIn
-        (
-            "fvMatrix<Type>("
-            "const GeometricField<Type, fvPatchField, volMesh>&,"
-            "const dimensionSet&)"
-        )   << "constructing fvMatrix<Type> for field " << psi_.name()
+        InfoInFunction
+            << "Constructing fvMatrix<Type> for field " << psi_.name()
             << endl;
     }
 
@@ -310,8 +305,8 @@ Foam::fvMatrix<Type>::fvMatrix(const fvMatrix<Type>& fvm)
 {
     if (debug)
     {
-        Info<< "fvMatrix<Type>::fvMatrix(const fvMatrix<Type>&) : "
-            << "copying fvMatrix<Type> for field " << psi_.name()
+        InfoInFunction
+            << "Copying fvMatrix<Type> for field " << psi_.name()
             << endl;
     }
 
@@ -368,8 +363,8 @@ Foam::fvMatrix<Type>::fvMatrix(const tmp<fvMatrix<Type> >& tfvm)
 {
     if (debug)
     {
-        Info<< "fvMatrix<Type>::fvMatrix(const tmp<fvMatrix<Type> >&) : "
-            << "copying fvMatrix<Type> for field " << psi_.name()
+        InfoInFunction
+            << "Copying fvMatrix<Type> for field " << psi_.name()
             << endl;
     }
 
@@ -431,9 +426,8 @@ Foam::fvMatrix<Type>::fvMatrix
 {
     if (debug)
     {
-        Info<< "fvMatrix<Type>"
-               "(GeometricField<Type, fvPatchField, volMesh>&, Istream&) : "
-               "constructing fvMatrix<Type> for field " << psi_.name()
+        InfoInFunction
+            << "Constructing fvMatrix<Type> for field " << psi_.name()
             << endl;
     }
 
@@ -469,7 +463,7 @@ Foam::fvMatrix<Type>::~fvMatrix()
 {
     if (debug)
     {
-        Info<< "fvMatrix<Type>::~fvMatrix<Type>() : "
+        InfoInFunction
             << "destroying fvMatrix<Type> for field " << psi_.name()
             << endl;
     }
@@ -624,10 +618,8 @@ void Foam::fvMatrix<Type>::relax(const scalar alpha)
 {
     if (debug)
     {
-        InfoIn
-        (
-            "fvMatrix<Type>(const scalar alpha"
-        )   << "relaxing fvMatrix<Type> for field " << psi_.name()
+        InfoInFunction
+            << "relaxing fvMatrix<Type> for field " << psi_.name()
             << " with " << alpha
             << endl;
     }
@@ -733,7 +725,7 @@ void Foam::fvMatrix<Type>::relax()
     {
         if (debug)
         {
-            InfoIn("void fvMatrix<Type>::relax()")
+            InfoInFunction
                 << "Relaxation factor for field " << psi_.name()
                 << " not found.  Relaxation will not be used." << endl;
         }
@@ -865,9 +857,9 @@ void Foam::fvMatrix<Type>::completeAssembly()
 
     if (debug)
     {
-        InfoIn("void Foam::fvMatrix<Type>::completeAssembly()")
+        InfoInFunction
             << "Completing matrix for equation " << this->psi().name()
-                << endl;
+            << endl;
     }
 
     assemblyCompleted_ = true;
@@ -928,7 +920,7 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Type>::A() const
         (
             IOobject
             (
-                "A("+psi_.name()+')',
+                "A(" + psi_.name() + ")",
                 psi_.instance(),
                 psi_.mesh(),
                 IOobject::NO_READ,
@@ -939,6 +931,10 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Type>::A() const
             zeroGradientFvPatchScalarField::typeName
         )
     );
+
+    // Complete matrix assembly.  HJ, 3/May/2022
+    fvMatrix& m = const_cast<fvMatrix&>(*this);
+    m.completeAssembly();
 
     tAphi().internalField() = D()/psi_.mesh().V();
     tAphi().correctBoundaryConditions();
@@ -957,7 +953,7 @@ Foam::fvMatrix<Type>::H() const
         (
             IOobject
             (
-                "H("+psi_.name()+')',
+                "H(" + psi_.name() + ")",
                 psi_.instance(),
                 psi_.mesh(),
                 IOobject::NO_READ,
@@ -970,8 +966,12 @@ Foam::fvMatrix<Type>::H() const
     );
     GeometricField<Type, fvPatchField, volMesh>& Hphi = tHphi();
 
+    // Complete matrix assembly.  HJ, 3/May/2022
+    fvMatrix& m = const_cast<fvMatrix&>(*this);
+    m.completeAssembly();
+
     // Loop over field components
-    for (direction cmpt=0; cmpt<Type::nComponents; cmpt++)
+    for (direction cmpt = 0; cmpt < Type::nComponents; cmpt++)
     {
         scalarField psiCmpt = psi_.internalField().component(cmpt);
 
@@ -998,7 +998,7 @@ Foam::fvMatrix<Type>::H() const
         )
     );
 
-    for(direction cmpt=0; cmpt<Type::nComponents; cmpt++)
+    for(direction cmpt = 0; cmpt<Type::nComponents; cmpt++)
     {
         if (validComponents[cmpt] == -1)
         {
@@ -1036,23 +1036,6 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Type>::H1() const
     );
     volScalarField& H1_ = tH1();
 
-    // Loop over field components
-    /*
-    for (direction cmpt=0; cmpt<Type::nComponents; cmpt++)
-    {
-        scalarField psiCmpt = psi_.internalField().component(cmpt);
-
-        scalarField boundaryDiagCmpt(psi_.size(), 0.0);
-        addBoundaryDiag(boundaryDiagCmpt, cmpt);
-        boundaryDiagCmpt.negate();
-        addCmptAvBoundaryDiag(boundaryDiagCmpt);
-
-        H1_.internalField().replace(cmpt, boundaryDiagCmpt);
-    }
-
-    H1_.internalField() += lduMatrix::H1();
-    */
-
     H1_.internalField() = lduMatrix::H1();
 
     H1_.internalField() /= psi_.mesh().V();
@@ -1064,12 +1047,11 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Type>::H1() const
 
 template<class Type>
 Foam::tmp<Foam::GeometricField<Type, Foam::fvsPatchField, Foam::surfaceMesh> >
-Foam::fvMatrix<Type>::
-flux() const
+Foam::fvMatrix<Type>::flux() const
 {
     if (!psi_.mesh().schemesDict().fluxRequired(psi_.name()))
     {
-        FatalErrorIn("fvMatrix<Type>::flux()")
+        FatalErrorInFunction
             << "flux requested but " << psi_.name()
             << " not specified in the fluxRequired sub-dictionary"
                " of fvSchemes."
@@ -1083,7 +1065,7 @@ flux() const
         (
             IOobject
             (
-                "flux("+psi_.name()+')',
+                "flux(" + psi_.name() + ")",
                 psi_.instance(),
                 psi_.mesh(),
                 IOobject::NO_READ,
@@ -1095,7 +1077,11 @@ flux() const
     );
     GeometricField<Type, fvsPatchField, surfaceMesh>& fieldFlux = tfieldFlux();
 
-    for (direction cmpt=0; cmpt<pTraits<Type>::nComponents; cmpt++)
+    // Complete matrix assembly.  HJ, 3/May/2022
+    fvMatrix& m = const_cast<fvMatrix&>(*this);
+    m.completeAssembly();
+
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
         fieldFlux.internalField().replace
         (
@@ -1107,6 +1093,8 @@ flux() const
     // This needs to go into virtual functions for all coupled patches
     // in order to simplify handling of overset meshes
     // HJ, 29/May/2013
+    psi_.boundaryField().updateCoupledPatchFields();
+
     forAll (psi_.boundaryField(), patchI)
     {
         psi_.boundaryField()[patchI].patchFlux
@@ -1132,7 +1120,7 @@ jumpFlux() const
 {
     if (!psi_.mesh().schemesDict().fluxRequired(psi_.name()))
     {
-        FatalErrorIn("fvMatrix<Type>::jumpFlux()")
+        FatalErrorInFunction
             << "jumpFlux requested but " << psi_.name()
             << " not specified in the fluxRequired sub-dictionary"
                " of fvSchemes."
@@ -1146,7 +1134,7 @@ jumpFlux() const
         (
             IOobject
             (
-                "flux("+psi_.name()+')',
+                "flux(" + psi_.name() + ")",
                 psi_.instance(),
                 psi_.mesh(),
                 IOobject::NO_READ,
@@ -1158,7 +1146,11 @@ jumpFlux() const
     );
     GeometricField<Type, fvsPatchField, surfaceMesh>& fieldFlux = tfieldFlux();
 
-    for (direction cmpt=0; cmpt<pTraits<Type>::nComponents; cmpt++)
+    // Complete matrix assembly.  HJ, 3/May/2022
+    fvMatrix& m = const_cast<fvMatrix&>(*this);
+    m.completeAssembly();
+
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
         fieldFlux.internalField().replace
         (
@@ -1170,6 +1162,8 @@ jumpFlux() const
     // This needs to go into virtual functions for all coupled patches
     // in order to simplify handling of overset meshes
     // HJ, 29/May/2013
+    psi_.boundaryField().updateCoupledPatchFields();
+
     forAll (psi_.boundaryField(), patchI)
     {
         psi_.boundaryField()[patchI].patchFlux
@@ -1201,14 +1195,14 @@ void Foam::fvMatrix<Type>::operator=(const fvMatrix<Type>& fvmv)
 {
     if (this == &fvmv)
     {
-        FatalErrorIn("fvMatrix<Type>::operator=(const fvMatrix<Type>&)")
+        FatalErrorInFunction
             << "attempted assignment to self"
             << abort(FatalError);
     }
 
     if (&psi_ != &(fvmv.psi_))
     {
-        FatalErrorIn("fvMatrix<Type>::operator=(const fvMatrix<Type>&)")
+        FatalErrorInFunction
             << "different fields"
             << abort(FatalError);
     }
@@ -1485,21 +1479,15 @@ void Foam::fvMatrix<Type>::operator*=
 
     if (faceFluxCorrectionPtr_)
     {
-        FatalErrorIn
-        (
-            "fvMatrix<Type>::operator*="
-            "(const DimensionedField<scalar, volMesh>&)"
-        )   << "cannot scale a matrix containing a faceFluxCorrection"
+        FatalErrorInFunction
+            << "cannot scale a matrix containing a faceFluxCorrection"
             << abort(FatalError);
     }
 
     if (jumpFaceFluxCorrectionPtr_)
     {
-        FatalErrorIn
-        (
-            "fvMatrix<Type>::operator*="
-            "(const DimensionedField<scalar, volMesh>&)"
-        )   << "cannot scale a matrix containing a jumpFaceFluxCorrection"
+        FatalErrorInFunction
+            << "cannot scale a matrix containing a jumpFaceFluxCorrection"
             << abort(FatalError);
     }
 }
@@ -1563,10 +1551,8 @@ void Foam::checkMethod
 {
     if (&fvm1.psi() != &fvm2.psi())
     {
-        FatalErrorIn
-        (
-            "checkMethod(const fvMatrix<Type>&, const fvMatrix<Type>&)"
-        )   << "incompatible fields for operation "
+        FatalErrorInFunction
+            << "incompatible fields for operation "
             << endl << "    "
             << "[" << fvm1.psi().name() << "] "
             << op
@@ -1576,10 +1562,8 @@ void Foam::checkMethod
 
     if (dimensionSet::debug && fvm1.dimensions() != fvm2.dimensions())
     {
-        FatalErrorIn
-        (
-            "checkMethod(const fvMatrix<Type>&, const fvMatrix<Type>&)"
-        )   << "incompatible dimensions for operation "
+        FatalErrorInFunction
+            << "incompatible dimensions for operation "
             << endl << "    "
             << "[" << fvm1.psi().name() << fvm1.dimensions()/dimVolume << " ] "
             << op
@@ -1599,11 +1583,8 @@ void Foam::checkMethod
 {
     if (dimensionSet::debug && fvm.dimensions()/dimVolume != df.dimensions())
     {
-        FatalErrorIn
-        (
-            "checkMethod(const fvMatrix<Type>&, const GeometricField<Type, "
-            "fvPatchField, volMesh>&)"
-        )   <<  "incompatible dimensions for operation "
+        FatalErrorInFunction
+            <<  "incompatible dimensions for operation "
             << endl << "    "
             << "[" << fvm.psi().name() << fvm.dimensions()/dimVolume << " ] "
             << op
@@ -1623,10 +1604,8 @@ void Foam::checkMethod
 {
     if (dimensionSet::debug && fvm.dimensions()/dimVolume != dt.dimensions())
     {
-        FatalErrorIn
-        (
-            "checkMethod(const fvMatrix<Type>&, const dimensioned<Type>&)"
-        )   << "incompatible dimensions for operation "
+        FatalErrorInFunction
+            << "incompatible dimensions for operation "
             << endl << "    "
             << "[" << fvm.psi().name() << fvm.dimensions()/dimVolume << " ] "
             << op
@@ -1785,6 +1764,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     return (A - B);
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
 (
@@ -1795,6 +1775,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     checkMethod(tA(), B, "==");
     return (tA - B);
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1807,6 +1788,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     return (A - tB);
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
 (
@@ -1817,6 +1799,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     checkMethod(tA(), tB(), "==");
     return (tA - tB);
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1830,6 +1813,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     tC().source() += su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1845,6 +1829,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
 (
@@ -1858,6 +1843,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1872,6 +1858,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
 (
@@ -1885,6 +1872,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1900,6 +1888,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
 (
@@ -1912,6 +1901,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
     tC().source() += A.psi().mesh().V()*su.value();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator==
@@ -1959,6 +1949,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -1984,6 +1975,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -1997,6 +1989,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2009,6 +2002,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC() += A;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2024,6 +2018,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2036,6 +2031,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC().source() -= su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2051,6 +2047,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2064,6 +2061,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2078,6 +2076,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2091,6 +2090,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2106,6 +2106,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2118,6 +2119,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC().source() -= su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2132,6 +2134,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2147,6 +2150,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2159,6 +2163,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC().source() -= su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2173,6 +2178,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2202,6 +2208,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2214,6 +2221,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC() -= B;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2229,6 +2237,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2243,6 +2252,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2255,6 +2265,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC().source() += su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2270,6 +2281,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2283,6 +2295,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2297,6 +2310,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2310,6 +2324,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tsu.clear();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2325,6 +2340,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2338,6 +2354,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC().source() -= su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2354,6 +2371,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2369,6 +2387,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2382,6 +2401,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC().source() -= su.mesh().V()*su.field();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2398,6 +2418,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2413,6 +2434,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2425,6 +2447,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC().source() -= su.value()*A.psi().mesh().V();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2439,6 +2462,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
 (
@@ -2451,6 +2475,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     tC().source() -= su.value()*A.psi().mesh().V();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
@@ -2465,6 +2490,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator+
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2477,6 +2503,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC().source() += su.value()*tC().psi().mesh().V();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2491,6 +2518,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
 (
@@ -2504,6 +2532,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
     tC().source() -= su.value()*A.psi().mesh().V();
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator-
@@ -2531,6 +2560,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     tC() *= dsf;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
@@ -2544,6 +2574,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
 (
@@ -2555,6 +2586,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     tC() *= tvsf;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
@@ -2568,6 +2600,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
 (
@@ -2579,6 +2612,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     tC() *= tdsf;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
@@ -2592,6 +2626,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     return tC;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
 (
@@ -2603,6 +2638,7 @@ Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
     tC() *= ds;
     return tC;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::fvMatrix<Type> > Foam::operator*
@@ -2644,8 +2680,12 @@ Foam::operator&
     );
     GeometricField<Type, fvPatchField, volMesh>& Mphi = tMphi();
 
+    // Complete matrix assembly.  HJ, 3/May/2022
+    fvMatrix<Type>& m = const_cast<fvMatrix<Type>&>(M);
+    m.completeAssembly();
+
     // Loop over field components
-    for (direction cmpt=0; cmpt<pTraits<Type>::nComponents; cmpt++)
+    for (direction cmpt = 0; cmpt < pTraits<Type>::nComponents; cmpt++)
     {
         scalarField psiCmpt = psi.field().component(cmpt);
         scalarField boundaryDiagCmpt(M.diag());
@@ -2662,6 +2702,7 @@ Foam::operator&
     return tMphi;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh> >
 Foam::operator&
@@ -2675,6 +2716,7 @@ Foam::operator&
     return tMpsi;
 }
 
+
 template<class Type>
 Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh> >
 Foam::operator&
@@ -2687,6 +2729,7 @@ Foam::operator&
     tpsi.clear();
     return tMpsi;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh> >
@@ -2714,6 +2757,7 @@ Foam::operator&
     tpsi.clear();
     return tMpsi;
 }
+
 
 template<class Type>
 Foam::tmp<Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh> >

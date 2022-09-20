@@ -1,7 +1,7 @@
 #---------------------------------*- sh -*-------------------------------------
 # =========                 |
 # \\      /  F ield         | foam-extend: Open Source CFD
-#  \\    /   O peration     | Version:     4.1
+#  \\    /   O peration     | Version:     5.0
 #   \\  /    A nd           | Web:         http://www.foam-extend.org
 #    \\/     M anipulation  | For copyright notice see file Copyright
 #------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ cleanTimeDirectories ()
         zeros=`printf %0${nZeros}d 0`
         nZeros=$(($nZeros + 1))
     done
-    rm -rf ./[1-9]* ./-[1-9]* ./log ./log.* ./log-* ./logSummary.* ./.fxLock ./*.xml ./ParaView* ./paraFoam* ./*.OpenFOAM > /dev/null 2>&1
+    rm -rf ./[1-9]* ./-[1-9]* ./log ./log.* ./log-* ./logSummary.* ./.fxLock ./*.xml ./ParaView* ./paraFoam* ./*.OpenFOAM gdbCommands  mpirun.schema > /dev/null 2>&1
 }
 
 cleanCase ()
@@ -76,7 +76,7 @@ cleanCase ()
            constant/polyMesh/zoneToPatchName \
            constant/polyMesh/cellLevel* \
            constant/polyMesh/pointLevel* \
-           constant/polyMesh/refinementHistory*, \
+           constant/polyMesh/refinementHistory* \
            constant/polyMesh/surfaceIndex* \
            constant/cellToRegion \
            constant/polyMesh/sets/ \

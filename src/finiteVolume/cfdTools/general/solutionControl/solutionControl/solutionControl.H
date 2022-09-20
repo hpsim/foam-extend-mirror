@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -211,10 +211,10 @@ private:
     // Private member functions
 
         //- Disallow default bitwise copy construct
-        solutionControl(const solutionControl&);
+        solutionControl(const solutionControl&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const solutionControl&);
+        void operator=(const solutionControl&) = delete;
 
 
 public:
@@ -233,7 +233,7 @@ public:
 
 
     //- Destructor
-    virtual ~solutionControl();
+    virtual ~solutionControl() = default;
 
 
     // Member Functions

@@ -22,4 +22,6 @@ dynamicPolyRefinementFvMesh/refinementSelection/protectedInitialRefinement/prote
 dynamicPolyRefinementFvMesh/refinementSelection/minFaceArea2DRefinement/minFaceArea2DRefinement.C
 dynamicPolyRefinementFvMesh/refinementSelection/compositeRefinementSelection/compositeRefinementSelection.C
 
+dynamicLoadBalancedRefinementFvMesh/dynamicLoadBalancedRefinementFvMesh.C
+
 LIB = $(FOAM_LIBBIN)/libtopoChangerFvMesh

@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.0                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -35,6 +35,11 @@ solvers
         tolerance        1e-08;
         relTol           0;
     }
+}
+
+potentialFlow
+{
+    nNonOrthogonalCorrectors 1;
 }
 
 SIMPLE
@@ -73,6 +78,5 @@ relaxationFactors
     {
     }
 }
-
 
 // ************************************************************************* //

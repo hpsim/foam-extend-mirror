@@ -1,9 +1,9 @@
 # --------------------------------------------------------------------------
-#   ========                 |
-#   \      /  F ield         | foam-extend: Open Source CFD
-#    \    /   O peration     | Version:     4.1
-#     \  /    A nd           | Web:         http://www.foam-extend.org
-#      \/     M anipulation  | For copyright notice see file Copyright
+#   =========                 |
+#   \\      /  F ield         | foam-extend: Open Source CFD
+#    \\    /   O peration     | Version:     5.0
+#     \\  /    A nd           | Web:         http://www.foam-extend.org
+#      \\/     M anipulation  | For copyright notice see file Copyright
 # --------------------------------------------------------------------------
 # License
 #     This file is part of foam-extend.
@@ -146,6 +146,8 @@ list(APPEND SOURCES
   ${basicFvPatchFields}/basicSymmetry/basicSymmetryFvPatchScalarField.C
   ${basicFvPatchFields}/calculated/calculatedFvPatchFields.C
   ${basicFvPatchFields}/calculated/calculatedFvPatchVectorNFields.C
+  ${basicFvPatchFields}/extrapolatedCalculated/extrapolatedCalculatedFvPatchFields.C
+  ${basicFvPatchFields}/extrapolatedCalculated/extrapolatedCalculatedFvPatchVectorNFields.C
   ${basicFvPatchFields}/coupled/coupledFvPatchFields.C
   ${basicFvPatchFields}/coupled/coupledFvPatchVectorNFields.C
   ${basicFvPatchFields}/directionMixed/directionMixedFvPatchFields.C
@@ -341,7 +343,6 @@ list(APPEND SOURCES
   ${schemes}/outletStabilised/outletStabilised.C
   ${schemes}/reverseLinear/reverseLinear.C
   ${schemes}/clippedLinear/clippedLinear.C
-  ${schemes}/harmonic/magLongDelta.C
   ${schemes}/harmonic/harmonic.C
   ${schemes}/fixedBlended/fixedBlended.C
   ${schemes}/localBlended/localBlended.C

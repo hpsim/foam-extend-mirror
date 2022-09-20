@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -45,11 +45,8 @@ void checkFields
 {
     if (f1.size() != f2.size())
     {
-        FatalErrorIn
-        (
-            "checkFields(const FieldField<Field, Type1>&, "
-            "const FieldField<Field, Type2>&, const char* op)"
-        )   << "    incompatible fields"
+        FatalErrorInFunction
+            << "    incompatible fields"
             << " FieldField<" << pTraits<Type1>::typeName
             << "> f1(" << f1.size() << ')'
             << " and FieldField<" << pTraits<Type2>::typeName
@@ -70,18 +67,13 @@ void checkFields
 {
     if (f1.size() != f2.size() || f1.size() != f3.size())
     {
-        FatalErrorIn
-        (
-            "checkFields(const FieldField<Field, Type1>&, "
-            "const FieldField<Field, Type2>&, "
-            "const FieldField<Field, Type3>&, "
-            "const char* op)"
-        )   << "    incompatible fields"
+        FatalErrorInFunction
+            << "    incompatible fields"
             << " FieldField<" << pTraits<Type1>::typeName
             << "> f1(" << f1.size() << ')'
-            << ", FieldField<" <<pTraits<Type2>::typeName
+            << ", FieldField<" << pTraits<Type2>::typeName
             << "> f2(" << f2.size() << ')'
-            << " and FieldField<"<<pTraits<Type3>::typeName
+            << " and FieldField<" << pTraits<Type3>::typeName
             << "> f3("<<f3.size() << ')'
             << endl << "    for operation " << op
             << abort(FatalError);
@@ -292,6 +284,16 @@ tmp<FieldField<Field, Type> > FieldField<Field, Type>::T() const
 }
 
 
+template<template<class> class Field, class Type>
+void FieldField<Field, Type>::clearCaches() const
+{
+    forAll(*this, i)
+    {
+        this->operator[](i).clearCaches();
+    }
+}
+
+
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
 
 template<template<class> class Field, class Type>
@@ -299,11 +301,8 @@ void FieldField<Field, Type>::operator=(const FieldField<Field, Type>& f)
 {
     if (this == &f)
     {
-        FatalErrorIn
-        (
-            "FieldField<Field, Type>::"
-            "operator=(const FieldField<Field, Type>&)"
-        )   << "attempted assignment to self"
+        FatalErrorInFunction
+            << "attempted assignment to self"
             << abort(FatalError);
     }
 
@@ -319,17 +318,28 @@ void FieldField<Field, Type>::operator=(const tmp<FieldField>& tf)
 {
     if (this == &(tf()))
     {
-        FatalErrorIn
-        (
-            "FieldField<Field, Type>::operator=(const tmp<FieldField>&)"
-        )   << "attempted assignment to self"
+        FatalErrorInFunction
+            << "attempted assignment to self"
             << abort(FatalError);
     }
 
     // This is dodgy stuff, don't try this at home.
-    FieldField* fieldPtr = tf.ptr();
-    PtrList<Field<Type> >::transfer(*fieldPtr);
-    delete fieldPtr;
+    // It hurt me.  HJ, 2/May/2022
+    // FieldField* fieldPtr = tf.ptr();
+    // PtrList<Field<Type> >::transfer(*fieldPtr);
+    // delete fieldPtr;
+
+    // Boundary field is transferred, avoiding assignment operators.
+    // This disables virtual functions, which breaks the code.
+    // Use normal assignment instead.  HJ, 3/May/2022
+    const FieldField<Field, Type>& f = tf();
+
+    forAll (this, i)
+    {
+        this->operator[](i) = f[i];
+    }
+
+    tf.clear();
 }
 
 

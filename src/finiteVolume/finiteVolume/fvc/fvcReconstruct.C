@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ License
 
 #include "fvcReconstruct.H"
 #include "fvMesh.H"
-#include "zeroGradientFvPatchFields.H"
+#include "extrapolatedCalculatedFvPatchFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -70,7 +70,7 @@ reconstruct
             ),
             mesh,
             ssf.dimensions()/dimArea,
-            zeroGradientFvPatchField<GradType>::typeName
+            extrapolatedCalculatedFvPatchField<GradType>::typeName
         )
     );
     GeometricField<GradType, fvPatchField, volMesh>& reconField =

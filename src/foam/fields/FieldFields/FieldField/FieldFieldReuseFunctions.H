@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -68,6 +68,9 @@ public:
     {
         if (tf1.isTmp())
         {
+            // Clear caches before reuse
+            tf1().clearCaches();
+
             return tf1;
         }
         else
@@ -138,6 +141,9 @@ public:
     {
         if (tf2.isTmp())
         {
+            // Clear caches before reuse
+            tf2().clearCaches();
+
             return tf2;
         }
         else
@@ -177,6 +183,11 @@ public:
     {
         if (tf1.isTmp())
         {
+            // Clear caches before reuse
+            FieldField<Field, TypeR>& f1 =
+                const_cast<FieldField<Field, TypeR>& >(tf1());
+            f1.clearCaches();
+
             return tf1;
         }
         else
@@ -216,10 +227,20 @@ public:
     {
         if (tf1.isTmp())
         {
+            // Clear caches before reuse
+            FieldField<Field, TypeR>& f1 =
+                const_cast<FieldField<Field, TypeR>& >(tf1());
+            f1.clearCaches();
+
             return tf1;
         }
         else if (tf2.isTmp())
         {
+            // Clear caches before reuse
+            FieldField<Field, TypeR>& f2 =
+                const_cast<FieldField<Field, TypeR>& >(tf2());
+            f2.clearCaches();
+
             return tf2;
         }
         else

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -50,10 +50,10 @@ class pisoControl
     // Private member functions
 
         //- Disallow default bitwise copy construct
-        pisoControl(const pisoControl&);
+        pisoControl(const pisoControl&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const pisoControl&);
+        void operator=(const pisoControl&) = delete;
 
 
 public:
@@ -67,11 +67,11 @@ public:
     // Constructors
 
         //- Construct from mesh and the name of control sub-dictionary
-        pisoControl(fvMesh& mesh, const word& dictName="PISO");
+        pisoControl(fvMesh& mesh, const word& dictName = "PISO");
 
 
     //- Destructor
-    virtual ~pisoControl();
+    virtual ~pisoControl() = default;
 
 
     // Member Functions

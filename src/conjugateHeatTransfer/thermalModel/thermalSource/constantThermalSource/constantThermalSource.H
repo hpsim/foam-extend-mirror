@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -26,11 +26,12 @@ Class
 
 Description
     Constant thermal source, given in Watts for the component
-    consisting of face zones.  Therefore, S from dictionary is divided by
+    consisting of cell zones.  Therefore, S from dictionary is divided by
     total volume of the component
 
 Author
     Henrik Rusche, Wikki GmbH.  All rights reserved.
+    Updates, maintenance, improvements by Hrvoje Jasak
 
 SourceFiles
     constantThermalSource.C
@@ -67,19 +68,16 @@ class constantThermalSource
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        constantThermalSource(const constantThermalSource&);
+        constantThermalSource(const constantThermalSource&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const constantThermalSource&);
+        void operator=(const constantThermalSource&) = delete;
 
 
 public:
 
     //- Runtime type information
     TypeName("constant");
-
-    // Static data members
-
 
     // Constructors
 
@@ -92,9 +90,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~constantThermalSource();
+    //- Destructor
+    virtual ~constantThermalSource() = default;
 
 
     // Member Functions

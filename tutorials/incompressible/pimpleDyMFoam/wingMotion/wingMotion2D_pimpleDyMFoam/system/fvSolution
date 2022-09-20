@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -68,23 +68,27 @@ solvers
 PIMPLE
 {
     nOuterCorrectors    2;
-    nCorrectors         1;
+    nCorrectors         2;
     nNonOrthogonalCorrectors 0;
 }
 
 relaxationFactors
 {
-    p               0.3;
-    U               0.7;
-    UFinal          1.0;
-    k               0.7;
-    omega           0.7;
+    equations
+    {
+        U               1;
+        UFinal          1;
+    }
+    fields
+    {
+        p                0.3;
+    }
 }
 
-cache
+fieldBounds
 {
-    grad(U);
+    p -1e4 1e4;
+    U 20;
 }
-
 
 // ************************************************************************* //

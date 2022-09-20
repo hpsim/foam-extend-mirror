@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -89,6 +89,11 @@ class processorFvPatchField
             //- Scalar receive buffer
             mutable Field<scalar> scalarReceiveBuf_;
 
+
+        //- Cached patch neighbour field
+        mutable Field<Type> pnf_;
+
+
 public:
 
     //- Runtime type information
@@ -162,7 +167,7 @@ public:
 
 
     //- Destructor
-    virtual ~processorFvPatchField();
+    virtual ~processorFvPatchField() = default;
 
 
     // Member functions
@@ -182,18 +187,42 @@ public:
                 }
             }
 
-            //- Return neighbour field given internal field
-            // Returning patch values, which stores neighbour
-            // data after update due to scheduling issues.  HJ, 11/May/2009
+            //- Return true if this coupled patch fields are updated
+            virtual bool couplesUpdated() const
+            {
+                return !pnf_.empty();
+            }
+
+            //- Return neighbour field of internal field
+            //  Returning correct patch neighbour field data
+            //  HJ, 10/Sep/2021
             virtual tmp<Field<Type> > patchNeighbourField() const;
+
+
+        // Mapping functions
+
+            //- Map (and resize as needed) from self given a mapping object
+            virtual void autoMap
+            (
+                const fvPatchFieldMapper&
+            );
+
+            //- Reverse map the given fvPatchField onto this fvPatchField
+            virtual void rmap
+            (
+                const fvPatchField<Type>&,
+                const labelList&
+            );
 
 
         // Evaluation functions
 
             //- Initialise the evaluation of the patch field
+            //  Note: fixed patchNeighbourField storage problem.  HJ, 8/Sep/2021
             virtual void initEvaluate(const Pstream::commsTypes commsType);
 
             //- Evaluate the patch field
+            //  Note: fixed patchNeighbourField storage problem.  HJ, 8/Sep/2021
             virtual void evaluate(const Pstream::commsTypes commsType);
 
             //- Return patch-normal gradient
@@ -208,6 +237,9 @@ public:
             {
                 processorLduInterfaceField::transformCoupleField(f, cmpt);
             }
+
+
+        // Matrix manipulation
 
             //- Initialise neighbour matrix update
             virtual void initInterfaceMatrixUpdate
@@ -312,6 +344,42 @@ public:
             {
                 return pTraits<Type>::rank;
             }
+
+            //- Clear caches
+            virtual void clearCaches() const;
+
+
+    // Member operators
+
+        // Note: all field operators need to handle cached patchNeighbourField
+        // HJ, 8/Sep/2021
+
+        virtual void operator=(const UList<Type>&);
+
+        virtual void operator=(const fvPatchField<Type>&);
+        virtual void operator+=(const fvPatchField<Type>&);
+        virtual void operator-=(const fvPatchField<Type>&);
+        virtual void operator*=(const fvPatchField<scalar>&);
+        virtual void operator/=(const fvPatchField<scalar>&);
+
+        virtual void operator+=(const Field<Type>&);
+        virtual void operator-=(const Field<Type>&);
+
+        virtual void operator*=(const Field<scalar>&);
+        virtual void operator/=(const Field<scalar>&);
+
+        virtual void operator=(const Type&);
+        virtual void operator+=(const Type&);
+        virtual void operator-=(const Type&);
+        virtual void operator*=(const scalar);
+        virtual void operator/=(const scalar);
+
+
+        // Force an assignment irrespective of form of patch
+
+        virtual void operator==(const fvPatchField<Type>&);
+        virtual void operator==(const Field<Type>&);
+        virtual void operator==(const Type&);
 };
 
 

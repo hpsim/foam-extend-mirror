@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ void Foam::dynamicPolyRefinementFvMesh::readDict()
 
     if (refineInterval_ < 1)
     {
-        FatalErrorIn("dynamicPolyRefinementFvMesh::readDict()")
+        FatalErrorInFunction
             << "Illegal refineInterval found: " << refineInterval_ << nl
             << "The refineInterval controls the refinement"
             << " trigerring within a certain time step and should be > 0"
@@ -66,7 +66,7 @@ void Foam::dynamicPolyRefinementFvMesh::readDict()
 
     if (refineInterval_ < 1)
     {
-        FatalErrorIn("dynamicPolyRefinementFvMesh::readDict()")
+        FatalErrorInFunction
             << "Illegal unrefineInterval found: " << refineInterval_ << nl
             << "The unrefineInterval controls the unrefinement"
             << " trigerring within a certain time step and should be > 0"
@@ -139,7 +139,7 @@ Foam::dynamicPolyRefinementFvMesh::dynamicPolyRefinementFvMesh
     // Get number of valid geometric dimensions
     const label nGeometricDirs = this->nGeometricD();
 
-    switch(nGeometricDirs)
+    switch (nGeometricDirs)
     {
         case 3:
             // Add the polyhedralRefinement engine for
@@ -178,27 +178,15 @@ Foam::dynamicPolyRefinementFvMesh::dynamicPolyRefinementFvMesh
             break;
 
         case 1:
-            FatalErrorIn
-            (
-                "dynamicPolyRefinementFvMesh::dynamicPolyRefinementFvMesh"
-                "\n("
-                "\n    const IOobject& io,"
-                "\n    const word subDictName"
-                "\n)"
-            )   << "1D case detected. No valid refinement strategy is"
+            FatalErrorInFunction
+                << "1D case detected. No valid refinement strategy is"
                 <<  " available for 1D cases."
                 << abort(FatalError);
             break;
 
         default:
-            FatalErrorIn
-            (
-                "dynamicPolyRefinementFvMesh::dynamicPolyRefinementFvMesh"
-                "\n("
-                "\n    const IOobject& io,"
-                "\n    const word subDictName"
-                "\n)"
-            )   << "Invalid number of geometric meshes detected: "
+            FatalErrorInFunction
+                << "Invalid number of geometric meshes detected: "
                 << nGeometricDirs
                 << nl << "It appears that this mesh is neither 1D, 2D or 3D."
                 << abort(FatalError);
@@ -213,12 +201,6 @@ Foam::dynamicPolyRefinementFvMesh::dynamicPolyRefinementFvMesh
     // Initialize refinement selection algorithm after modifiers
     refinementSelectionPtr_ = refinementSelection::New(*this, refinementDict_);
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::dynamicPolyRefinementFvMesh::~dynamicPolyRefinementFvMesh()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -175,10 +175,10 @@ class sixDOFODE
         // Copy control
 
             //- Disallow default bitwise copy construct
-            sixDOFODE(const sixDOFODE&);
+            sixDOFODE(const sixDOFODE&) = delete;
 
             //- Disallow default bitwise assignment
-            void operator=(const sixDOFODE&);
+            void operator=(const sixDOFODE&) = delete;
 
 
         // Aitkens relaxation helper function
@@ -267,9 +267,8 @@ public:
         static autoPtr<sixDOFODE> New(const IOobject& io);
 
 
-    // Destructor
-
-        virtual ~sixDOFODE();
+    //- Destructor
+    virtual ~sixDOFODE() = default;
 
 
     // Member Functions

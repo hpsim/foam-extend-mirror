@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -56,7 +56,8 @@ void PatchToPatchInterpolation<FromPatch, ToPatch>::calcPointAddressing() const
 
     if (debug)
     {
-        Info << "projecting points" << endl;
+        InfoInFunction
+            << "Projecting points" << endl;
     }
 
     List<objectHit> proj =
@@ -237,7 +238,8 @@ void PatchToPatchInterpolation<FromPatch, ToPatch>::calcFaceAddressing() const
 
     if (debug)
     {
-        Info << "projecting face centres" << endl;
+        InfoInFunction
+            << "Projecting face centres" << endl;
     }
 
     const pointField& fromPatchPoints = fromPatch_.points();

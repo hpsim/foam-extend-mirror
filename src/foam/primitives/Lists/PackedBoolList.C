@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -188,7 +188,7 @@ void Foam::PackedBoolList::set(const PackedList<1>& lst)
 }
 
 
-Foam::label Foam::PackedBoolList::set(const UList<label>& indices)
+Foam::label Foam::PackedBoolList::set(const Foam::UList<label>& indices)
 {
     return setIndices(indices);
 }
@@ -216,7 +216,7 @@ void Foam::PackedBoolList::unset(const PackedList<1>& lst)
 }
 
 
-Foam::label Foam::PackedBoolList::unset(const UList<label>& indices)
+Foam::label Foam::PackedBoolList::unset(const Foam::UList<label>& indices)
 {
     return unsetIndices(indices);
 }
@@ -249,7 +249,7 @@ void Foam::PackedBoolList::subset(const PackedList<1>& lst)
 }
 
 
-Foam::label Foam::PackedBoolList::subset(const UList<label>& indices)
+Foam::label Foam::PackedBoolList::subset(const Foam::UList<label>& indices)
 {
     return subsetIndices(indices);
 }

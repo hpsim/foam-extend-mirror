@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | foam-extend: Open Source CFD
-#  \\    /   O peration     |
-#   \\  /    A nd           | For copyright notice see file Copyright
-#    \\/     M anipulation  |
+#  \\    /   O peration     | Version:     5.0
+#   \\  /    A nd           | Web:         http://www.foam-extend.org
+#    \\/     M anipulation  | For copyright notice see file Copyright
 #------------------------------------------------------------------------------
 # License
 #     This file is part of foam-extend.
@@ -48,8 +48,8 @@
 
 # Will install the package directly $WM_THIRD_PARTY_DIR
 #   Some comments about package relocation:
-#   By using this prefix for the Prefix:  parameter in this file, you will make this 
-#   package relocatable. 
+#   By using this prefix for the Prefix:  parameter in this file, you will make this
+#   package relocatable.
 #
 #   This is fine, as long as your software is itself relocatable.
 #
@@ -58,7 +58,7 @@
 #   Ref: http://sourceware.org/autobook/autobook/autobook_80.html
 #
 #   In that case, if you ever change the value of the $WM_THIRD_PARTY_DIR, you will
-#   not be able to reutilize this RPM, even though it is relocatable. You will need to 
+#   not be able to reutilize this RPM, even though it is relocatable. You will need to
 #   regenerate the RPM.
 #
 %define _prefix         %{_WM_THIRD_PARTY_DIR}
@@ -121,7 +121,7 @@ Patch1:                 ParaView-v4.1.0.patch_1
 #
     addCMakeVariable()
     {
-        echo "Adding: $1" 
+        echo "Adding: $1"
         while [ -n "$1" ]
         do
             CMAKE_VARIABLES="$CMAKE_VARIABLES -D$1"
@@ -168,7 +168,7 @@ Patch1:                 ParaView-v4.1.0.patch_1
     addCMakeVariable  PARAVIEW_ENABLE_PYTHON:BOOL=ON
 
  %ifos darwin
-    # Additional installation rules for Mac OS X 
+    # Additional installation rules for Mac OS X
     addCMakeVariable  PARAVIEW_EXTRA_INSTALL_RULES_FILE:FILEPATH=%{_topdir}/BUILD/%{name}-%{version}/Applications/ParaView-3.8.1_extra_install_Darwin.cmake
 %endif
 
@@ -224,7 +224,7 @@ export PARAVIEW_VERSION=%{version}
 
 # NB: It is important to set the PV_PLUGIN_PATH location to a directory containing only the ParaView plugins.
 #     Otherwise, paraview will try to automatically autoload each and every dynamic library it can find in the
-#     specified directory to see if a given library is a paraview plugin. 
+#     specified directory to see if a given library is a paraview plugin.
 #     In the case of \$FOAM_LIBBIN, with over 80 libraries, this is a total waste of time that will slow down the
 #     startup of paraview or even make paraview crash on startup.
 export PV_PLUGIN_PATH=\$FOAM_LIBBIN/paraview_plugins
@@ -254,7 +254,7 @@ setenv PARAVIEW_VERSION %{version}
 
 # NB: It is important to set the PV_PLUGIN_PATH location to a directory containing only the ParaView plugins.
 #     Otherwise, paraview will try to automatically autoload each and every dynamic library it can find in the
-#     specified directory to see if a given library is a paraview plugin. 
+#     specified directory to see if a given library is a paraview plugin.
 #     In the case of \$FOAM_LIBBIN, with over 80 libraries, this is a total waste of time that will slow down the
 #     startup of paraview or even make paraview crash on startup.
 setenv PV_PLUGIN_PATH \$FOAM_LIBBIN/paraview_plugins

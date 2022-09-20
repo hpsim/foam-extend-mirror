@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -44,10 +44,11 @@ Foam::processorFvPatchField<Type>::processorFvPatchField
     procPatch_(refCast<const processorFvPatch>(p)),
     outstandingSendRequest_(-1),
     outstandingRecvRequest_(-1),
-    sendBuf_(0),
-    receiveBuf_(0),
-    scalarSendBuf_(0),
-    scalarReceiveBuf_(0)
+    sendBuf_(),
+    receiveBuf_(),
+    scalarSendBuf_(),
+    scalarReceiveBuf_(),
+    pnf_()
 {}
 
 
@@ -63,10 +64,11 @@ Foam::processorFvPatchField<Type>::processorFvPatchField
     procPatch_(refCast<const processorFvPatch>(p)),
     outstandingSendRequest_(-1),
     outstandingRecvRequest_(-1),
-    sendBuf_(0),
-    receiveBuf_(0),
-    scalarSendBuf_(0),
-    scalarReceiveBuf_(0)
+    sendBuf_(),
+    receiveBuf_(),
+    scalarSendBuf_(),
+    scalarReceiveBuf_(),
+    pnf_()
 {}
 
 
@@ -83,23 +85,16 @@ Foam::processorFvPatchField<Type>::processorFvPatchField
     procPatch_(refCast<const processorFvPatch>(p)),
     outstandingSendRequest_(-1),
     outstandingRecvRequest_(-1),
-    sendBuf_(0),
-    receiveBuf_(0),
-    scalarSendBuf_(0),
-    scalarReceiveBuf_(0)
+    sendBuf_(),
+    receiveBuf_(),
+    scalarSendBuf_(),
+    scalarReceiveBuf_(),
+    pnf_()
 {
     if (!isA<processorFvPatch>(this->patch()))
     {
-        FatalErrorIn
-        (
-            "processorFvPatchField<Type>::processorFvPatchField\n"
-            "(\n"
-            "    const processorFvPatchField<Type>& ptf,\n"
-            "    const fvPatch& p,\n"
-            "    const DimensionedField<Type, volMesh>& iF,\n"
-            "    const fvPatchFieldMapper& mapper\n"
-            ")\n"
-        )   << "\n    patch type '" << p.type()
+        FatalErrorInFunction
+            << "\n    patch type '" << p.type()
             << "' not constraint type '" << typeName << "'"
             << "\n    for patch " << p.name()
             << " of field " << this->dimensionedInternalField().name()
@@ -121,23 +116,16 @@ Foam::processorFvPatchField<Type>::processorFvPatchField
     procPatch_(refCast<const processorFvPatch>(p)),
     outstandingSendRequest_(-1),
     outstandingRecvRequest_(-1),
-    sendBuf_(0),
-    receiveBuf_(0),
-    scalarSendBuf_(0),
-    scalarReceiveBuf_(0)
+    sendBuf_(),
+    receiveBuf_(),
+    scalarSendBuf_(),
+    scalarReceiveBuf_(),
+    pnf_()
 {
     if (!isA<processorFvPatch>(p))
     {
-        FatalIOErrorIn
-        (
-            "processorFvPatchField<Type>::processorFvPatchField\n"
-            "(\n"
-            "    const fvPatch& p,\n"
-            "    const Field<Type>& field,\n"
-            "    const dictionary& dict\n"
-            ")\n",
-            dict
-        )   << "\n    patch type '" << p.type()
+        FatalIOErrorInFunction(dict)
+            << "\n    patch type '" << p.type()
             << "' not constraint type '" << typeName << "'"
             << "\n    for patch " << p.name()
             << " of field " << this->dimensionedInternalField().name()
@@ -158,10 +146,11 @@ Foam::processorFvPatchField<Type>::processorFvPatchField
     procPatch_(refCast<const processorFvPatch>(ptf.patch())),
     outstandingSendRequest_(-1),
     outstandingRecvRequest_(-1),
-    sendBuf_(0),
-    receiveBuf_(0),
-    scalarSendBuf_(0),
-    scalarReceiveBuf_(0)
+    sendBuf_(),
+    receiveBuf_(),
+    scalarSendBuf_(),
+    scalarReceiveBuf_(),
+    pnf_()
 {}
 
 
@@ -176,54 +165,79 @@ Foam::processorFvPatchField<Type>::processorFvPatchField
     procPatch_(refCast<const processorFvPatch>(ptf.patch())),
     outstandingSendRequest_(-1),
     outstandingRecvRequest_(-1),
-    sendBuf_(0),
-    receiveBuf_(0),
-    scalarSendBuf_(0),
-    scalarReceiveBuf_(0)
+    sendBuf_(),
+    receiveBuf_(),
+    scalarSendBuf_(),
+    scalarReceiveBuf_(),
+    pnf_()
 {
     if (debug && !ptf.ready())
     {
-        FatalErrorIn
-        (
-            "processorFvPatchField<Type>::processorFvPatchField\n"
-            "(\n"
-            "    const processorFvPatchField<Type>& ptf,\n"
-            "    const DimensionedField<Type, volMesh>& iF\n"
-            ")"
-        )   << "On patch " << procPatch_.name() << " outstanding request."
+        FatalErrorInFunction
+            << "On patch " << procPatch_.name() << " outstanding request."
             << abort(FatalError);
     }
 }
 
 
-// * * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * //
+// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-Foam::processorFvPatchField<Type>::~processorFvPatchField()
-{}
+void Foam::processorFvPatchField<Type>::autoMap
+(
+    const fvPatchFieldMapper& m
+)
+{
+    // Clear patch neighbour field
+    clearCaches();
+
+    fvPatchField<Type>::autoMap(m);
+}
 
 
-// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+template<class Type>
+void Foam::processorFvPatchField<Type>::rmap
+(
+    const fvPatchField<Type>& ptf,
+    const labelList& addr
+)
+{
+    // Clear patch neighbour field
+    clearCaches();
+
+    fvPatchField<Type>::rmap(ptf, addr);
+}
+
 
 template<class Type>
 Foam::tmp<Foam::Field<Type> >
 Foam::processorFvPatchField<Type>::patchNeighbourField() const
 {
-    if (debug && !this->ready())
+    if (Pstream::parRun())
     {
-        FatalErrorIn
-        (
-            "tmp<Field<Type> >"
-            "processorFvPatchField<Type>::patchNeighbourField() const"
-        )   << "On patch " << procPatch_.name()
-            << " outstanding request."
+        if (pnf_.empty())
+        {
+            FatalErrorInFunction
+                << "Processor patchNeighbourField not ready"
+                << abort(FatalError);
+        }
+    }
+    else
+    {
+        FatalErrorInFunction
+            << "Attempting to access processor patchNeighbourField "
+            << "in a serial run"
             << abort(FatalError);
     }
 
-    // Warning: returning own patch field, which only after update stores
-    // actual neighbour data
-    // HJ, 14/May/2009
-    return *this;
+    if (debug)
+    {
+        Pout<< "Tracing processorFvPatchField: reusing cache : "
+            << this->dimensionedInternalField().name()
+            << " on patch: " << this->patch().name()
+            << endl;
+    }
+    return pnf_;
 }
 
 
@@ -235,12 +249,15 @@ void Foam::processorFvPatchField<Type>::initEvaluate
 {
     if (Pstream::parRun())
     {
+        // Set field size for receive
+        pnf_.setSize(this->size());
+
         // Collect data into send buffer
         sendBuf_ = this->patchInternalField();
 
         if (commsType == Pstream::nonBlocking)
         {
-            // Fast path. Receive into *this
+            // Fast path. Receive into pnf_.  HJ, 9/Sep/2021
 
             outstandingRecvRequest_ = Pstream::nRequests();
 
@@ -248,7 +265,7 @@ void Foam::processorFvPatchField<Type>::initEvaluate
             (
                 Pstream::nonBlocking,
                 procPatch_.neighbProcNo(),
-                reinterpret_cast<char*>(this->begin()),
+                reinterpret_cast<char*>(pnf_.begin()),
                 this->byteSize(),
                 procPatch_.tag(),
                 procPatch_.comm()
@@ -271,6 +288,9 @@ void Foam::processorFvPatchField<Type>::initEvaluate
             procPatch_.send(commsType, sendBuf_);
         }
     }
+
+    // Signal completion not needed
+    fvPatchField<Type>::initEvaluate(commsType);
 }
 
 
@@ -280,6 +300,14 @@ void Foam::processorFvPatchField<Type>::evaluate
     const Pstream::commsTypes commsType
 )
 {
+    if (debug)
+    {
+        Pout<< "Tracing processorFvPatchField: updating cache: "
+            << this->dimensionedInternalField().name()
+            << " on patch: " << this->patch().name()
+            << endl;
+    }
+
     if (Pstream::parRun())
     {
         if (commsType == Pstream::nonBlocking)
@@ -299,14 +327,25 @@ void Foam::processorFvPatchField<Type>::evaluate
         }
         else
         {
-            procPatch_.receive<Type>(commsType, *this);
+            // Receive into pnf_.  HJ, 9/Sep/2021
+            procPatch_.receive<Type>(commsType, pnf_);
         }
 
         if (doTransform())
         {
-            transform(*this, procPatch_.forwardT(), *this);
+            transform(*this, procPatch_.forwardT(), pnf_);
         }
     }
+
+    // Evaluate patch field to carry interpolated values
+    Field<Type>::operator=
+    (
+        this->patch().weights()*this->patchInternalField()
+      + (1 - this->patch().weights())*pnf_
+    );
+
+    // Signal completion
+    fvPatchField<Type>::evaluate(commsType);
 }
 
 
@@ -314,7 +353,9 @@ template<class Type>
 Foam::tmp<Foam::Field<Type> >
 Foam::processorFvPatchField<Type>::snGrad() const
 {
-    return this->patch().deltaCoeffs()*(*this - this->patchInternalField());
+    // Note: fixed patchNeighbourField storage problem
+    return this->patch().deltaCoeffs()*
+        (this->patchNeighbourField() - this->patchInternalField());
 }
 
 
@@ -337,19 +378,8 @@ void Foam::processorFvPatchField<Type>::initInterfaceMatrixUpdate
         // Fast path.
         if (debug && !this->ready())
         {
-            FatalErrorIn
-            (
-                "void processorFvPatchField<Type>::initInterfaceMatrixUpdate\n"
-                "(\n"
-                "    const scalarField& psiInternal,\n"
-                "    scalarField&,\n"
-                "    const lduMatrix&,\n"
-                "    const scalarField&,\n"
-                "    const direction,\n"
-                "    const Pstream::commsTypes commsType,\n"
-                "    const bool switchToLhs\n"
-                ") const"
-            )   << "On patch " << procPatch_.name()
+            FatalErrorInFunction
+                << "On patch " << procPatch_.name()
                 << " outstanding request."
                 << abort(FatalError);
         }
@@ -477,18 +507,8 @@ void Foam::processorFvPatchField<Type>::initInterfaceMatrixUpdate
         // Fast path.
         if (debug && !this->ready())
         {
-            FatalErrorIn
-            (
-                "void processorFvPatchField<Type>::initInterfaceMatrixUpdate\n"
-                "(\n"
-                "    const Field<Type>& psiInternal,\n"
-                "    Field<Type>&,\n"
-                "    const BlockLduMatrix<Type>&,\n"
-                "    const CoeffField<Type>&,\n"
-                "    const Pstream::commsTypes commsType,\n"
-                "    const bool switchToLhs\n"
-                ") const"
-            )   << "On patch " << procPatch_.name()
+            FatalErrorInFunction
+                << "On patch " << procPatch_.name()
                 << " outstanding request."
                 << abort(FatalError);
         }
@@ -634,6 +654,227 @@ bool Foam::processorFvPatchField<Type>::ready() const
     outstandingRecvRequest_ = -1;
 
     return true;
+}
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::clearCaches() const
+{
+    if (debug && !pnf_.empty())
+    {
+        Pout<< "Tracing processorFvPatchField: clearing cache: "
+            << this->dimensionedInternalField().name()
+            << " on patch: " << this->patch().name()
+            << endl;
+    }
+
+    // Clear patch neighbour field cache
+    pnf_.clear();
+}
+
+
+// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator=
+(
+    const UList<Type>& ul
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator=(ul);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator=
+(
+    const fvPatchField<Type>& ptf
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator+=
+(
+    const fvPatchField<Type>& ptf
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator+=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator-=
+(
+    const fvPatchField<Type>& ptf
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator-=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator*=
+(
+    const fvPatchField<scalar>& ptf
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator*=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator/=
+(
+    const fvPatchField<scalar>& ptf
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator/=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator+=
+(
+    const Field<Type>& tf
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator+=(tf);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator-=
+(
+    const Field<Type>& tf
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator-=(tf);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator*=
+(
+    const scalarField& tf
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator*=(tf);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator/=
+(
+    const scalarField& tf
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator/=(tf);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator=
+(
+    const Type& t
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator=(t);
+}
+
+
+// Note: it is possible to manipulate pnf_ in operations with primitive
+// types, but I am currently avoiding this because this assumes synchronised
+// field functions across multiple processors
+// HJ, 8/Sep/2021
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator+=
+(
+    const Type& t
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator+=(t);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator-=
+(
+    const Type& t
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator-=(t);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator*=
+(
+    const scalar s
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator*=(s);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator/=
+(
+    const scalar s
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator/=(s);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator==
+(
+    const fvPatchField<Type>& ptf
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator=(ptf);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator==
+(
+    const Field<Type>& tf
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator=(tf);
+}
+
+
+template<class Type>
+void Foam::processorFvPatchField<Type>::operator==
+(
+    const Type& t
+)
+{
+    clearCaches();
+    fvPatchField<Type>::operator=(t);
 }
 
 

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -24,26 +24,25 @@ License
 \*---------------------------------------------------------------------------*/
 
 #include "searchableCylinder.H"
+#include "volumeType.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam
 {
-
-defineTypeNameAndDebug(searchableCylinder, 0);
-addToRunTimeSelectionTable(searchableSurface, searchableCylinder, dict);
-
+    defineTypeNameAndDebug(searchableCylinder, 0);
+    addToRunTimeSelectionTable(searchableSurface, searchableCylinder, dict);
 }
 
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-Foam::pointField Foam::searchableCylinder::coordinates() const
+Foam::tmp<Foam::pointField> Foam::searchableCylinder::coordinates() const
 {
-    pointField ctrs(1, 0.5*(point1_ + point2_));
+    tmp<pointField> tCtrs(new pointField(1, 0.5*(point1_ + point2_)));
 
-    return ctrs;
+    return tCtrs;
 }
 
 
@@ -359,6 +358,54 @@ void Foam::searchableCylinder::findLineAll
 }
 
 
+Foam::boundBox Foam::searchableCylinder::calcBounds() const
+{
+
+    // Adapted from
+    // http://www.gamedev.net/community/forums
+    //       /topic.asp?topic_id=338522&forum_id=20&gforum_id=0
+
+    // Let cylinder have end points A,B and radius r,
+
+    // Bounds in direction X (same for Y and Z) can be found as:
+    // Let A.X<B.X (otherwise swap points)
+    // Good approximate lowest bound is A.X-r and highest is B.X+r (precise for
+    // capsule). At worst, in one direction it can be larger than needed by 2*r.
+
+    // Accurate bounds for cylinder is
+    // A.X-kx*r, B.X+kx*r
+    // where
+    // kx=sqrt(((A.Y-B.Y)^2+(A.Z-B.Z)^2)/((A.X-B.X)^2+(A.Y-B.Y)^2+(A.Z-B.Z)^2))
+
+    // similar thing for Y and Z
+    // (i.e.
+    // ky=sqrt(((A.X-B.X)^2+(A.Z-B.Z)^2)/((A.X-B.X)^2+(A.Y-B.Y)^2+(A.Z-B.Z)^2))
+    // kz=sqrt(((A.X-B.X)^2+(A.Y-B.Y)^2)/((A.X-B.X)^2+(A.Y-B.Y)^2+(A.Z-B.Z)^2))
+    // )
+
+    // How derived: geometric reasoning. Bounds of cylinder is same as for 2
+    // circles centered on A and B. This sqrt thingy gives sine of angle between
+    // axis and direction, used to find projection of radius.
+
+    vector kr
+    (
+        sqrt(sqr(unitDir_.y()) + sqr(unitDir_.z())),
+        sqrt(sqr(unitDir_.x()) + sqr(unitDir_.z())),
+        sqrt(sqr(unitDir_.x()) + sqr(unitDir_.y()))
+    );
+
+    kr *= radius_;
+
+    point min = point1_ - kr;
+    point max = point1_ + kr;
+
+    min = ::Foam::min(min, point2_ - kr);
+    max = ::Foam::max(max, point2_ + kr);
+
+    return boundBox(min, max);
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::searchableCylinder::searchableCylinder
@@ -375,7 +422,9 @@ Foam::searchableCylinder::searchableCylinder
     magDir_(mag(point2_-point1_)),
     unitDir_((point2_-point1_)/magDir_),
     radius_(radius)
-{}
+{
+    bounds() = calcBounds();
+}
 
 
 Foam::searchableCylinder::searchableCylinder
@@ -390,7 +439,9 @@ Foam::searchableCylinder::searchableCylinder
     magDir_(mag(point2_-point1_)),
     unitDir_((point2_-point1_)/magDir_),
     radius_(readScalar(dict.lookup("radius")))
-{}
+{
+    bounds() = calcBounds();
+}
 
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
@@ -571,7 +622,7 @@ void Foam::searchableCylinder::getVolumeType
 ) const
 {
     volType.setSize(points.size());
-    volType = INSIDE;
+    volType = volumeType::INSIDE;
 
     forAll(points, pointI)
     {
@@ -585,12 +636,12 @@ void Foam::searchableCylinder::getVolumeType
         if (parallel < 0)
         {
             // left of point1 endcap
-            volType[pointI] = OUTSIDE;
+            volType[pointI] = volumeType::OUTSIDE;
         }
         else if (parallel > magDir_)
         {
             // right of point2 endcap
-            volType[pointI] = OUTSIDE;
+            volType[pointI] = volumeType::OUTSIDE;
         }
         else
         {
@@ -599,11 +650,11 @@ void Foam::searchableCylinder::getVolumeType
 
             if (mag(v) > radius_)
             {
-                volType[pointI] = OUTSIDE;
+                volType[pointI] = volumeType::OUTSIDE;
             }
             else
             {
-                volType[pointI] = INSIDE;
+                volType[pointI] = volumeType::INSIDE;
             }
         }
     }

@@ -24,6 +24,7 @@ if (pimple.transonic())
           - fvm::laplacian(rho*rUA, p)
          ==
             coalParcels.Srho()
+          + massSource.Su()
         );
 
         pEqn.solve();
@@ -52,6 +53,7 @@ else
           - fvm::laplacian(rho*rUA, p)
          ==
             coalParcels.Srho()
+          + massSource.Su()
         );
 
         pEqn.solve();

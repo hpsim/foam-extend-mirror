@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -60,6 +60,10 @@ tmp<surfaceScalarField> PhiScheme<Type, PhiLimiter>::limiter
     );
     surfaceScalarField& Limiter = tLimiter();
 
+    // Make sure coupled patches are synced
+    // HJ and MH, 14/Sep/2021
+    phi.boundaryField().updateCoupledPatchFields();
+
     const surfaceScalarField& CDweights = mesh.surfaceInterpolation::weights();
 
     const surfaceVectorField& Sf = mesh.Sf();
@@ -80,11 +84,8 @@ tmp<surfaceScalarField> PhiScheme<Type, PhiLimiter>::limiter
     }
     else if (this->faceFlux_.dimensions() != dimVelocity*dimArea)
     {
-        FatalErrorIn
-        (
-            "PhiScheme<PhiLimiter>::limiter"
-            "(const GeometricField<Type, fvPatchField, volMesh>& phi)"
-        )   << "dimensions of faceFlux are not correct"
+        FatalErrorInFunction
+            << "dimensions of faceFlux are not correct"
             << exit(FatalError);
     }
 

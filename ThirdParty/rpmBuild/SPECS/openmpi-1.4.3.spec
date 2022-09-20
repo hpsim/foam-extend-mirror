@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | foam-extend: Open Source CFD
-#  \\    /   O peration     |
-#   \\  /    A nd           | For copyright notice see file Copyright
-#    \\/     M anipulation  |
+#  \\    /   O peration     | Version:     5.0
+#   \\  /    A nd           | Web:         http://www.foam-extend.org
+#    \\/     M anipulation  | For copyright notice see file Copyright
 #------------------------------------------------------------------------------
 # License
 #     This file is part of foam-extend.
@@ -45,8 +45,8 @@
 
 # Will install the package directly $WM_THIRD_PARTY_DIR
 #   Some comments about package relocation:
-#   By using this prefix for the Prefix:  parameter in this file, you will make this 
-#   package relocatable. 
+#   By using this prefix for the Prefix:  parameter in this file, you will make this
+#   package relocatable.
 #
 #   This is fine, as long as your software is itself relocatable.
 #
@@ -55,7 +55,7 @@
 #   Ref: http://sourceware.org/autobook/autobook/autobook_80.html
 #
 #   In that case, if you ever change the value of the $WM_THIRD_PARTY_DIR, you will
-#   not be able to reutilize this RPM, even though it is relocatable. You will need to 
+#   not be able to reutilize this RPM, even though it is relocatable. You will need to
 #   regenerate the RPM.
 #
 %define _prefix         %{_WM_THIRD_PARTY_DIR}
@@ -162,7 +162,7 @@ export OPENMPI_INCLUDE_DIR="\`mpicc --showme:incdirs\`"
 export OPENMPI_COMPILE_FLAGS="\`mpicc --showme:compile\`"
 export OPENMPI_LINK_FLAGS="\`mpicc --showme:link\`"
 
-# Set the foam-extend compilation flags 
+# Set the foam-extend compilation flags
 export PINC=\$OPENMPI_COMPILE_FLAGS
 export PLIBS=\$OPENMPI_LINK_FLAGS
 
@@ -212,7 +212,7 @@ setenv OPENMPI_INCLUDE_DIR "\`mpicc --showme:incdirs\`"
 setenv OPENMPI_COMPILE_FLAGS "\`mpicc --showme:compile\`"
 setenv OPENMPI_LINK_FLAGS "\`mpicc --showme:link\`"
 
-# Set the foam-extend compilation flags 
+# Set the foam-extend compilation flags
 setenv PINC "\$OPENMPI_COMPILE_FLAGS"
 setenv PLIBS "\$OPENMPI_LINK_FLAGS"
 

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -125,7 +125,8 @@ void Foam::blockMesh::checkBlockMesh(const polyMesh& bm) const
                 Info<< tab << tab
                     << "Face " << patchFacei
                     << " of patch " << patchi
-                    << " (" << patches[patchi].name() << ")"
+                    << " (" << patches[patchi].name() << ")" << nl
+                    << patchFace << nl
                     << " does not match any block faces" << endl;
 
                 ok = false;

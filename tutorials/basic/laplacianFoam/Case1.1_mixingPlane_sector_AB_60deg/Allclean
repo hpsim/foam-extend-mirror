@@ -22,7 +22,7 @@ cleanPostProcessing ()
 
 cleanFilesFromM4 ()
 {
-  rm {constant/polyMesh/boundary,constant/polyMesh/blockMeshDict} > /dev/null 2>&1
+  rm {constant/polyMesh/boundary,system/blockMeshDict} > /dev/null 2>&1
 }
 
 cleanTimeZero ()

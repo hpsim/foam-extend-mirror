@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -49,10 +49,10 @@ int main(int argc, char *argv[])
 #   include "createMesh.H"
 #   include "createFields.H"
 #   include "initContinuityErrs.H"
-#   include "initConvergenceCheck.H"
 #   include "createTimeControls.H"
 
     Info<< "\nStarting time loop\n" << endl;
+
     while (runTime.run())
     {
 #       include "readBlockSolverControls.H"
@@ -67,8 +67,6 @@ int main(int argc, char *argv[])
 
         for (label i = 0; i < nOuterCorrectors; i++)
         {
-            p.storePrevIter();
-
             // Initialize the Up block system
             fvBlockMatrix<vector4> UpEqn(Up);
 
@@ -82,8 +80,7 @@ int main(int argc, char *argv[])
 #           include "couplingTerms.H"
 
             // Solve the block matrix
-            residual = UpEqn.solve();
-            maxResidual = cmptMax(residual.initialResidual());
+            UpEqn.solve();
 
             // Retrieve solution
             UpEqn.retrieveSolution(0, U.internalField());
@@ -96,12 +93,9 @@ int main(int argc, char *argv[])
                 + pEqn.flux()
                 + presSource;
 
-
 #           include "continuityErrs.H"
 
 #           include "boundPU.H"
-
-            p.relax();
 
             turbulence->correct();
         }
@@ -111,8 +105,6 @@ int main(int argc, char *argv[])
         Info<< "ExecutionTime = " << runTime.elapsedCpuTime() << " s"
             << "  ClockTime = " << runTime.elapsedClockTime() << " s"
             << nl << endl;
-
-#       include "convergenceCheck.H"
     }
 
     Info<< "End\n" << endl;

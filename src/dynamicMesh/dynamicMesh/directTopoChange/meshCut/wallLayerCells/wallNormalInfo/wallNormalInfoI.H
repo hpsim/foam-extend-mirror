@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -66,13 +66,6 @@ inline Foam::wallNormalInfo::wallNormalInfo()
 inline Foam::wallNormalInfo::wallNormalInfo(const vector& normal)
 :
     normal_(normal)
-{}
-
-
-// Construct as copy
-inline Foam::wallNormalInfo::wallNormalInfo(const wallNormalInfo& wpt)
-:
-    normal_(wpt.normal())
 {}
 
 

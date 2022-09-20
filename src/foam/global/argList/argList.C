@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ Foam::argList::initValidTables::initValidTables()
         validOptions.set(switchSetName, "key1=val1,key2=val2,...");
     }
 
-    validOptions.set("dumpControlSwitches", "");
+    validOptions.set("dumpControlSwitches", "all|debug|info|optimisation|tolerances|constants");
 
     Pstream::addValidParOptions(validParOptions);
 }
@@ -398,6 +398,9 @@ Foam::argList::argList
     args_(argc),
     options_(argc)
 {
+    // Code currently does not need threading
+    bool needsThread = false;
+
     // Check if this run is a parallel run by searching for any parallel option
     // If found call runPar which might filter argv
     for (int argI = 0; argI < argc; ++argI)
@@ -408,7 +411,7 @@ Foam::argList::argList
 
             if (validParOptions.found(optionName))
             {
-                parRunControl_.runPar(argc, argv);
+                parRunControl_.runPar(argc, argv, needsThread);
                 break;
             }
         }
@@ -849,7 +852,7 @@ void Foam::argList::parse
             //  directly into a case's system/controlDict file to
             //  override some switches values without having to always
             // use the command-line options.
-            debug::dumpControlSwitchesToConsole();
+            debug::dumpControlSwitchesToConsole(option("dumpControlSwitches"));
         }
 
         ::exit(0);
@@ -916,7 +919,7 @@ void Foam::argList::parse
                 //<< "    floatTransfer      : " << Pstream::floatTransfer << nl
                 << "    nProcsSimpleSum    : " << Pstream::nProcsSimpleSum << nl
                 << "    commsType          : "
-                << Pstream::commsTypeNames[Pstream::defaultCommsType()] << nl
+                << Pstream::commsTypeNames[(Pstream::defaultComms())] << nl
                 << "    polling iterations : " << Pstream::nPollProcInterfaces
                 << endl;
         }

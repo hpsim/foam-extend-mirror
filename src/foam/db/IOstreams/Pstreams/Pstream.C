@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -55,11 +55,13 @@ const Foam::NamedEnum<Foam::Pstream::commsTypes, 3>
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
-void Foam::Pstream::setParRun(const label nProcs)
+void Foam::Pstream::setParRun(const label nProcs, const bool haveThreads)
 {
     if (nProcs == 0)
     {
         parRun_ = false;
+        haveThreads_ = haveThreads;
+
         freeCommunicator(Pstream::worldComm);
 
         label comm = allocateCommunicator(-1, labelList(1, label(0)), false);
@@ -78,6 +80,7 @@ void Foam::Pstream::setParRun(const label nProcs)
     else
     {
         parRun_ = true;
+        haveThreads_ = haveThreads;
 
         // Redo worldComm communicator (created at static initialisation)
         freeCommunicator(Pstream::worldComm);
@@ -94,164 +97,6 @@ void Foam::Pstream::setParRun(const label nProcs)
         Pout.prefix() = '[' +  name(myProcNo()) + "] ";
         Perr.prefix() = '[' +  name(myProcNo()) + "] ";
     }
-}
-
-
-Foam::List<Foam::Pstream::commsStruct> Foam::Pstream::calcLinearComm
-(
-    const label nProcs
-)
-{
-    List<commsStruct> linearCommunication(nProcs);
-
-    // Master
-    labelList belowIDs(nProcs - 1);
-    forAll (belowIDs, i)
-    {
-        belowIDs[i] = i + 1;
-    }
-
-    linearCommunication[0] = commsStruct
-    (
-        nProcs,
-        0,
-        -1,
-        belowIDs,
-        labelList()
-    );
-
-    // Slaves. Have no below processors, only communicate up to master
-    for (label procID = 1; procID < nProcs; procID++)
-    {
-        linearCommunication[procID] = commsStruct
-        (
-            nProcs,
-            procID,
-            0,
-            labelList(),
-            labelList()
-        );
-    }
-
-    return linearCommunication;
-}
-
-
-// Tree like schedule. For 8 procs:
-// (level 0)
-//      0 receives from 1
-//      2 receives from 3
-//      4 receives from 5
-//      6 receives from 7
-// (level 1)
-//      0 receives from 2
-//      4 receives from 6
-// (level 2)
-//      0 receives from 4
-//
-// The sends/receives for all levels are collected per processor (one send per
-// processor; multiple receives possible) creating a table:
-//
-// So per processor:
-// proc     receives from   sends to
-// ----     -------------   --------
-//  0       1,2,4           -
-//  1       -               0
-//  2       3               0
-//  3       -               2
-//  4       5               0
-//  5       -               4
-//  6       7               4
-//  7       -               6
-Foam::List<Foam::Pstream::commsStruct> Foam::Pstream::calcTreeComm
-(
-    const label nProcs
-)
-{
-    label nLevels = 1;
-    while ((1 << nLevels) < nProcs)
-    {
-        nLevels++;
-    }
-
-    List<dynamicLabelList> receives(nProcs);
-    labelList sends(nProcs, -1);
-
-    label offset = 2;
-    label childOffset = offset/2;
-
-    for (label level = 0; level < nLevels; level++)
-    {
-        label receiveID = 0;
-        while (receiveID < nProcs)
-        {
-            // Determine processor that sends and we receive from
-            label sendID = receiveID + childOffset;
-
-            if (sendID < nProcs)
-            {
-                receives[receiveID].append(sendID);
-                sends[sendID] = receiveID;
-            }
-
-            receiveID += offset;
-        }
-
-        offset <<= 1;
-        childOffset <<= 1;
-    }
-
-    // For all processors find the processors it receives data from
-    // (and the processors they receive data from etc.)
-    List<dynamicLabelList> allReceives(nProcs);
-    for (label procID = 0; procID < nProcs; procID++)
-    {
-        collectReceives(procID, receives, allReceives[procID]);
-    }
-
-
-    List<commsStruct> treeCommunication(nProcs);
-
-    for (label procID = 0; procID < nProcs; procID++)
-    {
-        treeCommunication[procID] = commsStruct
-        (
-            nProcs,
-            procID,
-            sends[procID],
-            receives[procID].shrink(),
-            allReceives[procID].shrink()
-        );
-    }
-
-    return treeCommunication;
-}
-
-
-// Append my children (and my children;s children etc.) to allReceives.
-void Foam::Pstream::collectReceives
-(
-    const label procID,
-    const List<dynamicLabelList>& receives,
-    dynamicLabelList& allReceives
-)
-{
-    const dynamicLabelList& myChildren = receives[procID];
-
-    forAll (myChildren, childI)
-    {
-        allReceives.append(myChildren[childI]);
-        collectReceives(myChildren[childI], receives, allReceives);
-    }
-}
-
-
-// Callback from Pstream::init() : initialize linear and tree communication
-// schedules now that nProcs is known.
-void Foam::Pstream::initCommunicationSchedule()
-{
-    calcLinearComm(nProcs());
-    calcTreeComm(nProcs());
 }
 
 
@@ -300,8 +145,13 @@ void Foam::Pstream::allocatePstreamCommunicator
                 << Pstream::worldComm << Foam::exit(FatalError);
         }
 
-        PstreamGlobals::MPICommunicators_[index] = MPI_COMM_WORLD;
-        MPI_Comm_group(MPI_COMM_WORLD, &PstreamGlobals::MPIGroups_[index]);
+        PstreamGlobals::MPICommunicators_[index] =
+            PstreamGlobals::MPI_COMM_FOAM;
+        MPI_Comm_group
+        (
+            PstreamGlobals::MPI_COMM_FOAM,
+            &PstreamGlobals::MPIGroups_[index]
+        );
         MPI_Comm_rank
         (
             PstreamGlobals::MPICommunicators_[index],
@@ -445,9 +295,9 @@ Foam::label Foam::Pstream::allocateCommunicator
     }
     parentCommunicator_[index] = parentIndex;
 
-    linearCommunication_[index] = calcLinearComm(procIDs_[index].size());
-    treeCommunication_[index] = calcTreeComm(procIDs_[index].size());
-
+    // Size but do not fill structure - this is done on-the-fly
+    linearCommunication_[index] = List<commsStruct>(procIDs_[index].size());
+    treeCommunication_[index] = List<commsStruct>(procIDs_[index].size());
 
     if (doPstream && parRun())
     {
@@ -561,14 +411,37 @@ void Foam::Pstream::addValidParOptions(HashTable<string>& validParOptions)
 }
 
 
-bool Foam::Pstream::init(int& argc, char**& argv)
+bool Foam::Pstream::init(int& argc, char**& argv, const bool needsThread)
 {
-    MPI_Init(&argc, &argv);
+    int provided_thread_support;
+
+    MPI_Init_thread
+    (
+        &argc,
+        &argv,
+        (
+            needsThread
+          ? MPI_THREAD_MULTIPLE
+          : MPI_THREAD_SINGLE
+        ),
+        &provided_thread_support
+    );
+
+    int myGlobalRank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &myGlobalRank);
+
+    MPI_Comm_split
+    (
+        MPI_COMM_WORLD,
+        1,
+        myGlobalRank,
+        &PstreamGlobals::MPI_COMM_FOAM
+    );
 
     int numprocs;
-    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+    MPI_Comm_size(PstreamGlobals::MPI_COMM_FOAM, &numprocs);
     int myRank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
+    MPI_Comm_rank(PstreamGlobals::MPI_COMM_FOAM, &myRank);
 
     if (debug)
     {
@@ -578,14 +451,14 @@ bool Foam::Pstream::init(int& argc, char**& argv)
 
     if (numprocs <= 1)
     {
-        FatalErrorIn("Pstream::init(int& argc, char**& argv)")
+        FatalErrorInFunction
             << "bool IPstream::init(int& argc, char**& argv) : "
                "attempt to run parallel on 1 processor"
             << Foam::abort(FatalError);
     }
 
     // Initialise parallel structure
-    setParRun(numprocs);
+    setParRun(numprocs, provided_thread_support == MPI_THREAD_MULTIPLE);
 
 #   ifndef SGIMPI
     string bufferSizeName = getEnv("MPI_BUFFER_SIZE");
@@ -601,7 +474,7 @@ bool Foam::Pstream::init(int& argc, char**& argv)
     }
     else
     {
-        FatalErrorIn("Pstream::init(int& argc, char**& argv)")
+        FatalErrorInFunction
             << "Pstream::init(int& argc, char**& argv) : "
             << "environment variable MPI_BUFFER_SIZE not defined"
             << Foam::abort(FatalError);
@@ -638,7 +511,7 @@ void Foam::Pstream::exit(int errnum)
         label n = PstreamGlobals::outstandingRequests_.size();
         PstreamGlobals::outstandingRequests_.clear();
 
-        WarningIn("Pstream::exit(int)")
+        WarningInFunction
             << "There are still " << n << " outstanding MPI_Requests." << endl
             << "This means that your code exited before doing a"
             << " Pstream::waitRequests()." << endl
@@ -662,14 +535,14 @@ void Foam::Pstream::exit(int errnum)
     }
     else
     {
-        MPI_Abort(MPI_COMM_WORLD, errnum);
+        MPI_Abort(PstreamGlobals::MPI_COMM_FOAM, errnum);
     }
 }
 
 
 void Foam::Pstream::abort()
 {
-    MPI_Abort(MPI_COMM_WORLD, 1);
+    MPI_Abort(PstreamGlobals::MPI_COMM_FOAM, 1);
 }
 
 
@@ -693,7 +566,7 @@ void Foam::Pstream::waitRequests(const label start)
     if (debug)
     {
         Pout<< "Pstream::waitRequests : starting wait for "
-            << PstreamGlobals::outstandingRequests_.size()-start
+            << PstreamGlobals::outstandingRequests_.size() - start
             << " outstanding requests starting at " << start << endl;
     }
 
@@ -716,10 +589,8 @@ void Foam::Pstream::waitRequests(const label start)
             )
         )
         {
-            FatalErrorIn
-            (
-                "Pstream::waitRequests()"
-            )   << "MPI_Waitall returned with error" << Foam::endl;
+            FatalErrorInFunction
+                << "MPI_Waitall returned with error" << Foam::endl;
         }
 
         resetRequests(start);
@@ -742,11 +613,9 @@ void Foam::Pstream::waitRequest(const label i)
 
     if (i >= PstreamGlobals::outstandingRequests_.size())
     {
-        FatalErrorIn
-        (
-            "Pstream::waitRequest(const label)"
-        )   << "There are " << PstreamGlobals::outstandingRequests_.size()
-            << " outstanding send requests and you are asking for i=" << i
+        FatalErrorInFunction
+            << "There are " << PstreamGlobals::outstandingRequests_.size()
+            << " outstanding send requests and you are asking for i =" << i
             << nl
             << "Maybe you are mixing blocking/non-blocking comms?"
             << Foam::abort(FatalError);
@@ -761,10 +630,8 @@ void Foam::Pstream::waitRequest(const label i)
         )
     )
     {
-        FatalErrorIn
-        (
-            "Pstream::waitRequest()"
-        )   << "MPI_Wait returned with error" << Foam::endl;
+        FatalErrorInFunction
+            << "MPI_Wait returned with error" << Foam::endl;
     }
 
     if (debug)
@@ -785,10 +652,8 @@ bool Foam::Pstream::finishedRequest(const label i)
 
     if (i >= PstreamGlobals::outstandingRequests_.size())
     {
-        FatalErrorIn
-        (
-            "Pstream::finishedRequest(const label)"
-        )   << "There are " << PstreamGlobals::outstandingRequests_.size()
+        FatalErrorInFunction
+            << "There are " << PstreamGlobals::outstandingRequests_.size()
             << " outstanding send requests and you are asking for i=" << i
             << nl
             << "Maybe you are mixing blocking/non-blocking comms?"
@@ -879,10 +744,122 @@ void Foam::Pstream::freeTag(const word& s, const int tag)
 }
 
 
+template<>
+Foam::Pstream::commsStruct&
+Foam::UList<Foam::Pstream::commsStruct>::operator[](const label procID)
+{
+    Pstream::commsStruct& t = v_[procID];
+
+    if (t.allBelow().size() + t.allNotBelow().size() + 1 != size())
+    {
+        // Not yet allocated
+
+        label above(-1);
+        labelList below;
+        labelList allBelow;
+
+        if (size() < Pstream::nProcsSimpleSum())
+        {
+            // Linear schedule
+
+            if (procID == 0)
+            {
+                below.setSize(size()-1);
+                for (label procI = 1; procI < size(); procI++)
+                {
+                    below[procI-1] = procI;
+                }
+            }
+            else
+            {
+                above = 0;
+            }
+        }
+        else
+        {
+            // Use tree like schedule. For 8 procs:
+            // (level 0)
+            //      0 receives from 1
+            //      2 receives from 3
+            //      4 receives from 5
+            //      6 receives from 7
+            // (level 1)
+            //      0 receives from 2
+            //      4 receives from 6
+            // (level 2)
+            //      0 receives from 4
+            //
+            // The sends/receives for all levels are collected per processor
+            // (one send per processor; multiple receives possible) creating
+            // a table:
+            //
+            // So per processor:
+            // proc     receives from   sends to
+            // ----     -------------   --------
+            //  0       1,2,4           -
+            //  1       -               0
+            //  2       3               0
+            //  3       -               2
+            //  4       5               0
+            //  5       -               4
+            //  6       7               4
+            //  7       -               6
+
+            label mod = 0;
+
+            for (label step = 1; step < size(); step = mod)
+            {
+                mod = step * 2;
+
+                if (procID % mod)
+                {
+                    above = procID - (procID % mod);
+                    break;
+                }
+                else
+                {
+                    for
+                    (
+                        label j = procID + step;
+                        j < size() && j < procID + mod;
+                        j += step
+                    )
+                    {
+                        below.append(j);
+                    }
+                    for
+                    (
+                        label j = procID + step;
+                        j < size() && j < procID + mod;
+                        j++
+                    )
+                    {
+                        allBelow.append(j);
+                    }
+                }
+            }
+        }
+        t = Pstream::commsStruct(size(), procID, above, below, allBelow);
+    }
+    return t;
+}
+
+
+template<>
+const Foam::Pstream::commsStruct&
+Foam::UList<Foam::Pstream::commsStruct>::operator[](const label procID) const
+{
+    return const_cast<UList<Pstream::commsStruct>&>(*this).operator[](procID);
+}
+
+
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 // By default this is not a parallel run
 bool Foam::Pstream::parRun_(false);
+
+// By default threads are not available
+bool Foam::Pstream::haveThreads_(false);
 
 // Free communicators
 Foam::LIFOStack<Foam::label> Foam::Pstream::freeComms_;

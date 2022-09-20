@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -29,6 +29,7 @@ Description
 
 Author
     Henrik Rusche, Wikki GmbH, All rights reserved.
+    Hrvoje Jasak, Wikki Ltd.
 
 SourceFiles
     thermalGap.C
@@ -69,11 +70,10 @@ class thermalGap
     // Private Member Functions
 
         //- Disallow copy construct
-        thermalGap(const thermalGap&);
+        thermalGap(const thermalGap&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const thermalGap&);
-
+        void operator=(const thermalGap&) = delete;
 
 protected:
 
@@ -127,10 +127,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~thermalGap()
-        {}
+    //- Destructor
+    virtual ~thermalGap() = default;
 
 
     // Member Functions

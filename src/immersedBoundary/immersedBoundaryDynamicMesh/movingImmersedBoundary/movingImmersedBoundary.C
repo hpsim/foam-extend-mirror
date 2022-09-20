@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -55,12 +55,6 @@ Foam::movingImmersedBoundary::movingImmersedBoundary
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::movingImmersedBoundary::~movingImmersedBoundary()
-{}
-
-
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 void Foam::movingImmersedBoundary::movePoints() const
@@ -70,10 +64,8 @@ void Foam::movingImmersedBoundary::movePoints() const
 
     if (patchID < 0)
     {
-        FatalErrorIn
-        (
-            "void movingImmersedBoundary::movePoints() const"
-        )   << "Patch " << name() << " not found.  Available patch names: "
+        FatalErrorInFunction
+            << "Patch " << name() << " not found.  Available patch names: "
             << mesh().boundaryMesh().names()
             << abort(FatalError);
     }

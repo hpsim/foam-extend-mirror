@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -78,13 +78,13 @@ inline void Foam::Matrix<Form, Type>::checki(const label i) const
 {
     if (!n_)
     {
-        FatalErrorIn("Matrix<Form, Type>::checki(const label)")
+        FatalErrorInFunction
             << "attempt to access element from zero sized row"
             << abort(FatalError);
     }
-    else if (i<0 || i>=n_)
+    else if (i < 0 || i >= n_)
     {
-        FatalErrorIn("Matrix<Form, Type>::checki(const label)")
+        FatalErrorInFunction
             << "index " << i << " out of range 0 ... " << n_-1
             << abort(FatalError);
     }
@@ -96,13 +96,13 @@ inline void Foam::Matrix<Form, Type>::checkj(const label j) const
 {
     if (!m_)
     {
-        FatalErrorIn("Matrix<Form, Type>::checkj(const label)")
+        FatalErrorInFunction
             << "attempt to access element from zero sized column"
             << abort(FatalError);
     }
-    else if (j<0 || j>=m_)
+    else if (j < 0 || j >= m_)
     {
-        FatalErrorIn("Matrix<Form, Type>::checkj(const label)")
+        FatalErrorInFunction
             << "index " << j << " out of range 0 ... " << m_-1
             << abort(FatalError);
     }

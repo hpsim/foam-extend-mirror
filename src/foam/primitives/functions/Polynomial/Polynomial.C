@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -39,18 +39,6 @@ Foam::Polynomial<PolySize>::Polynomial()
         this->v_[i] = 0.0;
     }
 }
-
-
-template<int PolySize>
-Foam::Polynomial<PolySize>::Polynomial
-(
-    const Polynomial<PolySize>& poly
-)
-:
-    VectorSpace<Polynomial<PolySize>, scalar, PolySize>(poly),
-    logActive_(poly.logActive_),
-    logCoeff_(poly.logCoeff_)
-{}
 
 
 template<int PolySize>

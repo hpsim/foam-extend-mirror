@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -43,6 +43,7 @@ SourceFiles
 #include "bool.H"
 #include "dimensionedScalarFwd.H"
 #include "className.H"
+#include "autoPtr.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -139,7 +140,7 @@ public:
 
 private:
 
-    // private data
+    // Private data
 
         // dimensionSet stored as an array of dimension exponents
         scalar exponents_[nDimensions];
@@ -179,6 +180,15 @@ public:
 
         //- Construct from Istream
         dimensionSet(Istream&);
+
+        //- Construct as copy
+        dimensionSet(const dimensionSet& ds);
+
+        //- Construct and return a clone
+        autoPtr<dimensionSet> clone() const
+        {
+            return autoPtr<dimensionSet>(new dimensionSet(*this));
+        }
 
 
     // Member functions

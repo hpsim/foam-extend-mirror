@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ Ostream& operator<<(Ostream&, const fvsPatchField<Type>&);
 
 
 /*---------------------------------------------------------------------------*\
-                           Class patch Declaration
+                        Class fvsPatchField Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
@@ -247,10 +247,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~fvsPatchField<Type>()
-        {}
+    //- Destructor
+    virtual ~fvsPatchField<Type>() = default;
 
 
     // Member functions
@@ -307,6 +305,15 @@ public:
             virtual bool coupled() const
             {
                 return false;
+            }
+
+            //- Return true if this coupled patch fields are updated
+            //  Since fvsPatchField does not have a patchNeighbourField,
+            //  this function is dummy.
+            //  HJ, 13/Sep/2021
+            virtual bool couplesUpdated() const
+            {
+                return true;
             }
 
 

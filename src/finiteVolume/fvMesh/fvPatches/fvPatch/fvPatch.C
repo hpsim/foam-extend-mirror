@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -55,6 +55,16 @@ void fvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 {
     const vectorField d = delta();
     dc = 1.0/max((nf() & d), 0.05*mag(d));
+}
+
+
+void fvPatch::makeMagLongDeltas(fvsPatchScalarField& mld) const
+{
+    const vectorField d = delta();
+
+    // Check for boundedness on non-orthogonal boundary faces
+    // HJ, 11/May/2020
+    mld = mag(Sf() & d)/magSf();
 }
 
 
@@ -186,6 +196,12 @@ tmp<vectorField> fvPatch::delta() const
 const scalarField& fvPatch::deltaCoeffs() const
 {
     return boundaryMesh().mesh().deltaCoeffs().boundaryField()[index()];
+}
+
+
+const scalarField& fvPatch::magLongDeltas() const
+{
+    return boundaryMesh().mesh().magLongDeltas().boundaryField()[index()];
 }
 
 

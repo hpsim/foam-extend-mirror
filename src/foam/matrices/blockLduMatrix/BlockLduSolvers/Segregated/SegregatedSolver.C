@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ Foam::BlockSolverPerformance<Type> Foam::SegregatedSolver<Type>::solve
 (
     Field<Type>& x,
     const Field<Type>& b
-)
+) const
 {
     // Get reference to matrix, x and b
     const BlockLduMatrix<Type>& blockMatrix = this->matrix_;

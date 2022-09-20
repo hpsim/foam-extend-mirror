@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -743,7 +743,7 @@ int main(int argc, char *argv[])
 #   include "addRegionOption.H"
 #   include "addTimeOptions.H"
 
-    argList::validOptions.insert("noVTK", "");
+    argList::validOptions.insert("noVTK", "Do not write VTK file");
     argList::validOptions.insert("batch", "file");
 
 #   include "setRootCase.H"
@@ -765,8 +765,6 @@ int main(int argc, char *argv[])
 
     // Print current sets
     printAllSets(mesh, Info);
-
-
 
     std::ifstream* fileStreamPtr(nullptr);
 

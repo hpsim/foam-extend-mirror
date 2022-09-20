@@ -1,15 +1,16 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     version     2.0;
     format      ascii;
     class       volScalarField;
+    location    "0";
     object      epsilon;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -23,29 +24,69 @@ boundaryField
     inlet
     {
         type            timeVaryingMappedFixedValue;
-        setAverage      off;
+        setAverage      0;
+        value           nonuniform List<scalar>
+30
+(
+9813.84
+8665.24
+1866.31
+755.118
+205.654
+76.6694
+28.4518
+16.0868
+15.9867
+11.0187
+7.95753
+5.26064
+3.44136
+2.55317
+2.27183
+2.33608
+2.9115
+3.59492
+3.0497
+2.716
+2.9325
+3.88456
+6.91821
+14.9754
+37.5461
+217.022
+2043.58
+4864.22
+6244
+6334.7
+)
+;
     }
-
     outlet
     {
         type            zeroGradient;
     }
-
     upperWall
     {
-        type            zeroGradient;
+        type            epsilonWallFunction;
+        refValue        uniform 0;
+        value           uniform 14.855;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
     }
-
     lowerWall
     {
-        type            zeroGradient;
+        type            epsilonWallFunction;
+        refValue        uniform 0;
+        value           uniform 14.855;
+        Cmu             0.09;
+        kappa           0.41;
+        E               9.8;
     }
-
     frontAndBack
     {
         type            empty;
     }
 }
-
 
 // ************************************************************************* //

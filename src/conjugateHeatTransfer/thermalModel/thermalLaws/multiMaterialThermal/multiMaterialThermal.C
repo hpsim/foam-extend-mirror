@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -119,10 +119,8 @@ void Foam::multiMaterialThermal::checkLaws() const
         max(materials_).value() > laws.size() + SMALL
     )
     {
-        FatalErrorIn
-        (
-            "multiMaterialThermal::checkLaws()\n"
-        )   << "Invalid definition of material indicator field.  "
+        FatalErrorInFunction
+            << "Invalid definition of material indicator field.  "
             << "Number of materials: " << laws.size()
             << " max index: " << max(materials_)
             << ".  Should be " << laws.size() - 1
@@ -203,13 +201,6 @@ Foam::multiMaterialThermal::multiMaterialThermal
 {
     readLaws(T, dict);
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-
-Foam::multiMaterialThermal::~multiMaterialThermal()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -53,15 +53,8 @@ autoPtr<thermalGap> thermalGap::New
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        FatalIOErrorIn
-        (
-            "thermalGap::New(\n"
-            "    const word& name,\n"
-            "    const volScalarField& T,\n"
-            "    const dictionary& dict\n"
-            ")",
-            dict
-        )   << "Unknown thermalGap type "
+        FatalIOErrorInFunction(dict)
+            << "Unknown thermalGap type "
             << tgTypeName << endl << endl
             << "Valid  thermalGaps are : " << endl
             << dictionaryConstructorTablePtr_->toc()

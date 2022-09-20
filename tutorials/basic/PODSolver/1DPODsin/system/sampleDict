@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.1                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -16,26 +16,26 @@ FoamFile
 
 interpolationScheme cellPoint;
 
-writeFormat     raw;
+setFormat     raw;
 
-sampleSets
+sets
 (
-    uniform
+    x
     {
+        type            midPointAndFace;
         name            cut;
         axis            distance;
         start           (0 0 0);
-        end             (0.1 0 0);
+        end             (0.1001 0 0);
         nPoints         100;
     }
 );
 
 fields
 (
-//    T
-//    TPODreconstruct
-    TPOD
+    // T
+    // directReconT
+    reconT
 );
-
 
 // ************************************************************************* //

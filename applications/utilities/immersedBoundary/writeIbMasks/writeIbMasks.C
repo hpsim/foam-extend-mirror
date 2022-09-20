@@ -57,6 +57,30 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
         return;
     }
 
+    // Calculate raw volumes and areas
+
+    const pointField& points = mesh.points();
+    const faceList& faces = mesh.faces();
+    const cellList& cells = mesh.cells();
+
+    // Calculate raw cell volumes
+    scalarField rawVolumes(mesh.nCells());
+
+    forAll (cells, cellI)
+    {
+        rawVolumes[cellI] = cells[cellI].mag(points, faces);
+    }
+
+    // Calculate raw face areas and magnitudes
+    vectorField rawFaceAreas(mesh.nFaces());
+    scalarField magRawFaceAreas(mesh.nFaces());
+
+    forAll (faces, faceI)
+    {
+        rawFaceAreas[faceI] = faces[faceI].normal(points);
+        magRawFaceAreas[faceI] = mag(rawFaceAreas[faceI]);
+    }
+
     Info<< nl << "Calculating gamma" << endl;
     volScalarField gamma
     (
@@ -71,7 +95,7 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
         mesh,
         dimensionedScalar("one", dimless, 1)
     );
-    gamma.internalField() = mesh.V()/mesh.cellVolumes();
+    gamma.internalField() = mesh.cellVolumes()/rawVolumes;
 
     // Report minimal live cell volume
     scalar minLiveGamma = GREAT;
@@ -127,11 +151,10 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
     );
 
     const surfaceScalarField& magSf = mesh.magSf();
-    const scalarField magFaceAreas = mag(mesh.faceAreas());
 
     sGamma.internalField() =
         magSf.internalField()/
-        scalarField::subField(magFaceAreas, mesh.nInternalFaces());
+        scalarField::subField(magRawFaceAreas, mesh.nInternalFaces());
 
     forAll (mesh.boundary(), patchI)
     {
@@ -139,10 +162,15 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
         {
             sGamma.boundaryField()[patchI] =
                 magSf.boundaryField()[patchI]/
-                mesh.boundary()[patchI].patchSlice(magFaceAreas);
+                mesh.boundary()[patchI].patchSlice(magRawFaceAreas);
 
             gamma.boundaryField()[patchI] =
                 sGamma.boundaryField()[patchI];
+        }
+        else
+        {
+            sGamma.boundaryField()[patchI] = 1;
+            gamma.boundaryField()[patchI] = 1;
         }
     }
 
@@ -151,7 +179,6 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
 
 
     // Create dead cells set
-    if (!deadCellsHash.empty())
     {
         cellSet
         (
@@ -159,11 +186,6 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
             "deadCells",
             deadCellsHash
         ).write();
-    }
-    else
-    {
-        InfoInFunction
-            << "Dead cells not found" << endl;
     }
 
     // Check consistency of face area vectors
@@ -187,7 +209,7 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
 
     if (max(magDivSf) > primitiveMesh::closedThreshold_)
     {
-        WarningIn("writeIbMasks")
+        WarningInFunction
             << "Possible problem with immersed boundary face area vectors: "
             << max(magDivSf)
             << endl;
@@ -203,7 +225,7 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
                 maxOpenCellIndex = cellI;
             }
 
-            if (magDivSf[cellI] > 1e-9)
+            if (magDivSf[cellI] > primitiveMesh::closedThreshold_)
             {
                 Info<< "Open cell " << cellI << ": " << magDivSf[cellI]
                     << " gamma: " << gamma[cellI] << endl;
@@ -218,7 +240,7 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
 
         vectorField openFaceAreas
         (
-            IndirectList<vector>(mesh.faceAreas(), openCellFaces)()
+            IndirectList<vector>(rawFaceAreas, openCellFaces)()
         );
 
         vectorField adjustedFaceAreas(openCellFaces.size());
@@ -237,13 +259,22 @@ void Foam::calc(const argList& args, const Time& runTime, const fvMesh& mesh)
             {
                 const label patchI = mesh.boundaryMesh().whichPatch(faceI);
 
-                const label patchFaceI =
-                    mesh.boundaryMesh()[patchI].whichFace(faceI);
+                if (!isA<emptyFvPatch>(mesh.boundary()[patchI]))
+                {
+                    const label patchFaceI =
+                        mesh.boundaryMesh()[patchI].whichFace(faceI);
 
-                openCellFaceGamma[cfI] =
-                    sGamma.boundaryField()[patchI][patchFaceI];
+                    openCellFaceGamma[cfI] =
+                        sGamma.boundaryField()[patchI][patchFaceI];
 
-                adjustedFaceAreas[cfI] = Sf.boundaryField()[patchI][patchFaceI];
+                    adjustedFaceAreas[cfI] =
+                        Sf.boundaryField()[patchI][patchFaceI];
+                }
+                else
+                {
+                    openCellFaceGamma[cfI] = 0;
+                    adjustedFaceAreas[cfI] = vector::zero;
+                }
             }
         }
 

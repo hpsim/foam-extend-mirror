@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -92,14 +92,13 @@ public:
         KRR4(ODE& ode);
 
 
-    // Destructor
-
-        virtual ~KRR4()
-        {}
+    //- Destructor
+    virtual ~KRR4() = default;
 
 
     // Member Functions
 
+        //- Virtual solve: advance by 1 step
         virtual void solve
         (
             scalar& x,

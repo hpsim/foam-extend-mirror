@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -92,13 +92,6 @@ inline Foam::wallPoint::wallPoint()
 inline Foam::wallPoint::wallPoint(const point& origin, const scalar distSqr)
 :
     origin_(origin), distSqr_(distSqr)
-{}
-
-
-// Construct as copy
-inline Foam::wallPoint::wallPoint(const wallPoint& wpt)
-:
-    origin_(wpt.origin()), distSqr_(wpt.distSqr())
 {}
 
 

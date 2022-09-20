@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -296,7 +296,7 @@ public:
             {
                 if
                 (
-                    Pstream::defaultCommsType() == Pstream::nonBlocking
+                    Pstream::defaultComms() == Pstream::nonBlocking
                  && contiguous<T>()
                 )
                 {
@@ -310,7 +310,7 @@ public:
                         fld
                     );
                 }
-                else if (Pstream::defaultCommsType() == Pstream::scheduled)
+                else if (Pstream::defaultComms() == Pstream::scheduled)
                 {
                     distribute
                     (

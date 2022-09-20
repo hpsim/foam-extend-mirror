@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -113,32 +113,23 @@ template<class Type>
 tmp<scalarField> waveTransmissiveFvPatchField<Type>::advectionSpeed() const
 {
     // Lookup the velocity and compressibility of the patch
-    const fvPatchField<scalar>& psip = this->lookupPatchField
-    (
-        psiName_,
-        reinterpret_cast<const volScalarField*>(0),
-        reinterpret_cast<const scalar*>(0)
-    );
+    const fvPatchField<scalar>& psip =
+        this->template lookupPatchField<volScalarField, scalar>(psiName_);
 
     const surfaceScalarField& phi =
         this->db().objectRegistry::template lookupObject<surfaceScalarField>
         (this->phiName_);
 
-    fvsPatchField<scalar> phip = this->lookupPatchField
-    (
-        this->phiName_,
-        reinterpret_cast<const surfaceScalarField*>(0),
-        reinterpret_cast<const scalar*>(0)
-    );
+    // Deliberately making a copy for further use.  HJ, 6/May/2020
+    fvsPatchScalarField phip =
+        this->template
+        lookupPatchField<surfaceScalarField, scalar>(this->phiName_);
 
     if (phi.dimensions() == dimDensity*dimVelocity*dimArea)
     {
-        const fvPatchScalarField& rhop = this->lookupPatchField
-        (
-            this->rhoName_,
-            reinterpret_cast<const volScalarField*>(0),
-            reinterpret_cast<const scalar*>(0)
-        );
+        const fvPatchScalarField& rhop =
+            this->template
+            lookupPatchField<volScalarField, scalar>(this->rhoName_);
 
         phip /= rhop;
     }
@@ -154,20 +145,11 @@ template<class Type>
 tmp<scalarField> waveTransmissiveFvPatchField<Type>::supercritical() const
 {
     // Lookup the velocity and compressibility of the patch
-    const fvPatchField<scalar>& psip = this->lookupPatchField
-    (
-        psiName_,
-        reinterpret_cast<const volScalarField*>(0),
-        reinterpret_cast<const scalar*>(0)
-    );
+    const fvPatchField<scalar>& psip =
+        this->template lookupPatchField<volScalarField, scalar>(psiName_);
 
     const fvPatchVectorField& U =
-        this->lookupPatchField
-        (
-            UName_,
-            reinterpret_cast<const volVectorField*>(0),
-            reinterpret_cast<const vector*>(0)
-        );
+        this->template lookupPatchField<volVectorField, vector>(UName_);
 
     // Calculate the speed of the field wave w
     // by summing the component of the velocity normal to the boundary

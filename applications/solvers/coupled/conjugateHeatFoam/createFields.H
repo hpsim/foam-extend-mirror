@@ -105,3 +105,6 @@
     (
         radiation::radiationModel::New(T)
     );
+
+    // Create thermal model for fluid sources
+    fluidThermalModel thermalModelFluid(laminarTransport, T);

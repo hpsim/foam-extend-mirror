@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -72,8 +72,8 @@ Foam::KRR4::KRR4(ODE& ode)
     g4_(ode_.nEqns()),
     yErr_(ode_.nEqns()),
     dfdx_(ode_.nEqns()),
-    dfdy_(ode_.nEqns(), ode_.nEqns()),
-    a_(ode_.nEqns(), ode_.nEqns()),
+    dfdy_(ode_.nEqns(), scalar(0)),
+    a_(ode_.nEqns(), scalar(0)),
     pivotIndices_(ode_.nEqns())
 {}
 

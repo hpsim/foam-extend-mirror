@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -200,7 +200,7 @@ public:
             void evaluate();
 
             //- Evaluate coupled boundary conditions only
-            void evaluateCoupled();
+            void updateCoupledPatchFields() const;
 
             //- Return a list of the patch types
             wordList types() const;
@@ -217,6 +217,9 @@ public:
             //  pointing to block-coupled interfaces being set
             typename BlockLduInterfaceFieldPtrsList<Type>::Type
             blockInterfaces() const;
+
+            //- Clear field caches
+            void clearCaches() const;
 
             //- Write boundary field as dictionary entry
             void writeEntry(const word& keyword, Ostream& os) const;
@@ -512,6 +515,9 @@ public:
         //  by returning the field name + "Final"
         //  otherwise the standard parameters by returning the field name
         word select(bool final) const;
+
+        //- Clear field caches
+        void clearCaches() const;
 
         //- Helper function to write the min and max to an Ostream
         void writeMinMax(Ostream& os) const;

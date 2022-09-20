@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -89,13 +89,8 @@ GeometricBoundaryField
 
     if (patchFieldTypes.size() != this->size())
     {
-        FatalErrorIn
-        (
-            "GeometricField<Type, PatchField, GeoMesh>::"
-            "GeometricBoundaryField::"
-            "GeometricBoundaryField(const BoundaryMesh&, "
-            "const Field<Type>&, const wordList&)"
-        )   << "Incorrect number of patch type specifications given" << nl
+        FatalErrorInFunction
+            << "Incorrect number of patch type specifications given" << nl
             << "    Number of patches in mesh = " << bmesh.size()
             << " number of patch type specifications = "
             << patchFieldTypes.size()
@@ -192,10 +187,8 @@ GeometricBoundaryField
 {
     if (debug)
     {
-        Info<< "GeometricField<Type, PatchField, GeoMesh>::"
-               "GeometricBoundaryField::"
-               "GeometricBoundaryField(const GeometricBoundaryField<Type, "
-               "PatchField, BoundaryMesh>&)"
+        InfoInFunction
+            << "GeometricBoundaryField copy"
             << endl;
     }
 }
@@ -262,9 +255,9 @@ updateCoeffs()
 {
     if (debug)
     {
-        Info<< "GeometricField<Type, PatchField, GeoMesh>::"
-               "GeometricBoundaryField::"
-               "updateCoeffs()" << endl;
+        InfoInFunction
+            << "updateCoeffs"
+            << endl;
     }
 
     forAll(*this, patchi)
@@ -280,9 +273,9 @@ evaluate()
 {
     if (debug)
     {
-        Info<< "GeometricField<Type, PatchField, GeoMesh>::"
-               "GeometricBoundaryField::"
-               "evaluate()" << endl;
+        InfoInFunction
+            << "evaluate"
+            << endl;
     }
 
     if
@@ -291,6 +284,8 @@ evaluate()
      || Pstream::defaultComms() == Pstream::nonBlocking
     )
     {
+        label nReq = Pstream::nRequests();
+
         forAll(*this, patchi)
         {
             this->operator[](patchi).initEvaluate
@@ -302,8 +297,7 @@ evaluate()
         // Block for any outstanding requests
         if (Pstream::defaultComms() == Pstream::nonBlocking)
         {
-            IPstream::waitRequests();
-            OPstream::waitRequests();
+            Pstream::waitRequests(nReq);
         }
 
         forAll(*this, patchi)
@@ -335,9 +329,9 @@ evaluate()
     }
     else
     {
-        FatalErrorIn("GeometricBoundaryField::evaluate()")
+        FatalErrorInFunction
             << "Unsuported communications type "
-            << Pstream::commsTypeNames[Pstream::defaultCommsType()]
+            << Pstream::commsTypeNames[Pstream::defaultComms()]
             << exit(FatalError);
     }
 }
@@ -345,87 +339,116 @@ evaluate()
 
 template<class Type, template<class> class PatchField, class GeoMesh>
 void Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricBoundaryField::
-evaluateCoupled()
+updateCoupledPatchFields() const
 {
     if (debug)
     {
-        Info<< "GeometricField<Type, PatchField, GeoMesh>::"
-               "GeometricBoundaryField::"
-               "evaluateCoupled()" << endl;
+        InfoInFunction
+            << "updateCoupledPatchFields"
+            << endl;
     }
 
-    if
-    (
-        Pstream::defaultComms() == Pstream::blocking
-     || Pstream::defaultComms() == Pstream::nonBlocking
-    )
+    bool couplesUpdated = true;
+
+    forAll (*this, patchi)
     {
-        forAll(*this, patchi)
+        if (this->operator[](patchi).coupled())
         {
-            if (this->operator[](patchi).coupled())
-            {
-                this->operator[](patchi).initEvaluate
-                (
-                    Pstream::defaultComms()
-                );
-            }
-        }
-
-        // Block for any outstanding requests
-        if (Pstream::defaultComms() == Pstream::nonBlocking)
-        {
-            IPstream::waitRequests();
-            OPstream::waitRequests();
-        }
-
-        forAll(*this, patchi)
-        {
-            if (this->operator[](patchi).coupled())
-            {
-                this->operator[](patchi).evaluate
-                (
-                    Pstream::defaultComms()
-                );
-            }
+            couplesUpdated &= this->operator[](patchi).couplesUpdated();
         }
     }
-    else if (Pstream::defaultComms() == Pstream::scheduled)
-    {
-        const lduSchedule& patchSchedule =
-            bmesh_.mesh().globalData().patchSchedule();
 
-        forAll(patchSchedule, patchEvali)
+    reduce(couplesUpdated, andOp<bool>());
+
+    // Update couples if not updated
+    if (!couplesUpdated)
+    {
+        if (debug)
         {
-            if (patchSchedule[patchEvali].init)
+            InfoInFunction
+                << "Updating couples"
+                << endl;
+        }
+
+        // Note: casting away const in initEvaluate and evaluate, as this
+        // only changes the cached patchNeighbourField value and not the
+        // field itself.  HJ, 10/Sep/2021
+        if
+        (
+            Pstream::defaultComms() == Pstream::blocking
+         || Pstream::defaultComms() == Pstream::nonBlocking
+        )
+        {
+            label nReq = Pstream::nRequests();
+
+            forAll (*this, patchi)
             {
-                if
-                (
-                    this->operator[](patchSchedule[patchEvali].patch).coupled()
-                )
+                if (this->operator[](patchi).coupled())
                 {
-                    this->operator[](patchSchedule[patchEvali].patch)
-                        .initEvaluate(Pstream::scheduled);
+                    const_cast<PatchField<Type>&>(this->operator[](patchi))
+                        .initEvaluate(Pstream::defaultComms());
                 }
             }
-            else
+
+            // Block for any outstanding requests
+            if (Pstream::defaultComms() == Pstream::nonBlocking)
             {
-                if
-                (
-                    this->operator[](patchSchedule[patchEvali].patch).coupled()
-                )
+                Pstream::waitRequests(nReq);
+            }
+
+            forAll (*this, patchi)
+            {
+                if (this->operator[](patchi).coupled())
                 {
-                    this->operator[](patchSchedule[patchEvali].patch)
-                        .evaluate(Pstream::scheduled);
+                    const_cast<PatchField<Type>&>(this->operator[](patchi))
+                        .evaluate(Pstream::defaultComms());
                 }
             }
         }
-    }
-    else
-    {
-        FatalErrorIn("GeometricBoundaryField::evaluateCoupled()")
-            << "Unsuported communications type "
-            << Pstream::commsTypeNames[Pstream::defaultCommsType()]
-            << exit(FatalError);
+        else if (Pstream::defaultComms() == Pstream::scheduled)
+        {
+            const lduSchedule& patchSchedule =
+                bmesh_.mesh().globalData().patchSchedule();
+
+            forAll(patchSchedule, patchEvali)
+            {
+                if (patchSchedule[patchEvali].init)
+                {
+                    if
+                    (
+                        this->operator[](patchSchedule[patchEvali].patch)
+                        .coupled()
+                    )
+                    {
+                        const_cast<PatchField<Type>&>
+                        (
+                            this->operator[](patchSchedule[patchEvali].patch)
+                        ).initEvaluate(Pstream::scheduled);
+                    }
+                }
+                else
+                {
+                    if
+                    (
+                        this->operator[](patchSchedule[patchEvali].patch)
+                        .coupled()
+                    )
+                    {
+                        const_cast<PatchField<Type>&>
+                        (
+                            this->operator[](patchSchedule[patchEvali].patch)
+                        ).evaluate(Pstream::scheduled);
+                    }
+                }
+            }
+        }
+        else
+        {
+            FatalErrorInFunction
+                << "Unsuported communications type "
+                << Pstream::commsTypeNames[Pstream::defaultComms()]
+                    << exit(FatalError);
+        }
     }
 }
 
@@ -516,6 +539,19 @@ blockInterfaces() const
     }
 
     return interfaces;
+}
+
+
+template<class Type, template<class> class PatchField, class GeoMesh>
+void
+Foam::GeometricField<Type, PatchField, GeoMesh>::GeometricBoundaryField::
+clearCaches() const
+{
+    // Clear caches on all boundary patches
+    forAll(*this, patchi)
+    {
+        this->operator[](patchi).clearCaches();
+    }
 }
 
 

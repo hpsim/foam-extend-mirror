@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -73,6 +73,7 @@ class heatFlux
         //- On/off switch
         bool active_;
 
+
     // Private Member Functions
 
         // Calculation functions
@@ -82,10 +83,10 @@ class heatFlux
 
 
         //- Disallow default bitwise copy construct
-        heatFlux(const heatFlux&);
+        heatFlux(const heatFlux&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const heatFlux&);
+        void operator=(const heatFlux&) = delete;
 
 
 public:
@@ -108,7 +109,7 @@ public:
 
 
     //- Destructor
-    virtual ~heatFlux();
+    virtual ~heatFlux() = default;
 
 
     // Member Functions

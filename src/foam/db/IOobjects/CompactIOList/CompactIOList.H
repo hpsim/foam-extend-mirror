@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ template<class T, class BaseType> Ostream& operator<<
 
 
 /*---------------------------------------------------------------------------*\
-                           Class CompactIOList Declaration
+                        Class CompactIOList Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class T, class BaseType>
@@ -102,9 +102,8 @@ public:
         CompactIOList(const IOobject&, const Xfer<List<T> >&);
 
 
-    // Destructor
-
-        virtual ~CompactIOList();
+    //- Destructor
+    virtual ~CompactIOList() = default;
 
 
     // Member functions

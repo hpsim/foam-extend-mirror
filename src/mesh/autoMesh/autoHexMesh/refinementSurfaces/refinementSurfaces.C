@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -1149,21 +1149,21 @@ void Foam::refinementSurfaces::findInside
 
         if (allGeometry_[surfaces_[surfI]].hasVolumeType())
         {
-            List<searchableSurface::volumeType> volType;
+            List<volumeType> volType;
             allGeometry_[surfaces_[surfI]].getVolumeType(pt, volType);
 
-            forAll(volType, pointI)
+            forAll (volType, pointI)
             {
                 if (insideSurfaces[pointI] == -1)
                 {
                     if
                     (
                         (
-                            volType[pointI] == triSurfaceMesh::INSIDE
+                            volType[pointI] == volumeType::INSIDE
                          && zoneInside_[surfI]
                         )
                      || (
-                            volType[pointI] == triSurfaceMesh::OUTSIDE
+                            volType[pointI] == volumeType::OUTSIDE
                          && !zoneInside_[surfI]
                         )
                     )

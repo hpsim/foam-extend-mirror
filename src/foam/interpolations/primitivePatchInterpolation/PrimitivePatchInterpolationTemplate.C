@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -23,8 +23,8 @@ License
 
 \*---------------------------------------------------------------------------*/
 
+#include "PrimitivePatchTemplate.H"
 #include "PrimitivePatchInterpolationTemplate.H"
-#include "faceList.H"
 #include "demandDrivenData.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -52,15 +52,13 @@ void PrimitivePatchInterpolation<Patch>::makeFaceToPointWeights() const
 {
     if (faceToPointWeightsPtr_)
     {
-        FatalErrorIn
-        (
-            "PrimitivePatchInterpolation<Patch>::makeFaceToPointWeights() const"
-        )   << "Face-to-edge weights already calculated"
+        FatalErrorInFunction
+            << "Face-to-edge weights already calculated"
             << abort(FatalError);
     }
 
-    const pointField& points = patch_.localPoints();
-    const faceList& faces = patch_.localFaces();
+    const typename Patch::PointFieldType& points = patch_.localPoints();
+    // const List<typename Patch::FaceType>& faces = patch_.localFaces();
 
     faceToPointWeightsPtr_ = new scalarListList(points.size());
     scalarListList& weights = *faceToPointWeightsPtr_;
@@ -79,8 +77,11 @@ void PrimitivePatchInterpolation<Patch>::makeFaceToPointWeights() const
 
         forAll(curFaces, facei)
         {
-            pw[facei] =
-                1.0/mag(faces[curFaces[facei]].centre(points) - points[pointi]);
+            // Hacked weighting.  HJ, 2/Sep/2022
+            pw[facei] = 1.0;
+
+            // pw[facei] =
+            //     1.0/mag(faces[curFaces[facei]].centre(points) - points[pointi]);
             sumw += pw[facei];
         }
 
@@ -110,15 +111,15 @@ void PrimitivePatchInterpolation<Patch>::makeFaceToEdgeWeights() const
 {
     if (faceToEdgeWeightsPtr_)
     {
-        FatalErrorIn
-        (
-            "PrimitivePatchInterpolation<Patch>::makeFaceToEdgeWeights() const"
-        )   << "Face-to-edge weights already calculated"
+        FatalErrorInFunction
+            << "Face-to-edge weights already calculated"
             << abort(FatalError);
     }
 
-    const pointField& points = patch_.localPoints();
-    const faceList& faces = patch_.localFaces();
+    const typename Patch::PointFieldType& points = patch_.localPoints();
+    const typename Patch::FaceListType& faces =
+        patch_.localFaces();
+
     const edgeList& edges = patch_.edges();
     const labelListList& edgeFaces = patch_.edgeFaces();
 
@@ -182,11 +183,8 @@ tmp<Field<Type> > PrimitivePatchInterpolation<Patch>::faceToPointInterpolate
     // Check size of the given field
     if (ff.size() != patch_.size())
     {
-        FatalErrorIn
-        (
-            "tmp<Field<Type> > PrimitivePatchInterpolation::"
-            "faceToPointInterpolate(const Field<Type> ff)"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "given field does not correspond to patch. Patch size: "
             << patch_.size() << " field size: " << ff.size()
             << abort(FatalError);
     }
@@ -241,11 +239,8 @@ tmp<Field<Type> > PrimitivePatchInterpolation<Patch>::pointToFaceInterpolate
 {
     if (pf.size() != patch_.nPoints())
     {
-        FatalErrorIn
-        (
-            "tmp<Field<Type> > PrimitivePatchInterpolation::"
-            "pointToFaceInterpolate(const Field<Type> pf)"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "given field does not correspond to patch. Patch size: "
             << patch_.nPoints() << " field size: " << pf.size()
             << abort(FatalError);
     }
@@ -261,7 +256,7 @@ tmp<Field<Type> > PrimitivePatchInterpolation<Patch>::pointToFaceInterpolate
 
     Field<Type>& result = tresult();
 
-    const faceList& localFaces = patch_.localFaces();
+    const List<typename Patch::FaceType>& localFaces = patch_.localFaces();
 
     forAll(result, facei)
     {
@@ -302,11 +297,8 @@ tmp<Field<Type> > PrimitivePatchInterpolation<Patch>::faceToEdgeInterpolate
     // Check size of the given field
     if (pf.size() != patch_.size())
     {
-        FatalErrorIn
-        (
-            "tmp<Field<Type> > PrimitivePatchInterpolation::"
-            "faceToEdgeInterpolate(const Field<Type> ff)"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "given field does not correspond to patch. Patch size: "
             << patch_.size() << " field size: " << pf.size()
             << abort(FatalError);
     }

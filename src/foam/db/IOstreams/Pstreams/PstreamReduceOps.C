@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -70,16 +70,8 @@ void Foam::reduce
     // Check for processors that are not in the communicator
     if (Pstream::myProcNo(comm) == -1)
     {
-        FatalErrorIn
-        (
-            "void Foam::reduce\n"
-            "(\n"
-            "    bool& Value,\n"
-            "    const andOp<bool>& bop,\n"
-            "    const int tag,\n"
-            "    const label comm\n"
-            ")"
-        )   << "Reduce called on the processor which is not a member "
+        FatalErrorInFunction
+            << "Reduce called on the processor which is not a member "
             << "of comm.  This is not allowed"
             << abort(FatalError);
     }
@@ -129,16 +121,8 @@ void Foam::reduce
     // Check for processors that are not in the communicator
     if (Pstream::myProcNo(comm) == -1)
     {
-        FatalErrorIn
-        (
-            "void Foam::reduce\n"
-            "(\n"
-            "    bool& Value,\n"
-            "    const orOp<bool>& bop,\n"
-            "    const int tag,\n"
-            "    const label comm\n"
-            ")"
-        )   << "Reduce called on the processor which is not a member "
+        FatalErrorInFunction
+            << "Reduce called on the processor which is not a member "
             << "of comm.  This is not allowed"
             << abort(FatalError);
     }
@@ -676,17 +660,8 @@ void Foam::reduce
     // Check for processors that are not in the communicator
     if (Pstream::myProcNo(comm) == -1)
     {
-        FatalErrorIn
-        (
-            "void Foam::reduce\n"
-            "(\n"
-            "    scalar& Value,\n"
-            "    const sumOp<scalar>& bop,\n"
-            "    const int tag,\n"
-            "    const label comm,\n"
-            "    label& requestID\n"
-            ")"
-        )   << "Reduce called on the processor which is not a member "
+        FatalErrorInFunction
+            << "Reduce called on the processor which is not a member "
             << "of comm.  This is not allowed"
             << abort(FatalError);
     }

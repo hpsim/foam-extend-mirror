@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -108,6 +108,19 @@ Foam::lduSolverPerformance Foam::amgSolver::solve
                 gSumMag(amg_.residual(x, b, cmpt))/norm;
 
             solverPerf.nIterations()++;
+
+            // AMG initialisation check
+            if (amg_.nLevels() < 2)
+            {
+                InfoInFunction
+                    << "AMG levels not initialised properly.  nLevels = "
+                        << amg_.nLevels()
+                        << endl;
+
+                // Do not cycle: AMG coarse level creation failed
+                break;
+            }
+
         } while (!stop(solverPerf));
     }
 

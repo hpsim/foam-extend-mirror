@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -82,14 +82,6 @@ Foam::surfZone::surfZone
     surfZoneIdentifier(name, dict, index),
     size_(readLabel(dict.lookup("nFaces"))),
     start_(readLabel(dict.lookup("startFace")))
-{}
-
-
-Foam::surfZone::surfZone(const surfZone& zone)
-:
-    surfZoneIdentifier(zone, zone.index()),
-    size_(zone.size()),
-    start_(zone.start())
 {}
 
 

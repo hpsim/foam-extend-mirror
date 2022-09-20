@@ -1,3 +1,5 @@
+    Info<< "Reading thermophysical properties\n" << endl;
+
     singlePhaseTransportModel laminarTransport(U, phi);
 
     // Thermal expansion coefficient [1/K]

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ Global
     compressibleCourantNo
 
 Description
-    Calculates and outputs the mean and maximum Courant Numbers for 
+    Calculates and outputs the mean and maximum Courant Numbers for
     compressible flow with immersed boundary correction.
 
 Author

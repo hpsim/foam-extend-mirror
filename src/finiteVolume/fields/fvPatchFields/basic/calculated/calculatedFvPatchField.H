@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ public:
             const fvPatch&,
             const DimensionedField<Type, volMesh>&,
             const dictionary&,
-            const bool valueRequired=false
+            const bool valueRequired = false
         );
 
         //- Construct by mapping given patchField<Type> onto a new patch

@@ -15,4 +15,6 @@ SKA/SKA.C
 constantVelocity/constantVelocity.C
 graphVelocity/graphVelocity.C
 
+constantAcceleration/constantAcceleration.C
+
 LIB = $(FOAM_LIBBIN)/libsolidBodyMotion

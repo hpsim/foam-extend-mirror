@@ -12,7 +12,12 @@
       - fvm::laplacian(kappaEff, T)
     );
 
-    TEqn.relax();
+    if (thermalModelFluid.active())
+    {
+        TEqn -=
+            thermalModelFluid.S()/
+            (thermalModelFluid.rho()*thermalModelFluid.C());
+    }
 
     TEqn.solve();
 

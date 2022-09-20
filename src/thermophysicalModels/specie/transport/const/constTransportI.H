@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -145,21 +145,6 @@ inline scalar constTransport<thermo>::alpha
     return Cp_*mu(T)*rPr/CpBar;
 }
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-template<class thermo>
-inline constTransport<thermo>& constTransport<thermo>::operator=
-(
-    const constTransport<thermo>& ct
-)
-{
-    thermo::operator=(ct);
-
-    Mu = ct.Mu;
-    rPr = ct.rPr;
-
-    return *this;
-}
-
 
 template<class thermo>
 inline void Foam::constTransport<thermo>::operator+=

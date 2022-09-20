@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -109,10 +109,8 @@ void Foam::polyMesh::calcDirections() const
         // Check if all processors see the same 2-D from empty patches
         if (mag(globalEmptyDirVec - emptyDirVec) > emptyDirTol_())
         {
-            FatalErrorIn
-            (
-                "void polyMesh::calcDirections() const"
-            )   << "Some processors detect different empty (2-D) "
+            FatalErrorInFunction
+                << "Some processors detect different empty (2-D) "
                 << "directions.  Probably using empty patches on a "
                 << "bad parallel decomposition." << nl << nl
                 << "Global empty direction vector: " << globalEmptyDirVec << nl
@@ -162,10 +160,8 @@ void Foam::polyMesh::calcDirections() const
         // Check if all processors see the same 2-D from wedge patches
         if (mag(globalWedgeDirVec - wedgeDirVec) > wedgeDirTol_())
         {
-            FatalErrorIn
-            (
-                "void polyMesh::calcDirections() const"
-            )   << "Some processors detect different wedge (2-D) "
+            FatalErrorInFunction
+                << "Some processors detect different wedge (2-D) "
                 << "directions.  Probably using wedge patches on a "
                 << "bad parallel decomposition." << nl
                 << "Global wedge direction vector: " << globalWedgeDirVec << nl
@@ -226,11 +222,11 @@ Foam::polyMesh::polyMesh(const IOobject& io)
             time().findInstance(meshDir(), "faces"),
             meshSubDir,
             *this,
-            IOobject::MUST_READ,
+            IOobject::NO_READ,  // Note: read is done by readFaces
             IOobject::NO_WRITE
-        )
+        ),
+        readFaces(time().findInstance(meshDir(), "faces"))
     ),
-    // To be re-sliced later.  HJ, 19/oct/2008
     faces_(allFaces_, allFaces_.size()),
     owner_
     (
@@ -366,20 +362,18 @@ Foam::polyMesh::polyMesh(const IOobject& io)
     }
 
     // Calculate topology for the patches (processor-processor comms etc.)
+    // updateMesh calls calcGeometry
     boundary_.updateMesh();
-
-    // Calculate the geometry for the patches (transformation tensors etc.)
-    boundary_.calcGeometry();
 
     // Warn if global empty mesh (constructs globalData!)
     if (globalData().nTotalPoints() == 0)
     {
-        WarningIn("polyMesh(const IOobject&)")
+        WarningInFunction
             << "no points in mesh" << endl;
     }
     if (globalData().nTotalCells() == 0)
     {
-        WarningIn("polyMesh(const IOobject&)")
+        WarningInFunction
             << "no cells in mesh" << endl;
     }
 }
@@ -529,16 +523,8 @@ Foam::polyMesh::polyMesh
 
         if (min(curFace) < 0 || max(curFace) > allPoints_.size())
         {
-            FatalErrorIn
-            (
-                "polyMesh::polyMesh\n"
-                "(\n"
-                "    const IOobject& io,\n"
-                "    const pointField& points,\n"
-                "    const faceList& faces,\n"
-                "    const cellList& cells\n"
-                ")\n"
-            )   << "Face " << faceI << "contains vertex labels out of range: "
+            FatalErrorInFunction
+                << "Face " << faceI << "contains vertex labels out of range: "
                 << curFace << " Max point index = " << allPoints_.size()
                 << abort(FatalError);
         }
@@ -691,16 +677,8 @@ Foam::polyMesh::polyMesh
 
         if (min(curFace) < 0 || max(curFace) > allPoints_.size())
         {
-            FatalErrorIn
-            (
-                "polyMesh::polyMesh\n"
-                "(\n"
-                "    const IOobject&,\n"
-                "    const Xfer<pointField>&,\n"
-                "    const Xfer<faceList>&,\n"
-                "    const Xfer<cellList>&\n"
-                ")\n"
-            )   << "Face " << faceI << "contains vertex labels out of range: "
+            FatalErrorInFunction
+                << "Face " << faceI << "contains vertex labels out of range: "
                 << curFace << " Max point index = " << allPoints_.size()
                 << abort(FatalError);
         }
@@ -716,16 +694,8 @@ Foam::polyMesh::polyMesh
 
         if (min(curCell) < 0 || max(curCell) > allFaces_.size())
         {
-            FatalErrorIn
-            (
-                "polyMesh::polyMesh\n"
-                "(\n"
-                "    const IOobject&,\n"
-                "    const Xfer<pointField>&,\n"
-                "    const Xfer<faceList>&,\n"
-                "    const Xfer<cellList>&\n"
-                ")\n"
-            )   << "Cell " << cellI << "contains face labels out of range: "
+            FatalErrorInFunction
+                << "Cell " << cellI << "contains face labels out of range: "
                 << curCell << " Max face index = " << allFaces_.size()
                 << abort(FatalError);
         }
@@ -810,34 +780,14 @@ void Foam::polyMesh::resetPrimitives
 
         if (curFace.size() == 0)
         {
-            FatalErrorIn
-            (
-                "polyMesh::polyMesh::resetPrimitives\n"
-                "(\n"
-                "    const Xfer<pointField>& points,\n"
-                "    const Xfer<faceList>& faces,\n"
-                "    const Xfer<labelList>& owner,\n"
-                "    const Xfer<labelList>& neighbour,\n"
-                "    const labelList& patchSizes,\n"
-                "    const labelList& patchStarts\n"
-                ")\n"
-            )   << "Face " << faceI << " contains no vertex labels"
+            FatalErrorInFunction
+                << "Face " << faceI << " contains no vertex labels"
                 << abort(FatalError);
         }
         else if (min(curFace) < 0 || max(curFace) > allPoints_.size())
         {
-            FatalErrorIn
-            (
-                "polyMesh::polyMesh::resetPrimitives\n"
-                "(\n"
-                "    const Xfer<pointField>& points,\n"
-                "    const Xfer<faceList>& faces,\n"
-                "    const Xfer<labelList>& owner,\n"
-                "    const Xfer<labelList>& neighbour,\n"
-                "    const labelList& patchSizes,\n"
-                "    const labelList& patchStarts\n"
-                ")\n"
-            )   << "Face " << faceI << " contains vertex labels out of range: "
+            FatalErrorInFunction
+                << "Face " << faceI << " contains vertex labels out of range: "
                 << curFace << " Max point index = " << allPoints_.size()
                 << abort(FatalError);
         }
@@ -854,10 +804,9 @@ void Foam::polyMesh::resetPrimitives
         // processor-processor comms.
 
         // Calculate topology for the patches (processor-processor comms etc.)
-        boundary_.updateMesh();
-
         // Calculate the geometry for the patches (transformation tensors etc.)
-        boundary_.calcGeometry();
+        // updateMesh calls calcGeometry
+        boundary_.updateMesh();
 
         // Warn if global empty mesh (constructs globalData!)
         if
@@ -866,18 +815,7 @@ void Foam::polyMesh::resetPrimitives
          || globalData().nTotalCells() == 0
         )
         {
-            FatalErrorIn
-            (
-                "polyMesh::polyMesh::resetPrimitives\n"
-                "(\n"
-                "    const Xfer<pointField>&,\n"
-                "    const Xfer<faceList>&,\n"
-                "    const Xfer<labelList>& owner,\n"
-                "    const Xfer<labelList>& neighbour,\n"
-                "    const labelList& patchSizes,\n"
-                "    const labelList& patchStarts\n"
-                ")\n"
-            )
+            FatalErrorInFunction
                 << "no points or no cells in mesh" << endl;
         }
     }
@@ -895,10 +833,6 @@ Foam::polyMesh::~polyMesh()
 {
     clearOut();
     resetMotion();
-
-    // Clear mesh objects.  See clearGeom()
-    // HJ, 12/Feb/2020
-    meshObjectBase::allDelete(*this);
 }
 
 
@@ -990,10 +924,8 @@ void Foam::polyMesh::addPatches
 {
     if (boundaryMesh().size())
     {
-        FatalErrorIn
-        (
-            "void polyMesh::addPatches(const List<polyPatch*>&, const bool)"
-        )   << "boundary already exists"
+        FatalErrorInFunction
+            << "boundary already exists"
             << abort(FatalError);
     }
 
@@ -1018,10 +950,9 @@ void Foam::polyMesh::addPatches
     if (validBoundary)
     {
         // Calculate topology for the patches (processor-processor comms etc.)
-        boundary_.updateMesh();
-
         // Calculate the geometry for the patches (transformation tensors etc.)
-        boundary_.calcGeometry();
+        // updateMesh calls calcGeometry
+        boundary_.updateMesh();
 
         boundary_.checkDefinition();
     }
@@ -1043,15 +974,8 @@ void Foam::polyMesh::addZones
      || cellZones().size() > 0
     )
     {
-        FatalErrorIn
-        (
-            "void addZones\n"
-            "(\n"
-            "    const List<pointZone*>&,\n"
-            "    const List<faceZone*>&,\n"
-            "    const List<cellZone*>&\n"
-            ")"
-        )   << "point, face or cell zone already exists"
+        FatalErrorInFunction
+            << "point, face or cell zone already exists"
             << abort(FatalError);
     }
 
@@ -1115,7 +1039,7 @@ const Foam::pointField& Foam::polyMesh::allPoints() const
 {
     if (clearedPrimitives_)
     {
-        FatalErrorIn("const pointField& polyMesh::allPoints() const")
+        FatalErrorInFunction
             << "allPoints deallocated"
             << abort(FatalError);
     }
@@ -1128,7 +1052,7 @@ const Foam::pointField& Foam::polyMesh::points() const
 {
     if (clearedPrimitives_)
     {
-        FatalErrorIn("const pointField& polyMesh::points() const")
+        FatalErrorInFunction
             << "points deallocated"
             << abort(FatalError);
     }
@@ -1141,7 +1065,7 @@ const Foam::faceList& Foam::polyMesh::allFaces() const
 {
     if (clearedPrimitives_)
     {
-        FatalErrorIn("const faceList& polyMesh::allFaces() const")
+        FatalErrorInFunction
             << "allFaces deallocated"
             << abort(FatalError);
     }
@@ -1154,7 +1078,7 @@ const Foam::faceList& Foam::polyMesh::faces() const
 {
     if (clearedPrimitives_)
     {
-        FatalErrorIn("const faceList& polyMesh::faces() const")
+        FatalErrorInFunction
             << "faces deallocated"
             << abort(FatalError);
     }
@@ -1182,7 +1106,7 @@ const Foam::pointField& Foam::polyMesh::oldAllPoints() const
     {
         if (debug)
         {
-            WarningIn("const pointField& polyMesh::oldAllPoints() const")
+            WarningInFunction
                 << "Old points not available.  Forcing storage of old points"
                 << endl;
         }
@@ -1214,7 +1138,7 @@ Foam::tmp<Foam::scalarField> Foam::polyMesh::movePoints
 {
     if (!syncPar_)
     {
-        Info<< "tmp<scalarField> polyMesh::movePoints"
+        InfoInFunction
             << "(const pointField&) : "
             << "Moving the mesh for the mesh with syncPar invalidated.  "
             << "Mesh motion should not be executed." << endl;
@@ -1222,7 +1146,7 @@ Foam::tmp<Foam::scalarField> Foam::polyMesh::movePoints
 
     if (debug)
     {
-        Info<< "tmp<scalarField> polyMesh::movePoints(const pointField&) : "
+        InfoInFunction
             << " Moving points for time " << time().value()
             << " index " << time().timeIndex() << endl;
     }
@@ -1246,7 +1170,7 @@ Foam::tmp<Foam::scalarField> Foam::polyMesh::movePoints
         // Check mesh motion
         if (primitiveMesh::checkMeshMotion(allPoints_, true))
         {
-            Info<< "tmp<scalarField> polyMesh::movePoints"
+            InfoInFunction
                 << "(const pointField&) : "
                 << "Moving the mesh with given points will "
                 << "invalidate the mesh." << nl
@@ -1310,18 +1234,13 @@ void Foam::polyMesh::setOldPoints
     const pointField& setPoints
 )
 {
-    if(setPoints.size() != allPoints_.size())
+    if (setPoints.size() != allPoints_.size())
     {
-            FatalErrorIn
-            (
-                "polyMesh::setOldPoints\n"
-                "(\n"
-                "    const pointField& setPoints\n"
-                ")\n"
-            )   << "setPoints size " << setPoints.size()
-                << " is different from the mesh points size "
-                << allPoints_.size()
-                << abort(FatalError);
+        FatalErrorInFunction
+            << "setPoints size " << setPoints.size()
+            << " is different from the mesh points size "
+            << allPoints_.size()
+            << abort(FatalError);
     }
 
     moving(false);

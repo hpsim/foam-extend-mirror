@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -30,16 +30,18 @@ License
 #include "OSHA1stream.H"
 #include "DynamicList.H"
 
-/* * * * * * * * * * * * * * * Static Member Data  * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * */
 
 namespace Foam
 {
     defineTypeNameAndDebug(dictionary, 0);
     const dictionary dictionary::null;
 
-    bool dictionary::writeOptionalEntries
+    debug::infoSwitch
+    dictionary::writeOptionalEntries
     (
-        debug::infoSwitch("writeOptionalEntries", 0)
+        "writeOptionalEntries",
+        0
     );
 }
 

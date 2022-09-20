@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ class PatchToPatchInterpolation
     // Private Member Functions
 
         //- Disallow default bitwise assignment
-        void operator=(const PatchToPatchInterpolation&);
+        void operator=(const PatchToPatchInterpolation&) = delete;
 
         //- Calculate point weights
         void calcPointAddressing() const;
@@ -168,9 +168,8 @@ public:
         );
 
 
-    // Destructor
-
-        ~PatchToPatchInterpolation();
+    //- Destructor
+    ~PatchToPatchInterpolation();
 
 
     // Member Functions

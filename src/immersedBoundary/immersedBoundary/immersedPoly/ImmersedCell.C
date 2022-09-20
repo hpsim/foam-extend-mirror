@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -569,15 +569,61 @@ Foam::ImmersedCell<Distance>::ImmersedCell
     // For a good cut there should be at least 3 points at zero level
     label nIntersections = 0;
 
+    // Added collinearity check.  HJ, 8/Apr/2022
+
+    // Collect first intersection point as reference for colinearity check
+    point refPoint;
+    vector refVec;
+    scalar minDot = GREAT;
+
     forAll (depth_, pointI)
     {
         if (mag(depth_[pointI]) < absTol_)
         {
+            if (nIntersections == 0)
+            {
+                // First intersection: collect reference point
+                refPoint = points_[pointI];
+            }
+            else if (nIntersections == 1)
+            {
+                // Second intersection: collect reference vector
+                refVec = points_[pointI] - refPoint;
+
+                // Normalise
+                refVec /= mag(refVec) + SMALL;
+            }
+            else
+            {
+                // Third and further intersection: collinearity check
+                vector otherVec = points_[pointI] - refPoint;
+
+                // Normalise
+                otherVec /= mag(otherVec) + SMALL;
+
+                // Collect minimum dot-product
+                minDot = Foam::min(minDot, (refVec & otherVec));
+            }
+
             nIntersections++;
+        }
+
+        // Can the check be terminated early?
+        if (nIntersections >= 3 && minDot < immersedPoly::collinearity_())
+        {
+            // Condition satisfied.  No need to keep checking
+            break;
         }
     }
 
-    if (nIntersections < 3)
+    // Check if the intersection is sufficient to make a proper face
+    if
+    (
+        // Insufficient number of intersections
+        nIntersections < 3
+        // More than 3 intersections, but collinear
+     || (nIntersections >= 3 && minDot > immersedPoly::collinearity_())
+    )
     {
         // Check if cell centre is wet or dry, depending on greatest distance
         // away from the cutting surface
@@ -632,7 +678,8 @@ Foam::ImmersedCell<Distance>::ImmersedCell
         const face& newFace = enrichedFaces[oldFaceI];
 
         // Calculate old face area locally to avoid triggering polyMesh
-        const scalar oldFaceArea = mag(mesh_.faceAreas()[origCell[oldFaceI]]);
+        const scalar oldFaceArea =
+            mesh_.faces()[origCell[oldFaceI]].mag(mesh_.points());
 
         // If a face has been modified, it will have extra points
         if (newFace.size() != oldFace.size())
@@ -690,10 +737,12 @@ Foam::ImmersedCell<Distance>::ImmersedCell
                 {
                     // Wet face area is greater than original face area
                     // This is a bad cut
-                    Info<< "Bad cell face cut: wet = ("
+#                   ifdef WET_DEBUG
+                    Pout<< "Bad cell face cut: wet = ("
                         << wetFace.mag(points_) << " "
                         << oldFaceArea
                         << ")" << endl;
+#                   endif
 
                     isBadCut_ = true;
                 }
@@ -717,10 +766,12 @@ Foam::ImmersedCell<Distance>::ImmersedCell
                 {
                     // Dry face area is greater than original face area
                     // This is a bad cut
-                    Info<< "Bad cell face cut: dry = ("
+#                   ifdef WET_DEBUG
+                    Pout<< "Bad cell face cut: dry = ("
                         << dryFace.mag(points_) << " "
                         << oldFaceArea
                         << ")" << endl;
+#                   endif
 
                     isBadCut_ = true;
                 }
@@ -781,7 +832,8 @@ Foam::ImmersedCell<Distance>::ImmersedCell
         << "depth: " << depth_ << endl;
 #   endif
 
-    const scalar oldCellVolume = mesh_.cellVolumes()[cellID_];
+    const scalar oldCellVolume =
+        mesh_.cells()[cellID_].mag(mesh_.points(), mesh_.faces());
 
     // Note: is it legal to cut a zero volume cell?  HJ, 11/Mar/2019
 
@@ -818,7 +870,8 @@ Foam::ImmersedCell<Distance>::ImmersedCell
     }
     else
     {
-        Info<< "Bad cell cut: volume = (" << wetCut << " " << dryCut
+#       ifdef WET_DEBUG
+        Pout<< "Bad cell cut: volume = (" << wetCut << " " << dryCut
             << ") = " << wetCut + dryCut << nl
             // << "Points: " << nl << this->points() << nl
             // << "Faces: " << nl << this->faces() << nl
@@ -826,6 +879,7 @@ Foam::ImmersedCell<Distance>::ImmersedCell
             // << "Neighbour: " << nl << this->faceNeighbour() << nl
             // << "Cut (wet dry) = (" << isAllWet_ << " " << isAllDry_ << ")"
             << endl;
+#       endif
     }
 
     // Correction on cutting is not allowed, as it results in an open cell

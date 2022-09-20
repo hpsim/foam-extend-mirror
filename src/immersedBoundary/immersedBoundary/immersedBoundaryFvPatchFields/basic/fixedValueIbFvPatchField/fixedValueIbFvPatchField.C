@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -26,15 +26,10 @@ License
 #include "fixedValueIbFvPatchField.H"
 #include "surfaceWriter.H"
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-namespace Foam
-{
-
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
 template<class Type>
-void fixedValueIbFvPatchField<Type>::updateIbValues()
+void Foam::fixedValueIbFvPatchField<Type>::updateIbValues()
 {
     // Interpolate the values from tri surface using nearest triangle
     const labelList& nt = this->ibPatch().ibPolyPatch().nearestTri();
@@ -46,7 +41,7 @@ void fixedValueIbFvPatchField<Type>::updateIbValues()
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class Type>
-fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
+Foam::fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
 (
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF
@@ -59,7 +54,7 @@ fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
 
 
 template<class Type>
-fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
+Foam::fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
 (
     const fvPatch& p,
     const DimensionedField<Type, volMesh>& iF,
@@ -98,7 +93,7 @@ fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
 
 
 template<class Type>
-fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
+Foam::fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
 (
     const fixedValueIbFvPatchField<Type>& ptf,
     const fvPatch& p,
@@ -128,9 +123,11 @@ fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
             << exit(FatalIOError);
     }
 
+    // Copy the patch type since mixed data was not mapped
+    this->setPatchType(ptf);
+
     // Re-interpolate the data related to immersed boundary
     this->updateIbValues();
-    this->setPatchType(ptf);
 
     // On creation of the mapped field, the internal field is dummy and
     // cannot be used.  Initialise the value to avoid errors
@@ -140,7 +137,7 @@ fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
 
 
 template<class Type>
-fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
+Foam::fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
 (
     const fixedValueIbFvPatchField<Type>& ptf
 )
@@ -159,7 +156,7 @@ fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
 
 
 template<class Type>
-fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
+Foam::fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
 (
     const fixedValueIbFvPatchField<Type>& ptf,
     const DimensionedField<Type, volMesh>& iF
@@ -181,7 +178,7 @@ fixedValueIbFvPatchField<Type>::fixedValueIbFvPatchField
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>
-void fixedValueIbFvPatchField<Type>::autoMap
+void Foam::fixedValueIbFvPatchField<Type>::autoMap
 (
     const fvPatchFieldMapper& m
 )
@@ -192,7 +189,7 @@ void fixedValueIbFvPatchField<Type>::autoMap
 
 
 template<class Type>
-void fixedValueIbFvPatchField<Type>::rmap
+void Foam::fixedValueIbFvPatchField<Type>::rmap
 (
     const fvPatchField<Type>& ptf,
     const labelList&
@@ -211,7 +208,7 @@ void fixedValueIbFvPatchField<Type>::rmap
 
 
 template<class Type>
-void fixedValueIbFvPatchField<Type>::updateOnMotion()
+void Foam::fixedValueIbFvPatchField<Type>::updateOnMotion()
 {
     if (this->size() != this->ibPatch().size())
     {
@@ -221,18 +218,15 @@ void fixedValueIbFvPatchField<Type>::updateOnMotion()
 
 
 template<class Type>
-void fixedValueIbFvPatchField<Type>::evaluate
+void Foam::fixedValueIbFvPatchField<Type>::evaluate
 (
     const Pstream::commsTypes
 )
 {
     this->updateIbValues();
 
-    // Get non-constant reference to internal field
-    Field<Type>& intField = const_cast<Field<Type>&>(this->internalField());
-
     // Set dead value
-    this->setDeadValues(intField);
+    this->setDeadValues(*this);
 
     // Evaluate fixed value condition
     fixedValueFvPatchField<Type>::evaluate();
@@ -250,7 +244,7 @@ void Foam::fixedValueIbFvPatchField<Type>::manipulateMatrix
 
 
 template<class Type>
-void fixedValueIbFvPatchField<Type>::write(Ostream& os) const
+void Foam::fixedValueIbFvPatchField<Type>::write(Ostream& os) const
 {
     // Resolve post-processing issues.  HJ, 1/Dec/2017
     fvPatchField<Type>::write(os);
@@ -264,9 +258,5 @@ void fixedValueIbFvPatchField<Type>::write(Ostream& os) const
     this->writeField(*this);
 }
 
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
-
-} // End namespace Foam
 
 // ************************************************************************* //

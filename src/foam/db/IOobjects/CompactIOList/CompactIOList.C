@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -45,11 +45,8 @@ void Foam::CompactIOList<T, BaseType>::readFromStream()
     }
     else
     {
-        FatalIOErrorIn
-        (
-            "CompactIOList<T, BaseType>::readFromStream()",
-            is
-        )   << "unexpected class name " << headerClassName()
+        FatalIOErrorInFunction(is)
+            << "unexpected class name " << headerClassName()
             << " expected " << typeName << " or " << IOList<T>::typeName
             << endl
             << "    while reading object " << name()
@@ -148,14 +145,6 @@ Foam::CompactIOList<T, BaseType>::CompactIOList
         readFromStream();
     }
 }
-
-
-// * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * * //
-
-template<class T, class BaseType>
-Foam::CompactIOList<T, BaseType>::~CompactIOList()
-{}
-
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

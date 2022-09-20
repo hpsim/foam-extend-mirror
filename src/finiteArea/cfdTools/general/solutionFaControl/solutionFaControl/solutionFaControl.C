@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -180,16 +180,19 @@ void Foam::solutionFaControl::storePrevIterFields() const
 
     storePrevIter<vector2>();
     storePrevIter<vector4>();
+    storePrevIter<vector5>();
     storePrevIter<vector6>();
     storePrevIter<vector8>();
 
     storePrevIter<sphericalTensor2>();
     storePrevIter<sphericalTensor4>();
+    storePrevIter<sphericalTensor5>();
     storePrevIter<sphericalTensor6>();
     storePrevIter<sphericalTensor8>();
 
     storePrevIter<tensor2>();
     storePrevIter<tensor4>();
+    storePrevIter<tensor5>();
     storePrevIter<tensor6>();
     storePrevIter<tensor8>();
 }
@@ -232,16 +235,19 @@ Foam::scalar Foam::solutionFaControl::maxResidual
 
     maxTypeResidual<vector2>(fieldName, data, firstRes, lastRes);
     maxTypeResidual<vector4>(fieldName, data, firstRes, lastRes);
+    maxTypeResidual<vector5>(fieldName, data, firstRes, lastRes);
     maxTypeResidual<vector6>(fieldName, data, firstRes, lastRes);
     maxTypeResidual<vector8>(fieldName, data, firstRes, lastRes);
 
     maxTypeResidual<sphericalTensor2>(fieldName, data, firstRes, lastRes);
     maxTypeResidual<sphericalTensor4>(fieldName, data, firstRes, lastRes);
+    maxTypeResidual<sphericalTensor5>(fieldName, data, firstRes, lastRes);
     maxTypeResidual<sphericalTensor6>(fieldName, data, firstRes, lastRes);
     maxTypeResidual<sphericalTensor8>(fieldName, data, firstRes, lastRes);
 
     maxTypeResidual<tensor2>(fieldName, data, firstRes, lastRes);
     maxTypeResidual<tensor4>(fieldName, data, firstRes, lastRes);
+    maxTypeResidual<tensor5>(fieldName, data, firstRes, lastRes);
     maxTypeResidual<tensor6>(fieldName, data, firstRes, lastRes);
     maxTypeResidual<tensor8>(fieldName, data, firstRes, lastRes);
 

@@ -1,9 +1,9 @@
 #------------------------------------------------------------------------------
 # =========                 |
 # \\      /  F ield         | foam-extend: Open Source CFD
-#  \\    /   O peration     |
-#   \\  /    A nd           | For copyright notice see file Copyright
-#    \\/     M anipulation  |
+#  \\    /   O peration     | Version:     5.0
+#   \\  /    A nd           | Web:         http://www.foam-extend.org
+#    \\/     M anipulation  | For copyright notice see file Copyright
 #------------------------------------------------------------------------------
 # License
 #     This file is part of foam-extend.
@@ -45,8 +45,8 @@
 
 # Will install the package directly $WM_THIRD_PARTY_DIR
 #   Some comments about package relocation:
-#   By using this prefix for the Prefix:  parameter in this file, you will make this 
-#   package relocatable. 
+#   By using this prefix for the Prefix:  parameter in this file, you will make this
+#   package relocatable.
 #
 #   This is fine, as long as your software is itself relocatable.
 #
@@ -55,7 +55,7 @@
 #   Ref: http://sourceware.org/autobook/autobook/autobook_80.html
 #
 #   In that case, if you ever change the value of the $WM_THIRD_PARTY_DIR, you will
-#   not be able to reutilize this RPM, even though it is relocatable. You will need to 
+#   not be able to reutilize this RPM, even though it is relocatable. You will need to
 #   regenerate the RPM.
 #
 %define _prefix         %{_WM_THIRD_PARTY_DIR}
@@ -143,7 +143,7 @@ DOT_CSH_EOF
     #finally, generate a .tgz file for systems where using rpm for installing packages
     # as a non-root user might be a problem.
     (mkdir -p  %{_topdir}/TGZS/%{_target_cpu}; cd $RPM_BUILD_ROOT/%{_prefix}; tar -zcvf %{_topdir}/TGZS/%{_target_cpu}/%{name}-%{version}.tgz  packages/%{name}-%{version})
- 
+
 
 %clean
 rm -rf %{buildroot}

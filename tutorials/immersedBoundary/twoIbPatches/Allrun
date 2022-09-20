@@ -5,12 +5,12 @@
 # Get application name
 application="pimpleDyMIbFoam"
 
-runApplication blockMesh -dict save/blockMeshDict
+runApplication blockMesh
 cp save/boundary constant/polyMesh/
 
-mkdir 0
-\cp -f 0_org/* 0/
+\rm -rf 0
+\cp -r 0_org 0
 
-runApplication potentialFoam
+runApplication potentialFoam -writep
 runApplication writeIbMasks
 runApplication $application

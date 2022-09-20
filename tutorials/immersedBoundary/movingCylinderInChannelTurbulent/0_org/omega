@@ -1,9 +1,9 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | foam-extend: Open Source CFD                    |
-|  \\    /   O peration     | Version:     4.0                                |
+|  \\    /   O peration     | Version:     5.0                                |
 |   \\  /    A nd           | Web:         http://www.foam-extend.org         |
-|    \\/     M anipulation  |                                                 |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
@@ -15,46 +15,46 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-dimensions      [0 0 -1 0 0 0 0];
+dimensions [0 0 -1 0 0 0 0];
 
-internalField   uniform 500;
+internalField uniform 500;
 
 boundaryField
 {
     ibCylinder
     {
-        type            immersedBoundaryOmegaWallFunction;
-        patchType       immersedBoundary;
-        Cmu             0.09;
-        kappa           0.41;
-        E               9.8;
-
-        value           uniform 500;
+        type immersedBoundaryOmegaWallFunction;
+        patchType immersedBoundary;
+        Cmu 0.09;
+        kappa 0.41;
+        E 9.8;
+        deadValue 500;
+        setDeadValue yes;
+        value uniform 500;
     }
     top
     {
-        type            zeroGradient;
+        type zeroGradient;
     }
     in
     {
-        type            fixedValue;
-        value           uniform 500;
+        type fixedValue;
+        value uniform 500;
     }
     out
     {
-        type            inletOutlet;
-        inletValue      uniform 500;
-        value           uniform 500;
+        type inletOutlet;
+        inletValue uniform 500;
+        value uniform 500;
     }
     bottom
     {
-        type            zeroGradient;
+        type zeroGradient;
     }
     frontAndBack
     {
-        type            empty;
+        type empty;
     }
 }
-
 
 // ************************************************************************* //

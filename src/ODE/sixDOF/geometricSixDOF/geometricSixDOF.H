@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -109,10 +109,10 @@ class geometricSixDOF
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        geometricSixDOF(const geometricSixDOF&);
+        geometricSixDOF(const geometricSixDOF&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const geometricSixDOF&);
+        void operator=(const geometricSixDOF&) = delete;
 
 
         // Variables in relative coordinate system (solved for)
@@ -198,7 +198,7 @@ public:
 
 
     //- Destructor
-    virtual ~geometricSixDOF();
+    virtual ~geometricSixDOF() = default;
 
 
     // Member Functions

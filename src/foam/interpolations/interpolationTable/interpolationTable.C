@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -471,6 +471,26 @@ Foam::interpolationTable<Type>::operator[](const label i) const
     }
 
     return List<Tuple2<scalar, Type> >::operator[](ii);
+}
+
+
+// * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
+
+template<class Type>
+void Foam::interpolationTable<Type>::operator=
+(
+    const interpolationTable<Type>& rhs
+)
+{
+    if (this == &rhs)
+    {
+        return;
+    }
+
+    static_cast<List<Tuple2<scalar, Type> >&>(*this) = rhs;
+    boundsHandling_ = rhs.boundsHandling_;
+    fileName_ = rhs.fileName_;
+    reader_.reset(rhs.reader_->clone().ptr());
 }
 
 

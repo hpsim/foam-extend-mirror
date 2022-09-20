@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -71,10 +71,10 @@ class volPointInterpolation
         void makeWeights() const;
 
         //- Disallow default bitwise copy construct
-        volPointInterpolation(const volPointInterpolation&);
+        volPointInterpolation(const volPointInterpolation&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const volPointInterpolation&);
+        void operator=(const volPointInterpolation&) = delete;
 
 
 public:
@@ -90,9 +90,8 @@ public:
         explicit volPointInterpolation(const fvMesh&);
 
 
-    // Destructor
-
-        virtual ~volPointInterpolation();
+    //- Destructor
+    virtual ~volPointInterpolation();
 
 
     // Member functions

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -34,9 +34,10 @@ License
 #include "ConeInjectionMP.H"
 #include "FieldActivatedInjection.H"
 #include "KinematicLookupTableInjection.H"
-#include "ManualInjection.H"
 #include "NoInjection.H"
+#include "ManualInjection.H"
 #include "PatchInjection.H"
+#include "CellZoneInjection.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -83,6 +84,12 @@ License
     makeInjectionModelType                                                    \
     (                                                                         \
         PatchInjection,                                                       \
+        KinematicCloud,                                                       \
+        ParcelType                                                            \
+    );                                                                        \
+    makeInjectionModelType                                                    \
+    (                                                                         \
+        CellZoneInjection,                                                    \
         KinematicCloud,                                                       \
         ParcelType                                                            \
     );

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -168,23 +168,6 @@ Foam::phaseProperties::phaseProperties()
     Y_(0),
     globalIds_(0),
     globalCarrierIds_(0)
-{}
-
-
-Foam::phaseProperties::phaseProperties(const phaseProperties& pp)
-:
-    phase_(pp.phase_),
-    stateLabel_(pp.stateLabel_),
-    names_(pp.names_),
-    Y_(pp.Y_),
-    globalIds_(pp.globalIds_),
-    globalCarrierIds_(pp.globalCarrierIds_)
-{}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::phaseProperties::~phaseProperties()
 {}
 
 

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -28,6 +28,7 @@ License
 #include "triSurfaceTools.H"
 #include "triSurface.H"
 #include "vector2D.H"
+#include "IFstream.H"
 #include "OFstream.H"
 #include "AverageIOField.H"
 
@@ -91,13 +92,7 @@ timeVaryingMappedFixedValueFvPatchField
     endSampleTime_(-1),
     endSampledValues_(0),
     endAverage_(pTraits<Type>::zero)
-{
-    if (debug)
-    {
-        Pout<< "timeVaryingMappedFixedValue"
-            << " : construct from mappedFixedValue and mapper" << endl;
-    }
-}
+{}
 
 
 template<class Type>
@@ -123,12 +118,6 @@ timeVaryingMappedFixedValueFvPatchField
     endSampledValues_(0),
     endAverage_(pTraits<Type>::zero)
 {
-    if (debug)
-    {
-        Pout<< "timeVaryingMappedFixedValue : construct from dictionary"
-            << endl;
-    }
-
     if (dict.found("fieldTableName"))
     {
         dict.lookup("fieldTableName") >> fieldTableName_;
@@ -165,13 +154,7 @@ timeVaryingMappedFixedValueFvPatchField
     endSampleTime_(ptf.endSampleTime_),
     endSampledValues_(ptf.endSampledValues_),
     endAverage_(ptf.endAverage_)
-{
-    if (debug)
-    {
-        Pout<< "timeVaryingMappedFixedValue : copy construct"
-            << endl;
-    }
-}
+{}
 
 
 template<class Type>
@@ -195,13 +178,7 @@ timeVaryingMappedFixedValueFvPatchField
     endSampleTime_(ptf.endSampleTime_),
     endSampledValues_(ptf.endSampledValues_),
     endAverage_(ptf.endAverage_)
-{
-    if (debug)
-    {
-        Pout<< "timeVaryingMappedFixedValue :"
-            << " copy construct, resetting internal field" << endl;
-    }
-}
+{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -242,39 +219,30 @@ template<class Type>
 void timeVaryingMappedFixedValueFvPatchField<Type>::readSamplePoints()
 {
     // Read the sample points
-
-    pointIOField samplePoints
+    const fileName samplePointsFile
     (
-        IOobject
-        (
-            "points",
-            this->db().time().constant(),
-            "boundaryData"/this->patch().name(),
-            this->db(),
-            IOobject::MUST_READ,
-            IOobject::AUTO_WRITE,
-            false
-        )
+        this->db().time().constant()/
+        "boundaryData"/this->patch().name()/
+        fileName("points")
     );
+    IFstream samplePointsData(samplePointsFile);
 
-    const fileName samplePointsFile = samplePoints.filePath();
+    pointField samplePoints(samplePointsData);
 
     if (debug)
     {
-        Info<< "timeVaryingMappedFixedValueFvPatchField :"
+        InfoInFunction
             << " Read " << samplePoints.size() << " sample points from "
-            << samplePointsFile << endl;
+            << samplePointsFile.path() << endl;
     }
 
     // Determine coordinate system from samplePoints
 
     if (samplePoints.size() < 3)
     {
-        FatalErrorIn
-        (
-            "timeVaryingMappedFixedValueFvPatchField<Type>::readSamplePoints()"
-        )   << "Only " << samplePoints.size() << " points read from file "
-            << samplePoints.objectPath() << nl
+        FatalErrorInFunction
+            << "Only " << samplePoints.size() << " points read from file "
+            << samplePointsFile << nl
             << "Need at least three non-colinear samplePoints"
             << " to be able to interpolate."
             << "\n    on patch " << this->patch().name()
@@ -333,20 +301,17 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::readSamplePoints()
 
     if (index2 == -1)
     {
-        FatalErrorIn
-        (
-            "timeVaryingMappedFixedValueFvPatchField<Type>::readSamplePoints()"
-        )   << "Cannot find points that make valid normal." << nl
+        FatalErrorInFunction
+            << "Cannot find points that make valid normal." << nl
             << "Need at least three sample points which are not in a line."
             << "\n    on patch " << this->patch().name()
-            << " of points " << samplePoints.name()
-            << " in file " << samplePoints.objectPath()
+            << " of points in file " << samplePointsFile
             << exit(FatalError);
     }
 
     if (debug)
     {
-        Info<< "timeVaryingMappedFixedValueFvPatchField :"
+        InfoInFunction
             << " Used points " << p0 << ' ' << samplePoints[index1]
             << ' ' << samplePoints[index2]
             << " to define coordinate system with normal " << n << endl;
@@ -363,15 +328,14 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::readSamplePoints()
         )
     );
 
-    tmp<vectorField> tlocalVertices
+    vectorField localVertices
     (
         referenceCS().localPosition(samplePoints)
     );
-    const vectorField& localVertices = tlocalVertices();
 
     // Determine triangulation
     List<vector2D> localVertices2D(localVertices.size());
-    forAll(localVertices, i)
+    forAll (localVertices, i)
     {
         localVertices2D[i][0] = localVertices[i][0];
         localVertices2D[i][1] = localVertices[i][1];
@@ -379,7 +343,7 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::readSamplePoints()
 
     triSurface s(triSurfaceTools::delaunay2D(localVertices2D));
 
-    tmp<pointField> localFaceCentres
+    pointField localFaceCentres
     (
         referenceCS().localPosition
         (
@@ -397,9 +361,9 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::readSamplePoints()
         Pout<< "readSamplePoints :"
             << " Dumping face centres to " << str.name() << endl;
 
-        forAll(localFaceCentres(), i)
+        forAll (localFaceCentres, i)
         {
-            const point& p = localFaceCentres()[i];
+            const point& p = localFaceCentres[i];
             str<< "v " << p.x() << ' ' << p.y() << ' ' << p.z() << nl;
         }
     }
@@ -438,7 +402,7 @@ wordList timeVaryingMappedFixedValueFvPatchField<Type>::timeNames
 {
     wordList names(times.size());
 
-    forAll(times, i)
+    forAll (times, i)
     {
         names[i] = times[i].name();
     }
@@ -459,7 +423,7 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::findTime
     lo = startSampleTime_;
     hi = -1;
 
-    for (label i = startSampleTime_+1; i < sampleTimes_.size(); i++)
+    for (label i = startSampleTime_ + 1; i < sampleTimes_.size(); i++)
     {
         if (sampleTimes_[i].value() > timeVal)
         {
@@ -473,7 +437,7 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::findTime
 
     if (lo == -1)
     {
-        FatalErrorIn("findTime")
+        FatalErrorInFunction
             << "Cannot find starting sampling values for current time "
             << timeVal << nl
             << "Have sampling values for times "
@@ -487,7 +451,7 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::findTime
 
     if (lo < sampleTimes_.size()-1)
     {
-        hi = lo+1;
+        hi = lo + 1;
     }
 
 
@@ -565,23 +529,17 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::checkTable()
 
 
             // Reread values and interpolate
-            AverageIOField<Type> vals
+            const fileName loDataFile
             (
-                IOobject
-                (
-                    fieldTableName_,
-                    this->db().time().constant(),
-                    "boundaryData"
-                   /this->patch().name()
-                   /sampleTimes_[startSampleTime_].name(),
-                    this->db(),
-                    IOobject::MUST_READ,
-                    IOobject::AUTO_WRITE,
-                    false
-                )
+                this->db().time().constant()/"boundaryData"/
+                this->patch().name()/sampleTimes_[startSampleTime_].name()/
+                fieldTableName_
             );
+            IFstream loData(loDataFile);
 
-            startAverage_ = vals.average();
+            Field<Type> vals(loData);
+
+            startAverage_ = average(vals);
             startSampledValues_ = interpolate(vals);
         }
     }
@@ -610,22 +568,17 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::checkTable()
                     << endl;
             }
             // Reread values and interpolate
-            AverageIOField<Type> vals
+            const fileName hiDataFile
             (
-                IOobject
-                (
-                    fieldTableName_,
-                    this->db().time().constant(),
-                    "boundaryData"
-                   /this->patch().name()
-                   /sampleTimes_[endSampleTime_].name(),
-                    this->db(),
-                    IOobject::MUST_READ,
-                    IOobject::AUTO_WRITE,
-                    false
-                )
+                this->db().time().constant()/"boundaryData"/
+                this->patch().name()/sampleTimes_[endSampleTime_].name()/
+                fieldTableName_
             );
-            endAverage_ = vals.average();
+            IFstream hiData(hiDataFile);
+
+            Field<Type> vals(hiData);
+
+            endAverage_ = average(vals);
             endSampledValues_ = interpolate(vals);
         }
     }
@@ -641,7 +594,7 @@ tmp<Field<Type> > timeVaryingMappedFixedValueFvPatchField<Type>::interpolate
     tmp<Field<Type> > tfld(new Field<Type>(nearestVertex_.size()));
     Field<Type>& fld = tfld();
 
-    forAll(fld, i)
+    forAll (fld, i)
     {
         const FixedList<label, 3>& verts = nearestVertex_[i];
         const FixedList<scalar, 3>& w = nearestVertexWeight_[i];

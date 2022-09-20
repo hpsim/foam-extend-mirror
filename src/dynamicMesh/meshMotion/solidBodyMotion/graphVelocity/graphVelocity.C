@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -44,17 +44,94 @@ addToRunTimeSelectionTable(solidBodyMotionFunction, graphVelocity, dictionary);
 
 // * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
 
+void Foam::solidBodyMotionFunctions::graphVelocity::integrateMotionToStartTime()
+{
+    if (translation_ != vector::zero && rotation_ != vector::zero)
+    {
+        FatalErrorInFunction
+            << "Translation or rotation greater than zero.  "
+            << "Has the initial integration been already calculated"
+            << abort(FatalError);
+    }
+
+    const scalar curTime = time_.value();
+
+    // Integrate motion by graph increments
+
+    // Get start time
+    scalar startTime = GREAT;
+
+    startTime = Foam::min(startTime, surge_.x()[0]);
+    startTime = Foam::min(startTime, sway_.x()[0]);
+    startTime = Foam::min(startTime, heave_.x()[0]);
+    startTime = Foam::min(startTime, roll_.x()[0]);
+    startTime = Foam::min(startTime, pitch_.x()[0]);
+    startTime = Foam::min(startTime, yaw_.x()[0]);
+
+    // Get a reasonable deltaT
+    scalar dt = Foam::max(time_.deltaT().value(), (curTime - startTime)/1000);
+
+    InfoInFunction
+        << "Integrating initial motion from time = " << startTime
+        << " to time = " << curTime << " with dt = " << dt << endl;
+
+    for (scalar tme = startTime + dt; tme < curTime + dt; tme += dt)
+    {
+        // Truncate at curTime
+        if (tme > curTime)
+        {
+            Info<< "Adjusting deltaT for final step: " << endl;
+            dt = curTime - (tme - dt);
+
+            tme = curTime;
+        }
+
+        // Calculate time integral and adjust motion
+
+        // Adjust time for interpolation, consistent with integration in
+        // translationalVelocity and rotationalVelocity
+        // HJ, 30/Jun/2021
+        const scalar t = tme - dt/2;
+
+        vector transVel
+        (
+            interpolateXY(t, surge_.x(), surge_.y()),
+            interpolateXY(t, sway_.x(), sway_.y()),
+            interpolateXY(t, heave_.x(), heave_.y())
+        );
+
+        scalar rollVel = interpolateXY(t, roll_.x(), roll_.y());
+        scalar pitchVel = interpolateXY(t, pitch_.x(), pitch_.y());
+        scalar yawVel = interpolateXY(t, yaw_.x(), yaw_.y());
+
+        if (inDegrees_)
+        {
+            const scalar piBy180 = mathematicalConstant::pi/180.0;
+
+            rollVel *= piBy180;
+            pitchVel *= piBy180;
+            yawVel *= piBy180;
+        }
+
+        vector rotVel(rollVel, pitchVel, yawVel);
+
+        translation_ += transVel*dt;
+        rotation_ += rotVel*dt;
+    }
+}
+
+
 Foam::vector
 Foam::solidBodyMotionFunctions::graphVelocity::translationalVelocity() const
 {
     const scalar t = time_.value() - time_.deltaT().value()/2;
 
     return vector
-           (
-               interpolateXY(t, surge_.x(), surge_.y()),
-               interpolateXY(t, sway_.x(), sway_.y()),
-               interpolateXY(t, heave_.x(), heave_.y())
-           );
+    (
+        interpolateXY(t, surge_.x(), surge_.y()),
+        interpolateXY(t, sway_.x(), sway_.y()),
+        interpolateXY(t, heave_.x(), heave_.y())
+    );
 }
 
 
@@ -100,9 +177,9 @@ Foam::solidBodyMotionFunctions::graphVelocity::calcTransformation() const
 
     const quaternion R(rotation_.x(), rotation_.y(), rotation_.z());
     const septernion TR
-        (
-            septernion(origin_ + translation_)*R*septernion(-origin_)
-        );
+    (
+        septernion(origin_ + translation_)*R*septernion(-origin_)
+    );
 
     return TR;
 }
@@ -189,6 +266,10 @@ Foam::solidBodyMotionFunctions::graphVelocity::graphVelocity
     )
 {
     read(SBMFCoeffs);
+
+    // Integrate motion to start time
+    // Bugfix, HJ, 21/Jun/2021
+    integrateMotionToStartTime();
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -199,7 +280,10 @@ Foam::solidBodyMotionFunctions::graphVelocity::transformation() const
    const septernion TR = calcTransformation();
 
    Info<< "solidBodyMotionFunctions::graphVelocity::transformation(): "
-   << "Time = " << time_.value() << " transformation: " << TR << endl;
+       << "Time = " << time_.value()
+       << " translation: " << translation_
+       << " rotation: " << rotation_
+       << " transformation: " << TR << endl;
 
    return TR;
 }
@@ -214,9 +298,9 @@ Foam::solidBodyMotionFunctions::graphVelocity::velocity() const
 
     const quaternion ROld(rotationOld_.x(), rotationOld_.y(), rotationOld_.z());
     const septernion TROld
-        (
-            septernion(origin_ + translationOld_)*ROld*septernion(-origin_)
-        );
+    (
+        septernion(origin_ + translationOld_)*ROld*septernion(-origin_)
+    );
 
     return septernion
     (
@@ -309,6 +393,22 @@ bool Foam::solidBodyMotionFunctions::graphVelocity::read
             yaw
         )()
     );
+
+    // Check sizes of graph files
+    if
+    (
+        surge_.x().size() < 2
+     || sway_.x().size() < 2
+     || heave_.x().size() < 2
+     || roll_.x().size() < 2
+     || pitch_.x().size() < 2
+     || yaw_.x().size() < 2
+    )
+    {
+        FatalErrorInFunction
+            << "Motion graphs need a minimum of 2 entries"
+            << abort(FatalError);
+    }
 
     return true;
 }

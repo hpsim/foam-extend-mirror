@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -65,11 +65,11 @@ public:
         }
     }
 
-    void runPar(int& argc, char**& argv)
+    void runPar(int& argc, char**& argv, const bool needsThread)
     {
         RunPar = true;
 
-        if (!Pstream::init(argc, argv))
+        if (!Pstream::init(argc, argv, needsThread))
         {
             Info<< "Failed to start parallel run" << endl;
             Pstream::exit(1);

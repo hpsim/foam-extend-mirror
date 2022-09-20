@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ private:
 
         //- Slice the given field and a create a PtrList of SlicedPatchField
         //  from which the boundary field is built
-        tmp<FieldField<PatchField, Type> >  slicedBoundaryField
+        tmp<FieldField<PatchField, Type> > slicedBoundaryField
         (
             const Mesh& mesh,
             const Field<Type>& completeField,
@@ -88,26 +88,32 @@ private:
 
         //- Slice the given field and a create a PtrList of SlicedPatchField
         //  from which the boundary field is built
-        tmp<FieldField<PatchField, Type> >  slicedBoundaryField
+        tmp<FieldField<PatchField, Type> > slicedBoundaryField
         (
             const Mesh& mesh,
             const FieldField<PatchField, Type>& bField,
             const bool preserveCouples
         );
 
-        ////- Disallow default bitwise copy construct
-        //SlicedGeometricField(const SlicedGeometricField&);
+        // //- Disallow default bitwise copy construct
+        // SlicedGeometricField(const SlicedGeometricField&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const SlicedGeometricField&);
+        void operator=(const SlicedGeometricField&) = delete;
 
-        //- Disallow standard assignment to GeometricField,
+        //- Disallow standard assignment from GeometricField,
         //  == assignment is allowed.
-        void operator=(const GeometricField<Type, PatchField, GeoMesh>&);
+        void operator=
+        (
+            const GeometricField<Type, PatchField, GeoMesh>&
+        ) = delete;
 
         //- Disallow standard assignment to tmp<GeometricField>,
         //  == assignment is allowed.
-        void operator=(const tmp<GeometricField<Type, PatchField, GeoMesh> >&);
+        void operator=
+        (
+            const tmp<GeometricField<Type, PatchField, GeoMesh>>&
+        ) = delete;
 
 
 public:
@@ -121,7 +127,7 @@ public:
             const Mesh&,
             const dimensionSet&,
             const Field<Type>& completeField,
-            const bool preserveCouples=true
+            const bool preserveCouples = true
         );
 
         //- Construct from components and separate fields to slice for the
@@ -142,7 +148,7 @@ public:
         (
             const IOobject&,
             const GeometricField<Type, PatchField, GeoMesh>&,
-            const bool preserveCouples=true
+            const bool preserveCouples = true
         );
 
         //- Construct as copy

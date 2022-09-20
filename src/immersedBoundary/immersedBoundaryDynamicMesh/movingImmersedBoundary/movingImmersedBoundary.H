@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -70,10 +70,10 @@ class movingImmersedBoundary
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        movingImmersedBoundary(const movingImmersedBoundary&);
+        movingImmersedBoundary(const movingImmersedBoundary&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const movingImmersedBoundary&);
+        void operator=(const movingImmersedBoundary&) = delete;
 
 
 public:
@@ -90,7 +90,7 @@ public:
 
 
     //- Destructor
-    ~movingImmersedBoundary();
+    ~movingImmersedBoundary() = default;
 
 
     // Member Functions

@@ -127,15 +127,6 @@
         fvc::DDt(surfaceScalarField("phiU", phi/fvc::interpolate(rho)), p)
     );
 
-    Info<< "\nConstructing explicit enthalpy source" << endl;
-    scalarTimeActivatedExplicitSourceList enthalpySource
-    (
-        "energy",
-        mesh,
-        dimEnergy/dimTime/dimVolume,
-        "hs"
-    );
-
     DimensionedField<scalar, volMesh> chemistrySh
     (
         IOobject
@@ -151,3 +142,6 @@
     );
 
     mesh.schemesDict().setFluxRequired(p.name());
+
+    // Create porous zones
+    porousZones pZones(mesh);

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -36,6 +36,7 @@ SourceFiles
 #define treeDataTriSurface_H
 
 #include "triSurface.H"
+#include "volumeType.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -48,7 +49,7 @@ class treeDataTriSurface;
 template<class Type> class indexedOctree;
 
 /*---------------------------------------------------------------------------*\
-                           Class treeDataTriSurface Declaration
+                      Class treeDataTriSurface Declaration
 \*---------------------------------------------------------------------------*/
 
 class treeDataTriSurface
@@ -111,7 +112,7 @@ public:
             //- Get type (inside, outside, mixed, unknown) of point
             //  with respect to a surface.
             //  Only makes sense for closed surfaces.
-            label getVolumeType
+            volumeType getVolumeType
             (
                 const indexedOctree<treeDataTriSurface>&,
                 const point&

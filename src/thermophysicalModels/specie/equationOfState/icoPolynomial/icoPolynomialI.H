@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -40,17 +40,6 @@ inline Foam::icoPolynomial<PolySize>::icoPolynomial
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
-
-template<int PolySize>
-inline Foam::icoPolynomial<PolySize>::icoPolynomial
-(
-    const icoPolynomial<PolySize>& ip
-)
-:
-    specie(ip),
-    rhoPolynomial_(ip.rhoPolynomial_)
-{}
-
 
 template<int PolySize>
 inline Foam::icoPolynomial<PolySize>::icoPolynomial
@@ -107,20 +96,6 @@ inline Foam::scalar Foam::icoPolynomial<PolySize>::Z(scalar, scalar) const
 
 
 // * * * * * * * * * * * * * * * Member Operators  * * * * * * * * * * * * * //
-
-template<int PolySize>
-inline Foam::icoPolynomial<PolySize>& Foam::icoPolynomial<PolySize>::operator=
-(
-    const icoPolynomial<PolySize>& ip
-)
-{
-    specie::operator=(ip);
-
-    rhoPolynomial_ = ip.rhoPolynomial_;
-
-    return *this;
-}
-
 
 template<int PolySize>
 inline void Foam::icoPolynomial<PolySize>::operator+=

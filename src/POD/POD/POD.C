@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -42,26 +42,111 @@ namespace POD
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+// Note: Consider weighting projection with cell volumes
+
 template<class Type>
-Type projection
+scalar projection(const Field<Type>& a, const Field<Type>& b)
+{
+    return cmptSum(gSumCmptProd(a, b));
+}
+
+
+template<class Type>
+scalar projection(const tmp<Field<Type> >& ta, const Field<Type>& b)
+{
+    scalar p = projection(ta(), b);
+    ta.clear();
+
+    return p;
+}
+
+
+template<class Type>
+scalar projection(const Field<Type>& a, const tmp<Field<Type> >& tb)
+{
+    scalar p = projection(a, tb());
+    tb.clear();
+
+    return p;
+}
+
+
+template<class Type>
+scalar projection(const tmp<Field<Type> >& ta, const tmp<Field<Type> >& tb)
+{
+    scalar p = projection(ta(), tb());
+    ta.clear();
+    tb.clear();
+
+    return p;
+}
+
+
+template<class Type>
+scalar projection
 (
     const GeometricField<Type, fvPatchField, volMesh>& a,
     const GeometricField<Type, fvPatchField, volMesh>& b
 )
 {
-    return sum(cmptMultiply(a.internalField(), b.internalField()));
+    scalar p = projection(a.internalField(), b.internalField());
+
+    // Experimental; reconsider.  HJ, 10/Feb/2021
+    // forAll (a.boundaryField(), patchI)
+    // {
+    //     p += projection(a.boundaryField()[patchI], b.boundaryField()[patchI]);
+    // }
+
+    return p;
 }
 
 
 template<class Type>
-Type projection
+scalar projection
 (
     const tmp<GeometricField<Type, fvPatchField, volMesh> >& ta,
     const GeometricField<Type, fvPatchField, volMesh>& b
 )
 {
-    Type p = projection(ta(), b);
+    const GeometricField<Type, fvPatchField, volMesh>& a = ta();
+
+    scalar p = projection(a, b);
     ta.clear();
+
+    return p;
+}
+
+
+template<class Type>
+scalar projection
+(
+    const GeometricField<Type, fvPatchField, volMesh>& a,
+    const tmp<GeometricField<Type, fvPatchField, volMesh> >& tb
+)
+{
+    const GeometricField<Type, fvPatchField, volMesh>& b = tb();
+
+    scalar p = projection(a, b);
+    tb.clear();
+
+    return p;
+}
+
+
+template<class Type>
+scalar projection
+(
+    const tmp<GeometricField<Type, fvPatchField, volMesh> >& ta,
+    const tmp<GeometricField<Type, fvPatchField, volMesh> >& tb
+)
+{
+    const GeometricField<Type, fvPatchField, volMesh>& a = ta();
+    const GeometricField<Type, fvPatchField, volMesh>& b = tb();
+
+    scalar p = projection(a, b);
+    ta.clear();
+    tb.clear();
+
     return p;
 }
 

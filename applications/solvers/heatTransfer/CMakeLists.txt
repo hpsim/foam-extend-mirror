@@ -1,9 +1,9 @@
 # --------------------------------------------------------------------------
-#   ========                 |
-#   \      /  F ield         | foam-extend: Open Source CFD
-#    \    /   O peration     | Version:     4.1
-#     \  /    A nd           | Web:         http://www.foam-extend.org
-#      \/     M anipulation  | For copyright notice see file Copyright
+#   =========                 |
+#   \\      /  F ield         | foam-extend: Open Source CFD
+#    \\    /   O peration     | Version:     5.0
+#     \\  /    A nd           | Web:         http://www.foam-extend.org
+#      \\/     M anipulation  | For copyright notice see file Copyright
 # --------------------------------------------------------------------------
 # License
 #     This file is part of foam-extend.
@@ -26,7 +26,7 @@
 #
 # Author
 #     Henrik Rusche, Wikki GmbH, 2017. All rights reserved
-#
+#     Hrvoje Jasak, Wikki Ltd.
 #
 # --------------------------------------------------------------------------
 
@@ -38,3 +38,4 @@ add_subdirectory(buoyantSimpleFoam)
 add_subdirectory(buoyantSimpleRadiationFoam)
 add_subdirectory(chtMultiRegionSimpleFoam)
 add_subdirectory(buoyantPisoFoam)
+add_subdirectory(thermalFoam)

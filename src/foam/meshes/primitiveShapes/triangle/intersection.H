@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -60,7 +60,6 @@ public:
         //  intersects the triangle or not.
         //  Adjusting the tolerance from the code does not allow it to be const
         //  HJ, 5/Jan/2008
-        //static Foam::debug::controlSwitches<scalar> planarTol_;
         static Foam::debug::tolerancesSwitch planarTol_;
 
         //- Intersection miss tolerance, of the order of 1e-15
@@ -94,10 +93,8 @@ public:
         {
             if (t < -VSMALL)
             {
-                FatalErrorIn
-                (
-                    "scalar intersection::setPlanarTol(const scalar t)"
-                )   << "Negative planar tolerance.  This is not allowed."
+                FatalErrorInFunction
+                    << "Negative planar tolerance.  This is not allowed."
                     << abort(FatalError);
             }
 

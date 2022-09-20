@@ -88,6 +88,8 @@ basicFvPatchFields = $(fvPatchFields)/basic
 $(basicFvPatchFields)/basicSymmetry/basicSymmetryFvPatchScalarField.C
 $(basicFvPatchFields)/calculated/calculatedFvPatchFields.C
 $(basicFvPatchFields)/calculated/calculatedFvPatchVectorNFields.C
+$(basicFvPatchFields)/extrapolatedCalculated/extrapolatedCalculatedFvPatchFields.C
+$(basicFvPatchFields)/extrapolatedCalculated/extrapolatedCalculatedFvPatchVectorNFields.C
 $(basicFvPatchFields)/coupled/coupledFvPatchFields.C
 $(basicFvPatchFields)/coupled/coupledFvPatchVectorNFields.C
 $(basicFvPatchFields)/directionMixed/directionMixedFvPatchFields.C
@@ -267,7 +269,6 @@ $(schemes)/leastSquaresSkewCorrected/leastSquaresSkewCorrected.C
 $(schemes)/outletStabilised/outletStabilised.C
 $(schemes)/reverseLinear/reverseLinear.C
 $(schemes)/clippedLinear/clippedLinear.C
-$(schemes)/harmonic/magLongDelta.C
 $(schemes)/harmonic/harmonic.C
 $(schemes)/fixedBlended/fixedBlended.C
 $(schemes)/localBlended/localBlended.C
@@ -408,6 +409,7 @@ $(general)/bound/bound.C
 
 solutionControl = $(general)/solutionControl
 $(solutionControl)/solutionControl/solutionControl.C
+$(solutionControl)/potentialControl/potentialControl.C
 $(solutionControl)/simpleControl/simpleControl.C
 $(solutionControl)/pimpleControl/pimpleControl.C
 $(solutionControl)/pisoControl/pisoControl.C

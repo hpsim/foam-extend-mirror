@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -296,6 +296,7 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
             reverse(masterPointsInUV);
             surfaceAreaMasterPointsInUV = -surfaceAreaMasterPointsInUV;
 
+#ifdef FULLDEBUG
             // Just generate a warning until we can verify this is a non issue
             InfoIn
             (
@@ -303,6 +304,7 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
                 "calcAddressing()"
             )   << "The master projected polygon was CW instead of CCW.  "
                 << "This is strange..."  << endl;
+#endif
         }
 
         // Next, project the candidate master neighbours faces points

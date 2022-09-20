@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -36,6 +36,7 @@ SourceFiles
 #define searchableSurfacesQueries_H
 
 #include "searchableSurface.H"
+#include "volumeType.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -43,80 +44,21 @@ namespace Foam
 {
 
 // Forward declaration of classes
+class boundBox;
 class plane;
+class pointConstraint;
 
 /*---------------------------------------------------------------------------*\
-                           Class searchableSurfacesQueries Declaration
+                Class searchableSurfacesQueries Declaration
 \*---------------------------------------------------------------------------*/
 
 class searchableSurfacesQueries
 {
-    // Private data
-
     // Private Member Functions
-
-        //- Temporary wrapper around findNearest. Used in facesIntersection only
-        static pointIndexHit tempFindNearest
-        (
-            const searchableSurface&,
-            const point& pt,
-            const scalar initDistSqr
-        );
-
-        //- Calculate sum of distances to nearest point on surfaces. Is used
-        //  in minimisation to find intersection. Returns sum of (square of)
-        //  distances to the surfaces.
-        static scalar sumDistSqr
-        (
-            const PtrList<searchableSurface>&,
-            const labelList& surfacesToTest,
-            const scalar initialDistSqr,    // search box
-            const point& pt
-        );
-
-        //- Takes the tet (points p) and reflects the point with the
-        //  highest value around the centre (pSum). Checks if it gets closer
-        //  and updates p, y if so.
-        static scalar tryMorphTet
-        (
-            const PtrList<searchableSurface>&,
-            const labelList& surfacesToTest,
-            const scalar initialDistSqr,
-            List<vector>& p,
-            scalarList& y,
-            vector& pSum,
-            const label ihi,
-            const scalar fac
-        );
-
-        //- Downhill simplex method: find the point with min cumulative
-        //  distance to all surfaces. Does so by morphing a tet (points p).
-        //  Returns the point on the 0th surface or hit if not reached within
-        //  maxIters iterations.
-        static bool morphTet
-        (
-            const PtrList<searchableSurface>&,
-            const labelList& surfacesToTest,
-            const scalar initialDistSqr,
-            const scalar convergenceDistSqr,
-            const label maxIter,
-            List<vector>& p,
-            scalarList& y
-        );
-
-        //static void findAllIntersections
-        //(
-        //    const searchableSurface& s,
-        //    const pointField& start,
-        //    const pointField& end,
-        //    const vectorField& smallVec,
-        //    List<List<pointIndexHit> >&
-        //);
 
         static void mergeHits
         (
             const point& start,
-            const scalar mergeDist,
 
             const label surfI,
             const List<pointIndexHit>& surfHits,
@@ -159,6 +101,19 @@ public:
                 List<List<pointIndexHit> >& surfaceHits
             );
 
+            //- Find intersections of edge nearest to both endpoints.
+            static void findNearestIntersection
+            (
+                const PtrList<searchableSurface>& allSurfaces,
+                const labelList& surfacesToTest,
+                const pointField& start,
+                const pointField& end,
+                labelList& surface1,
+                List<pointIndexHit>& hit1,
+                labelList& surface2,
+                List<pointIndexHit>& hit2
+            );
+
             //- Find nearest. Return -1 (and a miss()) or surface and nearest
             //  point.
             static void findNearest
@@ -171,17 +126,54 @@ public:
                 List<pointIndexHit>&
             );
 
-
-        // Single point queries
-
-            //- Calculate point which is on a set of surfaces. WIP.
-            static pointIndexHit facesIntersection
+            //- Find nearest points to a specific regions of the surface
+            static void findNearest
             (
                 const PtrList<searchableSurface>& allSurfaces,
                 const labelList& surfacesToTest,
-                const scalar initDistSqr,
-                const scalar convergenceDistSqr,
-                const point& start
+                const labelListList& regionIndices,
+                const pointField& samples,
+                const scalarField& nearestDistSqr,
+                labelList& nearestSurfaces,
+                List<pointIndexHit>& nearestInfo
+            );
+
+            //- Find nearest points that are on all supplied surfaces
+            //  (nearest point if single surface; nearest intersection by
+            //   steepest descent if on multiple surfaces). Returns current
+            //   best guess). Wip.
+            static void findNearest
+            (
+                const PtrList<searchableSurface>& allSurfaces,
+                const labelList& surfacesToTest,
+                const pointField& start,
+                const scalarField& distSqr,
+                pointField& near,
+                List<pointConstraint>& constraint,
+                const label nIter = 20
+            );
+
+            //- Find signed distance to nearest surface. Outside is positive.
+            //  illegalHandling: how to handle non-inside or outside
+            //      OUTSIDE : treat as outside
+            //      INSIDE  : treat as inside
+            //      UNKNOWN : throw fatal error
+            static void signedDistance
+            (
+                const PtrList<searchableSurface>& allSurfaces,
+                const labelList& surfacesToTest,
+                const pointField& samples,
+                const scalarField& nearestDistSqr,
+                const volumeType::type illegalHandling,
+                labelList& nearestSurfaces,
+                scalarField& distance
+            );
+
+            //- Find the boundBox of the selected surfaces
+            static boundBox bounds
+            (
+                const PtrList<searchableSurface>& allSurfaces,
+                const labelUList& surfacesToTest
             );
 };
 

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -25,7 +25,7 @@ License
 
 #include "fvcSurfaceIntegrate.H"
 #include "fvMesh.H"
-#include "zeroGradientFvPatchFields.H"
+#include "extrapolatedCalculatedFvPatchFields.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -104,7 +104,7 @@ surfaceIntegrate
                 ssf.dimensions()/dimVol,
                 pTraits<Type>::zero
             ),
-            zeroGradientFvPatchField<Type>::typeName
+            extrapolatedCalculatedFvPatchField<Type>::typeName
         )
     );
     GeometricField<Type, fvPatchField, volMesh>& vf = tvf();
@@ -155,7 +155,7 @@ surfaceSum
             ),
             mesh,
             dimensioned<Type>("0", ssf.dimensions(), pTraits<Type>::zero),
-            zeroGradientFvPatchField<Type>::typeName
+            extrapolatedCalculatedFvPatchField<Type>::typeName
         )
     );
     GeometricField<Type, fvPatchField, volMesh>& vf = tvf();

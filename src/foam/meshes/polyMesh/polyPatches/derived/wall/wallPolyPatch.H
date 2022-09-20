@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -25,7 +25,9 @@ Class
     Foam::wallPolyPatch
 
 Description
-    Foam::wallPolyPatch
+    Wall patch.
+
+    Added a switch for closed walls that undergo solid body motion only.
 
 SourceFiles
     wallPolyPatch.C
@@ -36,6 +38,7 @@ SourceFiles
 #define wallPolyPatch_H
 
 #include "polyPatch.H"
+#include "Switch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -50,6 +53,13 @@ class wallPolyPatch
 :
     public polyPatch
 {
+    // Private data
+
+        //- Adjust for solid body motion
+        //  True for closed wall surfaces undergoing solid body motion only
+        Switch closedSolidBodyMotion_;
+
+
 public:
 
     //- Runtime type information
@@ -122,10 +132,31 @@ public:
             return true;
         }
 
-    // Destructor
+    //- Destructor
+    virtual ~wallPolyPatch() = default;
 
-        virtual ~wallPolyPatch()
-        {}
+
+    // Member functions
+
+        // Access
+
+            //- Return the solid body motion state
+            //  True for closed wall surfaces undergoing solid body motion only
+            bool closedSolidBodyMotion() const
+            {
+                return closedSolidBodyMotion_;
+            }
+
+            //- Return access to the solid body motion switch
+            //  to allow adjustment
+            //  True for closed wall surfaces undergoing solid body motion only
+            Switch& closedSolidBodyMotion()
+            {
+                return closedSolidBodyMotion_;
+            }
+
+        //- Write the wallPolyPatch data as a dictionary
+        virtual void write(Ostream&) const;
 };
 
 

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -38,13 +38,16 @@ Description
 
 int main(int argc, char *argv[])
 {
-
 #   include "setRootCase.H"
 
 #   include "createTime.H"
 #   include "createMesh.H"
 
     Info<< "Reading PODsolverDict\n" << endl;
+
+    // Note: reading directories corrupts deltaT from file
+    // Remember and restore it
+    const scalar dt = runTime.deltaT().value();
 
     IOdictionary PODsolverDict
     (
@@ -75,11 +78,16 @@ int main(int argc, char *argv[])
     // Read required accuracy
     scalar eps = readScalar(PODsolverDict.lookup("eps"));
 
-    Info<< "\nStarting time loop\n" << endl;
-
-    for (runTime++; !runTime.end(); runTime++)
+    while (runTime.run())
     {
-        Info<< "Time = " << runTime.timeName() << nl << endl;
+        // Manual time-step control to avoid problems with running over
+        // existing directories with time file.  HJ, 5/Mar/2022
+        runTime.setDeltaT(dt);
+        runTime++;
+
+        Info<< "Time = " << runTime.timeName()
+            << " deltaT = " << runTime.deltaT().value()
+            << nl << endl;
 
         solver->solve
         (

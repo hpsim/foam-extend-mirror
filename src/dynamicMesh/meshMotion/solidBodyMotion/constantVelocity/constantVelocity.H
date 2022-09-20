@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------*\
   =========                 |
   \\      /  F ield         | foam-extend: Open Source CFD
-   \\    /   O peration     | Version:     4.1
+   \\    /   O peration     | Version:     5.0
     \\  /    A nd           | Web:         http://www.foam-extend.org
      \\/     M anipulation  | For copyright notice see file Copyright
 -------------------------------------------------------------------------------
@@ -78,10 +78,11 @@ class constantVelocity
     // Private Member Functions
 
         //- Disallow copy construct
-        constantVelocity(const constantVelocity&);
+        constantVelocity(const constantVelocity&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const constantVelocity&);
+        void operator=(const constantVelocity&) = delete;
+
 
         //- Calculate tranformation
         septernion calcTransformation(const scalar t) const;
@@ -104,8 +105,7 @@ public:
 
 
     //- Destructor
-    virtual ~constantVelocity()
-    {}
+    virtual ~constantVelocity() = default;
 
 
     // Member Functions

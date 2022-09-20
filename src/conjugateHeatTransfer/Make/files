@@ -20,6 +20,8 @@ $(thermalSource)/thermalSource/thermalSource.C
 $(thermalSource)/thermalSource/newThermalSource.C
 $(thermalSource)/constantThermalSource/constantThermalSource.C
 
+fluidThermalModel/fluidThermalModel.C
+
 BCs          = fvPatchFields
 
 $(BCs)/controlledParabolicVelocity/controlledParabolicVelocityFvPatchVectorField.C
