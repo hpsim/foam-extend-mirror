@@ -1,0 +1,72 @@
+Below are build instructions for Ubuntu 22.04.
+
+These instructions assume that you install in the default location, which is
+~/foam/ . Create this folder with:
+
+    cd ~
+    mkdir foam
+
+
+* Obtain and unpack source code (if you read this, you probably already have):
+
+The recommended way is to get the source code through git source code
+management system. This way, you can get updates and bugfixes easily by running
+"git pull". To install into the default location run:
+
+    cd ~/foam
+    git clone git://git.code.sf.net/p/foam-extend/foam-extend-5.0 foam-extend-5.0
+
+* Update your Ubuntu installation:
+
+    sudo apt update
+    sudo apt upgrade
+
+* Install required packages:
+
+  sudo apt install git binutils-dev cmake flex zlib1g-dev libncurses5-dev curl \
+  bison libxt-dev rpm mercurial graphviz openmpi-bin libopenmpi-dev \
+  build-essential linux-generic libmpich-dev libopenmpi-dev metis \
+  libmetis-dev libparmetis-dev scotch libscotch-dev \
+  python3 python3-dev python-is-python3 python3-setuptools
+
+* For Ubuntu 22.04, you need to customize some settings inside the foam-extend
+  directory.
+
+  Here is a list of sed commands that will do just that. You can copy/paste
+  the following block of commands in a control terminal in order to make
+  the necessary adjustments. You will need to be located at the root of your
+  foam-extend-5.0 installation for those commands to work.
+
+  ####################################################################
+  # 
+  # go into root of foam-extend:
+    cd ~/foam/foam-extend-5.0
+  # Edit ThidParty:
+    sed -i -e 's=rpmbuild --define=rpmbuild --define "_build_id_links none" --define=' ThirdParty/tools/makeThirdPartyFunctionsForRPM
+  #
+  ####################################################################
+
+
+* Set environment variables:
+
+    cd ~/foam/foam-extend-5.0
+    source etc/bashrc
+
+* Compile:
+
+    ./Allwmake.firstInstall
+
+
+* Create user directory:
+
+    mkdir -p $FOAM_RUN
+
+* Create alias:
+
+  # On bash:
+  echo "alias fe50='source \$HOME/foam/foam-extend-5.0/etc/bashrc'" >> $HOME/.bashrc
+
+  # On csh:
+  echo "alias fe50 'source $HOME/foam/foam-extend-5.0/etc/cshrc'" >> $HOME/.cshrc
+
+And you are ready to start.
