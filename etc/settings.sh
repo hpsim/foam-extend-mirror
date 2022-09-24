@@ -686,10 +686,10 @@ then
     # Using the system libraries
     # Some values might already be pre-initialized in prefs.sh
     # If not, we use the default WM_SYSTEM_XXX values
-    : ${SCOTCH_DIR:=$WM_SYSTEM_DIR};                 export SCOTCH_DIR
-    : ${SCOTCH_BIN_DIR:=$WM_SYSTEM_BIN_DIR};         export SCOTCH_BIN_DIR
-    : ${SCOTCH_LIB_DIR:=$WM_SYSTEM_LIB_DIR};         export SCOTCH_LIB_DIR
-    : ${SCOTCH_INCLUDE_DIR:=$WM_SYSTEM_INCLUDE_DIR}; export SCOTCH_INCLUDE_DIR
+    : ${SCOTCH_DIR:=$WM_SYSTEM_DIR};                        export SCOTCH_DIR
+    : ${SCOTCH_BIN_DIR:=$WM_SYSTEM_BIN_DIR};                export SCOTCH_BIN_DIR
+    : ${SCOTCH_LIB_DIR:=$WM_SYSTEM_LIB_DIR};                export SCOTCH_LIB_DIR
+    : ${SCOTCH_INCLUDE_DIR:=$WM_SYSTEM_INCLUDE_DIR/scotch}; export SCOTCH_INCLUDE_DIR
 else
     # Using ThirdParty package for Scotch
     [ ! -z $WM_THIRD_PARTY_USE_SCOTCH_604 ] && [ -e $WM_THIRD_PARTY_DIR/packages/scotch-6.0.4/platforms/$WM_OPTIONS ] && {

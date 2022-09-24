@@ -582,7 +582,7 @@ if ( $?SCOTCH_SYSTEM) then
     if ( ! $?SCOTCH_DIR )         setenv SCOTCH_DIR         $WM_SYSTEM_DIR
     if ( ! $?SCOTCH_BIN_DIR )     setenv SCOTCH_BIN_DIR     $WM_SYSTEM_BIN_DIR
     if ( ! $?SCOTCH_LIB_DIR )     setenv SCOTCH_LIB_DIR     $WM_SYSTEM_LIB_DIR
-    if ( ! $?SCOTCH_INCLUDE_DIR ) setenv SCOTCH_INCLUDE_DIR $WM_SYSTEM_INCLUDE_DIR    setenv SCOTCH_DIR /usr
+    if ( ! $?SCOTCH_INCLUDE_DIR ) setenv SCOTCH_INCLUDE_DIR $WM_SYSTEM_INCLUDE_DIR/scotch
 endif
 if ( $?SCOTCH_SYSTEM == 0 && $?WM_THIRD_PARTY_USE_SCOTCH_604 != 0 && -e $WM_THIRD_PARTY_DIR/packages/scotch-6.0.4/platforms/$WM_OPTIONS ) then
     # Using ThirdParty package for Scotch
