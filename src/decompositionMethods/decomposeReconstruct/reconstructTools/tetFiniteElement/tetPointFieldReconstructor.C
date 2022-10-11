@@ -117,16 +117,8 @@ labelList tetPointFieldReconstructor::procPatchAddressing
 
     if (addr.size() && min(addr) < 0)
     {
-        FatalErrorIn
-        (
-            "labelList tetPointFieldReconstructor::"
-            "patchProcAddressing\n"
-            "(\n"
-            "    const labelList& procToGlobalAddr,\n"
-            "    const label procNo,\n"
-            "    const label patchNo\n"
-            ") const"
-        )   << "error in addressing"
+        FatalErrorInFunction
+            << "error in addressing"
             << abort(FatalError);
     }
 

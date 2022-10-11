@@ -68,10 +68,8 @@ Foam::labelListList Foam::sharedPoints::procPatchPairs() const
                         // Get the other mesh
                         if (!meshes_.set(nbrProcID))
                         {
-                            FatalErrorIn
-                            (
-                                "labelListList sharedPoints::procPatchPairs()"
-                            )   << "Neighbour mesh does not exist for proc "
+                            FatalErrorInFunction
+                                << "Neighbour mesh does not exist for proc "
                                 << meshI << " patch " << patchI
                                 << " and neighbour " << nbrProcID
                                 << abort(FatalError);
@@ -114,10 +112,8 @@ Foam::labelListList Foam::sharedPoints::procPatchPairs() const
 
                         if (!found)
                         {
-                            FatalErrorIn
-                            (
-                                "labelListList sharedPoints::procPatchPairs()"
-                            )   << "Neighbour patch does not exist for proc "
+                            FatalErrorInFunction
+                                << "Neighbour patch does not exist for proc "
                                 << meshI << " patch " << patchI
                                 << " and neighbour " << nbrProcID
                                 << abort(FatalError);

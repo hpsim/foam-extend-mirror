@@ -138,7 +138,7 @@ Foam::processorMeshesReconstructor::readUpdate()
                     continue;
                 }
 
-                FatalErrorIn("processorMeshesReconstructor::readUpdate()")
+                FatalErrorInFunction
                     << "Processor " << procI
                     << " has a different polyMesh at time "
                     << meshes_[procI].time().timeName()
@@ -172,11 +172,8 @@ Foam::processorMeshesReconstructor::pointProcAddressing() const
 {
     if (pointProcAddressing_.empty())
     {
-        FatalErrorIn
-        (
-            "const PtrList<labelIOList>& "
-            "processorMeshesReconstructor::pointProcAddressing() const"
-        )   << "Mesh is not reconstructed"
+        FatalErrorInFunction
+            << "Mesh is not reconstructed"
             << abort(FatalError);
     }
 
@@ -189,11 +186,8 @@ Foam::processorMeshesReconstructor::faceProcAddressing() const
 {
     if (faceProcAddressing_.empty())
     {
-        FatalErrorIn
-        (
-            "const PtrList<labelIOList>& "
-            "processorMeshesReconstructor::faceProcAddressing() const"
-        )   << "Mesh is not reconstructed"
+        FatalErrorInFunction
+            << "Mesh is not reconstructed"
             << abort(FatalError);
     }
 
@@ -206,11 +200,8 @@ Foam::processorMeshesReconstructor::cellProcAddressing() const
 {
     if (cellProcAddressing_.empty())
     {
-        FatalErrorIn
-        (
-            "const PtrList<labelIOList>& "
-            "processorMeshesReconstructor::cellProcAddressing() const"
-        )   << "Mesh is not reconstructed"
+        FatalErrorInFunction
+            << "Mesh is not reconstructed"
             << abort(FatalError);
     }
 
@@ -223,11 +214,8 @@ Foam::processorMeshesReconstructor::boundaryProcAddressing() const
 {
     if (boundaryProcAddressing_.empty())
     {
-        FatalErrorIn
-        (
-            "const PtrList<labelIOList>& "
-            "processorMeshesReconstructor::boundaryProcAddressing() const"
-        )   << "Mesh is not reconstructed"
+        FatalErrorInFunction
+            << "Mesh is not reconstructed"
             << abort(FatalError);
     }
 

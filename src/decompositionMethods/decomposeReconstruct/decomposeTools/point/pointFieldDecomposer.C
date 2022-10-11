@@ -70,10 +70,8 @@ pointFieldDecomposer::patchFieldDecomposer::patchFieldDecomposer
     // Check that all the patch point addresses are set
     if (directAddressing_.size() && min(directAddressing_) < 0)
     {
-        FatalErrorIn
-        (
-            "pointFieldDecomposer::patchFieldDecomposer()"
-        )   << "Incomplete patch point addressing"
+        FatalErrorInFunction
+            << "Incomplete patch point addressing"
             << abort(FatalError);
     }
 }

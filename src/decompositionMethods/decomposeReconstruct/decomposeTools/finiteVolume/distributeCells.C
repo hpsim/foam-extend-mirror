@@ -58,7 +58,7 @@ void Foam::domainDecomposition::distributeCells()
 
             if (patchI == -1)
             {
-                FatalErrorIn("domainDecomposition::distributeCells()")
+                FatalErrorInFunction
                     << "Unknown preservePatch " << pNames[i]
                     << nl << "Valid patches are " << patches.names()
                     << exit(FatalError);
@@ -88,7 +88,7 @@ void Foam::domainDecomposition::distributeCells()
 
             if (zoneI == -1)
             {
-                FatalErrorIn("domainDecomposition::distributeCells()")
+                FatalErrorInFunction
                     << "Unknown preserveFaceZone " << zNames[i]
                     << endl << "Valid faceZones are " << fZones.names()
                     << exit(FatalError);

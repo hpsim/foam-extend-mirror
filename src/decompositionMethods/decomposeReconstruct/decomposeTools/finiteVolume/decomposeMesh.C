@@ -152,7 +152,7 @@ void Foam::domainDecomposition::decomposeMesh(const bool filterEmptyPatches)
         {
             if (cellToProc_[celli] >= nProcs_)
             {
-                FatalErrorIn("domainDecomposition::decomposeMesh()")
+                FatalErrorInFunction
                     << "Impossible processor label " << cellToProc_[celli]
                     << "for cell " << celli
                     << abort(FatalError);
@@ -673,10 +673,8 @@ void Foam::domainDecomposition::decomposeMesh(const bool filterEmptyPatches)
 
                         if (ownerInterProcFound && !neighbourInterProcFound)
                         {
-                            FatalErrorIn
-                            (
-                                "domainDecomposition::decomposeMesh()"
-                            )   << "Inconsistency in inter-processor "
+                            FatalErrorInFunction
+                                << "Inconsistency in inter-processor "
                                 << "boundary lists for processors "
                                 << ownerProc << " and "
                                 << neighbourProc
@@ -762,7 +760,7 @@ void Foam::domainDecomposition::decomposeMesh(const bool filterEmptyPatches)
 
                 if (zoneID == -1)
                 {
-                    FatalErrorIn("domainDecomposition::decomposeMesh()")
+                    FatalErrorInFunction
                         << "Unknown global face zone " << fzNames[nameI]
                         << nl << "Valid face zones are" << fz.names()
                         << exit(FatalError);

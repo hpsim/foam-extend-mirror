@@ -41,10 +41,8 @@ void tetPointFieldDecomposer::calcAddressing() const
 {
     if (directAddressingPtr_)
     {
-        FatalErrorIn
-        (
-            "void tetPointFieldDecomposer::calcAddressing() const"
-        )   << "addressing already calculated"
+        FatalErrorInFunction
+            << "addressing already calculated"
             << abort(FatalError);
     }
 
@@ -102,11 +100,8 @@ tetPolyPatchFieldDecomposer::calcPatchAddressing() const
 {
     if (directPatchAddressingPtr_)
     {
-        FatalErrorIn
-        (
-            "void tetPointFieldDecomposer::"
-            "tetPolyPatchFieldDecomposer::calcPatchAddressing() const"
-        )   << "addressing already calculated"
+        FatalErrorInFunction
+            << "addressing already calculated"
             << abort(FatalError);
     }
 
@@ -140,11 +135,8 @@ tetPolyPatchFieldDecomposer::calcPatchAddressing() const
 
     if (addr.size() && min(addr) < 0)
     {
-        FatalErrorIn
-        (
-            "void tetPointFieldDecomposer::"
-            "tetPolyPatchFieldDecomposer::calcPatchAddressing() const"
-        )   << "error in addressing"
+        FatalErrorInFunction
+            << "error in addressing"
             << abort(FatalError);
     }
 }

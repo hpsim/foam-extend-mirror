@@ -71,10 +71,8 @@ Foam::passiveProcessorPolyPatch::passiveProcessorPolyPatch
 {
     if (globalFaceIndex.size() != size)
     {
-        FatalErrorIn
-        (
-            "passiveProcessorPolyPatch::passiveProcessorPolyPatch(...)"
-        )   << "Bad global index list.  Patch size: " << this->size()
+        FatalErrorInFunction
+            << "Bad global index list.  Patch size: " << this->size()
             << " global index size: " << globalFaceIndex.size()
             << abort(FatalError);
     }

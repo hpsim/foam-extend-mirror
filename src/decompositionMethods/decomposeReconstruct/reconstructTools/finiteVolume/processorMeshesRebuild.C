@@ -41,7 +41,7 @@ Foam::label Foam::processorMeshesReconstructor::firstValidMesh() const
         }
     }
 
-    FatalErrorIn("label processorMeshesReconstructor::firstValidMesh() const")
+    FatalErrorInFunction
         << "Cannot find a valid mesh in reconstruction set"
         << abort(FatalError);
 
@@ -251,14 +251,8 @@ Foam::processorMeshesReconstructor::neighbourProcPatch
 
     if (!meshes_.set(masterProcID))
     {
-        FatalErrorIn
-        (
-            "const processorPolyPatch&\n"
-            "processorMeshesReconstructor::neighbourProcPatch\n"
-            "(\n"
-            "    const processorPolyPatch& procPatch\n"
-            ") const"
-        )   << "Cannot find processor patch pair ("
+        FatalErrorInFunction
+            << "Cannot find processor patch pair ("
             << procPatch.myProcNo() << " "
             << procPatch.neighbProcNo() << ") for merging"
             << abort(FatalError);
@@ -293,14 +287,8 @@ Foam::processorMeshesReconstructor::neighbourProcPatch
                 // Found matching patch.  Check sizes
                 if (masterProcPatch.size() != procPatch.size())
                 {
-                    FatalErrorIn
-                    (
-                        "const processorPolyPatch&\n"
-                        "processorMeshesReconstructor::neighbourProcPatch\n"
-                        "(\n"
-                        "    const processorPolyPatch& procPatch\n"
-                        ") const"
-                    )   << "Processor patch pair ("
+                    FatalErrorInFunction
+                        << "Processor patch pair ("
                         << procPatch.myProcNo() << " "
                         << procPatch.neighbProcNo() << ") sizes do not match: "
                         << masterProcPatch.size() << " and " << procPatch.size()
@@ -314,14 +302,8 @@ Foam::processorMeshesReconstructor::neighbourProcPatch
 
     if (!found)
     {
-        FatalErrorIn
-        (
-            "const processorPolyPatch&\n"
-            "processorMeshesReconstructor::neighbourProcPatch\n"
-            "(\n"
-            "    const processorPolyPatch& procPatch\n"
-            ") const"
-        )   << "Cannot find processor patch pair ("
+        FatalErrorInFunction
+            << "Cannot find processor patch pair ("
             << procPatch.myProcNo() << " "
             << procPatch.neighbProcNo() << ") for merging"
             << abort(FatalError);
@@ -353,8 +335,8 @@ void Foam::processorMeshesReconstructor::reconstructPoints(fvMesh& mesh) const
 
             if (pointProcAddressingI.size() != procPoints.size())
             {
-                FatalErrorIn("processorMeshes")
-                    << "problem :"
+                FatalErrorInFunction
+                    << "Problem :"
                     << " pointProcAddressingI: " << pointProcAddressingI.size()
                     << " procPoints:" << procPoints.size()
                     << abort(FatalError);
@@ -525,11 +507,8 @@ Foam::processorMeshesReconstructor::reconstructMesh(const Time& db)
                      || patch.type() != reconPatchTypes[pnIndex]
                     )
                     {
-                        FatalErrorIn
-                        (
-                            "autoPtr<fvMesh> processorMeshesReconstructor::"
-                            "reconstructMesh(const Time& db)"
-                        )   << "Patch name and type does not match "
+                        FatalErrorInFunction
+                            << "Patch name and type does not match "
                             << "across processors for patch "
                             << patch.name() << " type: " << patch.type()
                             << abort(FatalError);
@@ -1184,12 +1163,8 @@ Foam::processorMeshesReconstructor::reconstructMesh(const Time& db)
                                      != masterPpAddr[curMF[pointI]]
                                     )
                                     {
-                                        FatalErrorIn
-                                        (
-                                            "autoPtr<fvMesh> "
-                                            "processorMeshesReconstructor::"
-                                            "reconstructMesh(const Time& db)"
-                                        )   << "Loss of proc sync: proc pair: ("
+                                        FatalErrorInFunction
+                                            << "Loss of proc sync: proc pair: ("
                                             << procPatch.myProcNo()
                                             << " " << procPatch.neighbProcNo()
                                             << ") point addr: "
@@ -1250,12 +1225,8 @@ Foam::processorMeshesReconstructor::reconstructMesh(const Time& db)
                      != ppAddr[curSpl[splI]]
                     )
                     {
-                        FatalErrorIn
-                        (
-                            "autoPtr<fvMesh> "
-                            "processorMeshesReconstructor::"
-                            "reconstructMesh(const Time& db)"
-                        )   << "Loss of global sync: "
+                        FatalErrorInFunction
+                            << "Loss of global sync: "
                             << globalPointMapping[curSpAddr[splI]] << " and "
                             << ppAddr[curSpl[splI]] << nl
                             << abort(FatalError);
@@ -1711,11 +1682,8 @@ Foam::processorMeshesReconstructor::reconstructMesh(const Time& db)
         if (reconPatches[patchI] == nullptr)
         {
             // Patch not set.  Check its type
-            FatalErrorIn
-            (
-                "autoPtr<fvMesh> processorMeshesReconstructor::"
-                "reconstructMesh(const Time& db)"
-            )   << "Reconstructed patch " << patchI
+            FatalErrorInFunction
+                << "Reconstructed patch " << patchI
                 << " name " << reconPatchNames[patchI]
                 << " type " << reconPatchTypes[patchI]
                 << " not set."
@@ -1866,12 +1834,8 @@ Foam::processorMeshesReconstructor::reconstructMesh(const Time& db)
                         }
                         else
                         {
-                            FatalErrorIn
-                            (
-                                "autoPtr<fvMesh>"
-                                "\n processorMeshesReconstructor::"
-                                "reconstructMesh(const Time& db)"
-                            )   << "Found unmapped cell while reconstructing"
+                            FatalErrorInFunction
+                                << "Found unmapped cell while reconstructing"
                                 << " cell zones."
                                 << nl
                                 << "Cell from processor: " << procI << nl
