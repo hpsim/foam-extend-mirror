@@ -47,7 +47,10 @@ void inletOutletIbFvPatchField<Type>::updateIbValues()
 
     // Resize the field and initialise to a reasonable value.
     // Reconsider.  HJ, 16/Jun/2022
-    Field<Type>::operator=(this->patchInternalField());
+    Field<Type>::operator=
+    (
+        Field<Type>(this->ibPatch().size(), pTraits<Type>::zero)
+    );
 }
 
 
@@ -231,7 +234,6 @@ void inletOutletIbFvPatchField<Type>::updateOnMotion()
         // wrong size of valueFraction.
         // To avoid the problem, the field is dimensioned to the right size in
         // updateIbValues().  HJ, 9/Sep/2022
-        // inletOutletFvPatchField<Type>::evaluate();
     }
 }
 
