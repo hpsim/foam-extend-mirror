@@ -107,7 +107,6 @@ void Foam::MRFZone::setMRFFaces()
         if
         (
             (pp.isWall() && !excludedPatches.found(patchI))
-         || (pp.coupled() && !excludedPatches.found(patchI))
         )
         {
             forAll (pp, i)
@@ -812,13 +811,13 @@ void Foam::MRFZone::correctBoundaryVelocity(volVectorField& U) const
     // Included patches
     forAll (includedFaces_, patchI)
     {
-        const vectorField& patchC = mesh_.Cf().boundaryField()[patchI];
-
-        vectorField pfld(U.boundaryField()[patchI]);
-
         // Correct velocity for non-coupled patches
         if (!mesh_.boundaryMesh()[patchI].coupled())
         {
+            const vectorField& patchC = mesh_.Cf().boundaryField()[patchI];
+
+            vectorField pfld(U.boundaryField()[patchI]);
+
             forAll (includedFaces_[patchI], i)
             {
                 patchFaceI = includedFaces_[patchI][i];
