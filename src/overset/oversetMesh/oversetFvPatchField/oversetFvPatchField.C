@@ -785,16 +785,8 @@ oversetFvPatchField<Type>::oversetFvPatchField
 {
     if (!isType<oversetFvPatch>(p))
     {
-        FatalIOErrorIn
-        (
-            "oversetFvPatchField<Type>::oversetFvPatchField\n"
-            "(\n"
-            "    const fvPatch& p,\n"
-            "    const Field<Type>& field,\n"
-            "    const dictionary& dict\n"
-            ")\n",
-            dict
-        )   << "\n    patch type '" << p.type()
+        FatalIOErrorInFunction(dict)
+            << "\n    patch type '" << p.type()
             << "' not constraint type '" << typeName << "'"
             << "\n    for patch " << p.name()
             << " of field " << this->dimensionedInternalField().name()
