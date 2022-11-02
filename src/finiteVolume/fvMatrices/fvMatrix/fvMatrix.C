@@ -932,9 +932,8 @@ Foam::tmp<Foam::volScalarField> Foam::fvMatrix<Type>::A() const
         )
     );
 
-    // Complete matrix assembly.  HJ, 3/May/2022
-    fvMatrix& m = const_cast<fvMatrix&>(*this);
-    m.completeAssembly();
+    // Complete matrix assembly not allowed: overset changes A
+    // HJ, 2/Nov/2022
 
     tAphi().internalField() = D()/psi_.mesh().V();
     tAphi().correctBoundaryConditions();
@@ -966,9 +965,8 @@ Foam::fvMatrix<Type>::H() const
     );
     GeometricField<Type, fvPatchField, volMesh>& Hphi = tHphi();
 
-    // Complete matrix assembly.  HJ, 3/May/2022
-    fvMatrix& m = const_cast<fvMatrix&>(*this);
-    m.completeAssembly();
+    // Complete matrix assembly not allowed: should be in place
+    // if solve is called before H.  HJ, 2/Nov/2022
 
     // Loop over field components
     for (direction cmpt = 0; cmpt < Type::nComponents; cmpt++)
@@ -1077,7 +1075,8 @@ Foam::fvMatrix<Type>::flux() const
     );
     GeometricField<Type, fvsPatchField, surfaceMesh>& fieldFlux = tfieldFlux();
 
-    // Complete matrix assembly.  HJ, 3/May/2022
+    // Complete matrix assembly.  Should not be needed if solve() has been called
+    // HJ, 3/May/2022, HJ, 2/Nov/2022
     fvMatrix& m = const_cast<fvMatrix&>(*this);
     m.completeAssembly();
 
@@ -1146,7 +1145,8 @@ jumpFlux() const
     );
     GeometricField<Type, fvsPatchField, surfaceMesh>& fieldFlux = tfieldFlux();
 
-    // Complete matrix assembly.  HJ, 3/May/2022
+    // Complete matrix assembly.  Should not be needed if solve() has been called
+    // HJ, 3/May/2022, HJ, 2/Nov/2022
     fvMatrix& m = const_cast<fvMatrix&>(*this);
     m.completeAssembly();
 
