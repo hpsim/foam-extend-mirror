@@ -47,7 +47,6 @@ scalar nutkRoughWallFunctionFvPatchScalarField::fnRough
 ) const
 {
     // Return fn based on non-dimensional roughness height
-
     if (KsPlus < 90.0)
     {
         return pow
