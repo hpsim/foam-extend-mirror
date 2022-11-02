@@ -59,6 +59,12 @@ solvers
     }
 }
 
+potentialFlow
+{
+    pRefCell 0;
+    pRefValue 0;
+}
+
 SIMPLE
 {
     pRefCell 0;

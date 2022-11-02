@@ -16,8 +16,7 @@ FoamFile
 
 application icoOversetFoam;
 
-// startFrom       startTime;
-startFrom       latestTime;
+startFrom       startTime;
 
 startTime       0;
 
@@ -54,6 +53,27 @@ libs
     "libdynamicMesh.so"
     "liboversetMesh.so"
     "liblduSolvers.so"
+);
+
+functions
+(
+    forces
+    {
+        type               forces;
+        functionObjectLibs ("libforces.so");
+
+        outputControl timeStep;
+        outputInterval 1;
+        patches ( cylinder );
+
+        pName       p;
+        UName       U;
+        rhoName     rhoInf;
+        rhoInf      1;
+
+        log         true;
+        CofR        (0 0 0);
+    }
 );
 
 // ************************************************************************* //
