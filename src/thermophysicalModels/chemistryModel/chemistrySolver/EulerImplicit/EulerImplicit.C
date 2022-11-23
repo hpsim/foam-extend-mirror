@@ -43,13 +43,6 @@ Foam::EulerImplicit<CompType, ThermoType>::EulerImplicit
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class CompType, class ThermoType>
-Foam::EulerImplicit<CompType, ThermoType>::~EulerImplicit()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class CompType, class ThermoType>

@@ -81,9 +81,8 @@ public:
         );
 
 
-    // Destructor
-
-       virtual ~EulerImplicit();
+    //- Destructor
+    virtual ~EulerImplicit() = default;
 
 
     // Member Functions

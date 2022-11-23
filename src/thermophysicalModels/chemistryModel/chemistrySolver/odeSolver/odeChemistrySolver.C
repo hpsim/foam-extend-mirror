@@ -44,13 +44,6 @@ Foam::ode<CompType, ThermoType>::ode
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class CompType, class ThermoType>
-Foam::ode<CompType, ThermoType>::~ode()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class CompType, class ThermoType>

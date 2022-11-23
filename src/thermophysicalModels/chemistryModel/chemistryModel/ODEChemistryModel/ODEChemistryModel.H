@@ -93,8 +93,11 @@ class ODEChemistryModel
 
     // Private Member Functions
 
+        //- Disallow construct as copy
+        ODEChemistryModel(const ODEChemistryModel&) = delete;
+
         //- Disallow default bitwise assignment
-        void operator=(const ODEChemistryModel&);
+        void operator=(const ODEChemistryModel&) = delete;
 
 
 protected:
@@ -125,7 +128,7 @@ public:
 
 
     //- Destructor
-    virtual ~ODEChemistryModel();
+    virtual ~ODEChemistryModel() = default;
 
 
     // Member Functions
@@ -176,8 +179,7 @@ public:
         virtual void calculate();
 
 
-        // Chemistry model functions (overriding abstract functions in
-        // basicChemistryModel.H)
+        // Chemistry model functions
 
             //- Return const access to the chemical source terms
             inline tmp<volScalarField> RR(const label i) const;

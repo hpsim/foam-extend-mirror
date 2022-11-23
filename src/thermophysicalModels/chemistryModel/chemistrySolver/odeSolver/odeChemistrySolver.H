@@ -85,7 +85,7 @@ public:
 
 
     //- Destructor
-    virtual ~ode();
+    virtual ~ode() = default;
 
 
     // Member Functions

@@ -49,10 +49,4 @@ Foam::psiChemistryModel::psiChemistryModel
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::psiChemistryModel::~psiChemistryModel()
-{}
-
-
 // ************************************************************************* //

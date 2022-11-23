@@ -76,10 +76,4 @@ Foam::basicChemistryModel::basicChemistryModel
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::basicChemistryModel::~basicChemistryModel()
-{}
-
-
 // ************************************************************************* //

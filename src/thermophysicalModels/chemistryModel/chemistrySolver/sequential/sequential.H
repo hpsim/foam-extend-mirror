@@ -75,7 +75,6 @@ public:
 
     // Constructors
 
-
         //- Construct from components
         sequential
         (
@@ -85,7 +84,7 @@ public:
 
 
     //- Destructor
-    virtual ~sequential();
+    virtual ~sequential() = default;
 
 
     // Member Functions

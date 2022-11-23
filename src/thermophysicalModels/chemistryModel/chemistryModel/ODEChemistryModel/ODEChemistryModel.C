@@ -39,11 +39,8 @@ Foam::ODEChemistryModel<CompType, ThermoType>::ODEChemistryModel
 )
 :
     CompType(mesh, obj, thermoTypeName),
-
     ODE(),
-
     Y_(this->thermo().composition().Y()),
-
     reactions_
     (
         dynamic_cast<const reactingMixture<ThermoType>&>(this->thermo())
@@ -53,10 +50,8 @@ Foam::ODEChemistryModel<CompType, ThermoType>::ODEChemistryModel
         dynamic_cast<const reactingMixture<ThermoType>&>
             (this->thermo()).speciesData()
     ),
-
     nSpecie_(Y_.size()),
     nReaction_(reactions_.size()),
-
     solver_
     (
         chemistrySolver<CompType, ThermoType>::New
@@ -66,12 +61,11 @@ Foam::ODEChemistryModel<CompType, ThermoType>::ODEChemistryModel
             thermoTypeName
         )
     ),
-
     RR_(nSpecie_),
     coeffs_(nSpecie_ + 2)
 {
     // create the fields for the chemistry sources
-    forAll(RR_, fieldI)
+    forAll (RR_, fieldI)
     {
         RR_.set
         (
@@ -83,13 +77,6 @@ Foam::ODEChemistryModel<CompType, ThermoType>::ODEChemistryModel
     Info<< "ODEChemistryModel: Number of species = " << nSpecie_
         << " and reactions = " << nReaction_ << endl;
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class CompType, class ThermoType>
-Foam::ODEChemistryModel<CompType, ThermoType>::~ODEChemistryModel()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -107,7 +94,7 @@ Foam::scalarField Foam::ODEChemistryModel<CompType, ThermoType>::omega
 
     scalarField om(nEqns(), 0.0);
 
-    forAll(reactions_, i)
+    forAll (reactions_, i)
     {
         const Reaction<ThermoType>& R = reactions_[i];
 
@@ -116,14 +103,14 @@ Foam::scalarField Foam::ODEChemistryModel<CompType, ThermoType>::omega
             R, c, T, p, pf, cf, lRef, pr, cr, rRef
         );
 
-        forAll(R.lhs(), s)
+        forAll (R.lhs(), s)
         {
             label si = R.lhs()[s].index;
             scalar sl = R.lhs()[s].stoichCoeff;
             om[si] -= sl*omegai;
         }
 
-        forAll(R.rhs(), s)
+        forAll (R.rhs(), s)
         {
             label si = R.rhs()[s].index;
             scalar sr = R.rhs()[s].stoichCoeff;
@@ -151,7 +138,7 @@ Foam::scalar Foam::ODEChemistryModel<CompType, ThermoType>::omega
 ) const
 {
     scalarField c2(nSpecie_, 0.0);
-    for (label i=0; i<nSpecie_; i++)
+    for (label i = 0; i < nSpecie_; i++)
     {
         c2[i] = max(0.0, c[i]);
     }
@@ -169,7 +156,7 @@ Foam::scalar Foam::ODEChemistryModel<CompType, ThermoType>::omega
     lRef = R.lhs()[slRef].index;
 
     pf = kf;
-    for (label s=1; s<Nl; s++)
+    for (label s = 1; s < Nl; s++)
     {
         label si = R.lhs()[s].index;
 
@@ -212,7 +199,7 @@ Foam::scalar Foam::ODEChemistryModel<CompType, ThermoType>::omega
 
     // find the matrix element and element position for the rhs
     pr = kr;
-    for (label s=1; s<Nr; s++)
+    for (label s = 1; s < Nr; s++)
     {
         label si = R.rhs()[s].index;
         if (c[si] < c[rRef])
@@ -257,7 +244,7 @@ template<class CompType, class ThermoType>
 void Foam::ODEChemistryModel<CompType, ThermoType>::derivatives
 (
     const scalar time,
-    const scalarField &c,
+    const scalarField& c,
     scalarField& dcdt
 ) const
 {
@@ -270,7 +257,7 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::derivatives
     // dT/dt = ...
     scalar rho = 0.0;
     scalar cSum = 0.0;
-    for (label i=0; i<nSpecie_; i++)
+    for (label i = 0; i < nSpecie_; i++)
     {
         scalar W = specieThermo_[i].W();
         cSum += c[i];
@@ -278,7 +265,7 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::derivatives
     }
     scalar mw = rho/cSum;
     scalar cp = 0.0;
-    for (label i=0; i<nSpecie_; i++)
+    for (label i = 0; i < nSpecie_; i++)
     {
         scalar cpi = specieThermo_[i].cp(T);
         scalar Xi = c[i]/rho;
@@ -287,7 +274,7 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::derivatives
     cp /= mw;
 
     scalar dT = 0.0;
-    for (label i=0; i<nSpecie_; i++)
+    for (label i = 0; i < nSpecie_; i++)
     {
         scalar hi = specieThermo_[i].h(T);
         dT += hi*dcdt[i];
@@ -300,7 +287,7 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::derivatives
     dcdt[nSpecie_] = -dT*dtMag/(mag(dT) + 1.0e-10);
 
     // dp/dt = ...
-    dcdt[nSpecie_+1] = 0.0;
+    dcdt[nSpecie_ + 1] = 0.0;
 }
 
 
@@ -317,14 +304,14 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::jacobian
     scalar p = c[nSpecie_ + 1];
 
     scalarField c2(nSpecie_, 0.0);
-    for (label i=0; i<nSpecie_; i++)
+    for (label i = 0; i < nSpecie_; i++)
     {
         c2[i] = max(c[i], 0.0);
     }
 
-    for (label i=0; i<nEqns(); i++)
+    for (label i = 0; i < nEqns(); i++)
     {
-        for (label j=0; j<nEqns(); j++)
+        for (label j = 0; j < nEqns(); j++)
         {
             dfdc[i][j] = 0.0;
         }
@@ -333,18 +320,18 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::jacobian
     // length of the first argument must be nSpecie()
     dcdt = omega(c2, T, p);
 
-    for (label ri=0; ri<reactions_.size(); ri++)
+    for (label ri = 0; ri < reactions_.size(); ri++)
     {
         const Reaction<ThermoType>& R = reactions_[ri];
 
         scalar kf0 = R.kf(T, p, c2);
         scalar kr0 = R.kr(T, p, c2);
 
-        forAll(R.lhs(), j)
+        forAll (R.lhs(), j)
         {
             label sj = R.lhs()[j].index;
             scalar kf = kf0;
-            forAll(R.lhs(), i)
+            forAll (R.lhs(), i)
             {
                 label si = R.lhs()[i].index;
                 scalar el = R.lhs()[i].exponent;
@@ -372,13 +359,13 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::jacobian
                 }
             }
 
-            forAll(R.lhs(), i)
+            forAll (R.lhs(), i)
             {
                 label si = R.lhs()[i].index;
                 scalar sl = R.lhs()[i].stoichCoeff;
                 dfdc[si][sj] -= sl*kf;
             }
-            forAll(R.rhs(), i)
+            forAll (R.rhs(), i)
             {
                 label si = R.rhs()[i].index;
                 scalar sr = R.rhs()[i].stoichCoeff;
@@ -386,11 +373,11 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::jacobian
             }
         }
 
-        forAll(R.rhs(), j)
+        forAll (R.rhs(), j)
         {
             label sj = R.rhs()[j].index;
             scalar kr = kr0;
-            forAll(R.rhs(), i)
+            forAll (R.rhs(), i)
             {
                 label si = R.rhs()[i].index;
                 scalar er = R.rhs()[i].exponent;
@@ -418,13 +405,13 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::jacobian
                 }
             }
 
-            forAll(R.lhs(), i)
+            forAll (R.lhs(), i)
             {
                 label si = R.lhs()[i].index;
                 scalar sl = R.lhs()[i].stoichCoeff;
                 dfdc[si][sj] += sl*kr;
             }
-            forAll(R.rhs(), i)
+            forAll (R.rhs(), i)
             {
                 label si = R.rhs()[i].index;
                 scalar sr = R.rhs()[i].stoichCoeff;
@@ -438,7 +425,7 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::jacobian
     scalarField dcdT0 = omega(c2, T - delta, p);
     scalarField dcdT1 = omega(c2, T + delta, p);
 
-    for (label i=0; i<nEqns(); i++)
+    for (label i = 0; i < nEqns(); i++)
     {
         dfdc[i][nSpecie()] = 0.5*(dcdT1[i] - dcdT0[i])/delta;
     }
@@ -491,22 +478,22 @@ Foam::ODEChemistryModel<CompType, ThermoType>::tc() const
 
     if (this->chemistry_)
     {
-        forAll(rho, celli)
+        forAll (rho, cellI)
         {
-            scalar rhoi = rho[celli];
-            scalar Ti = this->thermo().T()[celli];
-            scalar pi = this->thermo().p()[celli];
+            scalar rhoi = rho[cellI];
+            scalar Ti = this->thermo().T()[cellI];
+            scalar pi = this->thermo().p()[cellI];
             scalarField c(nSpecie_);
             scalar cSum = 0.0;
 
-            for (label i=0; i<nSpecie_; i++)
+            for (label i = 0; i < nSpecie_; i++)
             {
-                scalar Yi = Y_[i][celli];
+                scalar Yi = Y_[i][cellI];
                 c[i] = rhoi*Yi/specieThermo_[i].W();
                 cSum += c[i];
             }
 
-            forAll(reactions_, i)
+            forAll (reactions_, i)
             {
                 const Reaction<ThermoType>& R = reactions_[i];
 
@@ -515,13 +502,14 @@ Foam::ODEChemistryModel<CompType, ThermoType>::tc() const
                     R, c, Ti, pi, pf, cf, lRef, pr, cr, rRef
                 );
 
-                forAll(R.rhs(), s)
+                forAll (R.rhs(), s)
                 {
                     scalar sr = R.rhs()[s].stoichCoeff;
-                    tc[celli] += sr*pf*cf;
+                    tc[cellI] += sr*pf*cf;
                 }
             }
-            tc[celli] = nReaction*cSum/tc[celli];
+
+            tc[cellI] = nReaction*cSum/tc[cellI];
         }
     }
 
@@ -559,9 +547,9 @@ Foam::ODEChemistryModel<CompType, ThermoType>::Sh() const
     {
         scalarField& Sh = tSh();
 
-        forAll(Y_, i)
+        forAll (Y_, i)
         {
-            forAll(Sh, cellI)
+            forAll (Sh, cellI)
             {
                 scalar hi = specieThermo_[i].Hc();
                 Sh[cellI] -= hi*RR_[i][cellI];
@@ -631,38 +619,38 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::calculate()
         this->thermo().rho()
     );
 
-    for (label i=0; i<nSpecie_; i++)
+    for (label i = 0; i < nSpecie_; i++)
     {
         RR_[i].setSize(rho.size());
     }
 
     if (this->chemistry_)
     {
-        forAll(rho, celli)
+        forAll (rho, cellI)
         {
-            for (label i=0; i<nSpecie_; i++)
+            for (label i = 0; i < nSpecie_; i++)
             {
-                RR_[i][celli] = 0.0;
+                RR_[i][cellI] = 0.0;
             }
 
-            scalar rhoi = rho[celli];
-            scalar Ti = this->thermo().T()[celli];
-            scalar pi = this->thermo().p()[celli];
+            scalar rhoi = rho[cellI];
+            scalar Ti = this->thermo().T()[cellI];
+            scalar pi = this->thermo().p()[cellI];
 
             scalarField c(nSpecie_);
             scalarField dcdt(nEqns(), 0.0);
 
-            for (label i=0; i<nSpecie_; i++)
+            for (label i = 0; i < nSpecie_; i++)
             {
-                scalar Yi = Y_[i][celli];
+                scalar Yi = Y_[i][cellI];
                 c[i] = rhoi*Yi/specieThermo_[i].W();
             }
 
             dcdt = omega(c, Ti, pi);
 
-            for (label i=0; i<nSpecie_; i++)
+            for (label i = 0; i < nSpecie_; i++)
             {
-                RR_[i][celli] = dcdt[i]*specieThermo_[i].W();
+                RR_[i][cellI] = dcdt[i]*specieThermo_[i].W();
             }
         }
     }
@@ -705,17 +693,17 @@ Foam::scalar Foam::ODEChemistryModel<CompType, ThermoType>::solve
     tmp<volScalarField> thc = this->thermo().hc();
     const scalarField& hc = thc();
 
-    forAll(rho, celli)
+    forAll (rho, cellI)
     {
-        for (label i=0; i<nSpecie_; i++)
+        for (label i = 0; i < nSpecie_; i++)
         {
-            RR_[i][celli] = 0.0;
+            RR_[i][cellI] = 0.0;
         }
 
-        scalar rhoi = rho[celli];
-        scalar Ti = this->thermo().T()[celli];
-        scalar hi = this->thermo().hs()[celli] + hc[celli];
-        scalar pi = this->thermo().p()[celli];
+        scalar rhoi = rho[cellI];
+        scalar Ti = this->thermo().T()[cellI];
+        scalar hi = this->thermo().hs()[cellI] + hc[cellI];
+        scalar pi = this->thermo().p()[cellI];
 
         scalarField c(nSpecie_);
         scalarField c0(nSpecie_);
@@ -723,12 +711,12 @@ Foam::scalar Foam::ODEChemistryModel<CompType, ThermoType>::solve
 
         for (label i = 0; i < nSpecie_; i++)
         {
-            c[i] = rhoi*Y_[i][celli]/specieThermo_[i].W();
+            c[i] = rhoi*Y_[i][cellI]/specieThermo_[i].W();
         }
         c0 = c;
 
         scalar t = t0;
-        scalar tauC = this->deltaTChem_[celli];
+        scalar tauC = this->deltaTChem_[cellI];
         scalar dt = min(deltaT, tauC);
         scalar timeLeft = deltaT;
 
@@ -743,30 +731,25 @@ Foam::scalar Foam::ODEChemistryModel<CompType, ThermoType>::solve
             // update the temperature
             cTot = sum(c);
             ThermoType mixture(0.0*specieThermo_[0]);
-            for (label i=0; i<nSpecie_; i++)
+            for (label i = 0; i < nSpecie_; i++)
             {
                 mixture += (c[i]/cTot)*specieThermo_[i];
             }
             Ti = mixture.TH(hi, Ti);
 
             timeLeft -= dt;
-            this->deltaTChem_[celli] = tauC;
+            this->deltaTChem_[cellI] = tauC;
             dt = min(timeLeft, tauC);
             dt = max(dt, SMALL);
         }
         deltaTMin = min(tauC, deltaTMin);
 
+        // Calculate change in c
         dc = c - c0;
-        scalar WTot = 0.0;
-        for (label i=0; i<nSpecie_; i++)
-        {
-            WTot += c[i]*specieThermo_[i].W();
-        }
-        WTot /= cTot;
 
-        for (label i=0; i<nSpecie_; i++)
+        for (label i = 0; i < nSpecie_; i++)
         {
-            RR_[i][celli] = dc[i]*specieThermo_[i].W()/deltaT;
+            RR_[i][cellI] = dc[i]*specieThermo_[i].W()/deltaT;
         }
     }
 

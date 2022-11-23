@@ -60,11 +60,11 @@ class rhoChemistryModel
 {
     // Private Member Functions
 
-        //- Construct as copy (not implemented)
-        rhoChemistryModel(const rhoChemistryModel&);
+        //- Disallow construct as copy
+        rhoChemistryModel(const rhoChemistryModel&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const rhoChemistryModel&);
+        void operator=(const rhoChemistryModel&) = delete;
 
 
 protected:
@@ -118,7 +118,7 @@ public:
 
 
     //- Destructor
-    virtual ~rhoChemistryModel();
+    virtual ~rhoChemistryModel() = default;
 
 
     // Member Functions

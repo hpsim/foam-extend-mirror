@@ -42,19 +42,12 @@ Foam::sequential<CompType, ThermoType>::sequential
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class CompType, class ThermoType>
-Foam::sequential<CompType, ThermoType>::~sequential()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class CompType, class ThermoType>
 Foam::scalar Foam::sequential<CompType, ThermoType>::solve
 (
-    scalarField &c,
+    scalarField& c,
     const scalar T,
     const scalar p,
     const scalar t0,

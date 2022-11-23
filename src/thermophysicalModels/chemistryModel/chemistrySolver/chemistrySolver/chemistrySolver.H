@@ -108,7 +108,7 @@ public:
 
 
     //- Destructor
-    virtual ~chemistrySolver();
+    virtual ~chemistrySolver() = default;
 
 
     // Member Functions

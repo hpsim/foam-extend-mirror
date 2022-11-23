@@ -59,11 +59,11 @@ class basicChemistryModel
 {
     // Private Member Functions
 
-        //- Construct as copy (not implemented)
-        basicChemistryModel(const basicChemistryModel&);
+        //- Disallow construct as copy
+        basicChemistryModel(const basicChemistryModel&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const basicChemistryModel&);
+        void operator=(const basicChemistryModel&) = delete;
 
 
 protected:
@@ -102,7 +102,7 @@ public:
 
 
     //- Destructor
-    virtual ~basicChemistryModel();
+    virtual ~basicChemistryModel() = default;
 
 
     // Member Functions
@@ -117,15 +117,18 @@ public:
         inline const scalarField& deltaTChem() const;
 
 
-        // Functions to be derived in derived classes
+        // Virtual functions for chemistry
 
             // Fields
 
-                //- Return const access to chemical source terms
+                //- Return chemical source terms
                 virtual tmp<volScalarField> RR(const label i) const = 0;
 
 
             // Chemistry solution
+
+                //- Calculate the reaction rates
+                virtual void calculate() = 0;
 
                 //- Solve the reaction system for the given start time and
                 //  timestep and return the characteristic time
@@ -137,7 +140,7 @@ public:
                 //- Return source for enthalpy equation [kg/m/s3]
                 virtual tmp<volScalarField> Sh() const = 0;
 
-                //- Return the heat release, i.e. enthalpy/sec [m2/s3]
+                //- Return heat release, i.e. enthalpy/sec [m2/s3]
                 virtual tmp<volScalarField> dQ() const = 0;
 };
 

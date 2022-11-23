@@ -49,10 +49,4 @@ Foam::rhoChemistryModel::rhoChemistryModel
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::rhoChemistryModel::~rhoChemistryModel()
-{}
-
-
 // ************************************************************************* //

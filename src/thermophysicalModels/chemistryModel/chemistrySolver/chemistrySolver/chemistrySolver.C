@@ -42,13 +42,6 @@ Foam::chemistrySolver<CompType, ThermoType>::chemistrySolver
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class CompType, class ThermoType>
-Foam::chemistrySolver<CompType, ThermoType>::~chemistrySolver()
-{}
-
-
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 } // End namespace Foam

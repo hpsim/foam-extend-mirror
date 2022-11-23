@@ -61,10 +61,10 @@ class psiChemistryModel
     // Private Member Functions
 
         //- Construct as copy (not implemented)
-        psiChemistryModel(const psiChemistryModel&);
+        psiChemistryModel(const psiChemistryModel&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const psiChemistryModel&);
+        void operator=(const psiChemistryModel&) = delete;
 
 
 protected:
@@ -118,7 +118,7 @@ public:
 
 
     //- Destructor
-    virtual ~psiChemistryModel();
+    virtual ~psiChemistryModel() = default;
 
 
     // Member Functions
