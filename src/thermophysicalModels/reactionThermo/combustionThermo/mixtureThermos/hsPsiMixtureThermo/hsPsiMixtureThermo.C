@@ -324,6 +324,69 @@ Foam::hsPsiMixtureThermo<MixtureType>::Cp() const
 
 
 template<class MixtureType>
+Foam::tmp<Foam::scalarField>
+Foam::hsPsiMixtureThermo<MixtureType>::Cv
+(
+    const scalarField& T,
+    const label patchi
+) const
+{
+    tmp<scalarField> tCv(new scalarField(T.size()));
+
+    scalarField& cp = tCv();
+
+    forAll(T, facei)
+    {
+        cp[facei] = this->patchFaceMixture(patchi, facei).Cv(T[facei]);
+    }
+
+    return tCv;
+}
+
+
+template<class MixtureType>
+Foam::tmp<Foam::volScalarField>
+Foam::hsPsiMixtureThermo<MixtureType>::Cv() const
+{
+    const fvMesh& mesh = T_.mesh();
+
+    tmp<volScalarField> tCv
+    (
+        new volScalarField
+        (
+            IOobject
+            (
+                "Cv",
+                mesh.time().timeName(),
+                this->T_.db(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh,
+            dimEnergy/dimMass/dimTemperature
+        )
+    );
+
+    volScalarField& cp = tCv();
+
+    scalarField& cpCells = cp.internalField();
+    const scalarField& TCells = T_.internalField();
+
+    forAll(TCells, celli)
+    {
+        cpCells[celli] = this->cellMixture(celli).Cv(TCells[celli]);
+    }
+
+    forAll(T_.boundaryField(), patchi)
+    {
+        cp.boundaryField()[patchi] = Cv(T_.boundaryField()[patchi], patchi);
+    }
+
+    return tCv;
+}
+
+
+template<class MixtureType>
 bool Foam::hsPsiMixtureThermo<MixtureType>::read()
 {
     if (hsCombustionThermo::read())
