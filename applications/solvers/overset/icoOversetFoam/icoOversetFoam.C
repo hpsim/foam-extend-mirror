@@ -129,9 +129,6 @@ int main(int argc, char *argv[])
             // Note: if implicit fringe is switched on, we are doing the
             // interpolation twice (once in correctBoundaryConditions and once
             // in oversetInterpolate). Reorganize. VV, 4/Oct/2016.
-
-            // Make the fluxes relative to the mesh motion
-            fvc::makeRelative(phi, U);
         }
 
         runTime.write();
