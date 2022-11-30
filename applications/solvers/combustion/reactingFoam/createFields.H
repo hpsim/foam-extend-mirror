@@ -85,7 +85,7 @@ forAll(Y, i)
 }
 fields.add(hs);
 
-DimensionedField<scalar, volMesh> chemistrySh
+volScalarField chemistrySh
 (
     IOobject
     (

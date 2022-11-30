@@ -92,9 +92,9 @@
         mesh
     );
 
-    #include "compressibleCreatePhi.H"
+#   include "compressibleCreatePhi.H"
 
-    DimensionedField<scalar, volMesh> kappa
+    volScalarField kappa
     (
         IOobject
         (
@@ -127,7 +127,7 @@
         fvc::DDt(surfaceScalarField("phiU", phi/fvc::interpolate(rho)), p)
     );
 
-    DimensionedField<scalar, volMesh> chemistrySh
+    volScalarField chemistrySh
     (
         IOobject
         (
@@ -135,7 +135,7 @@
             runTime.timeName(),
             mesh,
             IOobject::NO_READ,
-            IOobject::NO_WRITE
+            IOobject::AUTO_WRITE
         ),
         mesh,
         dimensionedScalar("chemistrySh", dimEnergy/dimTime/dimVolume, 0.0)

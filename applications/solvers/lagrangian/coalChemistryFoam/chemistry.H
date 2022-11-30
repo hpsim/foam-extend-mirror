@@ -10,18 +10,19 @@
     // turbulent time scale
     if (turbulentReaction)
     {
-        DimensionedField<scalar, volMesh> tk =
+        volScalarField tk =
             Cmix*sqrt(turbulence->muEff()/rho/turbulence->epsilon());
-        DimensionedField<scalar, volMesh> tc =
-            chemistry.tc()().dimensionedInternalField();
+
+        volScalarField tc = chemistry.tc();
 
         // Chalmers PaSR model
-        kappa = (runTime.deltaT() + tc)/(runTime.deltaT() + tc + tk);
+        kappa.dimensionedInternalField() =
+            (runTime.deltaT() + tc)/(runTime.deltaT() + tc + tk);
     }
     else
     {
         kappa = 1.0;
     }
 
-    chemistrySh = kappa*chemistry.Sh()();
+    chemistrySh = kappa*chemistry.Sh();
 }
