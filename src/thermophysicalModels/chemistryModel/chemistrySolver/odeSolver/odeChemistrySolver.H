@@ -48,7 +48,7 @@ template<class CompType, class ThermoType>
 class ode;
 
 /*---------------------------------------------------------------------------*\
-                            Class ode Declaration
+                      Class odeChemistrySolver Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class CompType, class ThermoType>
@@ -58,9 +58,15 @@ class ode
 {
     // Private data
 
+        //- Coefficients dictionary
         dictionary coeffsDict_;
+
+        //- Solver name
         const word solverName_;
+
+        //- ODE solver
         autoPtr<ODESolver> odeSolver_;
+
 
         // Model constants
 

@@ -60,12 +60,14 @@ Foam::scalar Foam::ode<CompType, ThermoType>::solve
     scalarField& c1 = this->model_.coeffs();
 
     // copy the concentration, T and P to the total solve-vector
-    for (label i=0; i<nSpecie; i++)
+    for (label i = 0; i < nSpecie; i++)
     {
         c1[i] = c[i];
     }
+
+    // Add temperature and pressure entry
     c1[nSpecie] = T;
-    c1[nSpecie+1] = p;
+    c1[nSpecie + 1] = p;
 
     scalar dtEst = dt;
 
@@ -77,11 +79,13 @@ Foam::scalar Foam::ode<CompType, ThermoType>::solve
         dtEst
     );
 
-    for (label i=0; i<c.size(); i++)
+    // Limit concentration
+    for (label i = 0; i < c.size(); i++)
     {
         c[i] = max(0.0, c1[i]);
     }
 
+    // Return the time-step used by the solver for future use
     return dtEst;
 }
 
