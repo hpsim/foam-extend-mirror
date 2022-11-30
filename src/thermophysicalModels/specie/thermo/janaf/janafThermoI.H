@@ -57,14 +57,13 @@ inline void Foam::janafThermo<equationOfState>::checkT(scalar& T) const
 {
     if (T <  Tlow_ || T > Thigh_)
     {
-        // Improvements: graceful exit with recovery.  HJ, 11/Oct/2010
-        InfoIn
-        (
-            "janafThermo<equationOfState>::checkT(scalar& T) const"
-        )   << "attempt to use janafThermo<equationOfState>"
-               " out of temperature range "
-            << Tlow_ << " -> " << Thigh_ << ";  T = " << T
-            << endl;
+        // InfoIn
+        // (
+        //     "janafThermo<equationOfState>::checkT(scalar& T) const"
+        // )   << "attempt to use janafThermo<equationOfState>"
+        //        " out of temperature range "
+        //     << Tlow_ << " -> " << Thigh_ << ";  T = " << T
+        //     << endl;
 
         // Bracket T to avoid out-of-range error
         T = Foam::min(Thigh_, Foam::max(T, Tlow_));
@@ -117,6 +116,29 @@ inline Foam::janafThermo<equationOfState>::janafThermo
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+template<class equationOfState>
+inline Foam::scalar Foam::janafThermo<equationOfState>::limit
+(
+    const scalar T
+) const
+{
+    if (T < Tlow_ || T > Thigh_)
+    {
+        WarningInFunction
+            << "attempt to use janafThermo<EquationOfState>"
+               " out of temperature range "
+            << Tlow_ << " -> " << Thigh_ << ";  T = " << T
+            << endl;
+
+        return min(max(T, Tlow_), Thigh_);
+    }
+    else
+    {
+        return T;
+    }
+}
+
 
 template<class equationOfState>
 inline Foam::scalar Foam::janafThermo<equationOfState>::cp

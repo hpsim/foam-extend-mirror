@@ -129,7 +129,11 @@ public:
 
     // Member Functions
 
-        // Fundamaental properties
+        //- Limit the temperature to be in range
+        inline scalar limit(const scalar T) const;
+
+
+        // Fundamental properties
 
             //- Heat capacity at constant pressure [J/(kmol K)]
             inline scalar cp(const scalar T) const;

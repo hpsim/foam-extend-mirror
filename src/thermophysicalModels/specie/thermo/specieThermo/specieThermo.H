@@ -110,12 +110,14 @@ class specieThermo
 
         //- Return the temperature corresponding to the value of the
         //  thermodynamic property f, given the function f = F(T) and dF(T)/dT
+        //  and a T range limiter
         inline scalar T
         (
             scalar f,
             scalar T0,
             scalar (specieThermo::*F)(const scalar) const,
-            scalar (specieThermo::*dFdT)(const scalar) const
+            scalar (specieThermo::*dFdT)(const scalar) const,
+            scalar (specieThermo<thermo>::*limit)(const scalar) const
         ) const;
 
 

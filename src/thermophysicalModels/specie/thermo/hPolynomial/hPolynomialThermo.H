@@ -147,20 +147,26 @@ public:
 
     // Member Functions
 
-        //- Heat capacity at constant pressure [J/(kmol K)]
-        inline scalar cp(const scalar T) const;
+        //- Limit the temperature to be in range
+        inline scalar limit(const scalar T) const;
 
-        //- Enthalpy [J/kmol]
-        inline scalar h(const scalar T) const;
 
-        //- Sensible enthalpy [J/kmol]
-        inline scalar hs(const scalar T) const;
+        // Fundamental properties
 
-        //- Chemical enthalpy [J/kmol]
-        inline scalar hc() const;
+            //- Heat capacity at constant pressure [J/(kmol K)]
+            inline scalar cp(const scalar T) const;
 
-        //- Entropy [J/(kmol K)]
-        inline scalar s(const scalar T) const;
+            //- Enthalpy [J/kmol]
+            inline scalar h(const scalar T) const;
+
+            //- Sensible enthalpy [J/kmol]
+            inline scalar hs(const scalar T) const;
+
+            //- Chemical enthalpy [J/kmol]
+            inline scalar hc() const;
+
+            //- Entropy [J/(kmol K)]
+            inline scalar s(const scalar T) const;
 
 
     // Member operators

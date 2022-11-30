@@ -43,12 +43,13 @@ inline Foam::scalar Foam::specieThermo<thermo>::T
     scalar f,
     scalar T0,
     scalar (specieThermo<thermo>::*F)(const scalar) const,
-    scalar (specieThermo<thermo>::*dFdT)(const scalar) const
+    scalar (specieThermo<thermo>::*dFdT)(const scalar) const,
+    scalar (specieThermo<thermo>::*limit)(const scalar) const
 ) const
 {
-    scalar Test = T0;
-    scalar Tnew = T0;
-    scalar Ttol = T0*tol_();
+    scalar Test = (this->*limit)(T0);
+    scalar Tnew = Test;
+    scalar Ttol = Test*tol_();
     int iter = 0;
 
     do
@@ -57,25 +58,25 @@ inline Foam::scalar Foam::specieThermo<thermo>::T
         // HJ, 12/Oct/2010
 
         Test = Tnew;
-        Tnew = Test
-            - Foam::min(((this->*F)(Test) - f)/(this->*dFdT)(Test), TJump_());
+        Tnew =
+            (this->*limit)
+            (
+                Test
+              - Foam::min(((this->*F)(Test) - f)/(this->*dFdT)(Test), TJump_())
+            );
 
         if (iter++ > maxIter_())
         {
             // Improvements: graceful exit with recovery.  HJ, 11/Oct/2010
-            InfoIn
-            (
-                "specieThermo<thermo>::T(scalar f, scalar T0, "
-                "scalar (specieThermo<thermo>::*F)(const scalar) const, "
-                "scalar (specieThermo<thermo>::*dFdT)(const scalar) const"
-                ") const"
-            )   << "Maximum number of iterations exceeded.  T0 = "
+            InfoInFunction
+                << "Maximum number of iterations exceeded.  T0 = "
                 << T0 << " F = " << (this->*F)(Test)
                 << " dFdT = " << (this->*dFdT)(Test)
+                << " Tnew = " << Tnew
                 << endl;
 
             // Use value where dFdT is calculated using T0.  HJ, 11/Oct/2010
-            Tnew = f/(this->*dFdT)(T0);
+            Tnew = (this->*limit)(f/(this->*dFdT)(T0));
 
             return Tnew;
         }
@@ -288,7 +289,14 @@ inline Foam::scalar Foam::specieThermo<thermo>::TH
     const scalar T0
 ) const
 {
-    return T(h, T0, &specieThermo<thermo>::H, &specieThermo<thermo>::Cp);
+    return T
+    (
+        h,
+        T0,
+        &specieThermo<thermo>::H,
+        &specieThermo<thermo>::Cp,
+        &specieThermo<thermo>::limit
+    );
 }
 
 
@@ -299,7 +307,14 @@ inline Foam::scalar Foam::specieThermo<thermo>::THs
     const scalar T0
 ) const
 {
-    return T(hs, T0, &specieThermo<thermo>::Hs, &specieThermo<thermo>::Cp);
+    return T
+    (
+        hs,
+        T0,
+        &specieThermo<thermo>::Hs,
+        &specieThermo<thermo>::Cp,
+        &specieThermo<thermo>::limit
+    );
 }
 
 
@@ -310,7 +325,14 @@ inline Foam::scalar Foam::specieThermo<thermo>::TE
     const scalar T0
 ) const
 {
-    return T(e, T0, &specieThermo<thermo>::E, &specieThermo<thermo>::Cv);
+    return T
+    (
+        e,
+        T0,
+        &specieThermo<thermo>::E,
+        &specieThermo<thermo>::Cv,
+        &specieThermo<thermo>::limit
+    );
 }
 
 

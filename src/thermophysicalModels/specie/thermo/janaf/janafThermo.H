@@ -145,6 +145,9 @@ public:
 
     // Member Functions
 
+        //- Limit the temperature to be in the range Tlow_ to Thigh_
+        inline scalar limit(const scalar T) const;
+
         //- Heat capacity at constant pressure [J/(kmol K)]
         //  Note: bounding T within range.  HJ, 12/Oct/2010
         inline scalar cp(scalar T) const;

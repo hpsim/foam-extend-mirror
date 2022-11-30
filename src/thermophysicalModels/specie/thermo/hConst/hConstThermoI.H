@@ -79,6 +79,16 @@ Foam::hConstThermo<equationOfState>::New(Istream& is)
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class equationOfState>
+inline Foam::scalar Foam::hConstThermo<equationOfState>::limit
+(
+    const scalar T
+) const
+{
+    return Foam::max(T, SMALL);
+}
+
+
+template<class equationOfState>
 inline Foam::scalar Foam::hConstThermo<equationOfState>::cp
 (
     const scalar
