@@ -259,10 +259,10 @@ protected:
 
 
         //- Disallow default bitwise copy construct
-        fieldAverage(const fieldAverage&);
+        fieldAverage(const fieldAverage&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const fieldAverage&);
+        void operator=(const fieldAverage&) = delete;
 
 
 public:
@@ -285,7 +285,7 @@ public:
 
 
     //- Destructor
-    virtual ~fieldAverage();
+    virtual ~fieldAverage() = default;
 
 
     // Member Functions

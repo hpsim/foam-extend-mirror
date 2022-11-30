@@ -89,13 +89,13 @@ void Foam::fieldAverage::initialize()
     {
         if (!faItems_[fieldI].active())
         {
-            WarningIn("void Foam::fieldAverage::initialize()")
+            WarningInFunction
                 << "Field " << faItems_[fieldI].fieldName()
                 << " not found in database for averaging";
         }
     }
 
-    // ensure first averaging works unconditionally
+    // Ensure first averaging works unconditionally
     prevTimeIndex_ = -1;
 
     Info<< endl;
@@ -111,8 +111,7 @@ void Foam::fieldAverage::calcAverages()
         initialize();
     }
 
-    const label currentTimeIndex =
-        static_cast<const fvMesh&>(obr_).time().timeIndex();
+    const label currentTimeIndex = obr_.time().timeIndex();
 
     if (prevTimeIndex_ == currentTimeIndex)
     {
@@ -270,25 +269,12 @@ Foam::fieldAverage::fieldAverage
     else
     {
         active_ = false;
-        WarningIn
-        (
-            "fieldAverage::fieldAverage"
-            "("
-                "const word&, "
-                "const objectRegistry&, "
-                "const dictionary&, "
-                "const bool "
-            ")"
-        )   << "No fvMesh available, deactivating " << name_ << nl
+
+        WarningInFunction
+            << "No fvMesh available, deactivating " << name_ << nl
             << endl;
     }
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::fieldAverage::~fieldAverage()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
