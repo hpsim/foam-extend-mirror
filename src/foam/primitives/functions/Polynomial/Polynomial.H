@@ -167,8 +167,8 @@ public:
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 #ifdef NoRepository
-    #include "Polynomial.C"
-    #include "PolynomialIO.C"
+#   include "Polynomial.C"
+#   include "PolynomialIO.C"
 #endif
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
