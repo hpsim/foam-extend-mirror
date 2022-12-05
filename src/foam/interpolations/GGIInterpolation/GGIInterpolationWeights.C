@@ -97,21 +97,15 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
      || slaveFaceUncoveredFractionsPtr_
     )
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "calcAddressing() const"
-        )   << "Addressing already calculated"
+        FatalErrorInFunction
+            << "Addressing already calculated"
             << abort(FatalError);
     }
 
     if (debug)
     {
-        InfoIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "calcAddressing() const"
-        )   << "Evaluation of GGI weighting factors:" << endl;
+        InfoInFunction
+            << "Evaluation of GGI weighting factors:" << endl;
     }
 
     // Create the dynamic lists to hold the addressing
@@ -149,11 +143,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
     }
     else
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "calcAddressing() const"
-        )   << "Unknown search"
+        FatalErrorInFunction
+            << "Unknown search"
             << abort(FatalError);
     }
 
@@ -298,11 +289,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
 
 #ifdef FULLDEBUG
             // Just generate a warning until we can verify this is a non issue
-            InfoIn
-            (
-                "void GGIInterpolation<MasterPatch, SlavePatch>::"
-                "calcAddressing()"
-            )   << "The master projected polygon was CW instead of CCW.  "
+            InfoInFunction
+                << "The master projected polygon was CW instead of CCW.  "
                 << "This is strange..."  << endl;
 #endif
         }
@@ -482,11 +470,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
                 }
                 else
                 {
-//                     WarningIn
-//                     (
-//                         "GGIInterpolation<MasterPatch, SlavePatch>::"
-//                         "calcAddressing()"
-//                     )   << "polygonIntersection is returning a "
+//                     WarningInFunction
+//                         << "polygonIntersection is returning a "
 //                         << "zero surface area between " << nl
 //                         << "     Master face: " << faceMi
 //                         << " and Neighbour face: " << curCMN[neighbI]
@@ -639,9 +624,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
         false // This is not master
     );
 
-
     // Rescaling the weighting factors so they will sum up to 1.0
-    // See the comment for the method ::rescaleWeightingFactors() for
+    // See the comment for the method ::rescaleGGIWeightingFactors() for
     // more information.  By default, we always rescale.  But for some
     // special kind of GGI interpolation, like the mixingPlaneGGI,
     // then we need the brute values, so no rescaling in that
@@ -651,7 +635,7 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
     // partially overlapping faces for their correct treatment. VV, 16/Oct/2017.
     if (rescaleGGIWeightingFactors_)
     {
-        rescaleWeightingFactors();
+        rescaleGGIWeightingFactors();
     }
 }
 
@@ -678,10 +662,11 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
 // decent strategy in order to intelligently take care of these
 // "missing weights"
 //
-// The purpose of the ::rescaleWeightingFactors() method is mainly for
+// The purpose of the ::rescaleGGIWeightingFactors() method is mainly for
 // this.
 template<class MasterPatch, class SlavePatch>
-void GGIInterpolation<MasterPatch, SlavePatch>::rescaleWeightingFactors() const
+void
+GGIInterpolation<MasterPatch, SlavePatch>::rescaleGGIWeightingFactors() const
 {
     scalarListList& maW = *masterWeightsPtr_;
     scalarListList& saW = *slaveWeightsPtr_;
@@ -699,11 +684,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::rescaleWeightingFactors() const
     // Note: do not rescale weighting factors for partially covered faces
     if (!partiallyUncoveredMasterAddrPtr_ || !partiallyUncoveredSlaveAddrPtr_)
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "rescaleWeightingFactors() const"
-        )   << "Master or slave partially covered faces are not calculated."
+        FatalErrorInFunction
+            << "Master or slave partially covered faces are not calculated."
             << abort(FatalError);
     }
 
@@ -716,14 +698,19 @@ void GGIInterpolation<MasterPatch, SlavePatch>::rescaleWeightingFactors() const
     boolList masterPCMask(maW.size(), false);
     boolList slavePCMask(saW.size(), false);
 
-    forAll (partiallyUncoveredMasterFaces, pfmI)
-    {
-        masterPCMask[partiallyUncoveredMasterFaces[pfmI]] = true;
-    }
-    forAll (partiallyUncoveredSlaveFaces, pfsI)
-    {
-        slavePCMask[partiallyUncoveredSlaveFaces[pfsI]] = true;
-    }
+
+    //HJ, TEMPORARY: scale partially covered faces to see if it works.
+    // HJ, 4/Dec/2022
+    
+    // forAll (partiallyUncoveredMasterFaces, pfmI)
+    // {
+    //     masterPCMask[partiallyUncoveredMasterFaces[pfmI]] = true;
+    // }
+
+    // forAll (partiallyUncoveredSlaveFaces, pfsI)
+    // {
+    //     slavePCMask[partiallyUncoveredSlaveFaces[pfsI]] = true;
+    // }
 
     // Rescaling the slave weights
     if (debug)
@@ -734,11 +721,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::rescaleWeightingFactors() const
          || uncoveredSlaveFaces().size() > 0
         )
         {
-            InfoIn
-            (
-                "void GGIInterpolation<MasterPatch, SlavePatch>::"
-                "rescaleWeightingFactors() const"
-            )   << "Uncovered faces found.  On master: "
+            InfoInFunction
+                << "Uncovered faces found.  On master: "
                 << uncoveredMasterFaces().size()
                 << " on slave: " << uncoveredSlaveFaces().size() << endl;
         }
@@ -781,7 +765,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::rescaleWeightingFactors() const
     {
         if (saW.size() > 0 && maW.size() > 0)
         {
-            Info<< "  Largest slave weighting factor correction : "
+            InfoInFunction
+                << "Largest slave weighting factor correction : "
                 << largestSWC
                 << " average: " << sumSWC/saW.size() << nl
                 << "  Largest master weighting factor correction: "
@@ -828,9 +813,10 @@ GGIInterpolation<MasterPatch, SlavePatch>::findNonOverlappingFaces
 
     if (debug)
     {
-        InfoIn("GGIInterpolation::findNonOverlappingFaces")
-            << "   : Found " << patchFaceNonOverlapAddr.size()
-            << " non-overlapping faces for this GGI patch" << endl;
+        InfoInFunction
+            << "Found " << patchFaceNonOverlapAddr.size()
+            << " non-overlapping faces for this GGI patch"
+            << endl;
     }
 
     return tpatchFaceNonOverlapAddr;
@@ -852,11 +838,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcPartiallyCoveredFaces
      && (partiallyUncoveredMasterAddrPtr_ || masterFaceUncoveredFractionsPtr_)
     )
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "calcPartiallyCoveredFaces() const"
-        )   << "Already calculated master partially covered faces"
+        FatalErrorInFunction
+            << "Already calculated master partially covered faces"
             << abort(FatalError);
     }
 
@@ -866,11 +849,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcPartiallyCoveredFaces
      && (partiallyUncoveredSlaveAddrPtr_ || slaveFaceUncoveredFractionsPtr_)
     )
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "calcPartiallyCoveredFaces() const"
-        )   << "Already calculated slave partially covered faces"
+        FatalErrorInFunction
+            << "Already calculated slave partially covered faces"
             << abort(FatalError);
     }
 
@@ -908,8 +888,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcPartiallyCoveredFaces
 
         if (debug)
         {
-            InfoIn("GGIInterpolation::calcPartiallyCoveredFaces")
-                << "   : Found " << partiallyUncoveredMasterAddrPtr_->size()
+            InfoInFunction
+                << "Found " << partiallyUncoveredMasterAddrPtr_->size()
                 << " partially overlapping faces for master GGI patch" << endl;
 
             if (partiallyUncoveredMasterAddrPtr_->size())
@@ -932,7 +912,7 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcPartiallyCoveredFaces
 
         if (debug)
         {
-            InfoIn("GGIInterpolation::calcPartiallyCoveredFaces")
+            InfoInFunction
                 << "   : Found " << partiallyUncoveredSlaveAddrPtr_->size()
                 << " partially overlapping faces for slave GGI patch" << endl;
 
@@ -953,16 +933,10 @@ template<class FromPatch, class ToPatch>
 void GGIInterpolation<FromPatch, ToPatch>::
 calcMasterPointAddressing() const
 {
-    Info << "calcMasterPointAddressing() const" << endl;
-
     // Find master points addressing
     if (masterPointAddressingPtr_)
     {
-        FatalErrorIn
-        (
-            "void ExtendedGGIInterpolation::"
-            "calcMasterPointAddressing() const"
-        )
+        FatalErrorInFunction
             << "Master points addressing already exists"
                 << abort(FatalError);
     }
@@ -1072,7 +1046,8 @@ calcMasterPointAddressing() const
         masterPointDist[pointI] = distance;
     }
 
-    Info << "Extended GGI, master point distance, max: "
+    InfoInFunction
+        << "Extended GGI, master point distance, max: "
         << max(masterPointDist)
         << ", avg: " << average(masterPointDist)
         << ", min: " << min(masterPointDist) << endl;
@@ -1103,12 +1078,8 @@ calcMasterPointAddressing() const
             nIncorrectPoints++;
         }
     }
-
-//     Info << "Extended GGI, master point orientation (<0), max: "
-//         << max(orientation)
-//         << ", min: " << min(orientation) << ", nIncorrectPoints: "
-//         << nIncorrectPoints << "/" << masterPointAddr.size() << endl;
 }
+
 
 template<class FromPatch, class ToPatch>
 void GGIInterpolation<FromPatch, ToPatch>::
@@ -1117,11 +1088,7 @@ calcMasterPointWeights() const
     // Find master point weights
     if (masterPointWeightsPtr_)
     {
-        FatalErrorIn
-        (
-            "void ExtendedGGIInterpolation::"
-            "calcMasterPointAddressing() const"
-        )
+        FatalErrorInFunction
             << "Master point weights already exist"
                 << abort(FatalError);
     }
@@ -1176,20 +1143,15 @@ calcMasterPointWeights() const
     }
 }
 
+
 template<class FromPatch, class ToPatch>
 void GGIInterpolation<FromPatch, ToPatch>::
 calcSlavePointAddressing() const
 {
-    Info << "calcSlavePointAddressing() const" << endl;
-
     // Find master points addressing
     if (slavePointAddressingPtr_)
     {
-        FatalErrorIn
-        (
-            "void ExtendedGGIInterpolation::"
-            "calcSlavePointAddressing() const"
-        )
+        FatalErrorInFunction
             << "Slave points addressing already exists"
                 << abort(FatalError);
     }
@@ -1295,16 +1257,12 @@ calcSlavePointAddressing() const
             }
         }
 
-//         Info << "MinEta " << MinEta << endl;
-
         slavePointAddr[pointI] = faceTriangle;
         slavePointDist[pointI] = distance;
-
-//         Info << "slave " << pointI << ", "
-//             << slavePointAddr[pointI] << endl;
     }
 
-    Info << "Extended GGI, slave point distance, max: "
+    InfoInFunction
+        << "Extended GGI, slave point distance, max: "
         << max(slavePointDist)
         << ", avg: " << average(slavePointDist)
         << ", min: " << min(slavePointDist) << endl;
@@ -1338,7 +1296,8 @@ calcSlavePointAddressing() const
         }
     }
 
-    Info << "Extended GGI, slave point orientation (<0), max: "
+    InfoInFunction
+        << "Extended GGI, slave point orientation (<0), max: "
         << max(orientation)
         << ", min: " << min(orientation) << ", nIncorrectPoints: "
         << nIncorrectPoints << "/" << slavePointAddr.size() << endl;
@@ -1351,13 +1310,9 @@ calcSlavePointWeights() const
     // Find master point weights
     if (slavePointWeightsPtr_)
     {
-        FatalErrorIn
-        (
-            "void ExtendedGGIInterpolation::"
-            "calcSlavePointAddressing() const"
-        )
+        FatalErrorInFunction
             << "Slave point weights already exist"
-                << abort(FatalError);
+            << abort(FatalError);
     }
 
     slavePointWeightsPtr_ =

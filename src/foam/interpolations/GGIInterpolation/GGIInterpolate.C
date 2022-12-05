@@ -310,10 +310,8 @@ GGIInterpolation<MasterPatch, SlavePatch>::masterToSlave
 {
     if (ff.size() != masterPatch_.size())
     {
-        FatalErrorIn
-        (
-            "GGIInterpolation::masterToSlave(const Field<Type> ff)"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch size: "
             << masterPatch_.size() << " field size: " << ff.size()
             << abort(FatalError);
     }
@@ -394,30 +392,16 @@ void GGIInterpolation<MasterPatch, SlavePatch>::maskedMasterToSlave
 {
     if (ff.size() != masterPatch_.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation::maskedMasterToSlave\n"
-            "(\n"
-            "    const Field<Type>& ff,\n"
-            "    Field<Type>& result,\n"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch size: "
             << masterPatch_.size() << " field size: " << ff.size()
             << abort(FatalError);
     }
 
     if (result.size() != mask.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation::maskedMasterToSlave\n"
-            "(\n"
-            "    const Field<Type>& ff,\n"
-            "    Field<Type>& result,\n"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "result field does not correspond to mask. Field size: "
+        FatalErrorInFunction
+            << "Result field does not correspond to mask. Field size: "
             << result.size() << " mask size: " << mask.size()
             << abort(FatalError);
     }
@@ -481,11 +465,8 @@ GGIInterpolation<MasterPatch, SlavePatch>::slaveToMaster
 {
     if (ff.size() != slavePatch_.size())
     {
-        FatalErrorIn
-        (
-            "GGIInterpolation::slaveToMaster"
-            "(const Field<Type> ff)"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch size: "
             << slavePatch_.size() << " field size: " << ff.size()
             << abort(FatalError);
     }
@@ -506,6 +487,7 @@ GGIInterpolation<MasterPatch, SlavePatch>::slaveToMaster
     {
         // Transform slave data to master
         Field<Type> transformFF;
+
         if (forwardT_.size() == 1)
         {
             // Constant transform
@@ -565,30 +547,16 @@ void GGIInterpolation<MasterPatch, SlavePatch>::maskedSlaveToMaster
 {
     if (ff.size() != slavePatch_.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation::maskedSlaveToMaster"
-            "(\n"
-            "    const Field<Type>& ff,\n"
-            "    Field<Type>& result,\n"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch size: "
             << slavePatch_.size() << " field size: " << ff.size()
             << abort(FatalError);
     }
 
     if (result.size() != mask.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation::maskedSlaveToMaster\n"
-            "(\n"
-            "    const Field<Type>& ff,\n"
-            "    Field<Type>& result,\n"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "result field does not correspond to mask. Field size: "
+        FatalErrorInFunction
+            << "Result field does not correspond to mask. Field size: "
             << result.size() << " mask size: " << mask.size()
             << abort(FatalError);
     }
@@ -655,15 +623,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::setUncoveredFacesMaster
      || (ff.size() != masterPatch_.size())
     )
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "setUncoveredFacesMaster\n"
-            "(\n"
-            "    const Field<Type>& fieldToSet\n,"
-            "    Field<Type>& ff\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch size: "
             << masterPatch_.size()
             << " field to set size: " << fieldToSet.size()
             << " field size: " << ff.size()
@@ -690,16 +651,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::maskedSetUncoveredFacesMaster
 {
     if (ff.size() != mask.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "maskedSetUncoveredFacesMaster\n"
-            "(\n"
-            "    const Field<Type>& fieldToSet\n,"
-            "    Field<Type>& ff,\n"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch (mask) size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch (mask) size: "
             << masterPatch_.size()
             << " field to set size: " << fieldToSet.size()
             << " field size: " << ff.size()
@@ -731,15 +684,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::setUncoveredFacesSlave
      || (ff.size() != slavePatch_.size())
     )
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "setUncoveredFacesSlave\n"
-            "(\n"
-            "    const Field<Type>& fieldToSet\n,"
-            "    Field<Type>& ff"
-            ") const"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch size: "
             << slavePatch_.size()
             << " field to set size: " << fieldToSet.size()
             << " field size: " << ff.size()
@@ -766,16 +712,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::maskedSetUncoveredFacesSlave
 {
     if (ff.size() != mask.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "maskedSetUncoveredFacesSlave\n"
-            "(\n"
-            "    const Field<Type>& fieldToSet\n,"
-            "    Field<Type>& ff\n,"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch (mask) size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch (mask) size: "
             << slavePatch_.size()
             << " field to set size: " << fieldToSet.size()
             << " field size: " << ff.size()
@@ -807,15 +745,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::setPartialFacesMaster
      || (ff.size() != masterPatch_.size())
     )
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "setPartialFacesMaster\n"
-            "(\n"
-            "    const Field<Type>& fieldToSet\n,"
-            "    Field<Type>& ff\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "given field does not correspond to patch. Patch size: "
             << masterPatch_.size()
             << " field to set size: " << fieldToSet.size()
             << " field size: " << ff.size()
@@ -842,16 +773,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::maskedSetPartialFacesMaster
 {
     if (ff.size() != mask.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "maskedSetPartialFacesMaster\n"
-            "(\n"
-            "    const Field<Type>& fieldToSet\n,"
-            "    Field<Type>& ff,\n"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch (mask) size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch (mask) size: "
             << masterPatch_.size()
             << " field to set size: " << fieldToSet.size()
             << " field size: " << ff.size()
@@ -883,15 +806,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::setPartialFacesSlave
      || (ff.size() != slavePatch_.size())
     )
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "setPartialFacesSlave\n"
-            "(\n"
-            "    const Field<Type>& fieldToSet\n,"
-            "    Field<Type>& ff"
-            ") const"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch size: "
             << slavePatch_.size()
             << " field to set size: " << fieldToSet.size()
             << " field size: " << ff.size()
@@ -918,16 +834,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::maskedSetPartialFacesSlave
 {
     if (ff.size() != mask.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "maskedSetPartialFacesSlave\n"
-            "(\n"
-            "    const Field<Type>& fieldToSet\n,"
-            "    Field<Type>& ff\n,"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch (mask) size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch (mask) size: "
             << slavePatch_.size()
             << " field to set size: " << fieldToSet.size()
             << " field size: " << ff.size()
@@ -954,14 +862,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::scalePartialMaster
 {
     if (ff.size() != masterPatch_.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "scalePartialMaster\n"
-            "(\n"
-            "    Field<Type>& ff\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch size: "
             << masterPatch_.size()
             << " scale field size: " << ff.size()
             << abort(FatalError);
@@ -986,15 +888,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::maskedScalePartialMaster
 {
     if (ff.size() != mask.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "maskedScalePartialMaster\n"
-            "(\n"
-            "    Field<Type>& ff,\n"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch (mask) size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch (mask) size: "
             << masterPatch_.size()
             << " scale field size: " << ff.size()
             << " mask size: " << mask.size()
@@ -1020,14 +915,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::scalePartialSlave
 {
     if (ff.size() != slavePatch_.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "scalePartialSlave\n"
-            "(\n"
-            "    Field<Type>& ff\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch size: "
             << slavePatch_.size()
             << " scale field size: " << ff.size()
             << abort(FatalError);
@@ -1052,15 +941,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::maskedScalePartialSlave
 {
     if (ff.size() != mask.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "maskedScalePartialSlave\n"
-            "(\n"
-            "    Field<Type>& ff\n,"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch (mask) size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch (mask) size: "
             << slavePatch_.size()
             << " scale field size: " << ff.size()
             << " mask size: " << mask.size()
@@ -1091,15 +973,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::addToPartialFacesMaster
      || ff.size() != masterPatch_.size()
     )
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "addToPartialFacesMaster\n"
-            "(\n"
-            "    const Field<Type>& fieldToAdd\n,"
-            "    Field<Type>& ff\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch size: "
             << masterPatch_.size()
             << " field to add size: " << fieldToAdd.size()
             << " scale field size: " << ff.size()
@@ -1127,16 +1002,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::maskedAddToPartialFacesMaster
 {
     if (ff.size() != mask.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "maskedAddToPartialFacesMaster\n"
-            "(\n"
-            "    const Field<Type>& fieldToAdd\n,"
-            "    Field<Type>& ff,\n"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch (mask) size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch (mask) size: "
             << masterPatch_.size()
             << " field to set size: " << fieldToAdd.size()
             << " scale field size: " << ff.size()
@@ -1169,15 +1036,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::addToPartialFacesSlave
      || ff.size() != slavePatch_.size()
     )
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "addToPartialFacesSlave\n"
-            "(\n"
-            "    const Field<Type>& fieldToAdd\n,"
-            "    Field<Type>& ff\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch size: "
             << slavePatch_.size()
             << " field to add size: " << fieldToAdd.size()
             << " scale field size: " << ff.size()
@@ -1205,16 +1065,8 @@ void GGIInterpolation<MasterPatch, SlavePatch>::maskedAddToPartialFacesSlave
 {
     if (ff.size() != mask.size())
     {
-        FatalErrorIn
-        (
-            "void GGIInterpolation<MasterPatch, SlavePatch>::"
-            "maskedAddToPartialFacesSlave\n"
-            "(\n"
-            "    const Field<Type>& fieldToAdd\n,"
-            "    Field<Type>& ff\n,"
-            "    const labelList& mask\n"
-            ") const"
-        )   << "given field does not correspond to patch. Patch (mask) size: "
+        FatalErrorInFunction
+            << "Given field does not correspond to patch. Patch (mask) size: "
             << slavePatch_.size()
             << " field to add size: " << fieldToAdd.size()
             << " scale field size: " << ff.size()

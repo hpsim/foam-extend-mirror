@@ -188,11 +188,8 @@ GGIInterpolation<MasterPatch, SlavePatch>::polygonIntersection
          || mag(intersectionArea/subjectArea)  < areaErrorTol_()
         )
         {
-            WarningIn
-            (
-                "GGIInterpolation<MasterPatch, SlavePatch>::"
-                "polygonIntersection"
-            )   << "Intersection might be wrong.  Clipping side "
+            WarningInFunction
+                << "Intersection might be wrong.  Clipping side "
                 << intersectionArea/clippingArea << " subject: "
                 << intersectionArea/subjectArea << endl;
         }
