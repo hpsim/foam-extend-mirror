@@ -115,9 +115,7 @@ interpolate
 {
     if (surfaceInterpolation::debug)
     {
-        Info<< "interpolate"
-            << "(const GeometricField<Type, fvPatchField, volMesh>&, "
-            << "const surfaceScalarField&, Istream&) : "
+        InfoInFunction
             << "interpolating GeometricField<Type, fvPatchField, volMesh> "
             << endl;
     }
@@ -138,9 +136,7 @@ interpolate
 {
     if (surfaceInterpolation::debug)
     {
-        Info<< "interpolate"
-            << "(const GeometricField<Type, fvPatchField, volMesh>&, "
-            << "const surfaceScalarField&, const word&) : "
+        InfoInFunction
             << "interpolating GeometricField<Type, fvPatchField, volMesh> "
             << "using " << name
             << endl;
@@ -216,9 +212,7 @@ interpolate
 {
     if (surfaceInterpolation::debug)
     {
-        Info<< "interpolate"
-            << "(const GeometricField<Type, fvPatchField, volMesh>&, "
-            << "Istream&) : "
+        InfoInFunction
             << "interpolating GeometricField<Type, fvPatchField, volMesh> "
             << endl;
     }
@@ -237,9 +231,7 @@ interpolate
 {
     if (surfaceInterpolation::debug)
     {
-        Info<< "interpolate"
-            << "(const GeometricField<Type, fvPatchField, volMesh>&, "
-            << "const word&) : "
+        InfoInFunction
             << "interpolating GeometricField<Type, fvPatchField, volMesh> "
             << "using " << name
             << endl;
@@ -276,9 +268,7 @@ interpolate
 {
     if (surfaceInterpolation::debug)
     {
-        Info<< "interpolate"
-            << "(const GeometricField<Type, fvPatchField, volMesh>&) : "
-            << "interpolating GeometricField<Type, fvPatchField, volMesh> "
+        InfoInFunction
             << "using run-time selected scheme"
             << endl;
     }
