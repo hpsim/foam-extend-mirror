@@ -295,19 +295,25 @@ void Foam::ggiPolyPatch::calcReconFaceCellCentres() const
         // Get face centres on master side
         const vectorField::subField cf = faceCentres();
 
+        // Note:
+        // For bridging, we use a mirror: weights are 0.5, not 1
+        // 12/Nov/2022
         if (bridgeOverlap_)
         {
             // Get face cell centres on master side
             const vectorField ccf = faceCellCentres();
 
             // Deltas for fully uncovered faces
-            const vectorField uncoveredDeltas(cf - ccf);
+            // Note:
+            // Bridging uses mirroring, so shadow cell centres need to be
+            // mirrored as well.  HJ, 2/Dec/2022
+            const vectorField uncoveredDeltas = 2*(cf - ccf);
 
             // Set uncovered deltas to fully uncovered faces
             setUncoveredFaces(uncoveredDeltas, df);
 
-            // Scale partially overlapping faces
-            scalePartialFaces(df);
+            // Add to partially overlapping faces
+            addToPartialFaces(uncoveredDeltas, df);
         }
 
         // Calculate the reconstructed cell centres

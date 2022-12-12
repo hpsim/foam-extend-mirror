@@ -71,6 +71,9 @@ void Foam::ggiFvPatch::makeWeights(fvsPatchScalarField& w) const
             mag(n & (ggiPolyPatch_.reconFaceCellCentres() - Cf()));
 
         w = nfc/(mag(n & (Cf() - Cn())) + nfc + SMALL);
+
+        // Master bridging is not needed, as reconFaceCellCentres
+        // has already been bridged.  HJ, 12/Dec/2022
     }
     else
     {
@@ -90,6 +93,7 @@ void Foam::ggiFvPatch::makeWeights(fvsPatchScalarField& w) const
         // Interpolate master weights to this side
         w = interpolate(masterWeights);
 
+        // Slave bridging is necesary.  HJ, 12/Dec/2022
         if (bridgeOverlap())
         {
             // Weights for fully uncovered faces
@@ -98,8 +102,9 @@ void Foam::ggiFvPatch::makeWeights(fvsPatchScalarField& w) const
             // Set weights for uncovered faces
             setUncoveredFaces(uncoveredWeights, w);
 
-            // Scale partially overlapping faces
-            scalePartialFaces(w);
+            // Cannot manipulate partially covered faces, as this breaks
+            // symmetry and causes conservation errors.
+            // HJ, 12/Dec/2022
         }
 
         // Finally construct these weights as 1 - master weights
@@ -141,19 +146,23 @@ void Foam::ggiFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 
         dc = interpolate(masterDeltas);
 
+        // For bridging, we use a mirror: weights are 0.5, not 1
+        // 12/Nov/2022
         if (bridgeOverlap())
         {
-            // Delta coeffs for fully uncovered faces obtained from deltas on
-            // this side
-            const vectorField d = delta();
+            // Bugfix: delta coeffs for double distance are halved
+            // Function fvPatch::deltaCoeffs() cannot be called here:
+            // calculation is not complete and it returns zero.
+            // HJ, 4/Dec/2022
             const scalarField uncoveredDeltaCoeffs =
-                1.0/max(nf() & d, 0.05*mag(d));
+                1/(2*mag(fvPatch::delta()));
 
             // Set delta coeffs for uncovered faces
             setUncoveredFaces(uncoveredDeltaCoeffs, dc);
 
-            // Scale partially overlapping faces
-            scalePartialFaces(dc);
+            // Cannot manipulate partially covered faces, as this breaks
+            // symmetry and causes conservation errors.
+            // HJ, 12/Dec/2022
         }
     }
 }
@@ -174,7 +183,7 @@ void Foam::ggiFvPatch::makeMagLongDeltas(fvsPatchScalarField& mld) const
         mld = (mag(Sf() & d) + mag(Sf() & (delta() - d)))/magSf();
 
         // Note: no need to bridge the overlap since delta already takes it into
-        // account. VV, 18/Oct/2017.
+        // account. VV, 18/Oct/2017.  Correct.  HJ, 12/Dec/2022
     }
     else
     {
@@ -194,16 +203,17 @@ void Foam::ggiFvPatch::makeMagLongDeltas(fvsPatchScalarField& mld) const
 
         if (bridgeOverlap())
         {
-            // Delta coeffs for fully uncovered faces obtained from deltas on
-            // this side
-            const vectorField d = fvPatch::delta();
-            const scalarField uncoveredMagDeltas = mag(Sf() & d)/magSf();
+            // Bugfix: delta coeffs for double distance are halved
+            // HJ, 4/Dec/2022
+            const scalarField uncoveredMagDeltas =
+                1/(2*mag(fvPatch::delta()));
 
             // Set delta coeffs for uncovered faces
             setUncoveredFaces(uncoveredMagDeltas, mld);
 
-            // Scale partially overlapping faces
-            scalePartialFaces(mld);
+            // Cannot manipulate partially covered faces, as this breaks
+            // symmetry and causes conservation errors.
+            // HJ, 12/Dec/2022
         }
     }
 }
@@ -216,22 +226,29 @@ void Foam::ggiFvPatch::makeCorrVecs(fvsPatchVectorField& cv) const
     // MB, 7/April/2009
 
     // No non-orthogonal correction if the bridge overlap is switched on to
-    // ensure conservative interpolation for partially overlapping faces
+    // ensure conservative interpolation for partially overlapping faces.
+    // VV??  This is wrong.  HJ, 2/Dec/2022
+
+    // Calculate correction vectors on coupled patches
+    const scalarField& patchDeltaCoeffs = deltaCoeffs();
+
+    const vectorField patchDeltas = delta();
+    const vectorField n = nf();
+
+    // If non-orthogonality is over 90 deg, kill correction vector
+    // HJ, 6/Jan/2011
+    cv = pos(patchDeltas & n)*(n - patchDeltas*patchDeltaCoeffs);
+
     if (bridgeOverlap())
     {
-        cv = vector::zero;
-    }
-    else
-    {
-        // Calculate correction vectors on coupled patches
-        const scalarField& patchDeltaCoeffs = deltaCoeffs();
+        // On uncovered faces, corr vectors are zero
+        const vectorField bridgeCorrVecs(size(), vector::zero);
 
-        const vectorField patchDeltas = delta();
-        const vectorField n = nf();
+        // Set delta coeffs for uncovered faces
+        setUncoveredFaces(bridgeCorrVecs, cv);
 
-        // If non-orthogonality is over 90 deg, kill correction vector
-        // HJ, 6/Jan/2011
-        cv = pos(patchDeltas & n)*(n - patchDeltas*patchDeltaCoeffs);
+        // Do nothing to partially overlapping faces: correction for the
+        // uncovered part is zero
     }
 }
 
@@ -249,6 +266,9 @@ Foam::tmp<Foam::vectorField> Foam::ggiFvPatch::delta() const
 
         tmp<vectorField> tdelta = ggiPolyPatch_.reconFaceCellCentres() - Cn();
 
+        // Master bridging is not needed, as reconFaceCellCentres
+        // has already been bridged.  HJ, 12/Dec/2022
+
         return tdelta;
     }
     else
@@ -261,17 +281,19 @@ Foam::tmp<Foam::vectorField> Foam::ggiFvPatch::delta() const
         (
             shadow().Cn() - ggiPolyPatch_.shadow().reconFaceCellCentres()
         );
+        vectorField& delta = tdelta();
 
         if (bridgeOverlap())
         {
             // Deltas for fully uncovered faces
-            const vectorField uncoveredDeltas(2.0*fvPatch::delta());
+            const vectorField uncoveredDeltas = 2*fvPatch::delta();
 
             // Set deltas for fully uncovered faces
-            setUncoveredFaces(uncoveredDeltas, tdelta());
+            setUncoveredFaces(uncoveredDeltas, delta);
 
-            // Scale for partially covered faces
-            scalePartialFaces(tdelta());
+            // Cannot manipulate partially covered faces, as this breaks
+            // symmetry and causes conservation errors.
+            // HJ, 12/Dec/2022
         }
 
         return tdelta;
@@ -424,6 +446,7 @@ void Foam::ggiFvPatch::expandCrMatrixToZone(crMatrix& patchP) const
         scalarField zoneCoeffs(nZoneEntries);
 
         zoneRowStart[0] = 0;
+
         // Reset nZoneEntries for use as a counter
         nZoneEntries = 0;
 

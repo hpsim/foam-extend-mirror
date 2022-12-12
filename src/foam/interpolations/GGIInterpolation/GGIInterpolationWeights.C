@@ -698,19 +698,14 @@ GGIInterpolation<MasterPatch, SlavePatch>::rescaleGGIWeightingFactors() const
     boolList masterPCMask(maW.size(), false);
     boolList slavePCMask(saW.size(), false);
 
-
-    //HJ, TEMPORARY: scale partially covered faces to see if it works.
-    // HJ, 4/Dec/2022
-    
-    // forAll (partiallyUncoveredMasterFaces, pfmI)
-    // {
-    //     masterPCMask[partiallyUncoveredMasterFaces[pfmI]] = true;
-    // }
-
-    // forAll (partiallyUncoveredSlaveFaces, pfsI)
-    // {
-    //     slavePCMask[partiallyUncoveredSlaveFaces[pfsI]] = true;
-    // }
+    forAll (partiallyUncoveredMasterFaces, pfmI)
+    {
+        masterPCMask[partiallyUncoveredMasterFaces[pfmI]] = true;
+    }
+    forAll (partiallyUncoveredSlaveFaces, pfsI)
+    {
+        slavePCMask[partiallyUncoveredSlaveFaces[pfsI]] = true;
+    }
 
     // Rescaling the slave weights
     if (debug)
