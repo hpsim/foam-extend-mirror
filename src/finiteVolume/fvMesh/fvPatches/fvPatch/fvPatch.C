@@ -47,7 +47,11 @@ addToRunTimeSelectionTable(fvPatch, fvPatch, polyPatch);
 
 void fvPatch::makeWeights(fvsPatchScalarField& w) const
 {
-    w = 1.0;
+    // Bugfix: incorrect interpretation of face weights on a patch
+    // phi_f = f_x \phi_P + (1 - fx) \phi_N
+    // Thus, patch weight is zero, not one
+    // HJ, 2/Dec/2022
+    w = 0;
 }
 
 
