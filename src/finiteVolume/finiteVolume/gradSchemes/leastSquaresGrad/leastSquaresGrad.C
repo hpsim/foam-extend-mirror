@@ -169,13 +169,8 @@ tmp
    const GeometricField<Type, fvPatchField, volMesh>& vf
 ) const
 {
-   FatalErrorIn
-   (
-       "tmp<BlockLduSystem> fvmGrad\n"
-       "(\n"
-       "    GeometricField<Type, fvPatchField, volMesh>&"
-       ")\n"
-   )   << "Implicit gradient operator defined only for scalar."
+    FatalErrorInFunction
+       << "Implicit gradient operator defined only for scalar."
        << abort(FatalError);
 
    typedef typename outerProduct<vector, Type>::type GradType;
