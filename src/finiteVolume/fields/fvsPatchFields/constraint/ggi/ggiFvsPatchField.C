@@ -90,16 +90,8 @@ ggiFvsPatchField<Type>::ggiFvsPatchField
 {
     if (!isType<ggiFvPatch>(this->patch()))
     {
-        FatalErrorIn
-        (
-            "ggiFvsPatchField<Type>::ggiFvsPatchField\n"
-            "(\n"
-            "    const ggiFvsPatchField<Type>& ptf,\n"
-            "    const fvPatch& p,\n"
-            "    const DimensionedField<Type, surfaceMesh>& iF,\n"
-            "    const fvPatchFieldMapper& mapper\n"
-            ")\n"
-        )   << "Field type does not correspond to patch type for patch "
+        FatalErrorInFunction
+            << "Field type does not correspond to patch type for patch "
             << this->patch().index() << "." << endl
             << "Field type: " << typeName << endl
             << "Patch type: " << this->patch().type()
