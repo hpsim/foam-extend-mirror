@@ -222,14 +222,8 @@ void Foam::fvBlockMatrix<Type>::insertUpperLower
     }
     else
     {
-        FatalErrorIn
-        (
-            "void fvBlockMatrix<Type, matrixType>::insertUpperLower\n"
-            "(\n"
-            "    const direction dir,\n"
-            "    const fvMatrix<matrixType>& matrix\n"
-            ")"
-        )   << "Error in matrix insertion: problem with block structure."
+        FatalErrorInFunction
+            << "Error in matrix insertion: problem with block structure."
             << abort(FatalError);
     }
 
@@ -393,32 +387,16 @@ void Foam::fvBlockMatrix<Type>::insertBlock
 
         if (blockMatrixSize > blockMatrixASize)
         {
-            FatalErrorIn
-            (
-                "void fvBlockMatrix<Type>::insertBlock\n"
-                "(\n"
-                "    const direction dirI,\n"
-                "    const direction dirJ,\n"
-                "    BlockLduSystem<blockType, fieldType>& blockSystem,\n"
-                "    const bool incrementColumnDir\n"
-                ")"
-            )   << "Trying to insert a block matrix from BlockLduSystem into "
+            FatalErrorInFunction
+                << "Trying to insert a block matrix from BlockLduSystem into "
                 << "smaller one from fvBlockMatrix."
                 << abort(FatalError);
         }
 
         if (dirI == dirJ)
         {
-            FatalErrorIn
-            (
-                "void fvBlockMatrix<Type>::insertBlock\n"
-                "(\n"
-                "    const direction dirI,\n"
-                "    const direction dirJ,\n"
-                "    BlockLduSystem<blockType, fieldType>& blockSystem,\n"
-                "    const bool incrementColumnDir\n"
-                ")"
-            )   << "Trying to insert coupling in the position where equation "
+            FatalErrorInFunction
+                << "Trying to insert coupling in the position where equation "
                 << "should be, since dirI = dirJ. Try using insertEquation "
                 << "member function."
                 << abort(FatalError);
@@ -429,46 +407,99 @@ void Foam::fvBlockMatrix<Type>::insertBlock
     direction localDirI = dirI;
     direction localDirJ = dirJ;
 
-    // Get references to ldu fields of blockMatrix always as linear
-    const typename CoeffField<blockType>::linearTypeField& bmd =
-        blockSystem.diag().asLinear();
-    const typename CoeffField<blockType>::linearTypeField& bmu =
-        blockSystem.upper().asLinear();
-    const typename CoeffField<blockType>::linearTypeField& bml =
-        blockSystem.lower().asLinear();
-
-    // Get references to ldu fields of this block matrix always as square
-    typename CoeffField<Type>::squareTypeField& blockDiag =
-         this->diag().asSquare();
-    typename CoeffField<Type>::squareTypeField& blockUpper =
-         this->upper().asSquare();
-    typename CoeffField<Type>::squareTypeField& blockLower =
-         this->lower().asSquare();
-
-    // Insert blockMatrix that represents coupling into larger system matrix
-    for (direction cmptI = 0; cmptI < nCmpts; cmptI++)
+    if (blockSystem.symmetric())
     {
-        forAll (bmd, cellI)
-        {
-            blockDiag[cellI](localDirI, localDirJ) +=
-                bmd[cellI].component(cmptI);
-        }
+        // Get references to ldu fields of blockMatrix always as linear
+        const typename CoeffField<blockType>::linearTypeField& bmd =
+            blockSystem.diag().asLinear();
+        const typename CoeffField<blockType>::linearTypeField& bmu =
+            blockSystem.upper().asLinear();
 
-        forAll (bmu, faceI)
-        {
-            blockUpper[faceI](localDirI, localDirJ) +=
-                bmu[faceI].component(cmptI);
-            blockLower[faceI](localDirI, localDirJ) +=
-                bml[faceI].component(cmptI);
-        }
+        // Get references to ldu fields of this block matrix always as square
+        typename CoeffField<Type>::squareTypeField& blockDiag =
+            this->diag().asSquare();
+        typename CoeffField<Type>::squareTypeField& blockUpper =
+            this->upper().asSquare();
+        typename CoeffField<Type>::squareTypeField& blockLower =
+            this->lower().asSquare();
 
-        if (incrementColumnDir)
+        // Insert blockMatrix that represents coupling into larger system matrix
+        for (direction cmptI = 0; cmptI < nCmpts; cmptI++)
         {
-            localDirI++;
+            forAll (bmd, cellI)
+            {
+                blockDiag[cellI](localDirI, localDirJ) +=
+                    bmd[cellI].component(cmptI);
+            }
+
+            forAll (bmu, faceI)
+            {
+                blockUpper[faceI](localDirI, localDirJ) +=
+                    bmu[faceI].component(cmptI);
+
+                // Note: to avoid making a transpose of upper coeffs, use bmu
+                // of the original matrix (which is symmetric),
+                // insert them in opposite order
+                // I and J are swapped.
+                blockLower[faceI](localDirJ, localDirI) +=
+                    bmu[faceI].component(cmptI);
+            }
+
+            if (incrementColumnDir)
+            {
+                localDirI++;
+            }
+            else
+            {
+                localDirJ++;
+            }
         }
-        else
+    }
+    else
+    {
+        // Asymmetric matrix
+
+        // Get references to ldu fields of blockMatrix always as linear
+        const typename CoeffField<blockType>::linearTypeField& bmd =
+            blockSystem.diag().asLinear();
+        const typename CoeffField<blockType>::linearTypeField& bmu =
+            blockSystem.upper().asLinear();
+        const typename CoeffField<blockType>::linearTypeField& bml =
+            blockSystem.lower().asLinear();
+
+        // Get references to ldu fields of this block matrix always as square
+        typename CoeffField<Type>::squareTypeField& blockDiag =
+            this->diag().asSquare();
+        typename CoeffField<Type>::squareTypeField& blockUpper =
+            this->upper().asSquare();
+        typename CoeffField<Type>::squareTypeField& blockLower =
+            this->lower().asSquare();
+
+        // Insert blockMatrix that represents coupling into larger system matrix
+        for (direction cmptI = 0; cmptI < nCmpts; cmptI++)
         {
-            localDirJ++;
+            forAll (bmd, cellI)
+            {
+                blockDiag[cellI](localDirI, localDirJ) +=
+                    bmd[cellI].component(cmptI);
+            }
+
+            forAll (bmu, faceI)
+            {
+                blockUpper[faceI](localDirI, localDirJ) +=
+                    bmu[faceI].component(cmptI);
+                blockLower[faceI](localDirI, localDirJ) +=
+                    bml[faceI].component(cmptI);
+            }
+
+            if (incrementColumnDir)
+            {
+                localDirI++;
+            }
+            else
+            {
+                localDirJ++;
+            }
         }
     }
 }
@@ -671,15 +702,8 @@ void Foam::fvBlockMatrix<Type>::insertCouplingUpperLower
     }
     else
     {
-        FatalErrorIn
-        (
-            "void fvBlockMatrix<Type>::insertCouplingUpperLower\n"
-            "(\n"
-            "    const direction dirI,\n"
-            "    const direction dirJ,\n"
-            "    const fvScalarMatrix& m\n"
-            ")"
-        )   << "Error in matrix insertion: problem with block structure."
+        FatalErrorInFunction
+            << "Error in matrix insertion: problem with block structure."
             << abort(FatalError);
     }
 
@@ -890,15 +914,8 @@ void Foam::fvBlockMatrix<Type>::insertAdjointConvection
 
         if (nCmpts > blockMatrixSize)
         {
-            FatalErrorIn
-            (
-                "void fvBlockMatrix<Type>::insertAdjointConvection\n"
-                "(\n"
-                "    const direction UEqnDir,\n"
-                "    const volVectorField& U,\n"
-                "    const volVectorField& UStar\n"
-                ")"
-            )   << "Trying to insert adjoint convection term into smaller "
+            FatalErrorInFunction
+                << "Trying to insert adjoint convection term into smaller "
                 << "fvBlockMatrix. Do you have momentum equation?"
                 << abort(FatalError);
         }
@@ -1039,16 +1056,8 @@ void Foam::fvBlockMatrix<Type>::insertAdjointConvection
         }
         else
         {
-            FatalErrorIn
-            (
-                "void fvBlockMatrix<Type, matrixType>"
-                "::insertAdjointConvection\n"
-                "(\n"
-                "    const direction UEqnDir,\n"
-                "    const volVectorField& U,\n"
-                "    const volVectorField& UStar\n"
-                ")"
-            )   << "Patch does not fix value, nor doesn't fix value nor is"
+            FatalErrorInFunction
+                << "Patch does not fix value, nor doesn't fix value nor is"
                 << " coupled."
                 << abort(FatalError);
         }
@@ -1156,15 +1165,8 @@ void Foam::fvBlockMatrix<Type>::insertPicardTensor
 
         if (nCmpts > blockMatrixSize)
         {
-            FatalErrorIn
-            (
-                "void fvBlockMatrix<Type>::insertPicardTensor\n"
-                "(\n"
-                "    const direction UEqnDir,\n"
-                "    const volVectorField& U,\n"
-                "    const surfaceScalarField& phi\n"
-                ")"
-            )   << "Trying to insert Picard tensor term into smaller "
+            FatalErrorInFunction
+                << "Trying to insert Picard tensor term into smaller "
                 << "fvBlockMatrix. Do you have momentum equation?"
                 << abort(FatalError);
         }
@@ -1256,15 +1258,8 @@ void Foam::fvBlockMatrix<Type>::insertPicardTensor
         }
         else
         {
-            FatalErrorIn
-            (
-                "void fvBlockMatrix<Type, matrixType>::insertPicardTensor\n"
-                "(\n"
-                "    const direction UEqnDir,\n"
-                "    const volVectorField& U,\n"
-                "    const surfaceScalarField& phi\n"
-                ")"
-            )   << "Patch does not fix value, nor doesn't fix value nor is"
+            FatalErrorInFunction
+                << "Patch does not fix value, nor doesn't fix value nor is"
                 << " coupled."
                 << abort(FatalError);
         }
