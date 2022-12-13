@@ -146,7 +146,7 @@ void fluxFvPatchField<Type>::updateCoeffs()
         return;
     }
 
-    const fvPatchField<scalar>& gammap =
+    const fvPatchScalarField& gammap =
         this->template lookupPatchField<volScalarField, scalar>(gammaName_);
 
     // Calculate minimum and maximum gradient
