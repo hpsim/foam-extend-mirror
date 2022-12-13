@@ -1,9 +1,5 @@
 {
-    volScalarField kappaEff
-    (
-        "kappaEff",
-        turbulence->nu()/Pr + turbulence->nut()/Prt
-    );
+    kappaEff = turbulence->nu()/Pr + turbulence->nut()/Prt;
 
     fvScalarMatrix TEqn
     (
