@@ -430,7 +430,7 @@ class GGIInterpolation
         void calcAddressing() const;
 
         //- Rescale GGI weighting factors
-        void rescaleWeightingFactors() const;
+        void rescaleGGIWeightingFactors() const;
 
         //- Find non-overlapping faces
         tmp<labelField> findNonOverlappingFaces

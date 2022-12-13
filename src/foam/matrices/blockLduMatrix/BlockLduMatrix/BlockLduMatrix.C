@@ -188,10 +188,8 @@ Foam::BlockLduMatrix<Type>::diag() const
 {
     if (!diagPtr_)
     {
-        FatalErrorIn
-        (
-            "const TypeCoeffField& BlockLduMatrix<Type>::diag() const"
-        )   << "diagPtr_ unallocated"
+        FatalErrorInFunction
+            << "diagPtr_ unallocated"
             << abort(FatalError);
     }
 
@@ -218,10 +216,8 @@ Foam::BlockLduMatrix<Type>::upper() const
 {
     if (!upperPtr_)
     {
-        FatalErrorIn
-        (
-            "const TypeCoeffField& BlockLduMatrix<Type>::upper() const"
-        )   << "upperPtr_ unallocated"
+        FatalErrorInFunction
+            << "upperPtr_ unallocated"
             << abort(FatalError);
     }
 
@@ -237,7 +233,7 @@ Foam::BlockLduMatrix<Type>::lower()
     {
         if (upperPtr_)
         {
-//             Info << "Manufacturing lower from upper transpose" << endl;
+            // Manufacturing lower from upper transpose
             lowerPtr_ = new TypeCoeffField(upperPtr_->transpose());
         }
         else
@@ -256,10 +252,8 @@ Foam::BlockLduMatrix<Type>::lower() const
 {
     if (!lowerPtr_)
     {
-        FatalErrorIn
-        (
-            "const TypeCoeffField&  BlockLduMatrix<Type>::lower() const"
-        )   << "lowerPtr_ unallocated"
+        FatalErrorInFunction
+            << "lowerPtr_ unallocated"
             << abort(FatalError);
     }
 
@@ -300,10 +294,8 @@ bool Foam::BlockLduMatrix<Type>::symmetric() const
 {
     if (lowerPtr_ && !upperPtr_)
     {
-        FatalErrorIn
-        (
-            "bool BlockLduMatrix<Type>::symmetric() const"
-        )   << "Matrix assembly error: symmetric matrix but only lower "
+        FatalErrorInFunction
+            << "Matrix assembly error: symmetric matrix but only lower "
             << "triangle is allocated.  This is not allowed."
             << abort(FatalError);
     }

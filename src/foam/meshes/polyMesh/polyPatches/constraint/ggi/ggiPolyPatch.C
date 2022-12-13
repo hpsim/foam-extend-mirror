@@ -89,7 +89,7 @@ void Foam::ggiPolyPatch::calcZoneAddressing() const
     // Calculate patch-to-zone addressing
     if (zoneAddressingPtr_)
     {
-        FatalErrorIn("void ggiPolyPatch::calcZoneAddressing() const")
+        FatalErrorInFunction
             << "Patch to zone addressing already calculated"
             << abort(FatalError);
     }
@@ -107,7 +107,7 @@ void Foam::ggiPolyPatch::calcZoneAddressing() const
     // Check zone addressing
     if (zAddr.size() > 0 && min(zAddr) < 0)
     {
-        FatalErrorIn("void ggiPolyPatch::calcZoneAddressing() const")
+        FatalErrorInFunction
             << "Problem with patch-to-zone addressing: some patch faces "
             << "not found in interpolation zone"
             << abort(FatalError);
@@ -120,7 +120,7 @@ void Foam::ggiPolyPatch::calcRemoteZoneAddressing() const
     // Calculate patch-to-remote zone addressing
     if (remoteZoneAddressingPtr_)
     {
-        FatalErrorIn("void ggiPolyPatch::calcRemoteZoneAddressing() const")
+        FatalErrorInFunction
             << "Patch to remote zone addressing already calculated"
             << abort(FatalError);
     }
@@ -200,7 +200,7 @@ void Foam::ggiPolyPatch::calcPatchToPatch() const
     // Create patch-to-patch interpolation
     if (patchToPatchPtr_)
     {
-        FatalErrorIn("void ggiPolyPatch::calcPatchToPatch() const")
+        FatalErrorInFunction
             << "Patch to patch interpolation already calculated"
             << abort(FatalError);
     }
@@ -209,7 +209,7 @@ void Foam::ggiPolyPatch::calcPatchToPatch() const
     {
         if (debug)
         {
-            InfoIn("void ggiPolyPatch::calcPatchToPatch() const")
+            InfoInFunction
                 << "Calculating patch to patch interpolation for patch"
                 << name() << endl;
         }
@@ -246,7 +246,7 @@ void Foam::ggiPolyPatch::calcPatchToPatch() const
             )
         )
         {
-            FatalErrorIn("void ggiPolyPatch::calcPatchToPatch() const")
+            FatalErrorInFunction
                 << "Found uncovered faces for GGI interface "
                 << name() << "/" << shadowName()
                 << " while the bridgeOverlap option is not set "
@@ -257,7 +257,7 @@ void Foam::ggiPolyPatch::calcPatchToPatch() const
     }
     else
     {
-        FatalErrorIn("void ggiPolyPatch::calcPatchToPatch() const")
+        FatalErrorInFunction
             << "Attempting to create GGIInterpolation on a shadow"
             << abort(FatalError);
     }
@@ -268,16 +268,14 @@ void Foam::ggiPolyPatch::calcReconFaceCellCentres() const
 {
     if (reconFaceCellCentresPtr_)
     {
-        FatalErrorIn
-        (
-            "void ggiPolyPatch::calcReconFaceCellCentres() const"
-        )   << "Reconstructed cell centres already calculated"
+        FatalErrorInFunction
+            << "Reconstructed cell centres already calculated"
             << abort(FatalError);
     }
 
     if (debug)
     {
-        InfoIn("void ggiPolyPatch::calcReconFaceCellCentres() const")
+        InfoInFunction
             << "Calculating recon centres for patch "
             << name() << endl;
     }
@@ -297,19 +295,25 @@ void Foam::ggiPolyPatch::calcReconFaceCellCentres() const
         // Get face centres on master side
         const vectorField::subField cf = faceCentres();
 
+        // Note:
+        // For bridging, we use a mirror: weights are 0.5, not 1
+        // 12/Nov/2022
         if (bridgeOverlap_)
         {
             // Get face cell centres on master side
             const vectorField ccf = faceCellCentres();
 
             // Deltas for fully uncovered faces
-            const vectorField uncoveredDeltas(cf - ccf);
+            // Note:
+            // Bridging uses mirroring, so shadow cell centres need to be
+            // mirrored as well.  HJ, 2/Dec/2022
+            const vectorField uncoveredDeltas = 2*(cf - ccf);
 
             // Set uncovered deltas to fully uncovered faces
             setUncoveredFaces(uncoveredDeltas, df);
 
-            // Scale partially overlapping faces
-            scalePartialFaces(df);
+            // Add to partially overlapping faces
+            addToPartialFaces(uncoveredDeltas, df);
         }
 
         // Calculate the reconstructed cell centres
@@ -317,7 +321,7 @@ void Foam::ggiPolyPatch::calcReconFaceCellCentres() const
     }
     else
     {
-        FatalErrorIn("void ggiPolyPatch::calcReconFaceCellCentres() const")
+        FatalErrorInFunction
             << "Attempting to create reconFaceCellCentres on a shadow"
             << abort(FatalError);
     }
@@ -329,7 +333,7 @@ void Foam::ggiPolyPatch::calcLocalParallel() const
     // Calculate patch-to-zone addressing
     if (localParallelPtr_)
     {
-        FatalErrorIn("void ggiPolyPatch::calcLocalParallel() const")
+        FatalErrorInFunction
             << "Local parallel switch already calculated"
             << abort(FatalError);
     }
@@ -339,7 +343,7 @@ void Foam::ggiPolyPatch::calcLocalParallel() const
 
     if (size() > zone().size())
     {
-        FatalErrorIn("void ggiPolyPatch::calcLocalParallel() const")
+        FatalErrorInFunction
             << "Patch size is greater than zone size for GGI patch "
             << name() << ".  This is not allowed: "
             << "the face zone must contain all patch faces and be "
@@ -441,7 +445,7 @@ void Foam::ggiPolyPatch::calcSendReceive() const
 
     if (mapPtr_)
     {
-        FatalErrorIn("void ggiPolyPatch::calcSendReceive() const")
+        FatalErrorInFunction
             << "Send-receive addressing already calculated"
             << abort(FatalError);
     }
@@ -454,7 +458,7 @@ void Foam::ggiPolyPatch::calcSendReceive() const
 
     if (!Pstream::parRun())
     {
-        FatalErrorIn("void ggiPolyPatch::calcSendReceive() const")
+        FatalErrorInFunction
             << "Requested calculation of send-receive addressing for a "
             << "serial run.  This is not allowed"
             << abort(FatalError);
@@ -811,7 +815,7 @@ Foam::label Foam::ggiPolyPatch::shadowIndex() const
 
         if (!shadow.active())
         {
-            FatalErrorIn("label ggiPolyPatch::shadowIndex() const")
+            FatalErrorInFunction
                 << "Shadow patch name " << shadowName_
                 << " not found.  Please check your GGI interface definition."
                 << abort(FatalError);
@@ -822,7 +826,7 @@ Foam::label Foam::ggiPolyPatch::shadowIndex() const
         // Check the other side is a ggi
         if (!isA<ggiPolyPatch>(boundaryMesh()[shadowIndex_]))
         {
-            FatalErrorIn("label ggiPolyPatch::shadowIndex() const")
+            FatalErrorInFunction
                 << "Shadow of ggi patch " << name()
                 << " named " << shadowName() << " is not a ggi.  Type: "
                 << boundaryMesh()[shadowIndex_].type() << nl
@@ -833,7 +837,7 @@ Foam::label Foam::ggiPolyPatch::shadowIndex() const
         // Check for GGI onto self
         if (index() == shadowIndex_)
         {
-            FatalErrorIn("label ggiPolyPatch::shadowIndex() const")
+            FatalErrorInFunction
                 << "ggi patch " << name() << " created as its own shadow"
                 << abort(FatalError);
         }
@@ -852,7 +856,7 @@ Foam::label Foam::ggiPolyPatch::zoneIndex() const
 
         if (!zone.active())
         {
-            FatalErrorIn("label ggiPolyPatch::zoneIndex() const")
+            FatalErrorInFunction
                 << "Face zone name " << zoneName_
                 << " for GGI patch " << name()
                 << " not found.  Please check your GGI interface definition."
@@ -1183,7 +1187,7 @@ void Foam::ggiPolyPatch::calcTransforms() const
         // Check for bridge overlap
         if (bridgeOverlap())
         {
-            InfoIn("label ggiPolyPatch::calcTransforms() const")
+            InfoInFunction
                 << "ggi patch " << name() << " with shadow "
                 << shadowName() << " has "
                 << patchToPatch().uncoveredMasterFaces().size()

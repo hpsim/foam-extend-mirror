@@ -176,7 +176,8 @@ Foam::cyclicGgiPolyPatch::cyclicGgiPolyPatch
     const bool bridgeOverlap,
     const vector& separationOffset,
     const vector& rotationAxis,
-    const scalar rotationAngle
+    const scalar rotationAngle,
+    const ggiZoneInterpolation::quickReject reject
 )
 :
     ggiPolyPatch
@@ -188,7 +189,8 @@ Foam::cyclicGgiPolyPatch::cyclicGgiPolyPatch
         bm,
         shadowName,
         zoneName,
-        bridgeOverlap
+        bridgeOverlap,
+        reject
     ),
     separationOffset_(separationOffset),
     rotationAxis_(rotationAxis),

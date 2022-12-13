@@ -92,3 +92,10 @@
 
     // Create porous zones
     porousZones pZones(mesh);
+
+    // Create thermal diffusivity field (post-processing)
+    volScalarField kappaEff
+    (
+        "kappaEff",
+        turbulence->nu()/Pr + turbulence->nut()/Prt
+    );

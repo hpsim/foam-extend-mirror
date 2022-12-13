@@ -175,10 +175,8 @@ GGIInterpolation<MasterPatch, SlavePatch>::GGIInterpolation
          || reverseT_.size() != masterPatch_.size()
         )
         {
-            FatalErrorIn
-            (
-                "GGIInterpolation<MasterPatch, SlavePatch>::GGIInterpolation"
-            )   << "Incorrectly defined transform: forwardT: "
+            FatalErrorInFunction
+                << "Incorrectly defined transform: forwardT: "
                 << forwardT_.size() << " patch: " << slavePatch_.size()
                 << " reverseT: " << reverseT_.size()
                 << " patch: " << masterPatch_.size()
@@ -434,11 +432,8 @@ slaveToMasterPointInterpolate
 {
     if (pf.size() != this->slavePatch().nPoints())
     {
-        FatalErrorIn
-        (
-            "GGIInterpolation::slaveToMasterPointInterpolate"
-            "(const Field<Type> pf)"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "given field does not correspond to patch. Patch size: "
             << this->slavePatch().nPoints() << " field size: " << pf.size()
             << abort(FatalError);
     }
@@ -485,11 +480,8 @@ slaveToMasterPointInterpolate
         }
         else
         {
-            FatalErrorIn
-            (
-                "GGIInterpolation::masterToSlavePointInterpolate"
-                "(const Field<Type> pf)"
-            )   << "Master point addressing is not correct"
+            FatalErrorInFunction
+                << "Master point addressing is not correct"
                 << abort(FatalError);
         }
     }
@@ -508,11 +500,8 @@ masterToSlavePointInterpolate
 {
     if (pf.size() != this->masterPatch().nPoints())
     {
-        FatalErrorIn
-        (
-            "GGIInterpolation::masterToSlavePointInterpolate"
-            "(const Field<Type> pf)"
-        )   << "given field does not correspond to patch. Patch size: "
+        FatalErrorInFunction
+            << "given field does not correspond to patch. Patch size: "
             << this->masterPatch().nPoints() << " field size: " << pf.size()
             << abort(FatalError);
     }
@@ -559,11 +548,8 @@ masterToSlavePointInterpolate
         }
         else
         {
-            FatalErrorIn
-            (
-                "GGIInterpolation::masterToSlavePointInterpolate"
-                "(const Field<Type> pf)"
-            )   << "Slave point addressing is not correct"
+            FatalErrorInFunction
+                << "Slave point addressing is not correct"
                 << abort(FatalError);
         }
     }

@@ -111,7 +111,9 @@ public:
             const bool bridgeOverlap,
             const vector& separationOffset,
             const vector& rotationAxis,
-            const scalar rotationAngle
+            const scalar rotationAngle,
+            const ggiZoneInterpolation::quickReject
+                reject = ggiZoneInterpolation::BB_OCTREE
         );
 
         //- Construct from dictionary

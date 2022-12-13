@@ -295,6 +295,11 @@ void Foam::fvPatchField<Type>::patchInterpolate
      else
      {
          // Uncoupled patch, re-use face values
+         // Note change in consistency of weights.  Patch values are
+         // multiplied by (1 - w): thus on a patch w should be 0
+         // It was 1 from first versions of the code, which is wrong
+         // Patch w was never used until the new CJM form of Gauss Gradient
+         // Bugfix, HJ, 8/Dec/2022
          fField.boundaryField()[patchI] = *this;
      }
 }
