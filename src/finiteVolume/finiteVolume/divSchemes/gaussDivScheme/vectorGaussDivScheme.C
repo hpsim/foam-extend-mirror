@@ -69,7 +69,7 @@ tmp<BlockLduSystem<vector, scalar> > gaussDivScheme<vector>::fvmUDiv
     const scalarField& wIn = weights.internalField();
 
     l = -wIn*SfIn;
-    u = l + SfIn;
+    u = (1 - wIn)*SfIn;
     bs.negSumDiag();
 
     // Boundary contributions
@@ -96,12 +96,9 @@ tmp<BlockLduSystem<vector, scalar> > gaussDivScheme<vector>::fvmUDiv
             CoeffField<vector>::linearTypeField& pcoupleLower =
                 bs.coupleLower()[patchI].asLinear();
 
-            const vectorField pcl = -pw*Sf;
-            const vectorField pcu = pcl + Sf;
-
             // Coupling  contributions
-            pcoupleLower -= pcl;
-            pcoupleUpper -= pcu;
+            pcoupleLower = pw*Sf;
+            pcoupleUpper = (1 - pw)*Sf;
         }
         else
         {
@@ -151,7 +148,7 @@ tmp<BlockLduSystem<vector, scalar> > gaussDivScheme<vector>::fvmUDiv
     const scalarField& fluxIn = flux.internalField();
 
     l = -wIn*fluxIn*SfIn;
-    u = l + fluxIn*SfIn;
+    u = (1 - wIn)*fluxIn*SfIn;
     bs.negSumDiag();
 
     // Boundary contributions
@@ -184,12 +181,9 @@ tmp<BlockLduSystem<vector, scalar> > gaussDivScheme<vector>::fvmUDiv
             CoeffField<vector>::linearTypeField& pcoupleLower =
                 bs.coupleLower()[patchI].asLinear();
 
-            const vectorField pcl = -pw*pFlux*Sf;
-            const vectorField pcu = pcl + pFlux*Sf;
-
             // Coupling  contributions
-            pcoupleLower -= pcl;
-            pcoupleUpper -= pcu;
+            pcoupleLower = -pw*pFlux*Sf;
+            pcoupleUpper = (1 - pw)*pFlux*Sf;
         }
         else
         {
@@ -210,6 +204,7 @@ tmp<BlockLduSystem<vector, scalar> > gaussDivScheme<vector>::fvmUDiv
 
     return tbs;
 }
+
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 

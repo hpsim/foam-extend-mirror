@@ -39,6 +39,36 @@ namespace fv
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+// template<class Type>
+// tmp
+// <
+//     GeometricField
+//     <typename innerProduct<vector, Type>::type, fvPatchField, volMesh>
+// >
+// gaussDivScheme<Type>::fvcDiv
+// (
+//     const GeometricField<Type, fvPatchField, volMesh>& vf
+// )
+// {
+//     tmp
+//     <
+//         GeometricField
+//         <typename innerProduct<vector, Type>::type, fvPatchField, volMesh>
+//     > tDiv
+//     (
+//         fvc::surfaceIntegrate
+//         (
+//             this->mesh_.Sf() & this->tinterpScheme_().interpolate(vf)
+//         )
+//     );
+
+//     tDiv().rename("div(" + vf.name() + ')');
+
+//     return tDiv;
+// }
+
+
+// NEW FORMULATION: deltas.  See CJ Marooney OFW17.  HJ, 8/Dec/2022
 template<class Type>
 tmp
 <
@@ -50,21 +80,116 @@ gaussDivScheme<Type>::fvcDiv
     const GeometricField<Type, fvPatchField, volMesh>& vf
 )
 {
-    tmp
-    <
-        GeometricField
-        <typename innerProduct<vector, Type>::type, fvPatchField, volMesh>
-    > tDiv
+    typedef typename innerProduct<vector, Type>::type DivType;
+
+    const fvMesh& mesh = vf.mesh();
+
+    tmp<GeometricField<DivType, fvPatchField, volMesh> > tgDiv
     (
-        fvc::surfaceIntegrate
+        new GeometricField<DivType, fvPatchField, volMesh>
         (
-            this->mesh_.Sf() & this->tinterpScheme_().interpolate(vf)
+            IOobject
+            (
+                word("div(" + vf.name() + ')'),
+                vf.instance(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh,
+            dimensioned<DivType>
+            (
+                "zero",
+                vf.dimensions()/dimLength,
+                pTraits<DivType>::zero
+            ),
+            extrapolatedCalculatedFvPatchField<DivType>::typeName
         )
     );
+    GeometricField<DivType, fvPatchField, volMesh>& gDiv = tgDiv();
 
-    tDiv().rename("div(" + vf.name() + ')');
+    // Get weights
+    surfaceScalarField w = this->tinterpScheme_().weights(vf);
 
-    return tDiv;
+    const surfaceVectorField& Sf = mesh.Sf();
+    
+    // updateCoupledPatchFields for patchNeighbourField update
+    // HJ, 10/Sep/2021
+    vf.boundaryField().updateCoupledPatchFields();
+
+    // Get access to internal fields
+
+    const Field<Type>& vfIn = vf.internalField();
+
+    Field<DivType>& gDivIn = gDiv.internalField();
+
+    const scalarField& wIn = w.internalField();
+    const vectorField& SfIn = Sf.internalField();
+
+    const unallocLabelList& own = mesh.owner();
+    const unallocLabelList& nei = mesh.neighbour();
+
+    label ownFaceI, neiFaceI;
+
+    forAll (own, faceI)
+    {
+        ownFaceI = own[faceI];
+        neiFaceI = nei[faceI];
+
+        Type deltaVf = vfIn[neiFaceI] - vfIn[ownFaceI];
+
+        // Both Sf and own-nei swap values: sign remains the same
+        // HJ, 8/Dec/2022
+        gDivIn[ownFaceI] += (1 - wIn[faceI])*(SfIn[faceI] & deltaVf);
+        gDivIn[neiFaceI] += wIn[faceI]*(SfIn[faceI] & deltaVf);
+    }
+
+    // Boundary faces
+    forAll (vf.boundaryField(), patchI)
+    {
+        const scalarField& patchW = w.boundaryField()[patchI];
+
+        const vectorField& patchSf = Sf.boundaryField()[patchI];
+
+        const unallocLabelList& faceCells =
+            gDiv.boundaryField()[patchI].patch().faceCells();
+
+        if (vf.boundaryField()[patchI].coupled())
+        {
+            Field<Type> neiVf =
+                vf.boundaryField()[patchI].patchNeighbourField();
+
+            forAll (neiVf, patchFaceI)
+            {
+                gDiv[faceCells[patchFaceI]] +=
+                    patchW[patchFaceI]*
+                    (
+                        patchSf[patchFaceI]
+                      & (neiVf[patchFaceI] - vfIn[faceCells[patchFaceI]])
+                    );
+            }
+        }
+        else
+        {
+            const fvPatchField<Type>& patchVf = vf.boundaryField()[patchI];
+
+            forAll (patchVf, patchFaceI)
+            {
+                gDiv[faceCells[patchFaceI]] +=
+                    patchW[patchFaceI]*
+                    (
+                        patchSf[patchFaceI]
+                      & (patchVf[patchFaceI] - vfIn[faceCells[patchFaceI]])
+                    );
+            }
+        }
+    }
+
+    gDivIn /= mesh.V();
+
+    gDiv.correctBoundaryConditions();
+
+    return tgDiv;
 }
 
 
@@ -77,13 +202,8 @@ tmp
     const GeometricField<Type, fvPatchField, volMesh>& vf
 ) const
 {
-    FatalErrorIn
-    (
-        "tmp<BlockLduSystem> gaussDivScheme<Type>::fvmUDiv\n"
-        "(\n"
-        "    GeometricField<Type, fvPatchField, volMesh>&"
-        ")\n"
-    )   << "Implicit div operator defined only for vector."
+    FatalErrorInFunction
+        << "Implicit div operator defined only for vector."
         << abort(FatalError);
 
     typedef typename innerProduct<vector, Type>::type DivType;
@@ -107,14 +227,8 @@ tmp
     const GeometricField<Type, fvPatchField, volMesh>& vf
 ) const
 {
-    FatalErrorIn
-    (
-        "tmp<BlockLduSystem> gaussDivScheme<Type>::fvmUDiv\n"
-        "(\n"
-        "    const surfaceScalarField& flux"
-        "    const GeometricField<Type, fvPatchField, volMesh>&"
-        ")\n"
-    )   << "Implicit div operator defined only for vector."
+    FatalErrorInFunction
+        << "Implicit div operator defined only for vector."
         << abort(FatalError);
 
     typedef typename innerProduct<vector, Type>::type DivType;

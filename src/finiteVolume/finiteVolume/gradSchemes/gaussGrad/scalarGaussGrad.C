@@ -47,8 +47,8 @@ tmp<BlockLduSystem<vector, vector> > gaussGrad<scalar>::fvmGrad
     const GeometricField<scalar, fvPatchField, volMesh>& vf
 ) const
 {
-    tmp<surfaceScalarField> tweights = this->tinterpScheme_().weights(vf);
-    const scalarField& wIn = tweights().internalField();
+    surfaceScalarField weights = this->tinterpScheme_().weights(vf);
+    const scalarField& wIn = weights.internalField();
 
     const fvMesh& mesh = vf.mesh();
 
@@ -67,7 +67,7 @@ tmp<BlockLduSystem<vector, vector> > gaussGrad<scalar>::fvmGrad
     const vectorField& SfIn = mesh.Sf().internalField();
 
     l = -wIn*SfIn;
-    u = l + SfIn;
+    u = (1 - wIn)*SfIn;
     bs.negSumDiag();
 
     // Boundary contributions
@@ -76,7 +76,7 @@ tmp<BlockLduSystem<vector, vector> > gaussGrad<scalar>::fvmGrad
         const fvPatchScalarField& pf = vf.boundaryField()[patchI];
         const fvPatch& patch = pf.patch();
         const vectorField& pSf = patch.Sf();
-        const fvsPatchScalarField& pw = tweights().boundaryField()[patchI];
+        const fvsPatchScalarField& pw = weights.boundaryField()[patchI];
         const labelList& fc = patch.faceCells();
 
         const scalarField internalCoeffs(pf.valueInternalCoeffs(pw));
@@ -94,12 +94,9 @@ tmp<BlockLduSystem<vector, vector> > gaussGrad<scalar>::fvmGrad
             CoeffField<vector>::linearTypeField& pcoupleLower =
                 bs.coupleLower()[patchI].asLinear();
 
-            const vectorField pcl = -pw*pSf;
-            const vectorField pcu = pcl + pSf;
-
             // Coupling  contributions
-            pcoupleLower -= pcl;
-            pcoupleUpper -= pcu;
+            pcoupleLower = -pw*pSf;
+            pcoupleUpper = (1 - pw)*pSf;
         }
         else
         {
