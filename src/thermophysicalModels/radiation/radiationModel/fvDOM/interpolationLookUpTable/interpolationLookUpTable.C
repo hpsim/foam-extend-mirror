@@ -225,10 +225,8 @@ void Foam::interpolationLookUpTable<Type>::readTable
 
     if (this->size() == 0)
     {
-        FatalErrorIn
-        (
-            "Foam::interpolationLookUpTable<Type>::readTable()"
-        )   << "table is empty" << nl << exit(FatalError);
+        FatalErrorInFunction
+            << "table is empty" << nl << exit(FatalError);
     }
 }
 
@@ -330,10 +328,8 @@ void Foam::interpolationLookUpTable<Type>::check() const
         // avoid duplicate values (divide-by-zero error)
         if (currValue <= prevValue)
         {
-            FatalErrorIn
-            (
-                "Foam::interpolationLookUpTable<Type>::checkOrder() const"
-            )   << "out-of-order value: " << currValue
+            FatalErrorInFunction
+                << "out-of-order value: " << currValue
                 << " at index " << index << nl << exit(FatalError);
         }
         prevValue = currValue;
@@ -372,10 +368,8 @@ void Foam::interpolationLookUpTable<Type>::write
 
     if (this->size() == 0)
     {
-        FatalErrorIn
-        (
-            "Foam::interpolationTable<Type>::write()"
-        )   << "table is empty" << nl << exit(FatalError);
+        FatalErrorInFunction
+            << "table is empty" << nl << exit(FatalError);
     }
     os.writeKeyword("values");
     os << *this << token::END_STATEMENT << nl;
@@ -393,24 +387,18 @@ Foam::interpolationLookUpTable<Type>::operator[](const label i)
 
     if (n <= 1)
     {
-        FatalErrorIn
-        (
-            "Foam::interpolationLookUpTable<Type>::operator[](const label)"
-        )   << "table has (" << n << ") columns" << nl << exit(FatalError);
+        FatalErrorInFunction
+            << "table has (" << n << ") columns" << nl << exit(FatalError);
     }
     else if (ii < 0)
     {
-        FatalErrorIn
-        (
-            "Foam::interpolationLookUpTable<Type>::operator[](const label)"
-        )   << "index (" << ii << ") underflow" << nl << exit(FatalError);
+        FatalErrorInFunction
+            << "index (" << ii << ") underflow" << nl << exit(FatalError);
     }
     else if (ii > n)
     {
-        FatalErrorIn
-        (
-            "Foam::interpolationLookUpTable<Type>::operator[](const label)"
-        )   << "index (" << ii << ") overflow" << nl << exit(FatalError);
+        FatalErrorInFunction
+            << "index (" << ii << ") overflow" << nl << exit(FatalError);
     }
 
     return List<scalarField>::operator[](ii);
@@ -426,28 +414,19 @@ Foam::interpolationLookUpTable<Type>::operator[](const label i) const
 
     if (n <= 1)
     {
-        FatalErrorIn
-        (
-            "Foam::interpolationLookUpTable<Type>::operator[]"
-            "(const label) const"
-        )   << "table has (" << n << ") columns" << nl << exit(FatalError);
+        FatalErrorInFunction
+            << "table has (" << n << ") columns" << nl << exit(FatalError);
     }
     else if (ii < 0)
     {
-        FatalErrorIn
-        (
-            "Foam::interpolationLookUpTable<Type>::operator[]"
-            "(const label) const"
-        )   << "index (" << ii << ") underflow" << nl << exit(FatalError);
+        FatalErrorInFunction
+            << "index (" << ii << ") underflow" << nl << exit(FatalError);
     }
 
     else if (ii > n)
     {
-        FatalErrorIn
-        (
-            "Foam::interpolationLookUpTable<Type>::operator[]"
-            "(const label) const"
-        )   << "index (" << ii << ") overflow" << nl
+        FatalErrorInFunction
+            << "index (" << ii << ") overflow" << nl
             << exit(FatalError);
     }
 

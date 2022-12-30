@@ -41,11 +41,8 @@ calcReceivedRayIDs() const
 {
     if (receivedRayIDPtr_)
     {
-        FatalErrorIn
-        (
-            "wideBandSpecularRadiationMixedFvPatchScalarField"
-            "::calcreceivedRayIDs()"
-        )   << "receivedRayIDPtr already calculated"
+        FatalErrorInFunction
+            << "receivedRayIDPtr already calculated"
             << abort(FatalError);
     }
 
@@ -185,11 +182,8 @@ calcReceivedRayIDs() const
 
             if (incomingRays != pickedUpRays)
             {
-                FatalErrorIn
-                (
-                    "wideBandSpecularRadiationMixedFvPatchScalarField"
-                    "::calcreceivedRayIDs()"
-                )   << "Sanity checked failed on patch " << patch().name()
+                FatalErrorInFunction
+                    << "Sanity checked failed on patch " << patch().name()
                     << " face " << faceI << nl
                     << "number of rays with direction into wall: "
                     << incomingRays

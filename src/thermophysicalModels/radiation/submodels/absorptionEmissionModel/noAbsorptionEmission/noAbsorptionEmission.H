@@ -70,7 +70,7 @@ public:
 
 
     // Destructor
-    virtual ~noAbsorptionEmission();
+    virtual ~noAbsorptionEmission() = default;
 };
 
 

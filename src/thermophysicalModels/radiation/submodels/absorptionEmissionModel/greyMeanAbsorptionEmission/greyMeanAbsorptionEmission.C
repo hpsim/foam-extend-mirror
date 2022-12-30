@@ -114,11 +114,8 @@ Foam::radiation::greyMeanAbsorptionEmission::greyMeanAbsorptionEmission
             }
             else
             {
-                FatalErrorIn
-                (
-                    "Foam::radiation::greyMeanAbsorptionEmission(const"
-                    "dictionary& dict, const fvMesh& mesh)"
-                )   << "specie: " << iter.key()
+                FatalErrorInFunction
+                    << "specie: " << iter.key()
                     << " is neither in look-up table: "
                     << lookUpTable_.tableName()
                     << " nor is being solved" << nl
@@ -127,21 +124,13 @@ Foam::radiation::greyMeanAbsorptionEmission::greyMeanAbsorptionEmission
         }
         else
         {
-            FatalErrorIn
-            (
-                "Foam::radiation::greyMeanAbsorptionEmission(const"
-                "dictionary& dict, const fvMesh& mesh)"
-            )   << "specie ft is not present " << nl
+            FatalErrorInFunction
+                << "specie ft is not present " << nl
                 << exit(FatalError);
 
         }
     }
 }
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::radiation::greyMeanAbsorptionEmission::~greyMeanAbsorptionEmission()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -210,6 +199,7 @@ Foam::radiation::greyMeanAbsorptionEmission::aCont(const label bandI) const
                 );
         }
     }
+
     return ta;
 }
 

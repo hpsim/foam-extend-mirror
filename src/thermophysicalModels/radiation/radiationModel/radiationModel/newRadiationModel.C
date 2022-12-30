@@ -25,6 +25,8 @@ License
 
 #include "error.H"
 #include "radiationModel.H"
+#include "absorptionEmissionModel.H"
+#include "scatterModel.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
@@ -69,10 +71,8 @@ autoPtr<radiationModel> radiationModel::New
 
     if (cstrIter == TConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "radiationModel::New(const volScalarField&)"
-        )   << "Unknown radiationModel type " << modelType
+        FatalErrorInFunction
+            << "Unknown radiationModel type " << modelType
             << nl << nl
             << "Valid radiationModel types are:" << nl
             << TConstructorTablePtr_->toc()
@@ -98,10 +98,8 @@ autoPtr<radiationModel> radiationModel::New
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "radiationModel::New(const dictionary&, const volScalarField&)"
-        )   << "Unknown radiationModel type "
+        FatalErrorInFunction
+            << "Unknown radiationModel type "
             << modelType << nl << nl
             << "Valid radiationModel types are:" << nl
             << dictionaryConstructorTablePtr_->toc()

@@ -121,7 +121,7 @@ void Foam::radiation::viewFactor::initialise()
 
     if (consMapDim.empty())
     {
-        FatalErrorIn("void radiation::viewFactor::initialise()")
+        FatalErrorInFunction
             << "constructMap/consMapDim is empty: radiation model cannot be "
             << "constructed"
             << abort(FatalError);

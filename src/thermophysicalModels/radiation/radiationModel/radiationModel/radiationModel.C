@@ -143,7 +143,6 @@ Foam::radiation::radiationModel::radiationModel
     firstIter_(true),
     absorptionEmission_(nullptr),
     scatter_(nullptr)
-
 {
     initialise();
 }

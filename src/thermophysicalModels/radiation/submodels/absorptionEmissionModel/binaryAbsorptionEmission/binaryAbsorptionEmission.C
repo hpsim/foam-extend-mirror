@@ -65,12 +65,6 @@ Foam::radiation::binaryAbsorptionEmission::binaryAbsorptionEmission
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::radiation::binaryAbsorptionEmission::~binaryAbsorptionEmission()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::tmp<Foam::volScalarField>

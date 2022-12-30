@@ -60,12 +60,6 @@ Foam::radiation::constantAbsorptionEmission::constantAbsorptionEmission
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::radiation::constantAbsorptionEmission::~constantAbsorptionEmission()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::tmp<Foam::volScalarField>

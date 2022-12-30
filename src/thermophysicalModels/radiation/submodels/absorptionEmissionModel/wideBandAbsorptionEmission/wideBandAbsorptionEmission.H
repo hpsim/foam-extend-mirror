@@ -190,7 +190,7 @@ public:
 
 
     // Destructor
-    virtual ~wideBandAbsorptionEmission();
+    virtual ~wideBandAbsorptionEmission() = default;
 
 
     // Member Functions

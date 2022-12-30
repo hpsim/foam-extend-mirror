@@ -85,9 +85,8 @@ public:
         );
 
 
-    // Destructor
-
-        ~constantScatter();
+    //- Destructor
+    ~constantScatter() = default;
 
 
     // Member Operators

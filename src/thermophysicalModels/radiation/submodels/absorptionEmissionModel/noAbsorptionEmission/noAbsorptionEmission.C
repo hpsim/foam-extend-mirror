@@ -56,10 +56,4 @@ Foam::radiation::noAbsorptionEmission::noAbsorptionEmission
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::radiation::noAbsorptionEmission::~noAbsorptionEmission()
-{}
-
-
 // ************************************************************************* //

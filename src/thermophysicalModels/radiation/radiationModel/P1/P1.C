@@ -73,45 +73,6 @@ Foam::radiation::P1::P1(const volScalarField& T)
         ),
         mesh_,
         dimensionedScalar("Qr", dimMass/pow3(dimTime), 0.0)
-    ),
-    a_
-    (
-        IOobject
-        (
-            "a",
-            mesh_.time().timeName(),
-            T.db(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        dimensionedScalar("a", dimless/dimLength, 0.0)
-    ),
-    e_
-    (
-        IOobject
-        (
-            "e",
-            mesh_.time().timeName(),
-            T.db(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        dimensionedScalar("a", dimless/dimLength, 0.0)
-    ),
-    E_
-    (
-        IOobject
-        (
-            "E",
-            mesh_.time().timeName(),
-            T.db(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        dimensionedScalar("E", dimMass/dimLength/pow3(dimTime), 0.0)
     )
 {}
 
@@ -143,45 +104,6 @@ Foam::radiation::P1::P1(const dictionary& dict, const volScalarField& T)
         ),
         mesh_,
         dimensionedScalar("Qr", dimMass/pow3(dimTime), 0.0)
-    ),
-    a_
-    (
-        IOobject
-        (
-            "a",
-            mesh_.time().timeName(),
-            T.db(),
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        mesh_,
-        dimensionedScalar("a", dimless/dimLength, 0.0)
-    ),
-    e_
-    (
-        IOobject
-        (
-            "e",
-            mesh_.time().timeName(),
-            T.db(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        dimensionedScalar("a", dimless/dimLength, 0.0)
-    ),
-    E_
-    (
-        IOobject
-        (
-            "E",
-            mesh_.time().timeName(),
-            T.db(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE
-        ),
-        mesh_,
-        dimensionedScalar("E", dimMass/dimLength/pow3(dimTime), 0.0)
     )
 {}
 
@@ -205,12 +127,10 @@ bool Foam::radiation::P1::read()
 
 void Foam::radiation::P1::calculate()
 {
-    a_ = absorptionEmission_->a();
-    e_ = absorptionEmission_->e();
-    E_ = absorptionEmission_->E();
-    const volScalarField sigmaEff(scatter_->sigmaEff());
-
-    const dimensionedScalar a0 ("a0", a_.dimensions(), ROOTVSMALL);
+    // Get absorption field: it is used multiple times
+    volScalarField a = absorptionEmission_->a();
+    
+    const dimensionedScalar a0("a0", dimless/dimLength, ROOTVSMALL);
 
     // Construct diffusion
     const volScalarField gamma
@@ -223,16 +143,20 @@ void Foam::radiation::P1::calculate()
             IOobject::NO_READ,
             IOobject::NO_WRITE
         ),
-        1.0/(3.0*a_ + sigmaEff + a0)
+        1.0/(3.0*a + scatter_->sigmaEff() + a0)
     );
 
     // Solve G transport equation
     solve
     (
         fvm::laplacian(gamma, G_)
-      - fvm::Sp(a_, G_)
+      - fvm::Sp(a, G_)
      ==
-      - 4.0*(e_*radiation::sigmaSB*pow4(T_) + E_)
+      - 4.0*
+        (
+            absorptionEmission_->e()*radiation::sigmaSB*pow4(T_)
+          + absorptionEmission_->E()
+        )
     );
 
     // Calculate radiative heat flux on boundaries.

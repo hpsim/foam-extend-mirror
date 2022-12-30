@@ -50,10 +50,4 @@ Foam::radiation::scatterModel::scatterModel
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor    * * * * * * * * * * * * * * //
-
-Foam::radiation::scatterModel::~scatterModel()
-{}
-
-
 // ************************************************************************* //

@@ -60,20 +60,11 @@ class P1
 {
     // Private data
 
-        //- Incident radiation / [W/m2]
+        //- Incident radiation [W/m2]
         volScalarField G_;
 
         //- Total radiative heat flux [W/m2]
         volScalarField Qr_;
-
-        //- Absorption coefficient
-        volScalarField a_;
-
-        //- Emission coefficient
-        volScalarField e_;
-
-        //- Emission contribution
-        volScalarField E_;
 
 
     // Private member functions
@@ -98,6 +89,7 @@ public:
 
         //- Construct from components
         P1(const dictionary& dict, const volScalarField& T);
+
 
     // Destructor
     virtual ~P1() = default;

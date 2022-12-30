@@ -103,7 +103,7 @@ public:
 
 
     //- Destructor
-    virtual ~absorptionEmissionModel();
+    virtual ~absorptionEmissionModel() = default;
 
 
     // Member Functions

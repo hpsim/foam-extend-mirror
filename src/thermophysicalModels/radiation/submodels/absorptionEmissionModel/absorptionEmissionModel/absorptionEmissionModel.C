@@ -49,12 +49,6 @@ Foam::radiation::absorptionEmissionModel::absorptionEmissionModel
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor    * * * * * * * * * * * * * * //
-
-Foam::radiation::absorptionEmissionModel::~absorptionEmissionModel()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::tmp<Foam::volScalarField>

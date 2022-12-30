@@ -81,7 +81,7 @@ public:
 
 
     // Destructor
-    virtual ~binaryAbsorptionEmission();
+    virtual ~binaryAbsorptionEmission() = default;
 
 
     // Member Operators

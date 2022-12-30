@@ -160,7 +160,7 @@ public:
 
 
     // Destructor
-    virtual ~greyMeanAbsorptionEmission();
+    virtual ~greyMeanAbsorptionEmission() = default;
 
 
     // Member Operators
