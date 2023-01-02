@@ -492,7 +492,6 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
 
     // Parallel search split.  HJ, 27/Apr/2016
     for (label mfI = this->parMasterStart(); mfI < this->parMasterEnd(); mfI++)
-//     forAll (ma, mfI)
     {
         ma[mfI].transfer(masterNeighbors[mfI].shrink());
     }
@@ -509,7 +508,6 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
 
     // Parallel search split.  HJ, 27/Apr/2016
     for (label mfI = this->parMasterStart(); mfI < this->parMasterEnd(); mfI++)
-//     forAll (maW, mfI)
     {
         maW[mfI].transfer(masterNeighborsWeights[mfI].shrink());
     }
@@ -525,7 +523,6 @@ void GGIInterpolation<MasterPatch, SlavePatch>::calcAddressing() const
     scalarListList smaW(masterPatch_.size());
 
     for (label mfI = this->parMasterStart(); mfI < this->parMasterEnd(); mfI++)
-//     forAll (smW, mfI)
     {
         smaW[mfI].transfer(slaveOnMasterNeighborsWeights[mfI].shrink());
     }
@@ -1297,6 +1294,7 @@ calcSlavePointAddressing() const
         << ", min: " << min(orientation) << ", nIncorrectPoints: "
         << nIncorrectPoints << "/" << slavePointAddr.size() << endl;
 }
+
 
 template<class FromPatch, class ToPatch>
 void GGIInterpolation<FromPatch, ToPatch>::
