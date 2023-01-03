@@ -176,10 +176,6 @@ tmp<Field<Type> > ggiFvPatchField<Type>::patchNeighbourField() const
 
         // For partially covered faces, add mirror that causes no flux
         ggiPatch_.addToPartialFaces(mirrorField, pnf);
-        
-        // Cannot manipulate partially covered faces, as this breaks
-        // symmetry and causes conservation errors.
-        // HJ, 12/Dec/2022
     }
 
     return tpnf;
