@@ -68,12 +68,11 @@ void Foam::regionCoupleFvPatch::makeWeights(fvsPatchScalarField& w) const
 
             w = nfc/(mag(n & (Cf() - Cn())) + nfc);
 
-            if (bridgeOverlap())
-            {
-                // Set overlap weights to 0.5 and use mirrored neighbour field
-                // for interpolation.  HJ, 21/Jan/2009
-                setUncoveredFaces(scalarField(size(), 0.5), w);
-            }
+            // Master bridging is not needed, as reconFaceCellCentres
+            // has already been bridged.  HJ, 12/Dec/2022
+
+            // For partial faces, recon cell centre is adjusted for live part
+            // HJ, 3/Jan/2022
         }
         else
         {
@@ -86,15 +85,18 @@ void Foam::regionCoupleFvPatch::makeWeights(fvsPatchScalarField& w) const
 
             shadow().makeWeights(masterWeights);
 
-            scalarField oneMinusW = 1 - masterWeights;
-
-            w = interpolate(oneMinusW);
+            w = interpolate(1 - masterWeights);
 
             if (bridgeOverlap())
             {
-                // Set overlap weights to 0.5 and use mirrored neighbour field
-                // for interpolation.  HJ, 21/Jan/2009
-                setUncoveredFaces(scalarField(size(), 0.5), w);
+                // Weights for fully uncovered faces
+                const scalarField uncoveredWeights(w.size(), 0.5);
+
+                // Set weights for uncovered faces
+                setUncoveredFaces(uncoveredWeights, w);
+
+                // Since weights are not scaled in partial cover faces, add
+                addToPartialFaces(uncoveredWeights, w);
             }
         }
     }
@@ -117,12 +119,10 @@ void Foam::regionCoupleFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 
             dc = 1.0/max(nf() & d, 0.05*mag(d));
 
-            if (bridgeOverlap())
-            {
-                scalarField bridgeDeltas = nf() & fvPatch::delta();
+            // Note: no need to bridge the overlap since delta already takes
+            //  it into account. VV, 18/Oct/2017.  Correct
 
-                setUncoveredFaces(bridgeDeltas, dc);
-            }
+            // Partially covered faces will get delta from the live part
         }
         else
         {
@@ -136,11 +136,23 @@ void Foam::regionCoupleFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
 
             dc = interpolate(masterDeltas);
 
+            // For bridging, we use a mirror: weights are 0.5, not 1
+            // 12/Nov/2022
             if (bridgeOverlap())
             {
-                scalarField bridgeDeltas = nf() & fvPatch::delta();
+                // Bugfix: delta coeffs for double distance are halved
+                // Function fvPatch::deltaCoeffs() cannot be called here:
+                // calculation is not complete and it returns zero.
+                // HJ, 4/Dec/2022
+                const scalarField uncoveredDeltaCoeffs =
+                    1/(2*mag(fvPatch::delta()));
 
-                setUncoveredFaces(bridgeDeltas, dc);
+                // Set delta coeffs for uncovered faces
+                setUncoveredFaces(uncoveredDeltaCoeffs, dc);
+
+                // For partial faces, scale delta to account for only the
+                // covered part.  HJ, 3/Jan/2022
+                scalePartialFaces(dc);
             }
         }
     }
@@ -166,12 +178,8 @@ void Foam::regionCoupleFvPatch::makeMagLongDeltas
 
             mld = (mag(Sf() & d) + mag(Sf() & (delta() - d)))/magSf();
 
-            if (bridgeOverlap())
-            {
-                scalarField bridgeDeltas = nf() & fvPatch::delta();
-
-                setUncoveredFaces(bridgeDeltas, mld);
-            }
+            // Note: no need to bridge the overlap since delta already takes
+            // it into account. VV, 18/Oct/2017.  Correct.  HJ, 12/Dec/2022
         }
         else
         {
@@ -187,9 +195,17 @@ void Foam::regionCoupleFvPatch::makeMagLongDeltas
 
             if (bridgeOverlap())
             {
-                scalarField bridgeDeltas = nf() & fvPatch::delta();
+                // Bugfix: delta coeffs for double distance are halved
+                // HJ, 4/Dec/2022
+                const scalarField uncoveredMagDeltas =
+                    1/(2*mag(fvPatch::delta()));
 
-                setUncoveredFaces(bridgeDeltas, mld);
+                // Set delta coeffs for uncovered faces
+                setUncoveredFaces(uncoveredMagDeltas, mld);
+
+                // For partial faces, scale delta to account for only the
+                // covered part.  HJ, 3/Jan/2022
+                scalePartialFaces(mld);
             }
         }
     }
@@ -217,6 +233,19 @@ void Foam::regionCoupleFvPatch::makeCorrVecs(fvsPatchVectorField& cv) const
         // If non-orthogonality is over 90 deg, kill correction vector
         // HJ, 6/Jan/2011
         cv = pos(patchDeltas & n)*(n - patchDeltas*patchDeltaCoeffs);
+
+        if (bridgeOverlap())
+        {
+            // On uncovered faces, corr vectors are zero
+            const vectorField bridgeCorrVecs(size(), vector::zero);
+
+            // Set delta coeffs for uncovered faces
+            setUncoveredFaces(bridgeCorrVecs, cv);
+
+            // Kill correction on partially overlapping faces for consistency:
+            // Non-orthogonal correction is not allowed on walls and symm planes
+            setPartialFaces(bridgeCorrVecs, cv);
+        }
     }
     else
     {
@@ -236,30 +265,33 @@ Foam::tmp<Foam::vectorField> Foam::regionCoupleFvPatch::delta() const
             tmp<vectorField> tDelta =
                 rcPolyPatch_.reconFaceCellCentres() - Cn();
 
-            if (bridgeOverlap())
-            {
-                vectorField bridgeDeltas = Cf() - Cn();
-
-                setUncoveredFaces(bridgeDeltas, tDelta());
-            }
+            // Master bridging is not needed, as reconFaceCellCentres
+            // has already been bridged.  HJ, 12/Dec/2022
 
             return tDelta;
         }
         else
         {
-            tmp<vectorField> tDelta = interpolate
+            tmp<vectorField> tdelta = interpolate
             (
                 shadow().Cn() - rcPolyPatch_.shadow().reconFaceCellCentres()
             );
+            vectorField& delta = tdelta();
 
             if (bridgeOverlap())
             {
-                vectorField bridgeDeltas = Cf() - Cn();
+                // Deltas for fully uncovered faces
+                const vectorField uncoveredDeltas = 2*fvPatch::delta();
 
-                setUncoveredFaces(bridgeDeltas, tDelta());
+                // Set deltas for fully uncovered faces
+                setUncoveredFaces(uncoveredDeltas, delta);
+
+                // Cannot manipulate partially covered faces, as this breaks
+                // symmetry and causes conservation errors.
+                // HJ, 12/Dec/2022
             }
 
-            return tDelta;
+            return tdelta;
         }
     }
     else

@@ -95,7 +95,6 @@ class regionCouplePolyPatch
             //- Interpolation zone index.  Delayed evaluation for construction
             mutable label zoneIndex_;
 
-
             //- Patch-to-patch interpolation
             mutable ggiZoneInterpolation* patchToPatchPtr_;
 
@@ -391,16 +390,19 @@ public:
             const mapDistribute& map() const;
 
             //- Return reference to patch-to-patch interpolation
+            //  Used only for addressing
             const ggiZoneInterpolation& patchToPatch() const;
 
 
-        // Interpolation functions
+        // Interpolation functions and bridging operations for fully uncovered
+        // and partially covered faces
 
             //- Expand face field to full zone size, including reduction
             template<class Type>
-            tmp<Field<Type> > fastExpand(const Field<Type>& pf) const;
+            tmp<Field<Type> > fastExpand(const UList<Type>& pf) const;
 
-            //- Interpolate face field
+            //- Interpolate face field: given field on a the shadow side,
+            //  create an interpolated field on this side
             template<class Type>
             tmp<Field<Type> > interpolate(const Field<Type>& pf) const;
 
@@ -412,6 +414,26 @@ public:
             void setUncoveredFaces
             (
                 const Field<Type>& fieldToSet,
+                Field<Type>& ff
+            ) const;
+
+            //- Set given field for partially covered faces
+            template<class Type>
+            void setPartialFaces
+            (
+                const Field<Type>& fieldToSet,
+                Field<Type>& ff
+            ) const;
+
+            //- Scale field for partially covered faces
+            template<class Type>
+            void scalePartialFaces(Field<Type>& ff) const;
+
+            //- Add given field to partially covered faces
+            template<class Type>
+            void addToPartialFaces
+            (
+                const Field<Type>& fieldToAdd,
                 Field<Type>& ff
             ) const;
 

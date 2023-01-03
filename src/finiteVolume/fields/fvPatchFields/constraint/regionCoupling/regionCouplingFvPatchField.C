@@ -91,16 +91,8 @@ regionCouplingFvPatchField<Type>::regionCouplingFvPatchField
 {
     if (!isType<regionCoupleFvPatch>(p))
     {
-        FatalIOErrorIn
-        (
-            "regionCouplingFvPatchField<Type>::regionCouplingFvPatchField\n"
-            "(\n"
-            "    const fvPatch& p,\n"
-            "    const DimensionedField<Type, volMesh>& iF,\n"
-            "    const dictionary& dict\n"
-            ")\n",
-            dict
-        )   << "patch " << this->patch().index() << " not regionCouple type. "
+        FatalIOErrorInFunction(dict)
+            << "patch " << this->patch().index() << " not regionCouple type. "
             << "Patch type = " << p.type()
             << exit(FatalIOError);
     }
@@ -131,16 +123,8 @@ regionCouplingFvPatchField<Type>::regionCouplingFvPatchField
 {
     if (!isType<regionCoupleFvPatch>(this->patch()))
     {
-        FatalErrorIn
-        (
-            "regionCouplingFvPatchField<Type>::regionCouplingFvPatchField\n"
-            "(\n"
-            "    const regionCouplingFvPatchField<Type>& ptf,\n"
-            "    const fvPatch& p,\n"
-            "    const DimensionedField<Type, volMesh>& iF,\n"
-            "    const fvPatchFieldMapper& mapper\n"
-            ")\n"
-        )   << "Field type does not correspond to patch type for patch "
+        FatalErrorInFunction
+            << "Field type does not correspond to patch type for patch "
             << this->patch().index() << "." << endl
             << "Field type: " << typeName << endl
             << "Patch type: " << this->patch().type()
@@ -226,10 +210,14 @@ tmp<Field<Type> > regionCouplingFvPatchField<Type>::patchNeighbourField() const
 
         // Use mirrored neighbour field for interpolation
         // HJ, 21/Jan/2009
-        Field<Type> bridgeField =
+        Field<Type> mirrorField =
             transform(I - 2.0*sqr(nHat), this->patchInternalField());
 
-        regionCouplePatch_.setUncoveredFaces(bridgeField, pnf);
+        // Set mirror values to fully uncovered faces
+        regionCouplePatch_.setUncoveredFaces(mirrorField, pnf);
+
+        // For partially covered faces, add mirror that causes no flux
+        regionCouplePatch_.addToPartialFaces(mirrorField, pnf);
     }
 
     return tpnf;
@@ -304,6 +292,8 @@ void regionCouplingFvPatchField<Type>::initEvaluate
             0.5*(pif + transform(I - 2.0*sqr(nHat), pif));
 
         regionCouplePatch_.setUncoveredFaces(bridgeField, *this);
+
+        regionCouplePatch_.addToPartialFaces(bridgeField, *this);
     }
 }
 
@@ -357,6 +347,8 @@ void regionCouplingFvPatchField<Type>::updateCoeffs()
             0.5*(pif + transform(I - 2.0*sqr(nHat), pif));
 
         regionCouplePatch_.setUncoveredFaces(bridgeField, *this);
+
+        regionCouplePatch_.addToPartialFaces(bridgeField, *this);
     }
 }
 
@@ -401,13 +393,36 @@ void regionCouplingFvPatchField<Type>::initInterfaceMatrixUpdate
             (
                 this->patch().patchInternalField(psiInternal)
             );
+
+        if (regionCouplePatch_.bridgeOverlap())
+        {
+            const scalarField mirrorField =
+                transform
+                (
+                    (I - sqr(this->patch().nf())/
+                    (1.0 - regionCouplePatch_.fvPatch::weights())),
+                    regionCouplePatch_.patchInternalField(psiInternal)
+                );
+
+            // Set fully uncovered faces
+            regionCouplePatch_.setUncoveredFaces
+            (
+                mirrorField,
+                matrixUpdateBuffer_
+            );
+
+            // For partially covered faces, add mirror that causes no flux
+            regionCouplePatch_.addToPartialFaces
+            (
+                mirrorField,
+                matrixUpdateBuffer_
+            );
+        }
     }
     else
     {
-        FatalErrorIn
-        (
-            "regionCouplingFvPatchField<Type>::initInterfaceMatrixUpdate"
-        )   << "init matrix update called in detached state"
+        FatalErrorInFunction
+            << "init matrix update called in detached state"
             << abort(FatalError);
     }
 }
@@ -454,10 +469,8 @@ void regionCouplingFvPatchField<Type>::updateInterfaceMatrix
     }
     else
     {
-        FatalErrorIn
-        (
-            "regionCouplingFvPatchField<Type>::updateInterfaceMatrix"
-        )   << "Matrix update called in detached state"
+        FatalErrorInFunction
+            << "Matrix update called in detached state"
             << abort(FatalError);
     }
 }

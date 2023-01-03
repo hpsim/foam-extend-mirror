@@ -167,6 +167,38 @@ public:
                 return rcPolyPatch_.setUncoveredFaces(fieldToSet, ff);
             }
 
+            //- Set given field for partially uncovered faces
+            template<class Type>
+            void setPartialFaces
+            (
+                const Field<Type>& fieldToSet,
+                Field<Type>& ff
+            ) const
+            {
+                return rcPolyPatch_.setPartialFaces(fieldToSet, ff);
+            }
+
+            //- Scale field for partially covered faces. Needed for correct
+            //  construction of mesh interpolation data (weights and delta
+            //  coeffs) and to ensure fully conservative implicit treatment
+            template<class Type>
+            void scalePartialFaces(Field<Type>& ff) const
+            {
+                return rcPolyPatch_.scalePartialFaces(ff);
+            }
+
+            //- Add given field to partially covered faces. Needed to ensure
+            //  fully conservative implicit treatment
+            template<class Type>
+            void addToPartialFaces
+            (
+                const Field<Type>& fieldToAdd,
+                Field<Type>& ff
+            ) const
+            {
+                return rcPolyPatch_.addToPartialFaces(fieldToAdd, ff);
+            }
+
 
         // Interface transfer functions
 

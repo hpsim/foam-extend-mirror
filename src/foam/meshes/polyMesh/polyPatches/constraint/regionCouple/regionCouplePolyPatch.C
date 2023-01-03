@@ -101,7 +101,7 @@ void Foam::regionCouplePolyPatch::calcZoneAddressing() const
     // Calculate patch-to-zone addressing
     if (zoneAddressingPtr_)
     {
-        FatalErrorIn("void regionCouplePolyPatch::calcZoneAddressing() const")
+        FatalErrorInFunction
             << "Patch to zone addressing already calculated"
             << abort(FatalError);
     }
@@ -125,7 +125,7 @@ void Foam::regionCouplePolyPatch::calcZoneAddressing() const
     // Check zone addressing
     if (zAddr.size() > 0 && min(zAddr) < 0)
     {
-        FatalErrorIn("void regionCouplePolyPatch::calcZoneAddressing() const")
+        FatalErrorInFunction
             << "Problem with patch-to-zone addressing for patch "
             << name()
             << ": some patch faces not found in interpolation zone"
@@ -139,10 +139,8 @@ void Foam::regionCouplePolyPatch::calcRemoteZoneAddressing() const
     // Calculate patch-to-zone addressing
     if (remoteZoneAddressingPtr_)
     {
-        FatalErrorIn
-        (
-            "void regionCouplePolyPatch::calcRemoteZoneAddressing() const"
-        )   << "Patch to remote zone addressing already calculated"
+        FatalErrorInFunction
+            << "Patch to remote zone addressing already calculated"
             << abort(FatalError);
     }
 
@@ -220,7 +218,7 @@ void Foam::regionCouplePolyPatch::calcPatchToPatch() const
     // Create patch-to-patch interpolation
     if (patchToPatchPtr_)
     {
-        FatalErrorIn("void regionCouplePolyPatch::calcPatchToPatch() const")
+        FatalErrorInFunction
             << "Patch to patch interpolation already calculated"
             << abort(FatalError);
     }
@@ -264,10 +262,8 @@ void Foam::regionCouplePolyPatch::calcPatchToPatch() const
             )
         )
         {
-            FatalErrorIn
-            (
-                "void regionCouplePolyPatch::calcPatchToPatch() const"
-            )   << "Found uncovered faces for GGI interface "
+            FatalErrorInFunction
+                << "Found uncovered faces for GGI interface "
                 << name() << "/" << shadowPatchName()
                 << " while the bridgeOverlap option is not set "
                 << "in the boundary file." << endl
@@ -277,7 +273,7 @@ void Foam::regionCouplePolyPatch::calcPatchToPatch() const
     }
     else
     {
-        FatalErrorIn("void regionCouplePolyPatch::calcPatchToPatch() const")
+        FatalErrorInFunction
             << "Attempting to create GGIInterpolation on a shadow"
             << abort(FatalError);
     }
@@ -288,10 +284,8 @@ void Foam::regionCouplePolyPatch::calcReconFaceCellCentres() const
 {
     if (reconFaceCellCentresPtr_)
     {
-        FatalErrorIn
-        (
-            "void regionCouplePolyPatch::calcReconFaceCellCentres() const"
-        )   << "Reconstructed cell centres already calculated"
+        FatalErrorInFunction
+            << "Reconstructed cell centres already calculated"
             << abort(FatalError);
     }
 
@@ -303,23 +297,47 @@ void Foam::regionCouplePolyPatch::calcReconFaceCellCentres() const
         const polyMesh& sr = shadowRegion();
 
         // Get the transformed and interpolated shadow face cell centers
-        reconFaceCellCentresPtr_ =
-            new vectorField
-            (
-                interpolate
-                (
-                    sr.boundaryMesh()[shadowID].faceCellCentres()
-                  - sr.boundaryMesh()[shadowID].faceCentres()
-                )
-              + faceCentres()
-            );
+        vectorField df = interpolate
+        (
+            sr.boundaryMesh()[shadowID].faceCellCentres()
+          - sr.boundaryMesh()[shadowID].faceCentres()
+        );
+
+        // Scale for partial cover: use cell centres of available live cell
+        scalePartialFaces(df);
+
+        // Get face centres on master side
+        const vectorField::subField cf = faceCentres();
+
+        // Note:
+        // For bridging, we use a mirror: weights are 0.5, not 1
+        // 12/Nov/2022
+        if (bridgeOverlap_)
+        {
+            // Get face cell centres on master side
+            const vectorField ccf = faceCellCentres();
+
+            // Deltas for fully uncovered faces
+            // Note:
+            // Bridging uses mirroring, so shadow cell centres need to be
+            // mirrored as well.  HJ, 2/Dec/2022
+            const vectorField uncoveredDeltas = cf - ccf;
+
+            // Set uncovered deltas to fully uncovered faces
+            setUncoveredFaces(uncoveredDeltas, df);
+
+            // For partially overlapping faces, the distance will be
+            // to the partial neighbour.  The rest of the flux is zero
+            // so no correction is needed.  HJ, 3/Jan/2023
+        }
+
+        // Calculate the reconstructed cell centres
+        reconFaceCellCentresPtr_ = new vectorField(df + cf);
     }
     else
     {
-        FatalErrorIn
-        (
-            "void regionCouplePolyPatch::calcReconFaceCellCentres() const"
-        )   << "Attempting to create reconFaceCellCentres on a shadow"
+        FatalErrorInFunction
+            << "Attempting to create reconFaceCellCentres on a shadow"
             << abort(FatalError);
     }
 }
@@ -330,7 +348,7 @@ void Foam::regionCouplePolyPatch::calcLocalParallel() const
     // Calculate patch-to-zone addressing
     if (localParallelPtr_)
     {
-        FatalErrorIn("void regionCouplePolyPatch::calcLocalParallel() const")
+        FatalErrorInFunction
             << "Local parallel switch already calculated"
             << abort(FatalError);
     }
@@ -343,10 +361,8 @@ void Foam::regionCouplePolyPatch::calcLocalParallel() const
     // in a parallel run.  HJ, 9/Nov/2014
     if (size() > zone().size())
     {
-        FatalErrorIn
-        (
-            "void regionCouplePolyPatch::calcLocalParallel() const"
-        )   << "Patch size is greater than zone size for GGI patch "
+        FatalErrorInFunction
+            << "Patch size is greater than zone size for GGI patch "
             << name() << ".  This is not allowerd: "
             << "the face zone must contain all patch faces and be "
             << "global in parallel runs"
@@ -402,7 +418,7 @@ void Foam::regionCouplePolyPatch::calcSendReceive() const
 
     if (mapPtr_)
     {
-        FatalErrorIn("void regionCouplePolyPatch::calcSendReceive() const")
+        FatalErrorInFunction
             << "Send-receive addressing already calculated"
             << abort(FatalError);
     }
@@ -415,7 +431,7 @@ void Foam::regionCouplePolyPatch::calcSendReceive() const
 
     if (!Pstream::parRun())
     {
-        FatalErrorIn("void regionCouplePolyPatch::calcSendReceive() const")
+        FatalErrorInFunction
             << "Requested calculation of send-receive addressing for a "
             << "serial run.  This is not allowed"
             << abort(FatalError);
@@ -809,10 +825,8 @@ const Foam::polyMesh& Foam::regionCouplePolyPatch::shadowRegion() const
     }
     else
     {
-        FatalErrorIn
-        (
-            "const polyMesh& regionCouplePolyPatch::shadowRegion() const"
-        )   << "Requested shadowRegion which is not available"
+        FatalErrorInFunction
+            << "Requested shadowRegion which is not available"
             << abort(FatalError);
 
         // Dummy return
@@ -837,7 +851,7 @@ Foam::label Foam::regionCouplePolyPatch::shadowIndex() const
 
         if (!shadow.active())
         {
-            FatalErrorIn("label regionCouplePolyPatch::shadowIndex() const")
+            FatalErrorInFunction
                 << "Shadow patch name " << shadowPatchName_
                 << " not found.  Please check your region couple "
                 << "interface definition."
@@ -849,7 +863,7 @@ Foam::label Foam::regionCouplePolyPatch::shadowIndex() const
         // Check the other side is a region couple
         if (!isA<regionCouplePolyPatch>(sr.boundaryMesh()[shadowIndex_]))
         {
-            FatalErrorIn("label regionCouplePolyPatch::shadowIndex() const")
+            FatalErrorInFunction
                 << "Shadow of region couple patch " << name()
                 << " named " << shadowPatchName()
                 << " on region " << shadowRegionName()
@@ -862,7 +876,7 @@ Foam::label Foam::regionCouplePolyPatch::shadowIndex() const
         // Check for region couple onto self
         if (index() == shadowIndex_ && &sr == &boundaryMesh().mesh())
         {
-            FatalErrorIn("label regionCouplePolyPatch::shadowIndex() const")
+            FatalErrorInFunction
                 << "region couple patch " << name()
                 << " created as its own shadow"
                 << abort(FatalError);
@@ -877,7 +891,7 @@ Foam::label Foam::regionCouplePolyPatch::shadowIndex() const
 
         if (master() == sp.master())
         {
-            FatalErrorIn("label regionCouplePolyPatch::shadowIndex() const")
+            FatalErrorInFunction
                 << "Region couple patch " << name()
                 << " and its shadow " << shadowPatchName()
                 << " on region " << shadowRegionName()
@@ -900,7 +914,7 @@ Foam::label Foam::regionCouplePolyPatch::zoneIndex() const
 
         if (!zone.active())
         {
-            FatalErrorIn("label regionCouplePolyPatch::zoneIndex() const")
+            FatalErrorInFunction
                 << "Face zone name " << zoneName_
                 << " for region couple patch " << name()
                 << " not found.  Please check your region couple "
@@ -1056,11 +1070,8 @@ Foam::regionCouplePolyPatch::reconFaceCellCentres() const
 {
     if (!attached_)
     {
-        FatalErrorIn
-        (
-            "const vectorField& "
-            "regionCouplePolyPatch::reconFaceCellCentres() const"
-        )   << "Requesting reconFaceCellCentres in detached state"
+        FatalErrorInFunction
+            << "Requesting reconFaceCellCentres in detached state"
             << abort(FatalError);
     }
 
