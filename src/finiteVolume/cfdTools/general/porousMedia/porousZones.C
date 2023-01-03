@@ -114,6 +114,7 @@ void Foam::porousZones::addHeatSource
     }
 }
 
+
 // Order cells for Dual Stream model
 void Foam::porousZones::macroCellOrder
 (
@@ -128,6 +129,7 @@ void Foam::porousZones::macroCellOrder
         operator[](i).macroCellOrder(Taux, Macro, posFlux, phi);
     }
 }
+
 
 bool Foam::porousZones::readData(Istream& is)
 {

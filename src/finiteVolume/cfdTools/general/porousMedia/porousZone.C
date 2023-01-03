@@ -99,18 +99,12 @@ Foam::porousZone::porousZone
             << exit(FatalError);
     }
 
-
     // porosity
     if (dict_.readIfPresent("porosity", porosity_))
     {
         if (porosity_ <= 0.0 || porosity_ > 1.0)
         {
-            FatalIOErrorIn
-            (
-                "Foam::porousZone::porousZone"
-                "(const fvMesh&, const word&, const dictionary&)",
-                dict_
-            )
+            FatalIOErrorInFunction(dict_)
                 << "out-of-range porosity value " << porosity_
                 << exit(FatalIOError);
         }
@@ -134,12 +128,8 @@ Foam::porousZone::porousZone
         {
             if (D_.dimensions() != d.dimensions())
             {
-                FatalIOErrorIn
-                (
-                    "Foam::porousZone::porousZone"
-                    "(const fvMesh&, const word&, const dictionary&)",
-                    dict_
-                )   << "incorrect dimensions for d: " << d.dimensions()
+                FatalIOErrorInFunction(dict_)
+                    << "incorrect dimensions for d: " << d.dimensions()
                     << " should be " << D_.dimensions()
                     << exit(FatalIOError);
             }
@@ -157,12 +147,8 @@ Foam::porousZone::porousZone
         {
             if (F_.dimensions() != f.dimensions())
             {
-                FatalIOErrorIn
-                (
-                    "Foam::porousZone::porousZone"
-                    "(const fvMesh&, const word&, const dictionary&)",
-                    dict_
-                )   << "incorrect dimensions for f: " << f.dimensions()
+                FatalIOErrorInFunction(dict_)
+                    << "incorrect dimensions for f: " << f.dimensions()
                     << " should be " << F_.dimensions()
                     << exit(FatalIOError);
             }
@@ -188,12 +174,8 @@ Foam::porousZone::porousZone
      && magSqr(F_.value()) <= VSMALL
     )
     {
-        FatalIOErrorIn
-        (
-            "Foam::porousZone::porousZone"
-            "(const fvMesh&, const word&, const dictionary&)",
-            dict_
-        )   << "neither powerLaw (C0/C1) "
+        FatalIOErrorInFunction(dict_)
+            << "neither powerLaw (C0/C1) "
                "nor Darcy-Forchheimer law (d/f) specified"
             << exit(FatalIOError);
     }
