@@ -718,7 +718,7 @@ GGIInterpolation<MasterPatch, SlavePatch>::rescaleGGIWeightingFactors() const
                 << uncoveredMasterFaces().size()
                 << " on slave: " << uncoveredSlaveFaces().size() << endl;
         }
-      }
+    }
 
     forAll (saW, saWi)
     {

@@ -593,16 +593,6 @@ public:
             //- Manipulate matrix
             virtual void manipulateMatrix(fvMatrix<Type>& matrix);
 
-            //- Manipulate value and boundary coefficients for convection.
-            //  Called from gaussConvection scheme and does nothing by default.
-            //  Currently overriden in ggiFvPatchField only
-            virtual void manipulateValueCoeffs(fvMatrix<Type>& matrix) const;
-
-            //- Manipulate value and boundary coefficients for diffusion.
-            //  Called from gaussConvection scheme and does nothing by default.
-            //  Currently overriden in ggiFvPatchField only
-            virtual void manipulateGradientCoeffs(fvMatrix<Type>& matrix) const;
-
 
         // I-O
 

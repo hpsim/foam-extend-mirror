@@ -292,6 +292,9 @@ void Foam::ggiPolyPatch::calcReconFaceCellCentres() const
           - boundaryMesh()[shadowID].faceCentres()
         );
 
+        // Scale for partial cover: use cell centres of available live cell
+        scalePartialFaces(df);
+
         // Get face centres on master side
         const vectorField::subField cf = faceCentres();
 
@@ -307,13 +310,14 @@ void Foam::ggiPolyPatch::calcReconFaceCellCentres() const
             // Note:
             // Bridging uses mirroring, so shadow cell centres need to be
             // mirrored as well.  HJ, 2/Dec/2022
-            const vectorField uncoveredDeltas = 2*(cf - ccf);
+            const vectorField uncoveredDeltas = cf - ccf;
 
             // Set uncovered deltas to fully uncovered faces
             setUncoveredFaces(uncoveredDeltas, df);
 
-            // Add to partially overlapping faces
-            addToPartialFaces(uncoveredDeltas, df);
+            // For partially overlapping faces, the distance will be
+            // to the partial neighbour.  The rest of the flux is zero
+            // so no correction is needed.  HJ, 3/Jan/2023
         }
 
         // Calculate the reconstructed cell centres

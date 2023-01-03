@@ -74,6 +74,9 @@ void Foam::ggiFvPatch::makeWeights(fvsPatchScalarField& w) const
 
         // Master bridging is not needed, as reconFaceCellCentres
         // has already been bridged.  HJ, 12/Dec/2022
+
+        // For partial faces, recon cell centre is adjusted for the live part
+        // HJ, 3/Jan/2022
     }
     else
     {
@@ -91,7 +94,7 @@ void Foam::ggiFvPatch::makeWeights(fvsPatchScalarField& w) const
         shadow().makeWeights(masterWeights);
 
         // Interpolate master weights to this side
-        w = interpolate(masterWeights);
+        w = interpolate(1 - masterWeights);
 
         // Slave bridging is necesary.  HJ, 12/Dec/2022
         if (bridgeOverlap())
@@ -102,13 +105,9 @@ void Foam::ggiFvPatch::makeWeights(fvsPatchScalarField& w) const
             // Set weights for uncovered faces
             setUncoveredFaces(uncoveredWeights, w);
 
-            // Cannot manipulate partially covered faces, as this breaks
-            // symmetry and causes conservation errors.
-            // HJ, 12/Dec/2022
+            // Since weights are not scaled in partial cover faces, add
+            addToPartialFaces(uncoveredWeights, w);
         }
-
-        // Finally construct these weights as 1 - master weights
-        w = 1 - w;
     }
 }
 
@@ -128,7 +127,9 @@ void Foam::ggiFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
         dc = 1.0/max(nf() & d, 0.05*mag(d));
 
         // Note: no need to bridge the overlap since delta already takes it into
-        // account. VV, 18/Oct/2017.
+        // account. VV, 18/Oct/2017.  Correct
+
+        // Partially covered faces will get delta from the live part
     }
     else
     {
@@ -160,9 +161,9 @@ void Foam::ggiFvPatch::makeDeltaCoeffs(fvsPatchScalarField& dc) const
             // Set delta coeffs for uncovered faces
             setUncoveredFaces(uncoveredDeltaCoeffs, dc);
 
-            // Cannot manipulate partially covered faces, as this breaks
-            // symmetry and causes conservation errors.
-            // HJ, 12/Dec/2022
+            // For partial faces, scale delta to account for only the
+            // covered part.  HJ, 3/Jan/2022
+            scalePartialFaces(dc);
         }
     }
 }
@@ -211,9 +212,9 @@ void Foam::ggiFvPatch::makeMagLongDeltas(fvsPatchScalarField& mld) const
             // Set delta coeffs for uncovered faces
             setUncoveredFaces(uncoveredMagDeltas, mld);
 
-            // Cannot manipulate partially covered faces, as this breaks
-            // symmetry and causes conservation errors.
-            // HJ, 12/Dec/2022
+            // For partial faces, scale delta to account for only the
+            // covered part.  HJ, 3/Jan/2022
+            scalePartialFaces(mld);
         }
     }
 }
@@ -247,8 +248,9 @@ void Foam::ggiFvPatch::makeCorrVecs(fvsPatchVectorField& cv) const
         // Set delta coeffs for uncovered faces
         setUncoveredFaces(bridgeCorrVecs, cv);
 
-        // Do nothing to partially overlapping faces: correction for the
-        // uncovered part is zero
+        // Kill correction on partially overlapping faces for consistency:
+        // Non-orthogonal correction is not allowed on walls and symm planes
+        setPartialFaces(bridgeCorrVecs, cv);
     }
 }
 

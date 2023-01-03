@@ -174,6 +174,9 @@ tmp<Field<Type> > ggiFvPatchField<Type>::patchNeighbourField() const
         // Set mirror values to fully uncovered faces
         ggiPatch_.setUncoveredFaces(mirrorField, pnf);
 
+        // For partially covered faces, add mirror that causes no flux
+        ggiPatch_.addToPartialFaces(mirrorField, pnf);
+        
         // Cannot manipulate partially covered faces, as this breaks
         // symmetry and causes conservation errors.
         // HJ, 12/Dec/2022
@@ -266,9 +269,11 @@ void ggiFvPatchField<Type>::initInterfaceMatrixUpdate
             ggiPatch_.patchInternalField(psiInternal)
         );
 
-        // Only set fully uncovered faces. Partially covered faces taken into
-        // account by manipulating value and gradient matrix coefficients
+        // Set fully uncovered faces
         ggiPatch_.setUncoveredFaces(mirrorField, pnf);
+
+        // For partially covered faces, add mirror that causes no flux
+        ggiPatch_.addToPartialFaces(mirrorField, pnf);
     }
 
     // Multiply the field by coefficients and add into the result
@@ -344,9 +349,11 @@ void ggiFvPatchField<Type>::initInterfaceMatrixUpdate
             ggiPatch_.patchInternalField(psiInternal)
         );
 
-        // Only set fully uncovered faces. Partially covered faces taken into
-        // account by manipulating value and gradient matrix coefficients
+        // Set fully uncovered faces
         ggiPatch_.setUncoveredFaces(mirrorField, pnf);
+
+        // For partially covered faces, add mirror that causes no flux
+        ggiPatch_.addToPartialFaces(mirrorField, pnf);
     }
 
     // Multiply neighbour field with coeffs and re-use pnf for result
