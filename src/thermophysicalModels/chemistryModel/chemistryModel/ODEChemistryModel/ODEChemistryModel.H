@@ -100,6 +100,10 @@ class ODEChemistryModel
         void operator=(const ODEChemistryModel&) = delete;
 
 
+        //- Check and resize (on mesh change)
+        void checkAndResize();
+
+
 protected:
 
     // Protected Member Functions

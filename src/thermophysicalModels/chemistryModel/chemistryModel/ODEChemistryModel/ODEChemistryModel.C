@@ -27,6 +27,25 @@ License
 #include "chemistrySolver.H"
 #include "reactingMixture.H"
 
+// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
+
+template<class CompType, class ThermoType>
+void Foam::ODEChemistryModel<CompType, ThermoType>::checkAndResize()
+{
+    if (!RR_.empty())
+    {
+        if (RR_[0].size() != this->mesh().nCells())
+        {
+            forAll(RR_, fieldI)
+            {
+                // Note: RR_ is set: no need to initialize to zero
+                RR_[fieldI].setSize(this->mesh().nCells());
+            }
+        }
+    }
+}
+
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 template<class CompType, class ThermoType>
@@ -64,13 +83,13 @@ Foam::ODEChemistryModel<CompType, ThermoType>::ODEChemistryModel
     RR_(nSpecie_),
     coeffs_(nSpecie_ + 2)
 {
-    // create the fields for the chemistry sources
+    // Create the fields for the chemistry sources
     forAll (RR_, fieldI)
     {
         RR_.set
         (
             fieldI,
-            new scalarField(mesh.nCells(), 0.0)
+            new scalarField(this->mesh().nCells(), scalar(0))
         );
     }
 
@@ -513,7 +532,6 @@ Foam::ODEChemistryModel<CompType, ThermoType>::tc() const
         }
     }
 
-
     ttc().correctBoundaryConditions();
 
     return ttc;
@@ -531,13 +549,13 @@ Foam::ODEChemistryModel<CompType, ThermoType>::Sh() const
             IOobject
             (
                 "Sh",
-                this->mesh_.time().timeName(),
-                this->mesh_,
+                this->mesh().time().timeName(),
+                this->mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
                 false
             ),
-            this->mesh_,
+            this->mesh(),
             dimensionedScalar("zero", dimEnergy/dimTime/dimVolume, 0.0),
             zeroGradientFvPatchScalarField::typeName
         )
@@ -572,13 +590,13 @@ Foam::ODEChemistryModel<CompType, ThermoType>::dQ() const
             IOobject
             (
                 "dQ",
-                this->mesh_.time().timeName(),
-                this->mesh_,
+                this->mesh().time().timeName(),
+                this->mesh(),
                 IOobject::NO_READ,
                 IOobject::NO_WRITE,
                 false
             ),
-            this->mesh_,
+            this->mesh(),
             dimensionedScalar("dQ", dimEnergy/dimTime, 0.0),
             zeroGradientFvPatchScalarField::typeName
         )
@@ -587,7 +605,7 @@ Foam::ODEChemistryModel<CompType, ThermoType>::dQ() const
     if (this->chemistry_)
     {
         volScalarField& dQ = tdQ();
-        dQ.dimensionedInternalField() = this->mesh_.V()*Sh()();
+        dQ.dimensionedInternalField() = this->mesh().V()*Sh()();
     }
 
     return tdQ;
@@ -605,53 +623,100 @@ Foam::label Foam::ODEChemistryModel<CompType, ThermoType>::nEqns() const
 template<class CompType, class ThermoType>
 void Foam::ODEChemistryModel<CompType, ThermoType>::calculate()
 {
-    const volScalarField rho
-    (
-        IOobject
-        (
-            "rho",
-            this->time().timeName(),
-            this->mesh(),
-            IOobject::NO_READ,
-            IOobject::NO_WRITE,
-            false
-        ),
-        this->thermo().rho()
-    );
-
-    for (label i = 0; i < nSpecie_; i++)
-    {
-        RR_[i].setSize(rho.size());
-    }
+    // Reset the reaction rate RR_ in case of mesh change.
+    // Reconsider: this should happen on topo change update
+    // HJ, 15/Dec/2022
+    this->checkAndResize();
 
     if (this->chemistry_)
     {
-        forAll (rho, cellI)
+        // Get density. Take a copy, because function returns a tmp
+        volScalarField rho = this->thermo().rho();
+        const scalarField rhoIn = rho.internalField();
+
+        // Get temperature
+        const scalarField& TIn = this->thermo().T().internalField();
+        
+        // Get pressure
+        const scalarField& pIn = this->thermo().p().internalField();
+        
+        scalarField c(nSpecie_);
+
+        for (label cellI = 0; cellI < this->mesh().nCells(); cellI++)
         {
+            // R is reset on resize
+
+            const scalar rhoi = rhoIn[cellI]; 
+            const scalar Ti = TIn[cellI];
+            scalar pi = pIn[cellI];
+
+            scalar WCSum = 0.0;
+            scalar cSum = 0.0;
+            scalar cp = 0.0;
+
+            // Calculate molar fractions from mass fractions, molar weight
             for (label i = 0; i < nSpecie_; i++)
             {
-                RR_[i][cellI] = 0.0;
+                scalar W = specieThermo_[i].W();
+
+                c[i] = rhoi*Y_[i][cellI]/W;
+
+                cSum += c[i];
+                WCSum += W*c[i];
             }
 
-            scalar rhoi = rho[cellI];
-            scalar Ti = this->thermo().T()[cellI];
-            scalar pi = this->thermo().p()[cellI];
+            // Calculate molar weight of mixture
+            scalar mw = WCSum/cSum;
+            
+            for (label i = 0; i < nSpecie_; i++)
+            {
+                scalar cpi = specieThermo_[i].cp(TIn[cellI]);
+                scalar Xi = c[i]/WCSum;
+                cp += Xi*cpi;
+            }
+            cp /= mw;
 
-            scalarField c(nSpecie_);
-            scalarField dcdt(nEqns(), 0.0);
-
+            // Calculate specie volume fractions
             for (label i = 0; i < nSpecie_; i++)
             {
                 scalar Yi = Y_[i][cellI];
                 c[i] = rhoi*Yi/specieThermo_[i].W();
             }
 
-            dcdt = omega(c, Ti, pi);
+            // Calculate reaction rate
+            scalarField dcdt = omega(c, Ti, pi);
 
             for (label i = 0; i < nSpecie_; i++)
             {
                 RR_[i][cellI] = dcdt[i]*specieThermo_[i].W();
             }
+
+            // Calculate and limit heat release
+            scalar dT = 0.0;
+            for (label i = 0; i < nSpecie_; i++)
+            {
+                scalar hi = specieThermo_[i].h(TIn[cellI]);
+
+                dT += hi*dcdt[i];
+            }
+            dT /= WCSum*cp;
+
+            // Limit the time-derivative, this is more stable for the ODE
+            // solver when calculating the allowed time step
+            scalar dtMag = min(500.0, mag(dT));
+            dcdt[nSpecie_] = -dT*dtMag/(mag(dT) + 1.0e-10);
+
+            // dp/dt = 0
+            dcdt[nSpecie_ + 1] = 0.0;
+        }
+    }
+    else
+    {
+        // No chemistry, no sources
+        forAll (RR_, i)
+        {
+            // Clear all sources
+            RR_[i] = 0;
         }
     }
 }
@@ -673,15 +738,15 @@ Foam::scalar Foam::ODEChemistryModel<CompType, ThermoType>::solve
             this->mesh(),
             IOobject::NO_READ,
             IOobject::NO_WRITE,
-            false
+            false    // Not registred in database
         ),
         this->thermo().rho()
     );
 
-    for (label i = 0; i < nSpecie_; i++)
-    {
-        RR_[i].setSize(rho.size());
-    }
+    // Reset the reaction rate RR_ in case of mesh change.
+    // Reconsider: this should happen on topo change update
+    // HJ, 15/Dec/2022
+    this->checkAndResize();
 
     if (!this->chemistry_)
     {
@@ -690,19 +755,16 @@ Foam::scalar Foam::ODEChemistryModel<CompType, ThermoType>::solve
 
     scalar deltaTMin = GREAT;
 
-    tmp<volScalarField> thc = this->thermo().hc();
-    const scalarField& hc = thc();
+    volScalarField hc = this->thermo().hc();
+    const scalarField& hcIn = hc.internalField();
 
     forAll (rho, cellI)
     {
-        for (label i = 0; i < nSpecie_; i++)
-        {
-            RR_[i][cellI] = 0.0;
-        }
+        // R is reset on resize
 
         scalar rhoi = rho[cellI];
         scalar Ti = this->thermo().T()[cellI];
-        scalar hi = this->thermo().hs()[cellI] + hc[cellI];
+        scalar hi = this->thermo().hs()[cellI] + hcIn[cellI];
         scalar pi = this->thermo().p()[cellI];
 
         scalarField c(nSpecie_);
@@ -749,6 +811,7 @@ Foam::scalar Foam::ODEChemistryModel<CompType, ThermoType>::solve
 
         for (label i = 0; i < nSpecie_; i++)
         {
+            // Note: RR_ is set: no need to initialize to zero
             RR_[i][cellI] = dc[i]*specieThermo_[i].W()/deltaT;
         }
     }
