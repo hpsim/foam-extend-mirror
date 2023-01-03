@@ -70,7 +70,7 @@ void Foam::ggiFvPatch::makeWeights(fvsPatchScalarField& w) const
         const scalarField nfc =
             mag(n & (ggiPolyPatch_.reconFaceCellCentres() - Cf()));
 
-        w = nfc/(mag(n & (Cf() - Cn())) + nfc + SMALL);
+        w = nfc/(mag(n & (Cf() - Cn())) + nfc);
 
         // Master bridging is not needed, as reconFaceCellCentres
         // has already been bridged.  HJ, 12/Dec/2022
