@@ -56,10 +56,10 @@ class multiMaterialZonesThermal
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        multiMaterialZonesThermal(const multiMaterialZonesThermal&);
+        multiMaterialZonesThermal(const multiMaterialZonesThermal&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const multiMaterialZonesThermal&);
+        void operator=(const multiMaterialZonesThermal&) = delete;
 
 
 public:

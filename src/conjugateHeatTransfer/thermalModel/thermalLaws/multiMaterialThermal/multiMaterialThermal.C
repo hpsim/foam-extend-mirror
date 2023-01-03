@@ -132,10 +132,8 @@ void Foam::multiMaterialThermal::checkLaws() const
         min(materials_).value() < 0
     )
     {
-        FatalErrorIn
-        (
-            "multiMaterialThermal::checkLaws()\n"
-        )   << "Invalid definition of material indicator field.  "
+        FatalErrorInFunction
+            << "Invalid definition of material indicator field.  "
             << "Number of materials: " << laws.size()
             << " min index: " << min(materials_)
             << ".  Should be 0"

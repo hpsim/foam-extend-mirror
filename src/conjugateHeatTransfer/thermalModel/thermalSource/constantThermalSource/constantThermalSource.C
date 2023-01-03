@@ -64,7 +64,7 @@ void Foam::constantThermalSource::addSource(volScalarField& source) const
     {
         const label zoneID = mesh().cellZones().findZoneID(zones_[zoneI]);
 
-        if ( zoneID < 0 )
+        if (zoneID < 0)
         {
             FatalErrorInFunction
                 << "Zone " << zones_[zoneI]
