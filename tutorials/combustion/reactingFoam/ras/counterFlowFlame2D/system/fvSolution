@@ -18,25 +18,19 @@ FoamFile
 solvers
 {
     rho
-    {
-        solver          PCG;
-        preconditioner  DIC;
-        tolerance       1e-06;
-        relTol          0;
-    }
+    {}
     p
     {
         solver           PCG;
         preconditioner   DIC;
-        tolerance        1e-6;
+        tolerance        1e-8;
         relTol           0.0;
     }
-
     "(U|Yi|hs|k|epsilon)"
     {
         solver          BiCGStab;
         preconditioner  DILU;
-        tolerance       1e-06;
+        tolerance       1e-08;
         relTol          0;
     }
 }
