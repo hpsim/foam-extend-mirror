@@ -105,21 +105,21 @@ void Foam::simpleMatrix<Type>::operator=(const simpleMatrix<Type>& m)
 {
     if (this == &m)
     {
-        FatalErrorIn("simpleMatrix<Type>::operator=(const simpleMatrix<Type>&)")
+        FatalErrorInFunction
             << "Attempted assignment to self"
             << abort(FatalError);
     }
 
     if (n() != m.n())
     {
-        FatalErrorIn("simpleMatrix<Type>::operator=(const simpleMatrix<Type>&)")
+        FatalErrorInFunction
             << "Different size matrices"
             << abort(FatalError);
     }
 
     if (source_.size() != m.source_.size())
     {
-        FatalErrorIn("simpleMatrix<Type>::operator=(const simpleMatrix<Type>&)")
+        FatalErrorInFunction
             << "Different size source vectors"
             << abort(FatalError);
     }
