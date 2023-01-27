@@ -34,7 +34,9 @@ License
 void Foam::Time::readDict()
 {
     if (debug)
-    Info << "Time::readDict(): reading " << controlDict_.name() << endl;
+    {
+        Info << "Time::readDict(): reading " << controlDict_.name() << endl;
+    }
 
     if (!deltaTchanged_)
     {
@@ -51,7 +53,7 @@ void Foam::Time::readDict()
         }
         else
         {
-            WarningIn("void Time::readDict()")
+            WarningInFunction
                 << wcName << " not found in enumeration "
                 << writeControlNames_.toc() << nl
                 << " setting writeControl to runTime" << endl;
@@ -66,7 +68,7 @@ void Foam::Time::readDict()
     {
         if (writeControl_ == wcTimeStep && label(writeInterval_) < 1)
         {
-            WarningIn("Time::readDict()")
+            WarningInFunction
                 << "writeInterval < 1 for writeControl timeStep.  "
                 << "Re-setting to 1."
                 << endl;
@@ -104,7 +106,7 @@ void Foam::Time::readDict()
     {
         if (purgeWrite_ < 0)
         {
-            WarningIn("Time::readDict()")
+            WarningInFunction
                 << "invalid value for purgeWrite " << purgeWrite_
                 << ", should be >= 0, setting to 0"
                 << endl;
@@ -131,7 +133,7 @@ void Foam::Time::readDict()
         }
         else
         {
-            WarningIn("void Time::readDict()")
+            WarningInFunction
                 << "unsupported time format " << formatName
                 << endl;
         }
@@ -151,7 +153,7 @@ void Foam::Time::readDict()
         }
         else
         {
-            WarningIn("void Time::readDict()")
+            WarningInFunction
                 << saName << " not found in enumeration "
                 << stopAtControlNames_.toc() << nl
                 << "Setting to writeNow" << endl;
@@ -279,11 +281,11 @@ bool Foam::Time::writeObject
     IOstream::compressionType cmp
 ) const
 {
-    addProfile2(getCalled,"Foam::Time::writeObject");
+    addProfile2(getCalled, "Foam::Time::writeObject");
 
     if (outputTime())
     {
-        addProfile2(actualOutput,"Foam::Time::writeObject - outputTime");
+        addProfile2(actualOutput, "Foam::Time::writeObject - outputTime");
 
         IOdictionary timeDict
         (

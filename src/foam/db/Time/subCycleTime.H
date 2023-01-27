@@ -50,10 +50,15 @@ class subCycleTime
 {
     // Private data
 
+        //- Reference to time
         Time& time_;
 
+        //- Number of sub-cycles
         label nSubCycles_;
+
+        //- Sub-cycle index
         label subCycleIndex_;
+
 
 public:
 
