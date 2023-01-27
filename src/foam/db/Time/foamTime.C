@@ -1100,6 +1100,9 @@ Foam::TimeState Foam::Time::subCycle(const label nSubCycles)
     deltaT0_ /= nSubCycles;
     deltaTSave_ = deltaT0_;
 
+    // No writing during subCycle
+    outputTime_ = false;
+    
     return prevTimeState();
 }
 
