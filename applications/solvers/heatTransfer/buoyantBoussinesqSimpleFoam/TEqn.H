@@ -1,10 +1,13 @@
 {
-    kappaEff = turbulence->nu()/Pr + turbulence->nut()/Prt;
+    kappaEff = thermalModelFluid.rho()*thermalModelFluid.C()*
+        (turbulence->nu()/Pr + turbulence->nut()/Prt);
+
+    rhoCpPhi =
+        fvc::interpolate(thermalModelFluid.rho()*thermalModelFluid.C())*phi;
 
     fvScalarMatrix TEqn
     (
-        fvm::div(phi, T)
-      + fvm::SuSp(-fvc::div(phi), T)
+        fvm::div(rhoCpPhi, T)
       - fvm::laplacian(kappaEff, T)
     );
 
@@ -14,9 +17,7 @@
             << gMax(thermalModelFluid.S()().internalField())
             << endl;
 
-        TEqn -=
-            thermalModelFluid.S()/
-            (thermalModelFluid.rho()*thermalModelFluid.C());
+        TEqn -= thermalModelFluid.S();
     }
 
     TEqn.relax();

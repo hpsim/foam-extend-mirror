@@ -93,9 +93,17 @@
     // Create porous zones
     porousZones pZones(mesh);
 
+    // Thermal flux
+    surfaceScalarField rhoCpPhi
+    (
+        "rhoCpPhi",
+        fvc::interpolate(thermalModelFluid.rho()*thermalModelFluid.C())*phi
+    );
+
     // Create thermal diffusivity field (post-processing)
     volScalarField kappaEff
     (
         "kappaEff",
-        turbulence->nu()/Pr + turbulence->nut()/Prt
+        thermalModelFluid.rho()*thermalModelFluid.C()*
+        (turbulence->nu()/Pr + turbulence->nut()/Prt)
     );
