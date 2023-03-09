@@ -113,12 +113,8 @@ autoPtr<turbulenceModel> turbulenceModel::New
 
     if (cstrIter == turbulenceModelConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "turbulenceModel::New(const volScalarField&, "
-            "const volVectorField&, const surfaceScalarField&, "
-            "basicThermo&)"
-        )   << "Unknown turbulenceModel type " << modelName
+        FatalErrorInFunction
+            << "Unknown turbulenceModel type " << modelName
             << endl << endl
             << "Valid turbulenceModel types are :" << endl
             << turbulenceModelConstructorTablePtr_->sortedToc()
@@ -138,7 +134,7 @@ scalar turbulenceModel::yPlusLam(const scalar kappa, const scalar E) const
 {
     scalar ypl = 11.0;
 
-    for (int i=0; i<10; i++)
+    for (int i = 0; i < 10; i++)
     {
         ypl = log(E*ypl)/kappa;
     }

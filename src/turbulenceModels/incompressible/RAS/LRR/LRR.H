@@ -116,9 +116,7 @@ public:
 
 
     //- Destructor
-
-        virtual ~LRR()
-        {}
+    virtual ~LRR() = default;
 
 
     // Member Functions

@@ -117,8 +117,7 @@ public:
 
 
     //- Destructor
-    virtual ~LaunderSharmaKE()
-    {}
+    virtual ~LaunderSharmaKE() = default;
 
 
     // Member Functions

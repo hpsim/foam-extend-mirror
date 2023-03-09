@@ -117,8 +117,7 @@ public:
 
 
     //- Destructor
-    virtual ~dynOneEqEddy()
-    {}
+    virtual ~dynOneEqEddy() = default;
 
 
     // Member Functions

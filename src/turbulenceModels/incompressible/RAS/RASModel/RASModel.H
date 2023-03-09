@@ -114,10 +114,10 @@ private:
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        RASModel(const RASModel&);
+        RASModel(const RASModel&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const RASModel&);
+        void operator=(const RASModel&) = delete;
 
 
 public:
@@ -169,12 +169,17 @@ public:
 
 
     //- Destructor
-
-        virtual ~RASModel()
-        {}
+    virtual ~RASModel() = default;
 
 
     // Member Functions
+
+        //- Turbulence on/off flag
+        virtual bool turbulence() const
+        {
+            return turbulence_;
+        }
+
 
         // Access
 

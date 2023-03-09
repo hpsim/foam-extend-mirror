@@ -76,6 +76,7 @@ LESModel::LESModel
         )
     ),
 
+    turbulence_(lookup("turbulence")),
     printCoeffs_(lookupOrDefault<Switch>("printCoeffs", false)),
     coeffDict_(subOrEmptyDict(type + "Coeffs")),
 
@@ -130,11 +131,8 @@ autoPtr<LESModel> LESModel::New
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "LESModel::New(const volVectorField& U, const "
-            "surfaceScalarField& phi, const basicThermo&)"
-        )   << "Unknown LESModel type " << modelName
+        FatalErrorInFunction
+            << "Unknown LESModel type " << modelName
             << endl << endl
             << "Valid LESModel types are :" << endl
             << dictionaryConstructorTablePtr_->sortedToc()
@@ -180,6 +178,8 @@ bool LESModel::read()
 
     if (ok)
     {
+        lookup("turbulence") >> turbulence_;
+
         if (const dictionary* dictPtr = subDictPtr(type() + "Coeffs"))
         {
             coeffDict_ <<= *dictPtr;

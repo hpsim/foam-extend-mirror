@@ -78,13 +78,22 @@ protected:
 
     // Protected data
 
+        //- Reference to time
         const Time& runTime_;
+
+        //- Mesh reference
         const fvMesh& mesh_;
 
+        //- Reference to density field
         const volScalarField& rho_;
+
+        //- Reference to velocity field
         const volVectorField& U_;
+
+        //- Reference to flux field
         const surfaceScalarField& phi_;
 
+        //- Reference to thermophysical model
         const basicThermo& thermophysicalModel_;
 
         //- Near wall distance boundary field
@@ -96,10 +105,10 @@ private:
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        turbulenceModel(const turbulenceModel&);
+        turbulenceModel(const turbulenceModel&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const turbulenceModel&);
+        void operator=(const turbulenceModel&) = delete;
 
 
 public:
@@ -153,11 +162,13 @@ public:
 
 
     //- Destructor
-    virtual ~turbulenceModel()
-    {}
+    virtual ~turbulenceModel() = default;
 
 
     // Member Functions
+
+        //- Turbulence on/off flag
+        virtual bool turbulence() const = 0;
 
         //- Access function to density field
         const volScalarField& rho() const
@@ -246,7 +257,6 @@ public:
         {
             return true;
         }
-
 };
 
 

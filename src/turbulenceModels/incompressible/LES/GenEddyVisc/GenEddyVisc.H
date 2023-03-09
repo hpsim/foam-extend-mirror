@@ -86,8 +86,7 @@ public:
 
 
     //- Destructor
-    virtual ~GenEddyVisc()
-    {}
+    virtual ~GenEddyVisc() = default;
 
 
     // Member Functions

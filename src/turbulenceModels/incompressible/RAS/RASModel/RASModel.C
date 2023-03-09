@@ -130,11 +130,8 @@ autoPtr<RASModel> RASModel::New
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "RASModel::New(const volVectorField&, "
-            "const surfaceScalarField&, transportModel&)"
-        )   << "Unknown RASModel type " << modelName
+        FatalErrorInFunction
+            << "Unknown RASModel type " << modelName
             << endl << endl
             << "Valid RASModel types are :" << endl
             << dictionaryConstructorTablePtr_->sortedToc()
@@ -155,7 +152,7 @@ scalar RASModel::yPlusLam(const scalar kappa, const scalar E) const
 {
     scalar ypl = 11.0;
 
-    for (int i=0; i<10; i++)
+    for (int i = 0; i < 10; i++)
     {
         ypl = log(max(E*ypl, 1))/kappa;
     }

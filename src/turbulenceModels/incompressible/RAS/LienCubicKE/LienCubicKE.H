@@ -126,8 +126,7 @@ public:
 
 
     //- Destructor
-    virtual ~LienCubicKE()
-    {}
+    virtual ~LienCubicKE() = default;
 
 
     // Member Functions

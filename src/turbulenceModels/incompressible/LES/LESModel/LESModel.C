@@ -75,10 +75,12 @@ LESModel::LESModel
         )
     ),
 
+    turbulence_(lookup("turbulence")),
     printCoeffs_(lookupOrDefault<Switch>("printCoeffs", false)),
     coeffDict_(subOrEmptyDict(type + "Coeffs")),
 
     k0_("k0", dimVelocity*dimVelocity, SMALL),
+
     delta_(LESdelta::New("delta", U.mesh(), *this))
 {
     readIfPresent("k0", k0_);
@@ -180,6 +182,8 @@ bool LESModel::read()
 
     if (ok)
     {
+        lookup("turbulence") >> turbulence_;
+
         if (const dictionary* dictPtr = subDictPtr(type() + "Coeffs"))
         {
             coeffDict_ <<= *dictPtr;

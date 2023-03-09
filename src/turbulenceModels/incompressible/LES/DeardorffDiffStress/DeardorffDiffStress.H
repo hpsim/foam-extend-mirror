@@ -107,8 +107,7 @@ public:
 
 
     //- Destructor
-    virtual ~DeardorffDiffStress()
-    {}
+    virtual ~DeardorffDiffStress() = default;
 
 
     // Member Functions

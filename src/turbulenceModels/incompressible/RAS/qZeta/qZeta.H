@@ -102,8 +102,7 @@ public:
 
 
     //- Destructor
-    virtual ~qZeta()
-    {}
+    virtual ~qZeta() = default;
 
 
     // Member Functions

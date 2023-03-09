@@ -113,8 +113,7 @@ public:
 
 
     //- Destructor
-    virtual ~RNGkEpsilon()
-    {}
+    virtual ~RNGkEpsilon() = default;
 
 
     // Member Functions

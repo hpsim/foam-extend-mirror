@@ -132,9 +132,7 @@ public:
 
 
     //- Destructor
-
-        virtual ~LienCubicKELowRe()
-        {}
+    virtual ~LienCubicKELowRe() = default;
 
 
     // Member Functions

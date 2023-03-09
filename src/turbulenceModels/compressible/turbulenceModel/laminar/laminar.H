@@ -53,6 +53,17 @@ class laminar
     public turbulenceModel
 {
 
+private:
+
+    // Private Member Functions
+
+        //- Disallow default bitwise copy construct
+        laminar(const laminar&) = delete;
+
+        //- Disallow default bitwise assignment
+        void operator=(const laminar&) = delete;
+
+
 public:
 
     //- Runtime type information
@@ -85,11 +96,16 @@ public:
 
 
     //- Destructor
-    virtual ~laminar()
-    {}
+    virtual ~laminar() = default;
 
 
     // Member Functions
+
+        //- Turbulence on/off flag
+        virtual bool turbulence() const
+        {
+            return false;
+        }
 
         //- Return the turbulence viscosity, i.e. 0 for laminar flow
         virtual tmp<volScalarField> mut() const;

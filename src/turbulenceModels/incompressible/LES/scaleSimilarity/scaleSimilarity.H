@@ -89,8 +89,7 @@ public:
 
 
     //- Destructor
-    virtual ~scaleSimilarity()
-    {}
+    virtual ~scaleSimilarity() = default;
 
 
     // Member Functions

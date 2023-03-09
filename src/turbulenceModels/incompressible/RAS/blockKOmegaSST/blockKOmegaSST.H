@@ -182,9 +182,7 @@ public:
 
 
     //- Destructor
-
-        virtual ~blockKOmegaSST()
-        {}
+    virtual ~blockKOmegaSST() = default;
 
 
     // Member Functions

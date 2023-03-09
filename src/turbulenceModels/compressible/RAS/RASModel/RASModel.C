@@ -132,12 +132,8 @@ autoPtr<RASModel> RASModel::New
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "RASModel::New(const volScalarField&, "
-            "const volVectorField&, const surfaceScalarField&, "
-            "basicThermo&)"
-        )   << "Unknown RASModel type " << modelName
+        FatalErrorInFunction
+            << "Unknown RASModel type " << modelName
             << endl << endl
             << "Valid RASModel types are :" << endl
             << dictionaryConstructorTablePtr_->sortedToc()

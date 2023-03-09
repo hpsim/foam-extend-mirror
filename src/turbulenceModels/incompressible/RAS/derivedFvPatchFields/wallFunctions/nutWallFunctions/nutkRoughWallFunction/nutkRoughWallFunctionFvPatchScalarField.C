@@ -70,8 +70,7 @@ tmp<scalarField> nutkRoughWallFunctionFvPatchScalarField::calcNut() const
         db().lookupObject<turbulenceModel>("turbulenceModel");
 
     const scalarField& y = turbModel.y()[patchI];
-    const tmp<volScalarField> tk = turbModel.k();
-    const volScalarField& k = tk();
+    const volScalarField k = turbModel.k();
     const scalarField& nuw = turbModel.nu().boundaryField()[patchI];
 
     const scalar Cmu25 = pow025(Cmu_);

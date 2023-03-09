@@ -229,8 +229,7 @@ public:
 
 
     //- Destructor
-    virtual ~coupledKOmegaSST()
-    {}
+    virtual ~coupledKOmegaSST() = default;
 
 
     // Member Functions

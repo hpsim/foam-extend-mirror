@@ -93,9 +93,7 @@ public:
 
 
     //- Destructor
-
-        virtual ~LamBremhorstKE()
-        {}
+    virtual ~LamBremhorstKE() = default;
 
 
     // Member Functions

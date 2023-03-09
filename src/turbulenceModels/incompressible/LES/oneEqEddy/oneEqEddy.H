@@ -109,8 +109,7 @@ public:
 
 
     //- Destructor
-    virtual ~oneEqEddy()
-    {}
+    virtual ~oneEqEddy() = default;
 
 
     // Member Functions

@@ -83,8 +83,7 @@ public:
 
 
     //- Destructor
-    virtual ~laminar()
-    {}
+    virtual ~laminar() = default;
 
 
     // Member Functions

@@ -102,9 +102,7 @@ public:
 
 
     //- Destructor
-
-        virtual ~LienLeschzinerLowRe()
-        {}
+    virtual ~LienLeschzinerLowRe() = default;
 
 
     // Member Functions

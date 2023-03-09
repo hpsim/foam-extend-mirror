@@ -222,8 +222,7 @@ public:
 
 
     //- Destructor
-    virtual ~kOmegaSST()
-    {}
+    virtual ~kOmegaSST() = default;
 
 
     // Member Functions

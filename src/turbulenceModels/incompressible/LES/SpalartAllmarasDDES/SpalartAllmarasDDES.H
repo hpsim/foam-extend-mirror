@@ -102,8 +102,7 @@ public:
 
 
     //- Destructor
-    virtual ~SpalartAllmarasDDES()
-    {}
+    virtual ~SpalartAllmarasDDES() = default;
 };
 
 

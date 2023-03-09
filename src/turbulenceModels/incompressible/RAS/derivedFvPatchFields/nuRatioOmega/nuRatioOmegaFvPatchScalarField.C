@@ -78,12 +78,8 @@ Foam::nuRatioOmegaFvPatchScalarField::nuRatioOmegaFvPatchScalarField
 {
     if (nuRatio_< SMALL)
     {
-        FatalErrorIn
-        (
-            "nuRatioOmegaFvPatchScalarField::nuRatioOmegaFvPatchScalarField"
-            "(const fvPatch& p, const DimensionedField<scalar, volMesh>& iF, "
-            "const dictionary& dict)"
-        )   << "Invalid eddy viscosity ratio (nuRatio) specified: " << nuRatio_
+        FatalErrorInFunction
+            << "Invalid eddy viscosity ratio (nuRatio) specified: " << nuRatio_
             << "\n    on patch " << this->patch().name()
             << " of field " << this->dimensionedInternalField().name()
             << " in file " << this->dimensionedInternalField().objectPath()

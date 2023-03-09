@@ -111,8 +111,7 @@ public:
 
 
     //- Destructor
-    virtual ~spectEddyVisc()
-    {}
+    virtual ~spectEddyVisc() = default;
 
 
     // Member Functions

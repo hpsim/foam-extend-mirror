@@ -106,8 +106,7 @@ public:
 
 
     //- Destructor
-    virtual ~LRRDiffStress()
-    {}
+    virtual ~LRRDiffStress() = default;
 
 
     // Member Functions

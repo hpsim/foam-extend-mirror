@@ -108,9 +108,7 @@ public:
 
 
     //- Destructor
-
-        virtual ~NonlinearKEShih()
-        {}
+    virtual ~NonlinearKEShih() = default;
 
 
     // Member Functions

@@ -150,10 +150,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~SpalartAllmaras()
-        {}
+    //- Destructor
+    virtual ~SpalartAllmaras() = default;
 
 
     // Member Functions

@@ -126,8 +126,7 @@ public:
 
 
     //- Destructor
-    virtual ~realizableKE()
-    {}
+    virtual ~realizableKE() = default;
 
 
     // Member Functions

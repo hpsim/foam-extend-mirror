@@ -109,8 +109,7 @@ public:
 
 
     //- Destructor
-    virtual ~coupledKEpsilon()
-    {}
+    virtual ~coupledKEpsilon() = default;
 
 
     // Member Functions

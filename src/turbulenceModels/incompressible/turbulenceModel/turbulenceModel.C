@@ -108,11 +108,8 @@ autoPtr<turbulenceModel> turbulenceModel::New
 
     if (cstrIter == turbulenceModelConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "turbulenceModel::New(const volVectorField&, "
-            "const surfaceScalarField&, transportModel&)"
-        )   << "Unknown turbulenceModel type " << modelName
+        FatalErrorInFunction
+            << "Unknown turbulenceModel type " << modelName
             << endl << endl
             << "Valid turbulenceModel types are :" << endl
             << turbulenceModelConstructorTablePtr_->sortedToc()

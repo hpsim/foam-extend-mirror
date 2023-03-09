@@ -90,8 +90,7 @@ public:
 
 
     //- Destructor
-    virtual ~GenSGSStress()
-    {}
+    virtual ~GenSGSStress() = default;
 
 
     // Member Functions

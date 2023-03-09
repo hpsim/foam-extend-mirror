@@ -127,9 +127,7 @@ public:
 
 
     //- Destructor
-
-        virtual ~LaunderGibsonRSTM()
-        {}
+    virtual ~LaunderGibsonRSTM() = default;
 
 
     // Member Functions

@@ -190,8 +190,7 @@ public:
 
 
     //- Destructor
-    virtual ~kOmegaSSTSAS()
-    {}
+    virtual ~kOmegaSSTSAS() = default;
 
 
     // Member Functions

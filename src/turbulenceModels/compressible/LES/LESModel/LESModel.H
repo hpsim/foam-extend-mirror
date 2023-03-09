@@ -79,9 +79,16 @@ protected:
 
     // Protected data
 
+        //- Turbulence on/off flag
+        Switch turbulence_;
+
+        //- Flag to print the model coeffs at run-time
         Switch printCoeffs_;
+
+        //- Model coefficients dictionary
         dictionary coeffDict_;
 
+        //- Lower limit of k
         dimensionedScalar k0_;
 
         autoPtr<LESdelta> delta_;
@@ -98,10 +105,10 @@ private:
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        LESModel(const LESModel&);
+        LESModel(const LESModel&) = delete;
 
         //- Disallow default bitwise assignment
-        LESModel& operator=(const LESModel&);
+        LESModel& operator=(const LESModel&) = delete;
 
 
 public:
@@ -156,12 +163,17 @@ public:
 
 
     //- Destructor
-
-        virtual ~LESModel()
-        {}
+    virtual ~LESModel() = default;
 
 
     // Member Functions
+
+        //- Turbulence on/off flag
+        virtual bool turbulence() const
+        {
+            return turbulence_;
+        }
+
 
         // Access
 

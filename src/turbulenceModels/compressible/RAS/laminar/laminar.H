@@ -75,12 +75,16 @@ public:
 
 
     //- Destructor
-
-        virtual ~laminar()
-        {}
+    virtual ~laminar() = default;
 
 
     // Member Functions
+
+        //- Turbulence on/off flag
+        virtual bool turbulence() const
+        {
+            return false;
+        }
 
         //- Return the turbulence viscosity, i.e. 0 for laminar flow
         virtual tmp<volScalarField> mut() const;

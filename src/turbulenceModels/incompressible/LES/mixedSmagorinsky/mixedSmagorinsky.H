@@ -106,8 +106,7 @@ public:
 
 
     //- Destructor
-    virtual ~mixedSmagorinsky()
-    {}
+    virtual ~mixedSmagorinsky() = default;
 
 
     // Member Functions
