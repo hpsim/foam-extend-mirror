@@ -94,14 +94,11 @@ int main(int argc, char *argv[])
             T.max(TMin);
             p.max(pMin);
             e == max(e, thermo.Cv()*TMin);
+            e.correctBoundaryConditions();
 
             thermo.correct();
             rho = thermo.rho();
-
-            if (correctPhi)
-            {
-// #           include "correctPhi.H"
-            }
+            rho.correctBoundaryConditions();
         }
 
         if (meshChanged)

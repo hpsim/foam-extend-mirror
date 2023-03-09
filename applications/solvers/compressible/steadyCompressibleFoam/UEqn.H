@@ -1,5 +1,4 @@
     // Solve the momentum equation
-    U.storePrevIter();
 
     fvVectorMatrix UEqn
     (
