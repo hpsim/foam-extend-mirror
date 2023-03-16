@@ -134,11 +134,8 @@ void Foam::gradientEnthalpyFvPatchScalarField::updateCoeffs()
         )
         {
              // Velocities not available, do not update
-            InfoIn
-            (
-                "void gradientEnthalpyFvPatchScalarField::"
-                "updateCoeffs(const vectorField& Up)"
-            )   << "Velocity fields " << UName << " or "
+            InfoInFunction
+                << "Velocity fields " << UName << " or "
                 << URotName << " or "
                 << UThetaName << " not found.  "
                 << "Performing enthalpy value update for field "

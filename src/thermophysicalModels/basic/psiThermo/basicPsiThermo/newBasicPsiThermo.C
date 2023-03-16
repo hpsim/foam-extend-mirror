@@ -61,7 +61,7 @@ Foam::autoPtr<Foam::basicPsiThermo> Foam::basicPsiThermo::New
 
     if (cstrIter == fvMeshConstructorTablePtr_->end())
     {
-        FatalErrorIn("basicPsiThermo::New(const fvMesh&, const objectRegistry&)")
+        FatalErrorInFunction
             << "Unknown basicPsiThermo type " << thermoTypeName << nl << nl
             << "Valid basicPsiThermo types are:" << nl
             << fvMeshConstructorTablePtr_->sortedToc() << nl
