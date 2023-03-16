@@ -89,9 +89,14 @@ blockSolver
 
 relaxationFactors
 {
-    U               0.95;
-    k               0.9;
-    epsilon         0.9;
+    equations
+    {
+        U               0.95;
+        k               0.9;
+        epsilon         0.9;
+    }
+    fields
+    {}
 }
 
 fieldBounds
