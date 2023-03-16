@@ -117,7 +117,7 @@ Foam::scalarField Foam::ODEChemistryModel<CompType, ThermoType>::omega
     {
         const Reaction<ThermoType>& R = reactions_[i];
 
-        scalar omegai = omega
+        const scalar omegai = omega
         (
             R, c, T, p, pf, cf, lRef, pr, cr, rRef
         );
@@ -631,83 +631,49 @@ void Foam::ODEChemistryModel<CompType, ThermoType>::calculate()
     if (this->chemistry_)
     {
         // Get density. Take a copy, because function returns a tmp
-        volScalarField rho = this->thermo().rho();
-        const scalarField rhoIn = rho.internalField();
+        const volScalarField rho
+        (
+            IOobject
+            (
+                "rho",
+                this->time().timeName(),
+                this->mesh(),
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false    // Not registred in database
+            ),
+            this->thermo().rho()
+        );
 
-        // Get temperature
-        const scalarField& TIn = this->thermo().T().internalField();
-        
-        // Get pressure
-        const scalarField& pIn = this->thermo().p().internalField();
-        
-        scalarField c(nSpecie_);
-
-        for (label cellI = 0; cellI < this->mesh().nCells(); cellI++)
+        forAll (rho, cellI)
         {
-            // R is reset on resize
-
-            const scalar rhoi = rhoIn[cellI]; 
-            const scalar Ti = TIn[cellI];
-            scalar pi = pIn[cellI];
-
-            scalar WCSum = 0.0;
-            scalar cSum = 0.0;
-            scalar cp = 0.0;
-
-            // Calculate molar fractions from mass fractions, molar weight
             for (label i = 0; i < nSpecie_; i++)
             {
-                scalar W = specieThermo_[i].W();
-
-                c[i] = rhoi*Y_[i][cellI]/W;
-
-                cSum += c[i];
-                WCSum += W*c[i];
+                RR_[i][cellI] = 0.0;
             }
 
-            // Calculate molar weight of mixture
-            scalar mw = WCSum/cSum;
-            
-            for (label i = 0; i < nSpecie_; i++)
-            {
-                scalar cpi = specieThermo_[i].cp(TIn[cellI]);
-                scalar Xi = c[i]/WCSum;
-                cp += Xi*cpi;
-            }
-            cp /= mw;
+            scalar rhoi = rho[cellI];
+            scalar Ti = this->thermo().T()[cellI];
+            scalar pi = this->thermo().p()[cellI];
 
-            // Calculate specie volume fractions
+            // Note: length od c and dcdt are different!
+            scalarField cOld(nSpecie_);
+            scalarField dcdt(nEqns(), 0.0);
+
+            // Calculate current species concentration
             for (label i = 0; i < nSpecie_; i++)
             {
                 scalar Yi = Y_[i][cellI];
-                c[i] = rhoi*Yi/specieThermo_[i].W();
+                cOld[i] = rhoi*Yi/specieThermo_[i].W();
             }
 
-            // Calculate reaction rate
-            scalarField dcdt = omega(c, Ti, pi);
+            // Calculate current reaction rate
+            dcdt = omega(cOld, Ti, pi);
 
             for (label i = 0; i < nSpecie_; i++)
             {
                 RR_[i][cellI] = dcdt[i]*specieThermo_[i].W();
             }
-
-            // Calculate and limit heat release
-            scalar dT = 0.0;
-            for (label i = 0; i < nSpecie_; i++)
-            {
-                scalar hi = specieThermo_[i].h(TIn[cellI]);
-
-                dT += hi*dcdt[i];
-            }
-            dT /= WCSum*cp;
-
-            // Limit the time-derivative, this is more stable for the ODE
-            // solver when calculating the allowed time step
-            scalar dtMag = min(500.0, mag(dT));
-            dcdt[nSpecie_] = -dT*dtMag/(mag(dT) + 1.0e-10);
-
-            // dp/dt = 0
-            dcdt[nSpecie_ + 1] = 0.0;
         }
     }
     else
@@ -771,6 +737,7 @@ Foam::scalar Foam::ODEChemistryModel<CompType, ThermoType>::solve
         scalarField c0(nSpecie_);
         scalarField dc(nSpecie_, 0.0);
 
+        // Calculate concentrations from mass fractions
         for (label i = 0; i < nSpecie_; i++)
         {
             c[i] = rhoi*Y_[i][cellI]/specieThermo_[i].W();
@@ -782,7 +749,7 @@ Foam::scalar Foam::ODEChemistryModel<CompType, ThermoType>::solve
         scalar dt = min(deltaT, tauC);
         scalar timeLeft = deltaT;
 
-        // calculate the chemical source terms
+        // Calculate the chemical source terms
         scalar cTot = 0.0;
 
         while (timeLeft > SMALL)

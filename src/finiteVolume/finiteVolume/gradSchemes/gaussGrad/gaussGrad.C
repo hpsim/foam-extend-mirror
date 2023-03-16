@@ -147,7 +147,7 @@ gaussGrad<Type>::gradf
 // }
 
 
-// NEW FORMULATION: deltas.  See CJ Marroney OFW17.  HJ, 8/Dec/2022
+// NEW FORMULATION: deltas.  See CJ Marooney OFW17.  HJ, 8/Dec/2022
 template<class Type>
 tmp
 <

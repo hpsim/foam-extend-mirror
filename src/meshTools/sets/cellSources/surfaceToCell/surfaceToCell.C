@@ -176,7 +176,7 @@ void Foam::surfaceToCell::combine(topoSet& set, const bool add) const
             // Find cell point is in. Linear search.
             if (queryMesh.findCell(outsidePoint, -1, false) == -1)
             {
-                FatalErrorIn("surfaceToCell::combine(topoSet&, const bool)")
+                FatalErrorInFunction
                     << "outsidePoint " << outsidePoint
                     << " is not inside any cell"
                     << exit(FatalError);
@@ -314,10 +314,8 @@ void Foam::surfaceToCell::checkSettings() const
         )
     )
     {
-        FatalErrorIn
-        (
-            "surfaceToCell:checkSettings()"
-        )   << "Illegal include cell specification."
+        FatalErrorInFunction
+            << "Illegal include cell specification."
             << " Result would be either all or no cells." << endl
             << "Please set one of includeCut, includeInside, includeOutside"
             << " to true, set nearDistance to a value > 0"

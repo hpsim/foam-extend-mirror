@@ -45,16 +45,11 @@ void Foam::ThermoParcel<ParcelType>::setCellValues
 
     if (Tc_ < td.constProps().TMin())
     {
-        WarningIn
-        (
-            "void Foam::ThermoParcel<ParcelType>::setCellValues"
-            "("
-                "TrackData&, "
-                "const scalar, "
-                "const label"
-            ")"
-        )   << "Limiting observed temperature in cell " << cellI << " to "
+#       ifdef FULL_DEBUG
+        WarningInFunction
+            << "Limiting observed temperature in cell " << cellI << " to "
             << td.constProps().TMin() <<  nl << endl;
+#       endif
 
         Tc_ = td.constProps().TMin();
     }
