@@ -93,3 +93,13 @@
     Switch closedVolume(pimple.dict().lookup("closedVolume"));
 
     dimensionedScalar initialMass = fvc::domainIntegrate(rho);
+
+    // Create thermal model for fluid sources
+    thermalSourceModel thermalModelFluid(thermo, thermo.T());
+
+    // Storing alphaEff for post-processing function objects
+    volScalarField alphaH
+    (
+        "alphaH",
+        turbulence->alphaEff()
+    );

@@ -32,6 +32,7 @@ Description
 #include "fvCFD.H"
 #include "basicPsiThermo.H"
 #include "RASModel.H"
+#include "thermalSourceModel.H"
 #include "fixedGradientFvPatchFields.H"
 #include "simpleControl.H"
 

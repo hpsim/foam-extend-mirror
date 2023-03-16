@@ -1,12 +1,24 @@
 {
+    // Storing alphaH for post-processing function objects
+    alphaH = turbulence->alphaEff();
+
     fvScalarMatrix hEqn
     (
         fvm::ddt(rho, h)
       + fvm::div(phi, h)
-      - fvm::laplacian(turbulence->alphaEff(), h)
+      - fvm::laplacian(alphaH, h)
      ==
         DpDt
     );
+
+    if (thermalModelFluid.active())
+    {
+        Info<< "Adding thermal source: "
+            << gMax(thermalModelFluid.S()().internalField())
+            << endl;
+
+        hEqn -= thermalModelFluid.S();
+    }
 
     hEqn.relax();
     hEqn.solve();

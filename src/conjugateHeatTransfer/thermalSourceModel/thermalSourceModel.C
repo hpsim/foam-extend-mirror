@@ -22,26 +22,26 @@ License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    fluidThermalModel
+    thermalSourceModel
 
 Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved.
 
 \*---------------------------------------------------------------------------*/
 
-#include "fluidThermalModel.H"
+#include "thermalSourceModel.H"
 #include "volFields.H"
 #include "fvc.H"
 #include "fvm.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
-defineTypeNameAndDebug(Foam::fluidThermalModel, 0);
+defineTypeNameAndDebug(Foam::thermalSourceModel, 0);
 
 
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::fluidThermalModel::fluidThermalModel
+Foam::thermalSourceModel::thermalSourceModel
 (
     const dictionary& dict,
     const volScalarField& T
@@ -51,12 +51,9 @@ Foam::fluidThermalModel::fluidThermalModel
     T_(T)
 {
     // If thermal dictionary is found, read it
-    if (dict_.found("thermal"))
+    if (dict_.found("sources"))
     {
-        // Get thermal law
-        lawPtr_ = thermalLaw::New("law", T_, dict_.subDict("thermal"));
-
-        PtrList<entry> entries(dict_.subDict("thermal").lookup("sources"));
+        PtrList<entry> entries(dict_.lookup("sources"));
         sources_.setSize(entries.size());
 
         forAll (sources_, sourceI)
@@ -73,12 +70,14 @@ Foam::fluidThermalModel::fluidThermalModel
             );
         }
     }
+
+    Info<< "SOURCE SIZE: " << sources_.size() << endl;
 }
 
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
-Foam::tmp<Foam::volScalarField> Foam::fluidThermalModel::S() const
+Foam::tmp<Foam::volScalarField> Foam::thermalSourceModel::S() const
 {
     tmp<volScalarField> tsource
     (
@@ -96,7 +95,7 @@ Foam::tmp<Foam::volScalarField> Foam::fluidThermalModel::S() const
             dimensionedScalar
             (
                 "zero",
-                // Watt/m^3 divided by rho*Cp
+                // Watt/m^3
                 dimEnergy/dimTime/dimVolume,
                 scalar(0)
             )

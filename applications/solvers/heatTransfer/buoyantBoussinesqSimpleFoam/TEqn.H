@@ -1,9 +1,7 @@
 {
-    kappaEff = thermalModelFluid.rho()*thermalModelFluid.C()*
-        (turbulence->nu()/Pr + turbulence->nut()/Prt);
+    kappaEff = rho*Cp*(turbulence->nu()/Pr + turbulence->nut()/Prt);
 
-    rhoCpPhi =
-        fvc::interpolate(thermalModelFluid.rho()*thermalModelFluid.C())*phi;
+    rhoCpPhi = rho*Cp*phi;
 
     fvScalarMatrix TEqn
     (

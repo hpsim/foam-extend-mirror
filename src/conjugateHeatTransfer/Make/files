@@ -14,13 +14,13 @@ $(thermalGaps)/thermalGap/newThermalGap.C
 $(thermalGaps)/constantThermalGap/constantThermalGap.C
 $(thermalGaps)/constantResistanceThermalGap/constantResistanceThermalGap.C
 
-thermalSource          = thermalModel/thermalSource
+thermalSource          = thermalSourceModel/thermalSource
 
 $(thermalSource)/thermalSource/thermalSource.C
 $(thermalSource)/thermalSource/newThermalSource.C
 $(thermalSource)/constantThermalSource/constantThermalSource.C
 
-fluidThermalModel/fluidThermalModel.C
+thermalSourceModel/thermalSourceModel.C
 
 BCs          = fvPatchFields
 

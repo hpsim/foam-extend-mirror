@@ -4,13 +4,12 @@
         coupledFvScalarMatrix TEqns(2);
 
         // Fluid side
+        rhoCpPhi = rho*Cp*phi;
+
         fvScalarMatrix* TFluidEqn = new fvScalarMatrix
         (
-            rho*Cp*
-            (
-                fvm::ddt(T)
-              + fvm::div(phi, T)
-            )
+            rho*Cp*fvm::ddt(T)
+          + fvm::div(rhoCpPhi, T)
           - fvm::laplacian(kappaEff, T)
          ==
             radiation->Ru()
@@ -22,8 +21,7 @@
         {
             fvScalarMatrix& TFEqn = *TFluidEqn;
             TFEqn -=
-                thermalModelFluid.S()/
-                (thermalModelFluid.rho()*thermalModelFluid.C());
+                thermalModelFluid.S();
         }
 
         // Solid side
@@ -36,7 +34,7 @@
         if (solidThermalModel.active())
         {
             fvScalarMatrix& TSEqn = *TSolidEqn;
-            TSEqn += fvm::SuSp(-solidThermalModel.S()/Tsolid, Tsolid);
+            TSEqn += fvm::SuSp(-solidThermalModel.source().S()/Tsolid, Tsolid);
         }
 
         TSolidEqn->relax();

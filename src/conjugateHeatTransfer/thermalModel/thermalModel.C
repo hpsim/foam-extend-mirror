@@ -60,7 +60,8 @@ thermalModel::thermalModel(const volScalarField& T)
         )
     ),
     T_(T),
-    lawPtr_(thermalLaw::New("law", T_, subDict("thermal")))
+    lawPtr_(thermalLaw::New("law", T_, subDict("thermal"))),
+    source_(subDict("thermal"), T)
 {
     {
         PtrList<entry> entries(subDict("thermal").lookup("gaps"));
@@ -81,24 +82,7 @@ thermalModel::thermalModel(const volScalarField& T)
         }
     }
 
-    {
-        PtrList<entry> entries(subDict("thermal").lookup("sources"));
-        sourcePtr_.setSize(entries.size());
-
-        forAll (sourcePtr_, sourceI)
-        {
-            sourcePtr_.set
-            (
-                sourceI,
-                thermalSource::New
-                (
-                    entries[sourceI].keyword(),
-                    T,
-                    entries[sourceI].dict()
-                )
-            );
-        }
-    }
+    Info<< "SOURCE ACTIVE?: " << source_.active() << endl;
 }
 
 
@@ -128,40 +112,6 @@ tmp<fvScalarMatrix> thermalModel::laplacian(volScalarField& T)
     (
         new fvScalarMatrix(fvm::laplacian(kf, T, kScheme))
     );
-}
-
-
-tmp<volScalarField> thermalModel::S() const
-{
-    tmp<volScalarField> tsource
-    (
-        new volScalarField
-        (
-            IOobject
-            (
-                "heatSource",
-                T_.time().timeName(),
-                T_.mesh(),
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            T_.mesh(),
-            dimensionedScalar
-            (
-                "zero",
-                dimEnergy/dimTime/dimVolume,
-                scalar(0)
-            )
-        )
-    );
-    volScalarField& source = tsource();
-
-    forAll(sourcePtr_, sourceI)
-    {
-        sourcePtr_[sourceI].addSource(source);
-    }
-
-    return tsource;
 }
 
 

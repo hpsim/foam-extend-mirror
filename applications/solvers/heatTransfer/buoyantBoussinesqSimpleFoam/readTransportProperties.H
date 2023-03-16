@@ -2,6 +2,12 @@
 
     singlePhaseTransportModel laminarTransport(U, phi);
 
+    // Density [kg/m^3]
+    dimensionedScalar rho(laminarTransport.lookup("rho"));
+
+    // Heat capacity [J/kgK]
+    dimensionedScalar Cp(laminarTransport.lookup("Cp"));
+
     // Thermal expansion coefficient [1/K]
     dimensionedScalar beta(laminarTransport.lookup("beta"));
 

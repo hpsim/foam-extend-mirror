@@ -47,7 +47,7 @@ Description
 
 #include "fvCFD.H"
 #include "singlePhaseTransportModel.H"
-#include "fluidThermalModel.H"
+#include "thermalSourceModel.H"
 #include "turbulenceModel.H"
 #include "porousZones.H"
 #include "pisoControl.H"

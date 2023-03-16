@@ -35,7 +35,7 @@ Description
 #include "coupledFvMatrices.H"
 #include "regionCouplePolyPatch.H"
 #include "radiationModel.H"
-#include "fluidThermalModel.H"
+#include "thermalSourceModel.H"
 #include "thermalModel.H"
 #include "singlePhaseTransportModel.H"
 #include "RASModel.H"

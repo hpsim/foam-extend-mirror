@@ -110,4 +110,11 @@
     );
 
     // Create thermal model for fluid sources
-    fluidThermalModel thermalModelFluid(laminarTransport, T);
+    thermalSourceModel thermalModelFluid(laminarTransport, T);
+
+    // Thermal flux
+    surfaceScalarField rhoCpPhi
+    (
+        "rhoCpPhi",
+        rho*Cp*phi
+    );

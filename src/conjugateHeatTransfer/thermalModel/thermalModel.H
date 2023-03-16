@@ -47,7 +47,7 @@ SourceFiles
 #include "tmp.H"
 #include "thermalLaw.H"
 #include "thermalGap.H"
-#include "thermalSource.H"
+#include "thermalSourceModel.H"
 #include "Switch.H"
 
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
@@ -75,7 +75,7 @@ class thermalModel
         PtrList<thermalGap> gapPtr_;
 
         //- Thermal source
-        PtrList<thermalSource> sourcePtr_;
+        thermalSourceModel source_;
 
 
     // Private Member Functions
@@ -152,8 +152,11 @@ public:
         //- Return the laplacian and incorporate resistance for gaps
         tmp<fvScalarMatrix> laplacian(volScalarField&);
 
-        //- Return the aggregated source
-        tmp<volScalarField> S() const;
+        //- Return the thermal source model
+        const thermalSourceModel& source() const
+        {
+            return source_;
+        }
 
         //- Correct the thermal model
         void correct()

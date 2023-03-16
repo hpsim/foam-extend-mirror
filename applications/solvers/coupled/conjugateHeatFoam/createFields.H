@@ -67,6 +67,7 @@
     setRefCell(p_rgh, piso.dict(), pRefCell, pRefValue);
     mesh.schemesDict().setFluxRequired(p_rgh.name());
 
+    Info<< "Creating turbulence model\n" << endl;
     autoPtr<incompressible::RASModel> turbulence
     (
         incompressible::RASModel::New(U, phi, laminarTransport)
@@ -107,4 +108,11 @@
     );
 
     // Create thermal model for fluid sources
-    fluidThermalModel thermalModelFluid(laminarTransport, T);
+    thermalSourceModel thermalModelFluid(laminarTransport, T);
+
+    // Thermal flux
+    surfaceScalarField rhoCpPhi
+    (
+        "rhoCpPhi",
+        rho*Cp*phi
+    );

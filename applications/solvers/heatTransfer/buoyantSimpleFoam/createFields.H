@@ -38,8 +38,7 @@
         mesh
     );
 
-    #include "compressibleCreatePhi.H"
-
+#   include "compressibleCreatePhi.H"
 
     Info<< "Creating turbulence model\n" << endl;
     autoPtr<compressible::RASModel> turbulence
@@ -59,7 +58,16 @@
     scalar pRefValue = 0.0;
     setRefCell(p, simple.dict(), pRefCell, pRefValue);
 
-
     dimensionedScalar initialMass = fvc::domainIntegrate(rho);
 
     mesh.schemesDict().setFluxRequired(p.name());
+
+    // Create thermal model for fluid sources
+    thermalSourceModel thermalModelFluid(thermo, thermo.T());
+
+    // Storing alphaEff for post-processing function objects
+    volScalarField alphaH
+    (
+        "alphaH",
+        turbulence->alphaEff()
+    );

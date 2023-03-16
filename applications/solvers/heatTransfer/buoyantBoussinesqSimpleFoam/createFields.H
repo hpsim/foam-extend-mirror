@@ -88,7 +88,7 @@
     );
 
     // Create thermal model for fluid sources
-    fluidThermalModel thermalModelFluid(laminarTransport, T);
+    thermalSourceModel thermalModelFluid(laminarTransport, T);
 
     // Create porous zones
     porousZones pZones(mesh);
@@ -97,13 +97,12 @@
     surfaceScalarField rhoCpPhi
     (
         "rhoCpPhi",
-        fvc::interpolate(thermalModelFluid.rho()*thermalModelFluid.C())*phi
+        rho*Cp*phi
     );
 
     // Create thermal diffusivity field (post-processing)
     volScalarField kappaEff
     (
         "kappaEff",
-        thermalModelFluid.rho()*thermalModelFluid.C()*
-        (turbulence->nu()/Pr + turbulence->nut()/Prt)
+        rho*Cp*(turbulence->nu()/Pr + turbulence->nut()/Prt)
     );

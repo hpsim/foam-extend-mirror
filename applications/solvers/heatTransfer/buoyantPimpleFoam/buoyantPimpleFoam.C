@@ -36,6 +36,7 @@ Description
 #include "fvCFD.H"
 #include "basicRhoThermo.H"
 #include "turbulenceModel.H"
+#include "thermalSourceModel.H"
 #include "fixedGradientFvPatchFields.H"
 #include "pimpleControl.H"
 

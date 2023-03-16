@@ -22,21 +22,21 @@ License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
 Class
-    fluidThermalModel
+    thermalSourceModel
 
 Description
-    Thermal model for fluids.
+    Thermal source model for fluids and solids.
 
 Author
     Hrvoje Jasak, Wikki Ltd.  All rights reserved.
 
 SourceFiles
-    fluidThermalModel.C
+    thermalSourceModel.C
 
 \*---------------------------------------------------------------------------*/
 
-#ifndef fluidThermalModel_H
-#define fluidThermalModel_H
+#ifndef thermalSourceModel_H
+#define thermalSourceModel_H
 
 #include "IOdictionary.H"
 #include "typeInfo.H"
@@ -54,10 +54,10 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                      Class fluidThermalModel Declaration
+                      Class thermalSourceModel Declaration
 \*---------------------------------------------------------------------------*/
 
-class fluidThermalModel
+class thermalSourceModel
 {
     // Private data
 
@@ -67,9 +67,6 @@ class fluidThermalModel
         //- Reference to temperature field
         const volScalarField& T_;
 
-        //- Thermal law
-        autoPtr<thermalLaw> lawPtr_;
-
         //- Thermal source
         PtrList<thermalSource> sources_;
 
@@ -77,21 +74,21 @@ class fluidThermalModel
     // Private Member Functions
 
         //- Disallow copy construct
-        fluidThermalModel(const fluidThermalModel&) = delete;
+        thermalSourceModel(const thermalSourceModel&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const fluidThermalModel&) = delete;
+        void operator=(const thermalSourceModel&) = delete;
 
 
 public:
 
     //- Runtime type information
-    TypeName("fluidThermalModel");
+    TypeName("thermalSourceModel");
 
     // Constructors
 
         //- Construct from dictionary
-        fluidThermalModel
+        thermalSourceModel
         (
             const dictionary& dict,
             const volScalarField& T
@@ -99,7 +96,7 @@ public:
 
 
     //- Destructor
-    virtual ~fluidThermalModel() = default;
+    virtual ~thermalSourceModel() = default;
 
 
     // Member Functions
@@ -107,31 +104,7 @@ public:
         //- Is the thermal model active?
         inline bool active() const
         {
-            return lawPtr_.valid();
-        }
-
-        //- Return thermal law
-        const thermalLaw& law() const
-        {
-            return lawPtr_();
-        }
-
-        //- Return density
-        tmp<volScalarField> rho() const
-        {
-            return lawPtr_->rho();
-        }
-
-        //- Return specific heat capacity
-        tmp<volScalarField> C() const
-        {
-            return lawPtr_->C();
-        }
-
-        //- Return thermal conductivity
-        tmp<volScalarField> k() const
-        {
-            return lawPtr_->k();
+            return !sources_.empty();
         }
 
         //- Return the aggregated source

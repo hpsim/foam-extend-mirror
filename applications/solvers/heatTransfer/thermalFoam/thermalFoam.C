@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
         (
             fvm::ddt(rhoCp, T)
           - fvm::laplacian(kf, T, "laplacian(k,T)")
-          + fvm::SuSp(-solidThermo.S()/T, T)
+          + fvm::SuSp(-solidThermo.source().S()/T, T)
         );
 
         runTime.write();
