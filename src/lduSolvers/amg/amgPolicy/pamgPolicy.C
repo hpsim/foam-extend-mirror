@@ -349,11 +349,6 @@ Foam::pamgPolicy::pamgPolicy
     calcChild();
 }
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::pamgPolicy::~pamgPolicy()
-{}
-
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
@@ -361,10 +356,8 @@ Foam::autoPtr<Foam::amgMatrix> Foam::pamgPolicy::restrictMatrix() const
 {
     if (!coarsen_)
     {
-        FatalErrorIn
-        (
-            "autoPtr<amgMatrix> pAmgPolicy::restrictMatrix() const"
-        )   << "Requesting coarse matrix when it cannot be created"
+        FatalErrorInFunction
+            << "Requesting coarse matrix when it cannot be created"
             << abort(FatalError);
     }
 
@@ -390,10 +383,8 @@ Foam::autoPtr<Foam::amgMatrix> Foam::pamgPolicy::restrictMatrix() const
 #   ifdef FULLDEBUG
     if (child_.size() != matrix().lduAddr().size())
     {
-        FatalErrorIn
-        (
-            "autoPtr<amgMatrix> pamgPolicy::restrictMatrix() const"
-        )   << "Child array does not correspond to fine level. " << endl
+        FatalErrorInFunction
+            << "Child array does not correspond to fine level. " << endl
             << " Child size: " << child_.size()
             << " number of equations: " << matrix().lduAddr().size()
             << abort(FatalError);

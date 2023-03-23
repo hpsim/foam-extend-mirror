@@ -81,10 +81,10 @@ class amgPolicy
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        amgPolicy(const amgPolicy&);
+        amgPolicy(const amgPolicy&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const amgPolicy&);
+        void operator=(const amgPolicy&) = delete;
 
 
 public:
@@ -157,8 +157,7 @@ public:
 
 
     //- Destructor
-    virtual ~amgPolicy()
-    {}
+    virtual ~amgPolicy() = default;
 
 
     // Member Functions

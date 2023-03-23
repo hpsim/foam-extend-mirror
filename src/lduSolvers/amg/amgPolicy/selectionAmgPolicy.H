@@ -90,10 +90,10 @@ class selectionAmgPolicy
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        selectionAmgPolicy(const selectionAmgPolicy&);
+        selectionAmgPolicy(const selectionAmgPolicy&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const selectionAmgPolicy&);
+        void operator=(const selectionAmgPolicy&) = delete;
 
         //- Filter the prolongation matrix and return only the rows
         //  corresponding to interface

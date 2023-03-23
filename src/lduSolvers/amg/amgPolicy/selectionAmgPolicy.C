@@ -762,10 +762,8 @@ Foam::autoPtr<Foam::amgMatrix> Foam::selectionAmgPolicy::restrictMatrix() const
 {
     if (!coarsen_)
     {
-        FatalErrorIn
-        (
-            "autoPtr<amgMatrix> selectionAmgPolicy::restrictMatrix() const"
-        )   << "Requesting coarse matrix when it cannot be created"
+        FatalErrorInFunction
+            << "Requesting coarse matrix when it cannot be created"
             << abort(FatalError);
     }
 
@@ -788,10 +786,8 @@ Foam::autoPtr<Foam::amgMatrix> Foam::selectionAmgPolicy::restrictMatrix() const
      || crR.nRows() != nCoarseEqns_
     )
     {
-        FatalErrorIn
-        (
-            "autoPtr<amgMatrix> Foam::selectionAmgPolicy::restrictMatrix"
-        )   << "Incompatible matrices for triple product: "
+        FatalErrorInFunction
+            << "Incompatible matrices for triple product: "
             << "R( " << crR.nRows() << " ," << crR.nCols() << ") "
             << "A( " << nEqns << " ," << nEqns << ") "
             << "P( " << crP.nRows() << " ," << crP.nCols() << ") "

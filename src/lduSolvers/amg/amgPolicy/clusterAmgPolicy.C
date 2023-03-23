@@ -520,29 +520,13 @@ Foam::clusterAmgPolicy::clusterAmgPolicy
 {
     if (groupSize < 2)
     {
-        FatalErrorIn
-        (
-            "clusterAmgPolicy::clusterAmgPolicy\n"
-            "(\n"
-            "    const lduMatrix& matrix,\n"
-            "    const FieldField<Field, scalar>& bouCoeffs,\n"
-            "    const FieldField<Field, scalar>& intCoeffs,\n"
-            "    const lduInterfaceFieldPtrsList& interfaceFields,\n"
-            "    const label groupSize,\n"
-            "    const label minCoarseEqns\n"
-            ")"
-        )   << "Group size smaller than 2 is not allowed"
+        FatalErrorInFunction
+            << "Group size smaller than 2 is not allowed"
             << abort(FatalError);
     }
 
     calcChild();
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::clusterAmgPolicy::~clusterAmgPolicy()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -551,10 +535,8 @@ Foam::autoPtr<Foam::amgMatrix> Foam::clusterAmgPolicy::restrictMatrix() const
 {
     if (!coarsen_)
     {
-        FatalErrorIn
-        (
-            "autoPtr<amgMatrix> clusterAmgPolicy::restrictMatrix() const"
-        )   << "Requesting coarse matrix when it cannot be created"
+        FatalErrorInFunction
+            << "Requesting coarse matrix when it cannot be created"
             << abort(FatalError);
     }
 
@@ -580,10 +562,8 @@ Foam::autoPtr<Foam::amgMatrix> Foam::clusterAmgPolicy::restrictMatrix() const
 #   ifdef FULLDEBUG
     if (child_.size() != matrix().lduAddr().size())
     {
-        FatalErrorIn
-        (
-            "autoPtr<amgMatrix> clusterAmgPolicy::restrictMatrix() const"
-        )   << "Child array does not correspond to fine level. " << endl
+        FatalErrorInFunction
+            << "Child array does not correspond to fine level. " << endl
             << " Child size: " << child_.size()
             << " number of equations: " << matrix().lduAddr().size()
             << abort(FatalError);

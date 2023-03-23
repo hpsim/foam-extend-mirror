@@ -89,7 +89,7 @@ Foam::fineAmgLevel::fineAmgLevel
 
 Foam::scalarField& Foam::fineAmgLevel::x()
 {
-    FatalErrorIn("scalarField& Foam::fineAmgLevel::x()")
+    FatalErrorInFunction
         << "x is not available."
         << abort(FatalError);
 
@@ -100,7 +100,7 @@ Foam::scalarField& Foam::fineAmgLevel::x()
 
 Foam::scalarField& Foam::fineAmgLevel::b()
 {
-    FatalErrorIn("scalarField& Foam::fineAmgLevel::b()")
+    FatalErrorInFunction
         << "b is not available."
         << abort(FatalError);
 

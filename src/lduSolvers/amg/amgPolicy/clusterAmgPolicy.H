@@ -79,10 +79,10 @@ class clusterAmgPolicy
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        clusterAmgPolicy(const clusterAmgPolicy&);
+        clusterAmgPolicy(const clusterAmgPolicy&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const clusterAmgPolicy&);
+        void operator=(const clusterAmgPolicy&) = delete;
 
         //- Calculate child
         void calcChild();
@@ -118,7 +118,7 @@ public:
 
 
     //- Destructor
-    virtual ~clusterAmgPolicy();
+    virtual ~clusterAmgPolicy() = default;
 
 
     // Member Functions

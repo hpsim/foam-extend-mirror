@@ -65,19 +65,8 @@ Foam::autoPtr<Foam::amgPolicy> Foam::amgPolicy::New
 
     if (constructorIter == matrixConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "autoPtr<amgPolicy> amgPolicy::New\n"
-            "(\n"
-            "    const word& policyType,\n"
-            "    const lduMatrix& matrix,\n"
-            "    const FieldField<Field, scalar>& bouCoeffs,\n"
-            "    const FieldField<Field, scalar>& intCoeffs,\n"
-            "    const lduInterfaceFieldPtrsList& interfaceFields,\n"
-            "    const label groupSize\n"
-            "    const label minCoarseEqns\n"
-            ")"
-        )   << "Unknown AMG policy " << policyType
+        FatalErrorInFunction
+            << "Unknown AMG policy " << policyType
             << endl << endl
             << "Valid AMG policies are :" << endl
             << matrixConstructorTablePtr_->sortedToc()

@@ -73,10 +73,10 @@ class pamgPolicy
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        pamgPolicy(const pamgPolicy&);
+        pamgPolicy(const pamgPolicy&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const pamgPolicy&);
+        void operator=(const pamgPolicy&) = delete;
 
         //- Calculate child
         void calcChild();
@@ -109,7 +109,7 @@ public:
 
 
     //- Destructor
-    virtual ~pamgPolicy();
+    virtual ~pamgPolicy() = default;
 
 
     // Member Functions
