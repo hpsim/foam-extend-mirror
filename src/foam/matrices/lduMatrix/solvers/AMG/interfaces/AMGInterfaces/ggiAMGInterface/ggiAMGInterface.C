@@ -46,14 +46,14 @@ void Foam::ggiAMGInterface::initFastReduce() const
 {
     if (mapPtr_)
     {
-        FatalErrorIn("void ggiAMGInterface::initFastReduce() const")
+        FatalErrorInFunction
             << "map already calculated"
             << abort(FatalError);
     }
 
     if (!Pstream::parRun())
     {
-        FatalErrorIn("void ggiAMGInterface::initFastReduce() const")
+        FatalErrorInFunction
             << "Requested calculation of send-receive addressing for a "
             << "serial run.  This is not allowed"
             << abort(FatalError);
@@ -942,11 +942,11 @@ Foam::ggiAMGInterface::ggiAMGInterface
                 }
                 else
                 {
-                    FatalErrorIn("...")
+                    FatalErrorInFunction
                         << "My proc number " << Pstream::myProcNo()
-                            << " is neither a sender nor a receiver: "
-                            << schedule[i]
-                            << abort(FatalError);
+                        << " is neither a sender nor a receiver: "
+                        << schedule[i]
+                        << abort(FatalError);
                 }
             }
         }
@@ -1151,7 +1151,7 @@ const Foam::labelList& Foam::ggiAMGInterface::zoneAddressing() const
 
 const Foam::labelListList& Foam::ggiAMGInterface::ggiAddressing() const
 {
-    FatalErrorIn("const labelListList& ggiAMGInterface::ggiAddressing() const")
+    FatalErrorInFunction
         << "Requested fine addressing at coarse level"
         << abort(FatalError);
 
@@ -1169,10 +1169,8 @@ const Foam::labelListList& Foam::ggiAMGInterface::procMasterFaces() const
 {
     if (!master())
     {
-        FatalErrorIn
-        (
-            "const labelListList& ggiGAMGInterface::procMasterFaces() const"
-        )   << "Requester procMasterFaces from a slave.  This is not allowed"
+        FatalErrorInFunction
+            << "Requester procMasterFaces from a slave.  This is not allowed"
             << abort(FatalError);
     }
 
@@ -1193,7 +1191,7 @@ const Foam::mapDistribute& Foam::ggiAMGInterface::map() const
 
 const Foam::scalarListList& Foam::ggiAMGInterface::ggiWeights() const
 {
-    FatalErrorIn("const labelListList& ggiAMGInterface::ggiWeights() const")
+    FatalErrorInFunction
         << "Requested fine addressing at coarse level"
         << abort(FatalError);
 
