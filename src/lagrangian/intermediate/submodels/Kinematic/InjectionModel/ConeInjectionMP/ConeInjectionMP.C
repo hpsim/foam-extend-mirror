@@ -38,12 +38,13 @@ Foam::label Foam::ConeInjectionMP<CloudType>::parcelsToInject
 {
     if ((time0 >= 0.0) && (time0 < duration_))
     {
-        const scalar targetVolume = volumeFlowRate_().integrate(0, time1);
+        const label nToInject = round((time1 - time0)*parcelsPerInjector_);
 
-        const label targetParcels =
-            parcelsPerInjector_*targetVolume/this->volumeTotal_;
+//        const scalar targetVolume = volumeFlowRate_().integrate(0, time1);
 
-        const label nToInject = targetParcels - nInjected_;
+//        const scalar volumeFraction = targetVolume/this->volumeTotal_;
+
+//        const label targetParcels =  ceil(parcelsPerInjector_*volumeFraction);
 
         nInjected_ += nToInject;
 

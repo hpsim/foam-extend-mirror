@@ -44,14 +44,8 @@ Foam::InjectionModel<CloudType>::New
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "InjectionModel<CloudType>::New"
-            "("
-                "const dictionary&, "
-                "CloudType&"
-            ")"
-        )   << "Unknown InjectionModelType type "
+        FatalErrorInFunction
+            << "Unknown InjectionModelType type "
             << InjectionModelType
             << ", constructor not in hash table" << nl << nl
             << "    Valid InjectionModel types are:" << nl
