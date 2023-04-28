@@ -82,13 +82,13 @@ tmp<GeometricField<Type, fvPatchField, volMesh> > fvMeshSubset::meshToMesh
 
             labelList directAddressing(subPatch.size());
 
-            forAll(directAddressing, i)
+            forAll (directAddressing, i)
             {
                 label baseFaceI = faceMap[subPatch.patch().start()+i];
 
                 if (baseFaceI >= baseStart && baseFaceI < baseStart + baseSize)
                 {
-                    directAddressing[i] = baseFaceI-baseStart;
+                    directAddressing[i] = baseFaceI - baseStart;
                 }
                 else
                 {
@@ -214,7 +214,7 @@ tmp<GeometricField<Type, fvPatchField, volMesh> > fvMeshSubset::interpolate
 
         const labelList& fm = faceMap();
 
-        forAll(lastPatchField, faceI)
+        forAll (lastPatchField, faceI)
         {
             if (fm[lastPatchStart + faceI] < baseMesh().nInternalFaces())
             {
@@ -317,7 +317,7 @@ fvMeshSubset::meshToMesh
 
             labelList directAddressing(subPatch.size());
 
-            forAll(directAddressing, i)
+            forAll (directAddressing, i)
             {
                 label baseFaceI = faceMap[subPatch.patch().start()+i];
 
@@ -352,15 +352,15 @@ fvMeshSubset::meshToMesh
     }
 
 
-    // Map exposed internal faces. Note: Only nessecary if exposed faces added
+    // Map exposed internal faces. Note: Only necessary if exposed faces added
     // into existing patch but since we don't know that at this point...
-    forAll(patchFields, patchI)
+    forAll (patchFields, patchI)
     {
         fvsPatchField<Type>& pfld = patchFields[patchI];
 
         label meshFaceI = pfld.patch().patch().start();
 
-        forAll(pfld, i)
+        forAll (pfld, i)
         {
             label oldFaceI = faceMap[meshFaceI++];
 
@@ -432,12 +432,17 @@ fvMeshSubset::interpolate
             patchFields.set
             (
                 patchI,
-                calculatedFvsPatchField<Type>
+                new calculatedFvsPatchField<Type>
                 (
                     sMesh.boundary()[patchI],
                     DimensionedField<Type, surfaceMesh>::null()
                 )
             );
+
+            Info<< "Added surface patch field for exposed internal faces "
+                << " Size = " << patchFields[patchI].size()
+                << " Type = " << patchFields[patchI].type()
+                << endl;
         }
         else
         {
@@ -458,15 +463,15 @@ fvMeshSubset::interpolate
 
     const labelList& fm = faceMap();
 
-    // Map exposed internal faces. Note: Only nessecary if exposed faces added
+    // Map exposed internal faces. Note: Only necessary if exposed faces added
     // into existing patch but since we don't know that at this point...
-    forAll(patchFields, patchI)
+    forAll (patchFields, patchI)
     {
         fvsPatchField<Type>& pfld = patchFields[patchI];
 
         label meshFaceI = pfld.patch().patch().start();
 
-        forAll(pfld, i)
+        forAll (pfld, i)
         {
             label oldFaceI = fm[meshFaceI++];
 
@@ -554,7 +559,7 @@ fvMeshSubset::interpolate
 
             // Make addressing from mesh to patch point
             Map<label> meshPointMap(2*meshPoints.size());
-            forAll(meshPoints, localI)
+            forAll (meshPoints, localI)
             {
                 meshPointMap.insert(meshPoints[localI], localI);
             }
@@ -568,7 +573,7 @@ fvMeshSubset::interpolate
 
             const labelList& ptMap = pointMap();
 
-            forAll(subMeshPoints, localI)
+            forAll (subMeshPoints, localI)
             {
                 // Get mesh point on original mesh.
                 label meshPointI = ptMap[subMeshPoints[localI]];
