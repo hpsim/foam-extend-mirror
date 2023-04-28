@@ -43,7 +43,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                      Class calculatedFvsPatch Declaration
+                  Class calculatedFvsPatchField Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
@@ -117,6 +117,10 @@ public:
                 new calculatedFvsPatchField<Type>(*this, iF)
             );
         }
+
+
+    //- Destructor
+    virtual ~calculatedFvsPatchField<Type>() = default;
 
 
     // Member functions
