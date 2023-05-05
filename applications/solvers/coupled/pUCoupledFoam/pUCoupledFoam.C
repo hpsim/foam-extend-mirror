@@ -81,6 +81,7 @@ int main(int argc, char *argv[])
         UpEqn.retrieveSolution(0, U.internalField());
         UpEqn.retrieveSolution(3, p.internalField());
 
+        // Note: care required when calculating fluxes
         U.correctBoundaryConditions();
         p.correctBoundaryConditions();
 
