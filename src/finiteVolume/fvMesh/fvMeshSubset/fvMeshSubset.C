@@ -619,7 +619,6 @@ void Foam::fvMeshSubset::setCellSubset
     }
 
 
-
     // Grab the points map
     pointMap_ = globalPointMap.toc();
     sort(pointMap_);
