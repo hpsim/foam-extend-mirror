@@ -27,7 +27,8 @@ boundaryField
     }
     outlet
     {
-        type            zeroGradient;
+        type            pressureInletOutletVelocity;
+        value           uniform (1 0 0);
     }
     upperWall
     {
