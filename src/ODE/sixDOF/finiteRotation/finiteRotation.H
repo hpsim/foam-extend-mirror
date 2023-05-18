@@ -29,6 +29,9 @@ Author
     Hrvoje Jasak, FSB Zagreb.  All rights reserved.
     Vuko Vukcevic, FSB Zagreb.  All rights reserved.
 
+Contributor
+    Sanijo Durasevic, FSB Zagreb.  All rights reserved.
+
 SourceFiles
     finiteRotation.C
 

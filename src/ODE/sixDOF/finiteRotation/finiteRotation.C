@@ -21,14 +21,6 @@ License
     You should have received a copy of the GNU General Public License
     along with foam-extend.  If not, see <http://www.gnu.org/licenses/>.
 
-Class
-    finiteRotation
-
-Author
-    Dubravko Matijasevic, FSB Zagreb.  All rights reserved.
-    Hrvoje Jasak, FSB Zagreb.  All rights reserved.
-    Vuko Vukcevic, FSB Zagreb.  All rights reserved.
-
 \*---------------------------------------------------------------------------*/
 
 #include "objectRegistry.H"
@@ -78,14 +70,35 @@ Foam::vector Foam::finiteRotation::eulerAngles(const tensor& rotT)
     scalar& yawAngle = eulerAngles.z();
 
     // Calculate pitch angle
-    pitchAngle = asin(rotT.xz());
+    scalar xz = rotT.xz();
+    if (xz >= 1.0)
+    {
+        pitchAngle = M_PI / 2.0; // set to the closest value within the domain
+    }
+    else if (xz <= -1.0)
+    {
+        pitchAngle = -M_PI / 2.0; // set to the closest value within the domain
+    }
+    else
+    {
+        pitchAngle = asin(xz);
+    }
 
-    // Calculate roll angle
+    // Calculate roll and yaw angles
     const scalar cosPitch = cos(pitchAngle);
-    rollAngle = asin(-rotT.yz()/cosPitch);
-
-    // Calculate yaw angle
-    yawAngle = asin(-rotT.xy()/cosPitch);
+    if (mag(cosPitch) > SMALL) // Check if not in gimbal lock
+    {
+        rollAngle = atan2(-rotT.yz(), rotT.zz());
+        yawAngle = atan2(-rotT.xy(), rotT.xx());
+    }
+    else
+    {
+        // Gimbal lock occurred, use an alternative representation
+        rollAngle = atan2(rotT.zy(), rotT.yy());
+        // Set yaw angle to an arbitrary value (e.g., 0.0) since it is
+        // undetermined in gimbal lock
+        yawAngle = 0.0;
+    }
 
     return eulerAngles;
 }
