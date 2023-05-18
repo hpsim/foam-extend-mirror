@@ -266,13 +266,7 @@ void Foam::ggiPolyPatch::calcPatchToPatch() const
 
 void Foam::ggiPolyPatch::calcReconFaceCellCentres() const
 {
-    if (reconFaceCellCentresPtr_)
-    {
-        FatalErrorInFunction
-            << "Reconstructed cell centres already calculated"
-            << abort(FatalError);
-    }
-
+    // NEW ALGORITHM
     if (debug)
     {
         InfoInFunction
@@ -280,16 +274,22 @@ void Foam::ggiPolyPatch::calcReconFaceCellCentres() const
             << name() << endl;
     }
 
+    if (reconFaceCellCentresPtr_)
+    {
+        FatalErrorInFunction
+            << "Reconstructed cell centres already calculated"
+            << abort(FatalError);
+    }
+
     // Create neighbouring face centres using interpolation
     if (master())
     {
         const label shadowID = shadowIndex();
 
-        // Get interpolated shadow face centre to face cell centre vectors
+        // Get interpolated shadow cell centre vectors
         vectorField df = interpolate
         (
             boundaryMesh()[shadowID].faceCellCentres()
-          - boundaryMesh()[shadowID].faceCentres()
         );
 
         // Scale for partial cover: use cell centres of available live cell
@@ -321,7 +321,7 @@ void Foam::ggiPolyPatch::calcReconFaceCellCentres() const
         }
 
         // Calculate the reconstructed cell centres
-        reconFaceCellCentresPtr_ = new vectorField(df + cf);
+        reconFaceCellCentresPtr_ = new vectorField(df);
     }
     else
     {
