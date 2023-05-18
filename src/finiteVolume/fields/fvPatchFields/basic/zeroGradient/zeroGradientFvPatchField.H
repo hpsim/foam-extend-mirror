@@ -120,6 +120,10 @@ public:
         }
 
 
+    //- Destructor
+    virtual ~zeroGradientFvPatchField() = default;
+
+
     // Member functions
 
         // Evaluation functions

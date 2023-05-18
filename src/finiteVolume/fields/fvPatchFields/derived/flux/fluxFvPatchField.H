@@ -44,7 +44,7 @@ namespace Foam
 {
 
 /*---------------------------------------------------------------------------*\
-                        Class fluxFvPatch Declaration
+                     Class fluxFvPatchField Declaration
 \*---------------------------------------------------------------------------*/
 
 template<class Type>
@@ -132,6 +132,10 @@ public:
                 new fluxFvPatchField<Type>(*this, iF)
             );
         }
+
+
+    //- Destructor
+    virtual ~fluxFvPatchField() = default;
 
 
     // Member functions

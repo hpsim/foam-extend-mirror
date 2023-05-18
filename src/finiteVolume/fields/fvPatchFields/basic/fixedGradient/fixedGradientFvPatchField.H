@@ -124,6 +124,10 @@ public:
         }
 
 
+    //- Destructor
+    virtual ~fixedGradientFvPatchField() = default;
+
+
     // Member functions
 
         // Return defining fields
