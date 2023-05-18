@@ -93,13 +93,6 @@ tmp<gradScheme<Type> > gradScheme<Type>::New
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class Type>
-gradScheme<Type>::~gradScheme()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>

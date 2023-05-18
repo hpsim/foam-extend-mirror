@@ -65,10 +65,10 @@ class extendedLeastSquaresGrad
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        extendedLeastSquaresGrad(const extendedLeastSquaresGrad&);
+        extendedLeastSquaresGrad(const extendedLeastSquaresGrad&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const extendedLeastSquaresGrad&);
+        void operator=(const extendedLeastSquaresGrad&) = delete;
 
 
 public:
@@ -87,20 +87,22 @@ public:
         {
             if (minDet_ < 0 || minDet_ > 8)
             {
-                FatalIOErrorIn
-                (
-                    "extendedLeastSquaresGrad"
-                    "(const fvMesh&, Istream& schemeData)",
-                    schemeData
-                )   << "Minimum determinant = " << minDet_
+                FatalIOErrorInFunction(schemeData)
+                    << "Minimum determinant = " << minDet_
                     << " should be >= 0 and <= 8"
                     << exit(FatalIOError);
             }
         }
 
 
+    //- Destructor
+    virtual ~extendedLeastSquaresGrad() = default;
+
+
     // Member Functions
 
+        //- Return the gradient
+        virtual
         tmp
         <
             GeometricField

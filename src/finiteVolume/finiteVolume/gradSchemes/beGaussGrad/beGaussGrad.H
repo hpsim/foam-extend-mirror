@@ -68,10 +68,10 @@ class beGaussGrad
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        beGaussGrad(const beGaussGrad&);
+        beGaussGrad(const beGaussGrad&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const beGaussGrad&);
+        void operator=(const beGaussGrad&) = delete;
 
 
 public:
@@ -114,10 +114,15 @@ public:
         }
 
 
+    //- Destructor
+    virtual ~beGaussGrad() = default;
+
+
     // Member Functions
 
         //- Return the gradient of the given field calculated
         //  using Gauss' theorem on the interpolated field
+        virtual
         tmp
         <
             GeometricField

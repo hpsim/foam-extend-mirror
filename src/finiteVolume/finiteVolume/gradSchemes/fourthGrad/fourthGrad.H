@@ -59,10 +59,10 @@ class fourthGrad
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        fourthGrad(const fourthGrad&);
+        fourthGrad(const fourthGrad&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const fourthGrad&);
+        void operator=(const fourthGrad&) = delete;
 
 
 public:
@@ -80,8 +80,14 @@ public:
         {}
 
 
+    //- Destructor
+    virtual ~fourthGrad() = default;
+
+
     // Member Functions
 
+        //- Return the gradient
+        virtual
         tmp
         <
             GeometricField

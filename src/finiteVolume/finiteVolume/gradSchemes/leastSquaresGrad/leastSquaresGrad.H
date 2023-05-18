@@ -59,10 +59,10 @@ class leastSquaresGrad
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        leastSquaresGrad(const leastSquaresGrad&);
+        leastSquaresGrad(const leastSquaresGrad&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const leastSquaresGrad&);
+        void operator=(const leastSquaresGrad&) = delete;
 
 
 public:
@@ -84,6 +84,10 @@ public:
         :
             gradScheme<Type>(mesh)
         {}
+
+
+    //- Destructor
+    virtual ~leastSquaresGrad() = default;
 
 
     // Member Functions
