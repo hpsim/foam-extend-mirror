@@ -101,11 +101,11 @@ protected:
 
     // Protected Member Functions
 
+        //- Disallow default bitwise assignment
+        void operator=(const TableBase<Type>&) = delete;
+
         //- Return (demand driven) interpolator
         const interpolationWeights& interpolator() const;
-
-        //- Disallow default bitwise assignment
-        void operator=(const TableBase<Type>&);
 
 
 public:
@@ -120,7 +120,7 @@ public:
 
 
     //- Destructor
-    virtual ~TableBase();
+    virtual ~TableBase() = default;
 
 
     // Member Functions

@@ -113,11 +113,11 @@ class Sine
 
     // Private Member Functions
 
+        //- Disallow default bitwise assignment
+        void operator=(const Sine<Type>&) = delete;
+
         //- Read the coefficients from the given dictionary
         void read(const dictionary& coeffs);
-
-        //- Disallow default bitwise assignment
-        void operator=(const Sine<Type>&);
 
 
 public:
@@ -147,7 +147,7 @@ public:
 
 
     //- Destructor
-    virtual ~Sine();
+    virtual ~Sine() = default;
 
 
     // Member Functions

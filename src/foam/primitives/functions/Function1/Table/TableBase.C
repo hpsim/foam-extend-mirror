@@ -92,13 +92,6 @@ Foam::Function1Types::TableBase<Type>::TableBase(const TableBase<Type>& tbl)
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class Type>
-Foam::Function1Types::TableBase<Type>::~TableBase()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>

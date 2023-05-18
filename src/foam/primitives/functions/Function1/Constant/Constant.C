@@ -63,13 +63,6 @@ Foam::Function1Types::Constant<Type>::Constant(const Constant<Type>& cnst)
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class Type>
-Foam::Function1Types::Constant<Type>::~Constant()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>

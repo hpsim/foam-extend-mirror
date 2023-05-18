@@ -119,13 +119,6 @@ Foam::Function1Types::Polynomial<Type>::Polynomial(const Polynomial& poly)
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class Type>
-Foam::Function1Types::Polynomial<Type>::~Polynomial()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>

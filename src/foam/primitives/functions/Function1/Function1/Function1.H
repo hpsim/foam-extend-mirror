@@ -66,7 +66,7 @@ class Function1
     // Private Member Functions
 
         //- Disallow default bitwise assignment
-        void operator=(const Function1<Type>&);
+        void operator=(const Function1<Type>&) = delete;
 
 
 protected:
@@ -120,7 +120,7 @@ public:
 
 
     //- Destructor
-    virtual ~Function1();
+    virtual ~Function1() = default;
 
 
     // Member Functions

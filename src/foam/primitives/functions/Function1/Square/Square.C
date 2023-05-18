@@ -66,13 +66,6 @@ Foam::Function1Types::Square<Type>::Square(const Square<Type>& se)
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-template<class Type>
-Foam::Function1Types::Square<Type>::~Square()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 template<class Type>

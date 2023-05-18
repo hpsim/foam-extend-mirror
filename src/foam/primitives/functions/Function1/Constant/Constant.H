@@ -67,7 +67,7 @@ class Constant
     // Private Member Functions
 
         //- Disallow default bitwise assignment
-        void operator=(const Constant<Type>&);
+        void operator=(const Constant<Type>&) = delete;
 
 
 public:
@@ -97,7 +97,7 @@ public:
 
 
     //- Destructor
-    virtual ~Constant();
+    virtual ~Constant() = default;
 
 
     // Member Functions
