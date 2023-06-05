@@ -18,7 +18,8 @@ tmp<fv::convectionScheme<scalar> > mvConvection
         if (Y[i].name() != inertSpecie)
         {
             volScalarField& Yi = Y[i];
-            solve
+
+            fvScalarMatrix YiEqn
             (
                 fvm::ddt(rho, Yi)
               + mvConvection->fvmDiv(phi, Yi)
@@ -26,11 +27,17 @@ tmp<fv::convectionScheme<scalar> > mvConvection
               ==
                 coalParcels.Srho(i)
               + kappa*chemistry.RR(i)().dimensionedInternalField()
-              + massSource.Su()*speciesSource.Su(i),
-                mesh.solutionDict().solver("Yi")
+              + massSource.Su()*speciesSource.Su(i)
             );
 
+            YiEqn.relax
+            (
+                mesh.solutionDict().equationRelaxationFactor("Yihs")
+            );
+            YiEqn.solve(mesh.solutionDict().solver("Yi"));
+            
             Yi.max(0.0);
+            Yi.min(1.0);
             Yt += Yi;
         }
         else
@@ -39,6 +46,8 @@ tmp<fv::convectionScheme<scalar> > mvConvection
         }
     }
 
+    Yt.max(0.0);
+    Yt.min(1.0);
+    
     Y[inertIndex] = scalar(1) - Yt;
-    Y[inertIndex].max(0.0);
 }
