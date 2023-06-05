@@ -13,8 +13,10 @@
      +  chemistrySh
     );
 
-    hsEqn.relax();
-
+    hsEqn.relax
+    (
+        mesh.solutionDict().equationRelaxationFactor("Yihs")
+    );
     hsEqn.solve();
 
     thermo.correct();
