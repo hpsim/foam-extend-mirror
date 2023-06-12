@@ -82,10 +82,10 @@ class amgPrecon
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        amgPrecon(const amgPrecon&);
+        amgPrecon(const amgPrecon&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const amgPrecon&);
+        void operator=(const amgPrecon&) = delete;
 
 
 public:

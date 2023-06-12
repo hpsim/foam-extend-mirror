@@ -157,12 +157,6 @@ Foam::ILU0::ILU0
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::ILU0::~ILU0()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void Foam::ILU0::precondition
@@ -174,15 +168,8 @@ void Foam::ILU0::precondition
 {
     if (matrix_.symmetric())
     {
-        FatalErrorIn
-        (
-            "void ILU0::precondition\n"
-            "(\n"
-            "    scalarField& x,\n"
-            "    const scalarField& b,\n"
-            "    const direction cmpt\n"
-            ") const"
-        )   << "Calling ILU0 on a symetric matrix.  "
+        FatalErrorInFunction
+            << "Calling ILU0 on a symetric matrix.  "
             << "Please use CholeskyPrecon instead"
             << abort(FatalError);
     }

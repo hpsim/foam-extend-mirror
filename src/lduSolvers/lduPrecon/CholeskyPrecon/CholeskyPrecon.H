@@ -62,10 +62,10 @@ class CholeskyPrecon
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        CholeskyPrecon(const CholeskyPrecon&);
+        CholeskyPrecon(const CholeskyPrecon&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const CholeskyPrecon&);
+        void operator=(const CholeskyPrecon&) = delete;
 
         //- Precondition the diagonal
         void calcPreconDiag();
@@ -100,7 +100,7 @@ public:
 
 
     //- Destructor
-    virtual ~CholeskyPrecon();
+    virtual ~CholeskyPrecon() = default;
 
 
     // Member Functions

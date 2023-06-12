@@ -62,10 +62,10 @@ class symGaussSeidelPrecon
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        symGaussSeidelPrecon(const symGaussSeidelPrecon&);
+        symGaussSeidelPrecon(const symGaussSeidelPrecon&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const symGaussSeidelPrecon&);
+        void operator=(const symGaussSeidelPrecon&) = delete;
 
 
 public:
@@ -97,10 +97,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~symGaussSeidelPrecon()
-        {}
+    //- Destructor
+    virtual ~symGaussSeidelPrecon() = default;
 
 
     // Member Functions

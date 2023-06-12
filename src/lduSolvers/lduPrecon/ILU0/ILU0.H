@@ -62,10 +62,10 @@ class ILU0
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        ILU0(const ILU0&);
+        ILU0(const ILU0&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const ILU0&);
+        void operator=(const ILU0&) = delete;
 
         //- Precondition the diagonal
         void calcPreconDiag();
@@ -100,7 +100,7 @@ public:
 
 
     //- Destructor
-    virtual ~ILU0();
+    virtual ~ILU0() = default;
 
 
     // Member Functions

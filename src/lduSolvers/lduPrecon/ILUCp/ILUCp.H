@@ -79,10 +79,10 @@ class ILUCp
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        ILUCp(const ILUCp&);
+        ILUCp(const ILUCp&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const ILUCp&);
+        void operator=(const ILUCp&) = delete;
 
         //- Calculate LU factorization
         void calcFactorization();
@@ -108,7 +108,7 @@ public:
 
 
     //- Destructor
-    virtual ~ILUCp();
+    virtual ~ILUCp() = default;
 
 
     // Member Functions

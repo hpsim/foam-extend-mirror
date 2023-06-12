@@ -120,12 +120,6 @@ Foam::CholeskyPrecon::CholeskyPrecon
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::CholeskyPrecon::~CholeskyPrecon()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void Foam::CholeskyPrecon::precondition
@@ -137,15 +131,8 @@ void Foam::CholeskyPrecon::precondition
 {
     if (matrix_.asymmetric())
     {
-        FatalErrorIn
-        (
-            "void CholeskyPrecon::precondition\n"
-            "(\n"
-            "    scalarField& x,\n"
-            "    const scalarField& b,\n"
-            "    const direction cmpt\n"
-            ") const"
-        )   << "Calling CholeskyPrecon on an assymetric matrix.  "
+        FatalErrorInFunction
+            << "Calling CholeskyPrecon on an assymetric matrix.  "
             << "Please use ILU0 instead"
             << abort(FatalError);
     }

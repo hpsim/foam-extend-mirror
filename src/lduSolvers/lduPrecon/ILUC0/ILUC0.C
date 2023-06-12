@@ -274,12 +274,6 @@ Foam::ILUC0::ILUC0
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::ILUC0::~ILUC0()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void Foam::ILUC0::precondition

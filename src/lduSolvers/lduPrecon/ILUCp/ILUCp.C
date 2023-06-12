@@ -258,12 +258,6 @@ Foam::ILUCp::ILUCp
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::ILUCp::~ILUCp()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 void Foam::ILUCp::precondition
