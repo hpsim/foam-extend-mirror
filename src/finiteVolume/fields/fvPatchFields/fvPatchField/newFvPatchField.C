@@ -141,7 +141,8 @@ Foam::tmp<Foam::fvPatchField<Type> > Foam::fvPatchField<Type>::New
                 dict
             )   << "Inconsistent patch and patchField types for field "
                 << iF.name() << " on patch " << p.name() << "\n"
-                << "    patch type " << p.type()
+                << "    boundary patch type " << p.type()
+                << "    looked up patchType " << word(dict.lookup("patchType"))
                 << " and patchField type " << patchFieldType
                 << exit(FatalIOError);
         }
