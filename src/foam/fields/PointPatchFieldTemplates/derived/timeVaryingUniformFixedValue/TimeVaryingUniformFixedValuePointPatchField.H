@@ -63,7 +63,7 @@ class TimeVaryingUniformFixedValuePointPatchField
 
     // Private data
 
-        //- Yhe time series being used, including the bounding treatment
+        //- Time series being used, including the bounding treatment
         interpolationTable<Type> timeSeries_;
 
 
