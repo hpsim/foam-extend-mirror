@@ -53,15 +53,8 @@ autoPtr<thermalLaw> thermalLaw::New
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        FatalIOErrorIn
-        (
-            "thermalLaw::New(\n"
-            "    const word& name,\n"
-            "    const volScalarField& T,\n"
-            "    const dictionary& dict\n"
-            ")",
-            dict
-        )   << "Unknown thermalLaw type "
+        FatalIOErrorInFunction(dict)
+            << "Unknown thermalLaw type "
             << rheoTypeName << endl << endl
             << "Valid  thermalLaws are : " << endl
             << dictionaryConstructorTablePtr_->sortedToc()

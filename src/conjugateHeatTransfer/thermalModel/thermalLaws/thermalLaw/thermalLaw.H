@@ -69,10 +69,10 @@ class thermalLaw
     // Private Member Functions
 
         //- Disallow copy construct
-        thermalLaw(const thermalLaw&);
+        thermalLaw(const thermalLaw&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const thermalLaw&);
+        void operator=(const thermalLaw&) = delete;
 
 
 protected:
@@ -128,10 +128,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~thermalLaw()
-        {}
+    //- Destructor
+    virtual ~thermalLaw() = default;
 
 
     // Member Functions
