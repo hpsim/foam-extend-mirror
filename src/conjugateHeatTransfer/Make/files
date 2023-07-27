@@ -44,9 +44,4 @@ $(BCs)/externalRadiation/ersPointSource/ersPointSource.C
 $(BCs)/solidWallHeatFluxTemperature/solidWallHeatFluxTemperatureFvPatchScalarField.C
 $(BCs)/adiabatic/adiabaticFvPatchScalarField.C
 
-FOs          = functionObjects
-
-$(FOs)/heatFlux/heatFlux/heatFlux.C
-$(FOs)/heatFlux/heatFluxFunctionObject/heatFluxFunctionObject.C
-
 LIB = $(FOAM_LIBBIN)/libconjugateHeatTransfer
