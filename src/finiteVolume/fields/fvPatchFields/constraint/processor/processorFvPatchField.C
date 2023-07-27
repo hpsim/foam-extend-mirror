@@ -237,6 +237,7 @@ Foam::processorFvPatchField<Type>::patchNeighbourField() const
             << " on patch: " << this->patch().name()
             << endl;
     }
+
     return pnf_;
 }
 
@@ -680,7 +681,7 @@ void Foam::processorFvPatchField<Type>::operator=
     const UList<Type>& ul
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator=(ul);
 }
 
@@ -691,7 +692,7 @@ void Foam::processorFvPatchField<Type>::operator=
     const fvPatchField<Type>& ptf
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator=(ptf);
 }
 
@@ -702,7 +703,7 @@ void Foam::processorFvPatchField<Type>::operator+=
     const fvPatchField<Type>& ptf
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator+=(ptf);
 }
 
@@ -713,7 +714,7 @@ void Foam::processorFvPatchField<Type>::operator-=
     const fvPatchField<Type>& ptf
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator-=(ptf);
 }
 
@@ -724,7 +725,7 @@ void Foam::processorFvPatchField<Type>::operator*=
     const fvPatchField<scalar>& ptf
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator*=(ptf);
 }
 
@@ -735,7 +736,7 @@ void Foam::processorFvPatchField<Type>::operator/=
     const fvPatchField<scalar>& ptf
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator/=(ptf);
 }
 
@@ -746,7 +747,7 @@ void Foam::processorFvPatchField<Type>::operator+=
     const Field<Type>& tf
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator+=(tf);
 }
 
@@ -757,7 +758,7 @@ void Foam::processorFvPatchField<Type>::operator-=
     const Field<Type>& tf
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator-=(tf);
 }
 
@@ -768,7 +769,7 @@ void Foam::processorFvPatchField<Type>::operator*=
     const scalarField& tf
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator*=(tf);
 }
 
@@ -779,7 +780,7 @@ void Foam::processorFvPatchField<Type>::operator/=
     const scalarField& tf
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator/=(tf);
 }
 
@@ -790,7 +791,7 @@ void Foam::processorFvPatchField<Type>::operator=
     const Type& t
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator=(t);
 }
 
@@ -807,7 +808,7 @@ void Foam::processorFvPatchField<Type>::operator+=
     const Type& t
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator+=(t);
 }
 
@@ -818,7 +819,7 @@ void Foam::processorFvPatchField<Type>::operator-=
     const Type& t
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator-=(t);
 }
 
@@ -829,7 +830,7 @@ void Foam::processorFvPatchField<Type>::operator*=
     const scalar s
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator*=(s);
 }
 
@@ -840,7 +841,7 @@ void Foam::processorFvPatchField<Type>::operator/=
     const scalar s
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator/=(s);
 }
 
@@ -851,7 +852,7 @@ void Foam::processorFvPatchField<Type>::operator==
     const fvPatchField<Type>& ptf
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator=(ptf);
 }
 
@@ -862,7 +863,7 @@ void Foam::processorFvPatchField<Type>::operator==
     const Field<Type>& tf
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator=(tf);
 }
 
@@ -873,7 +874,7 @@ void Foam::processorFvPatchField<Type>::operator==
     const Type& t
 )
 {
-    clearCaches();
+    this->clearCaches();
     fvPatchField<Type>::operator=(t);
 }
 
