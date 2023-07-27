@@ -58,12 +58,7 @@ void Foam::hierarchGeomDecomp::setDecompOrder()
 
     if (order.size() != 3)
     {
-        FatalIOErrorIn
-        (
-            "hierarchGeomDecomp::hierarchGeomDecomp"
-            "(const dictionary& decompositionDict)",
-            decompositionDict_
-        )   << "number of characters in order (" << order << ") != 3"
+        FatalIOErrorInFunction(decompositionDict_)
             << exit(FatalIOError);
     }
 
