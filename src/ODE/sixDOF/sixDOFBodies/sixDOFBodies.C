@@ -51,7 +51,7 @@ void Foam::sixDOFBodies::setBodies()
         {
             if (names_[bodyI] == names_[otherBody])
             {
-                FatalErrorIn("sixDOFBodies::setBodies()")
+                FatalErrorInFunction
                     << "Found duplicate name: " << names_[bodyI]
                     << " for bodies. This is not allowed."
                     << exit(FatalError);

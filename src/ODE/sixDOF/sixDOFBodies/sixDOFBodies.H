@@ -75,10 +75,10 @@ class sixDOFBodies
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        sixDOFBodies(const sixDOFBodies&);
+        sixDOFBodies(const sixDOFBodies&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const sixDOFBodies&);
+        void operator=(const sixDOFBodies&) = delete;
 
         //- Set bodies
         void setBodies();
@@ -92,10 +92,8 @@ public:
         sixDOFBodies(const Time& runTime);
 
 
-    // Destructor
-
-        virtual ~sixDOFBodies()
-        {}
+    //- Destructor
+    virtual ~sixDOFBodies() = default;
 
 
     // Member Functions
