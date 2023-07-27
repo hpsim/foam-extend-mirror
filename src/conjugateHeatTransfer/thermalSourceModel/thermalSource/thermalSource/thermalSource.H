@@ -29,6 +29,7 @@ Description
 
 Author
     Henrik Rusche, Wikki GmbH.  All rights reserved.
+    Further development and rewrite by Hrvoje Jasak, Wikki Ltd.
 
 SourceFiles
     thermalSource.C
