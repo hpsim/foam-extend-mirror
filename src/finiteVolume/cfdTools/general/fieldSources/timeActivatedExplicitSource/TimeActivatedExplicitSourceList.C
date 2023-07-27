@@ -91,7 +91,7 @@ Foam::TimeActivatedExplicitSourceList<Type>::TimeActivatedExplicitSourceList
 
 template<class Type>
 Foam::tmp<Foam::DimensionedField<Type, Foam::volMesh> >
-Foam::TimeActivatedExplicitSourceList<Type>::Su(const label fieldI)
+Foam::TimeActivatedExplicitSourceList<Type>::Su(const label fieldI) const
 {
     tmp<DimensionedField<Type, volMesh> > tSu
     (
@@ -112,7 +112,7 @@ Foam::TimeActivatedExplicitSourceList<Type>::Su(const label fieldI)
 
     DimensionedField<Type, volMesh>& Su = tSu();
 
-    forAll(*this, i)
+    forAll (*this, i)
     {
         this->operator[](i).addToField(Su, fieldI);
     }
@@ -123,7 +123,7 @@ Foam::TimeActivatedExplicitSourceList<Type>::Su(const label fieldI)
 
 template<class Type>
 Foam::tmp<Foam::DimensionedField<Type, Foam::volMesh> >
-Foam::TimeActivatedExplicitSourceList<Type>::SuTot()
+Foam::TimeActivatedExplicitSourceList<Type>::SuTot() const
 {
     tmp<DimensionedField<Type, volMesh> > tSuTot
     (
@@ -144,15 +144,30 @@ Foam::TimeActivatedExplicitSourceList<Type>::SuTot()
 
     DimensionedField<Type, volMesh>& SuTot = tSuTot();
 
-    forAll(fieldNames_, fieldI)
+    forAll (fieldNames_, fieldI)
     {
-        forAll(*this, sourceI)
+        forAll (*this, sourceI)
         {
             this->operator[](sourceI).addToField(SuTot, fieldI);
         }
     }
 
     return tSuTot;
+}
+
+
+template<class Type>
+void
+Foam::TimeActivatedExplicitSourceList<Type>::limitField
+(
+    GeometricField<Type, fvPatchField, volMesh>& psi,
+    const label fieldI
+) const
+{
+    forAll (*this, i)
+    {
+        this->operator[](i).limitField(psi, fieldI);
+    }
 }
 
 
@@ -191,7 +206,7 @@ bool Foam::TimeActivatedExplicitSourceList<Type>::writeData(Ostream& os) const
     os << nl << token::BEGIN_LIST;
 
     // Write list contents
-    forAll(*this, i)
+    forAll (*this, i)
     {
         os << nl;
         this->operator[](i).writeData(os);

@@ -93,10 +93,10 @@ private:
         TimeActivatedExplicitSourceList
         (
             const TimeActivatedExplicitSourceList<Type>&
-        );
+        ) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const TimeActivatedExplicitSourceList<Type>&);
+        void operator=(const TimeActivatedExplicitSourceList<Type>&) = delete;
 
 
 public:
@@ -130,11 +130,17 @@ public:
             tmp<DimensionedField<Type, volMesh> > Su
             (
                 const label fieldI = 0
-            );
+            ) const;
 
             //- Return the total source for all fields
-            tmp<DimensionedField<Type, volMesh> > SuTot();
+            tmp<DimensionedField<Type, volMesh> > SuTot() const;
 
+            //- Return the source for field, fieldI
+            void limitField
+            (
+                GeometricField<Type, fvPatchField, volMesh>& psi,
+                const label fieldI
+            ) const;
 
 
         // I-O

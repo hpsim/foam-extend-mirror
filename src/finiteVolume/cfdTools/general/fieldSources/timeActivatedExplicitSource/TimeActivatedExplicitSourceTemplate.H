@@ -151,13 +151,16 @@ protected:
         word cellSetName_;
 
         //- Field of cell volumes according to cell set cells
-        scalarList V_;
+        mutable scalarList V_;
 
         //- Cell set
-        autoPtr<cellSet> cellsPtr_;
+        mutable autoPtr<cellSet> cellsPtr_;
 
         //- List of source field name vs value pairs
         List<fieldNameValuePair> fieldData_;
+
+        //- List of source field name vs limit pairs
+        List<fieldNameValuePair> limitData_;
 
         //- Map of fields ids from supplied fields to local field source ids
         labelList fieldIds_;
@@ -183,8 +186,11 @@ protected:
         //- Set the local field data
         void setFieldData(const dictionary& dict, const wordList& fieldNames);
 
+        //- Set the local limit data
+        void setLimitData(const dictionary& dict, const wordList& fieldNames);
+
         //- Set the cell set based on the user input selection mode
-        void setCellSet();
+        void setCellSet() const;
 
 
 public:
@@ -251,6 +257,9 @@ public:
                 );
             }
         };
+
+    //- Destructor
+    ~TimeActivatedExplicitSource() = default;
 
 
     // Member Functions
@@ -353,7 +362,15 @@ public:
             (
                 DimensionedField<Type, volMesh>& Su,
                 const label fieldI
-            );
+            ) const;
+
+
+            //- Limit field
+            void limitField
+            (
+                GeometricField<Type, fvPatchField, volMesh>& psi,
+                const label fieldI
+            ) const;
 
 
         // I-O
