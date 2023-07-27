@@ -201,10 +201,8 @@ Foam::chtRegionCoupleBase::initInterfaceMatrixUpdate
     const bool switchToLhs
 ) const
 {
-    FatalErrorIn
-    (
-        "chtRegionCoupleBase::initInterfaceMatrixUpdate"
-    )   << "Undefined function: this patch field cannot be used "
+    FatalErrorInFunction
+        << "Undefined function: this patch field cannot be used "
         << "on active variables"
         << abort(FatalError);
 }
@@ -222,10 +220,8 @@ Foam::chtRegionCoupleBase::updateInterfaceMatrix
     const bool switchToLhs
 ) const
 {
-    FatalErrorIn
-    (
-        "chtRegionCoupleBase::updateInterfaceMatrix"
-    )   << "Undefined function: this patch field cannot be used "
+    FatalErrorInFunction
+        << "Undefined function: this patch field cannot be used "
         << "on active variables"
         << abort(FatalError);
 }
