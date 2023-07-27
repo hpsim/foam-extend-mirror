@@ -77,10 +77,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~DILUPreconditioner()
-        {}
+    //- Destructor
+    virtual ~DILUPreconditioner() = default;
 
 
     // Member Functions

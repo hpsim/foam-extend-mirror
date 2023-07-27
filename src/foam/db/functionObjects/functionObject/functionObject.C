@@ -85,11 +85,8 @@ Foam::autoPtr<Foam::functionObject> Foam::functionObject::New
 
     if (!dictionaryConstructorTablePtr_)
     {
-        FatalErrorIn
-        (
-            "functionObject::New"
-            "(const word& name, const Time&, const dictionary&)"
-        )   << "Unknown function type "
+        FatalErrorInFunction
+            << "Unknown function type "
             << functionType << nl << nl
             << "Table of functionObjects is empty" << endl
             << exit(FatalError);
@@ -100,11 +97,8 @@ Foam::autoPtr<Foam::functionObject> Foam::functionObject::New
 
     if (cstrIter == dictionaryConstructorTablePtr_->end())
     {
-        FatalErrorIn
-        (
-            "functionObject::New"
-            "(const word& name, const Time&, const dictionary&)"
-        )   << "Unknown function type "
+        FatalErrorInFunction
+            << "Unknown function type "
             << functionType << nl << nl
             << "Valid functions are : " << nl
             << dictionaryConstructorTablePtr_->sortedToc() << endl
@@ -113,12 +107,6 @@ Foam::autoPtr<Foam::functionObject> Foam::functionObject::New
 
     return autoPtr<functionObject>(cstrIter()(name, t, functionDict));
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::functionObject::~functionObject()
-{}
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //

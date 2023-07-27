@@ -139,8 +139,7 @@ public:
 
 
     //- Destructor
-
-        virtual ~functionObject();
+    virtual ~functionObject() = default;
 
 
     // Member Functions
