@@ -104,6 +104,19 @@ void Foam::chtRcThermalDiffusivityFvPatchScalarField::updateCoeffs()
         return;
     }
 
+    if (!this->db().objectRegistry::foundObject<volScalarField>("T"))
+    {
+        InfoInFunction
+            << "Temperature field T not found.  Returning"
+            << endl;
+
+        return;
+    }
+
+    // Get wall temperature
+    const fvPatchScalarField& Tw =
+        lookupPatchField<volScalarField, scalar>("T");
+
     if
     (
         dimensionedInternalField().dimensions()
@@ -116,8 +129,6 @@ void Foam::chtRcThermalDiffusivityFvPatchScalarField::updateCoeffs()
         (
             "thermophysicalProperties"
         );
-
-        const scalarField Tw = lookupPatchField<volScalarField, scalar>("T");
 
         // Note: BUG work-around
         // Selection of enthaly field cannot just rely on dimensions
@@ -134,7 +145,7 @@ void Foam::chtRcThermalDiffusivityFvPatchScalarField::updateCoeffs()
                 );
 
             *this == calcThermalDiffusivity(*this, shadowPatchField(), h)
-            /thermo.Cp(Tw, patchi);
+                /thermo.Cp(Tw, patchi);
         }
         else if
         (
@@ -152,14 +163,19 @@ void Foam::chtRcThermalDiffusivityFvPatchScalarField::updateCoeffs()
         }
         else
         {
-            FatalErrorIn
-            (
-                "void fixedFluxPressureFvPatchScalarField::updateCoeffs()"
-            )   << "Cannot find enthalpy for field "
+            FatalErrorInFunction
+                << "Cannot find enthalpy for field "
                 << dimensionedInternalField().name() << " on patch "
                 << patch().name()
                 << abort(FatalError);
         }
+    }
+    else
+    {
+        const chtRcTemperatureFvPatchScalarField& patchT =
+            refCast<const chtRcTemperatureFvPatchScalarField>(Tw);
+                
+        *this == calcThermalDiffusivity(*this, shadowPatchField(), patchT);
     }
 }
 
@@ -174,10 +190,8 @@ Foam::chtRcThermalDiffusivityFvPatchScalarField::calcThermalDiffusivity
 {
     if (debug)
     {
-        InfoIn
-        (
-            "chtRcThermalDiffusivityFvPatchScalarField::calcThermalDiffusivity"
-        )   << "for field " << this->dimensionedInternalField().name()
+        InfoInFunction
+            << "for field " << this->dimensionedInternalField().name()
             << " in " << this->patch().boundaryMesh().mesh().name()
             << endl;
     }
@@ -286,10 +300,8 @@ Foam::chtRcThermalDiffusivityFvPatchScalarField::calcTemperature
 {
     if (debug)
     {
-        InfoIn
-        (
-            "chtRcThermalDiffusivityFvPatchScalarField::calcTemperature"
-        )   << "for field " << this->dimensionedInternalField().name()
+        InfoInFunction
+            << "for field " << this->dimensionedInternalField().name()
             << " in " << this->patch().boundaryMesh().mesh().name()
             << endl;
     }
