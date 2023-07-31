@@ -51,16 +51,14 @@ void faMesh::calcLduAddressing() const
 {
     if (debug)
     {
-        Info<< "void faMesh::calcLduAddressing() const : "
+        InfoInFunction
             << "Calculating addressing" << endl;
     }
 
     if (lduPtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcLduAddressing() const"
-        )   << "lduPtr_ already allocated"
+        FatalErrorInFunction
+            << "lduPtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -72,16 +70,14 @@ void faMesh::calcPatchStarts() const
 {
     if (debug)
     {
-        Info<< "void faMesh::calcPatchStarts() const : "
+        InfoInFunction
             << "Calculating patch starts" << endl;
     }
 
     if (patchStartsPtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcPatchStarts() const"
-        )   << "patchStartsPtr_ already allocated"
+        FatalErrorInFunction
+            << "patchStartsPtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -102,16 +98,14 @@ void faMesh::calcLe() const
 {
     if (debug)
     {
-        Info<< "void faMesh::calcLe() const : "
+        InfoInFunction
             << "Calculating local edges" << endl;
     }
 
     if (LePtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcLe() const"
-        )   << "LePtr_ already allocated"
+        FatalErrorInFunction
+            << "LePtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -204,16 +198,14 @@ void faMesh::calcMagLe() const
 {
     if (debug)
     {
-        Info<< "void faMesh::calcMagLe() const : "
+        InfoInFunction
             << "Calculating local edge magnitudes" << endl;
     }
 
     if (magLePtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcMagLe() const"
-        )   << "magLePtr_ already allocated"
+        FatalErrorInFunction
+            << "magLePtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -265,16 +257,14 @@ void faMesh::calcAreaCentres() const
 {
     if (debug)
     {
-        Info<< "void faMesh::calcAreaCentres() const : "
+        InfoInFunction
             << "Calculating face centres" << endl;
     }
 
     if (centresPtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcAreaCentres() const"
-        )   << "centresPtr_ already allocated"
+        FatalErrorInFunction
+            << "centresPtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -314,21 +304,24 @@ void faMesh::calcAreaCentres() const
         }
     }
 
-    forAll(centres.boundaryField(), patchI)
-    {
-        //HJ: this is wrong!  5/Aug/2011
-        if
-        (
-            isA<processorFaPatchVectorField>
-            (
-                centres.boundaryField()[patchI]
-            )
-        )
-        {
-            centres.boundaryField()[patchI].initEvaluate();
-            centres.boundaryField()[patchI].evaluate();
-        }
-    }
+    // HJ: bug fix to be completed
+    centres.boundaryField().updateCoupledPatchFields();
+    
+    // forAll (centres.boundaryField(), patchI)
+    // {
+    //     //HJ: this is wrong!  5/Aug/2011
+    //     if
+    //     (
+    //         isA<processorFaPatchVectorField>
+    //         (
+    //             centres.boundaryField()[patchI]
+    //         )
+    //     )
+    //     {
+    //         centres.boundaryField()[patchI].initEvaluate();
+    //         centres.boundaryField()[patchI].evaluate();
+    //     }
+    // }
 }
 
 
@@ -336,16 +329,14 @@ void faMesh::calcEdgeCentres() const
 {
     if (debug)
     {
-        Info<< "void faMesh::calcEdgeCentres() const : "
+        InfoInFunction
             << "Calculating edge centres" << endl;
     }
 
     if (edgeCentresPtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcEdgeCentres() const"
-        )   << "edgeCentresPtr_ already allocated"
+        FatalErrorInFunction
+            << "edgeCentresPtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -396,16 +387,14 @@ void faMesh::calcS() const
 {
     if (debug)
     {
-        Info<< "void faMesh::calcS() const : "
+        InfoInFunction
             << "Calculating areas" << endl;
     }
 
     if (SPtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcS() const"
-        )   << "SPtr_ already allocated"
+        FatalErrorInFunction
+            << "SPtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -438,16 +427,14 @@ void faMesh::calcFaceAreaNormals() const
 {
     if (debug)
     {
-        Info<< "void faMesh::calcFaceAreaNormals() const : "
+        InfoInFunction
             << "Calculating face area normals" << endl;
     }
 
     if (faceAreaNormalsPtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcFaceAreaNormals() const"
-        )   << "faceAreaNormalsPtr_ already allocated"
+        FatalErrorInFunction
+            << "faceAreaNormalsPtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -505,16 +492,14 @@ void faMesh::calcEdgeAreaNormals() const
 {
     if (debug)
     {
-        Info<< "void faMesh::calcEdgeAreaNormals() const : "
+        InfoInFunction
             << "Calculating edge area normals" << endl;
     }
 
     if (edgeAreaNormalsPtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcEdgeAreaNormals() const"
-        )   << "edgeAreaNormalsPtr_ already allocated"
+        FatalErrorInFunction
+            << "edgeAreaNormalsPtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -645,16 +630,14 @@ void faMesh::calcFaceCurvatures() const
 {
     if (debug)
     {
-        Info<< "void faMesh::calcFaceCurvatures() const : "
+        InfoInFunction
             << "Calculating face curvatures" << endl;
     }
 
     if (faceCurvaturesPtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcFaceCurvatures() const"
-        )   << "faceCurvaturesPtr_ already allocated"
+        FatalErrorInFunction
+            << "faceCurvaturesPtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -690,16 +673,14 @@ void faMesh::calcEdgeTransformTensors() const
 {
     if (debug)
     {
-        Info<< "void faMesh::calcEdgeTransformTensors() const : "
+        InfoInFunction
             << "Calculating edge transformation tensors" << endl;
     }
 
     if (edgeTransformTensorsPtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcEdgeTransformTensors() const"
-        )   << "edgeTransformTensorsPtr_ already allocated"
+        FatalErrorInFunction
+            << "edgeTransformTensorsPtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -938,7 +919,7 @@ labelList faMesh::internalPoints() const
 {
     if (debug)
     {
-        Info<< "labelList faMesh::internalPoints() const : "
+        InfoInFunction
             << "Calculating internal points" << endl;
     }
 
@@ -974,7 +955,7 @@ labelList faMesh::boundaryPoints() const
 {
     if (debug)
     {
-        Info<< "labelList faMesh::boundaryPoints() const : "
+        InfoInFunction
             << "Calculating boundary points" << endl;
     }
 
@@ -1010,10 +991,8 @@ void faMesh::calcPointAreaNormals() const
 {
     if (pointAreaNormalsPtr_)
     {
-        FatalErrorIn
-        (
-            "void faMesh::calcPointAreaNormals() const"
-        )   << "pointAreaNormalsPtr_ already allocated"
+        FatalErrorInFunction
+            << "pointAreaNormalsPtr_ already allocated"
             << abort(FatalError);
     }
 
@@ -1294,10 +1273,8 @@ void faMesh::calcPointAreaNormals() const
         {
             if (boundary()[patchI].ngbPolyPatchIndex() == -1)
             {
-                FatalErrorIn
-                (
-                    "void faMesh::calcPointAreaNormals const"
-                )   << "Neighbour polyPatch index is not defined "
+                FatalErrorInFunction
+                    << "Neighbour polyPatch index is not defined "
                     << "for faPatch " << boundary()[patchI].name()
                     << abort(FatalError);
             }
@@ -1695,10 +1672,8 @@ void faMesh::calcPointAreaNormalsByQuadricsFit() const
 
                 if (nAllPoints < 5)
                 {
-                    FatalErrorIn
-                    (
-                        "void faMesh::calcPointAreaNormals() const"
-                    )   << "There are no enough points for quadrics "
+                    FatalErrorInFunction
+                        << "There are no enough points for quadrics "
                         << "fitting for a point at processor patch"
                         << abort(FatalError);
                 }
@@ -1874,10 +1849,8 @@ void faMesh::calcPointAreaNormalsByQuadricsFit() const
 
                 if (nAllPoints < 5)
                 {
-                    FatalErrorIn
-                    (
-                        "void faMesh::calcPointAreaNormals() const"
-                    )   << "There are no enough points for quadrics "
+                    FatalErrorInFunction
+                        << "There are no enough points for quadrics "
                         << "fitting for a global processor point "
                         << abort(FatalError);
                 }
@@ -1959,7 +1932,7 @@ tmp<edgeScalarField> faMesh::edgeLengthCorrection() const
 {
     if (debug)
     {
-        Info<< "tmp<edgeScalarField> faMesh::edgeLengthCorrection() const : "
+        InfoInFunction
             << "Calculating edge length correction" << endl;
     }
 

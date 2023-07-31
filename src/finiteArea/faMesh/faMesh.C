@@ -762,10 +762,7 @@ Foam::faMesh::faMesh
         {
             if (faPatches[pI].ngbPolyPatchID_ == -1)
             {
-                FatalErrorIn
-                (
-                    "void faMesh::faMesh(const polyMesh&, const fileName&)"
-                )
+                FatalErrorInFunction
                     << "ngbPolyPatch is not defined for processorFaPatch: "
                         << faPatches[pI].name_
                         << abort(FatalError);
@@ -1036,7 +1033,7 @@ void Foam::faMesh::addFaPatches(const List<faPatch*>& p)
 
     if (boundary().size() > 0)
     {
-        FatalErrorIn("void faMesh::addPatches(const List<faPatch*>& p)")
+        FatalErrorInFunction
             << "boundary already exists"
             << abort(FatalError);
     }
@@ -1150,7 +1147,7 @@ Foam::faMesh::S0() const
 {
     if (!S0Ptr_)
     {
-        FatalErrorIn("faMesh::S0() const")
+        FatalErrorInFunction
             << "S0 is not available"
             << abort(FatalError);
     }
@@ -1343,10 +1340,8 @@ bool Foam::faMesh::correctPatchPointNormals(const label patchID) const
 {
     if ((patchID < 0) || (patchID >= boundary().size()))
     {
-        FatalErrorIn
-        (
-            "bool correctPatchPointNormals(const label patchID) const"
-        )   << "patchID is not in the valid range"
+        FatalErrorInFunction
+            << "patchID is not in the valid range"
             << abort(FatalError);
     }
 
