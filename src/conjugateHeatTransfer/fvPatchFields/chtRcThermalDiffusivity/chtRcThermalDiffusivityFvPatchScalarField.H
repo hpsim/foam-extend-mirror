@@ -116,6 +116,9 @@ public:
             );
         }
 
+    //- Destructor
+    virtual ~chtRcThermalDiffusivityFvPatchScalarField() = default;
+    
 
     // Member functions
 

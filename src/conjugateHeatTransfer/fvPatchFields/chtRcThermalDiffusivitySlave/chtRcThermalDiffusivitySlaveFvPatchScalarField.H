@@ -120,6 +120,10 @@ public:
         }
 
 
+    //- Destructor
+    virtual ~chtRcThermalDiffusivitySlaveFvPatchScalarField() = default;
+    
+
     // Member functions
 
         // Access

@@ -164,6 +164,15 @@ Foam::chtRegionCoupleBase::calcThermalDiffusivity
     const chtRcTemperatureFvPatchScalarField& TwOwn
 ) const
 {
+    // Master side will calculate temperature and thermal diffusivity
+    if (regionCouplePatch().master())
+    {
+        FatalErrorInFunction
+            << "Master patch field needs to define calcThermalDiffusivity"
+            << abort(FatalError);
+    }    
+
+    // From shadow, return master value
     return shadowPatchField().calcThermalDiffusivity(owner, neighbour, TwOwn);
 }
 
@@ -176,6 +185,15 @@ Foam::chtRegionCoupleBase::calcTemperature
     const chtRegionCoupleBase& ownerK
 ) const
 {
+    // Master side will calculate temperature and thermal diffusivity
+    if (regionCouplePatch().master())
+    {
+        FatalErrorInFunction
+            << "Master patch field needs to define calcTemperature"
+            << abort(FatalError);
+    }    
+
+    // From shadow, return master value
     return shadowPatchField().calcTemperature(TwOwn, neighbour, ownerK);
 }
 
