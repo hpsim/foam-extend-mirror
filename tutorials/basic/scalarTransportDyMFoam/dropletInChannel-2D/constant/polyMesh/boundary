@@ -15,7 +15,7 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-3
+4
 (
     inlet
     {
@@ -32,8 +32,14 @@ FoamFile
     outer
     {
         type            patch;
-        nFaces          7440;
+        nFaces          240;
         startFace       7110;
+    }
+    frontAndBack
+    {
+        type            empty;
+        nFaces          7200;
+        startFace       7350;
     }
 )
 

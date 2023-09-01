@@ -15,16 +15,15 @@ FoamFile
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-numberOfSubdomains 18;
+numberOfSubdomains 4;
 
-// Using metis with load balancing (see dynamicMeshDict-atomizationFoam)
-method             metis;
+method             simple;
 
-//method             manual;
-//
-//manualCoeffs
-//{
-//    dataFile       "circumferentialDistribution";
-//}
+simpleCoeffs
+{
+    n (4 1 1);
+    delta 0.01;
+}
+
 
 // ************************************************************************* //

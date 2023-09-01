@@ -62,6 +62,13 @@ boundary
         (
             (3 7 6 2)
             (1 5 4 0)
+        );
+    }
+    frontAndBack
+    {
+        type empty;
+        faces
+        (
             (0 3 2 1)
             (4 5 6 7)
         );
