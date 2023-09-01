@@ -1,0 +1,130 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | foam-extend: Open Source CFD                    |
+|  \\    /   O peration     | Version:     5.1                                |
+|   \\  /    A nd           | Web:         http://www.foam-extend.org         |
+|    \\/     M anipulation  | For copyright notice see file Copyright         |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "constant";
+    object      dynamicMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// dynamicFvMesh   staticFvMesh;
+dynamicFvMesh dynamicPolyRefinementFvMesh;
+// dynamicFvMesh dynamicLoadBalancedRefinementFvMesh;
+
+dynamicPolyRefinementFvMeshCoeffs
+{
+    // Polyhedral refinement engine controls
+    active yes;
+
+    // Dynamic mesh procedure controls
+    refineInterval   5;
+    unrefineInterval 5;
+
+    // Separate updates of refinement/unrefinement. If both are triggered in a
+    // single time step, unrefinement is skipped. Switched off by default.
+    separateUpdates  no;
+
+    // Maximum number of cells to allow (not strictly controlled)
+    maxCells             500000;
+
+    // Maximum refinement level
+    maxRefinementLevel   2;
+
+    // Number of buffer layers between refinement levels
+    nRefinementBufferLayers   1;
+
+    // Number of buffer layers between cells that are getting unrefined at the
+    // same time as the cells that are getting refined
+    nUnrefinementBufferLayers 3;
+
+    // Whether to use edge based consistency check. Needed when one allows more
+    // than 2 refinement levels (switched on by default)
+    edgeBasedConsistency yes;
+
+    refinementSelection
+    {
+        type fieldBoundsRefinement;
+
+        fieldName T;
+
+        lowerBound 0.4;
+        upperBound 0.6;
+    }
+}
+
+dynamicLoadBalancedRefinementFvMeshCoeffs
+{
+    // Dynamic mesh procedure controls
+    refineInterval   1;
+    unrefineInterval 1;
+
+    // Separate updates of refinement/unrefinement. If both are triggered in a
+    // single time step, unrefinement is skipped. Switched off by default.
+    separateUpdates  no;
+
+    // Refinement selection criteria
+    refinementSelection
+    {
+        type        compositeRefinementSelection;
+
+        baseRefinementSelections
+        (
+            protectionOfInitialRefinement
+            {
+                refinementSelection
+                {
+                    type    protectedInitialRefinement;
+
+                    // Allow unrefinement up to level 2
+                    minProtectedLevel 2;
+                }
+            }
+
+            interfaceProximity
+            {
+                refinementSelection
+                {
+                    type interfaceCellsRefinement;
+                    nLayers 2;
+                }
+            }
+        );
+    }
+
+    // Polyhedral refinement engine controls
+    active yes;
+
+    // Maximum number of cells to allow (not strictly controlled)
+    maxCells             50000000;
+
+    // Maximum refinement level
+    maxRefinementLevel   5;
+
+    // Number of buffer layers between refinement levels
+    nRefinementBufferLayers   1;
+
+    // Number of buffer layers between cells that are getting unrefined at the
+    // same time as the cells that are getting refined
+    nUnrefinementBufferLayers 3;
+
+    // Whether to use edge based consistency check. Needed when one allows more
+    // than 2 refinement levels (switched on by default)
+    edgeBasedConsistency yes;
+
+    // Load balance controls
+    loadBalance on;
+    imbalanceThreshold 0.8;
+
+    numberOfSubdomains 18;
+    method             parMetis;
+}
+
+// ************************************************************************* //

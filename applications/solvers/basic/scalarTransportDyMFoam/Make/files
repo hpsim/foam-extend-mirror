@@ -1,0 +1,3 @@
+scalarTransportDyMFoam.C
+
+EXE = $(FOAM_APPBIN)/scalarTransportDyMFoam
