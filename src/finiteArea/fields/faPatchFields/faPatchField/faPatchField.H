@@ -304,6 +304,13 @@ public:
                 return false;
             }
 
+            //- Return true if this coupled patch fields are updated
+            virtual bool couplesUpdated() const
+            {
+                notImplemented(type() + "::couplesUpdated()");
+                return true;
+            }
+
             //- Return true if the boundary condition has already been updated
             bool updated() const
             {

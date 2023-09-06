@@ -128,6 +128,11 @@ public:
                 return true;
             }
 
+            //- Return true if this coupled patch fields are updated
+            //  Return true if cached patchNeighbourField is available
+            //  or if the patch field does not cache it
+            virtual bool couplesUpdated() const = 0;
+
             //- Return neighbour field of internal field
             virtual tmp<Field<Type> > patchNeighbourField() const = 0;
 

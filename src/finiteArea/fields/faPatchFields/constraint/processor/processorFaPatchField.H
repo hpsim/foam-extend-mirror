@@ -136,7 +136,7 @@ public:
 
 
     //- Destructor
-    ~processorFaPatchField() = default;
+    virtual ~processorFaPatchField() = default;
 
 
     // Member functions
@@ -246,6 +246,9 @@ public:
             {
                 return pTraits<Type>::rank;
             }
+
+            //- Clear caches
+            virtual void clearCaches() const;
 
 
     // Member operators
