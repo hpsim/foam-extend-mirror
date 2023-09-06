@@ -69,13 +69,14 @@ class polyTopoChanger
         //- Current time index for mesh morph
         label morphIndex_;
 
+
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        polyTopoChanger(const polyTopoChanger&);
+        polyTopoChanger(const polyTopoChanger&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const polyTopoChanger&);
+        void operator=(const polyTopoChanger&) = delete;
 
         void readModifiers();
 
@@ -130,8 +131,7 @@ public:
 
 
     //- Destructor
-    virtual ~polyTopoChanger()
-    {}
+    virtual ~polyTopoChanger() = default;
 
 
     // Member functions

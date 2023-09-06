@@ -203,7 +203,7 @@ public:
 
 
     //- Destructor
-    virtual ~polyhedralRefinement();
+    virtual ~polyhedralRefinement() = default;
 
 
     // Member Functions

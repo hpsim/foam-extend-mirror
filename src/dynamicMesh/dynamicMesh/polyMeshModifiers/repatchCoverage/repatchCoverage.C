@@ -154,12 +154,6 @@ Foam::repatchCoverage::repatchCoverage
 }
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::repatchCoverage::~repatchCoverage()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool Foam::repatchCoverage::changeTopology() const

@@ -164,10 +164,10 @@ class removeFaces
 
 
         //- Disallow default bitwise copy construct
-        removeFaces(const removeFaces&);
+        removeFaces(const removeFaces&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const removeFaces&);
+        void operator=(const removeFaces&) = delete;
 
 
 public:

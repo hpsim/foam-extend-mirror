@@ -162,7 +162,7 @@ bool Foam::polyTopoChanger::reorderCoupledPatches
             {
                 if (patchFaceMap[patchFaceI] == -1)
                 {
-                    SeriousErrorIn("polyTopoChanger::reorderCoupledPatches")
+                    SeriousErrorInFunction
                         << "Could not determine correspondence for coupled "
                         << " face " << start+patchFaceI
                         << " on patch " << patchI << endl
@@ -226,15 +226,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
         // the statistics of the refinement request
         if (ref.check())
         {
-            FatalErrorIn
-            (
-                "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                "polyTopoChanger::changeMesh\n"
-                "(\n"
-                "    polyMesh& mesh,\n"
-                "    const polyTopoChange& ref\n"
-                ")"
-            )   << "Inconsistent topological change request."
+            FatalErrorInFunction
+                << "Inconsistent topological change request."
                 << abort(FatalError);
         }
     }
@@ -517,15 +510,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
                  || max(mf[mfI].owner(), mf[mfI].neighbour()) >= cf.size()
                 )
                 {
-                    FatalErrorIn
-                    (
-                        "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                        "polyTopoChanger::changeMesh\n"
-                        "(\n"
-                        "    polyMesh& mesh,\n"
-                        "    const polyTopoChange& ref\n"
-                        ")"
-                    )   << "Invalid modified face " << mf[mfI].faceID()
+                    FatalErrorInFunction
+                        << "Invalid modified face " << mf[mfI].faceID()
                         << ".  Declared as internal but owner or neighbour "
                         << "are invalid." << nl
                         << "Owner: " << mf[mfI].owner()
@@ -565,15 +551,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
                  || max(af[afI].owner(), af[afI].neighbour()) >= cf.size()
                 )
                 {
-                    FatalErrorIn
-                    (
-                        "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                        "polyTopoChanger::changeMesh\n"
-                        "(\n"
-                        "    polyMesh& mesh,\n"
-                        "    const polyTopoChange& ref\n"
-                        ")"
-                    )   << "Invalid added face " << faces.size() + afI
+                    FatalErrorInFunction
+                        << "Invalid added face " << faces.size() + afI
                         << ".  Declared as internal but owner or neighbour "
                         << "are invalid." << nl
                         << "Owner: " << af[afI].owner()
@@ -654,15 +633,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
             // Check if the removed cell has got any faces
             if (cf[cellI].size() > 0)
             {
-                FatalErrorIn
-                (
-                    "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                    "polyTopoChanger::changeMesh\n"
-                    "(\n"
-                    "    polyMesh& mesh,\n"
-                    "    const polyTopoChange& ref\n"
-                    ")"
-                )   << "Cell " << cellI << " is marked as removed but still "
+                FatalErrorInFunction
+                    << "Cell " << cellI << " is marked as removed but still "
                     << "has faces.  Cell faces: " << cf[cellI]
                     << abort(FatalError);
             }
@@ -799,15 +771,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
             }
             else
             {
-                FatalErrorIn
-                (
-                    "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                    "polyTopoChanger::changeMesh\n"
-                    "(\n"
-                    "    polyMesh& mesh,\n"
-                    "    const polyTopoChange& ref\n"
-                    ")"
-                )   << "Error in internal face insertion"
+                FatalErrorInFunction
+                    << "Error in internal face insertion"
                     << abort(FatalError);
             }
         }
@@ -1013,15 +978,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
     {
         if (nNewFaces != faces.size() + ref.faceBalance())
         {
-            FatalErrorIn
-            (
-                "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                "polyTopoChanger::changeMesh\n"
-                "(\n"
-                "    polyMesh& mesh,\n"
-                "    const polyTopoChange& ref\n"
-                ")"
-            )   << "Error in face insertion.  Number of inserted faces: "
+            FatalErrorInFunction
+                << "Error in face insertion.  Number of inserted faces: "
                 << nNewFaces << ".  Expected "
                 << faces.size() + ref.faceBalance()
                 << " faces."
@@ -1051,15 +1009,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
              || max(renumberedFace) >= newPointsZeroVol.size()
             )
             {
-                FatalErrorIn
-                (
-                    "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                    "polyTopoChanger::changeMesh\n"
-                    "(\n"
-                    "    polyMesh& mesh,\n"
-                    "    const polyTopoChange& ref\n"
-                    ")"
-                )   << "Face " << faceI << " in the new mesh is not "
+                FatalErrorInFunction
+                    << "Face " << faceI << " in the new mesh is not "
                     << "mapped correctly." << nl
                     << "It uses a removed or a non-existing vertex or "
                     << "has been skipped." << nl
@@ -1174,15 +1125,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
                  || af[afI].masterPointID() >= mesh.nPoints()
                 )
                 {
-                    FatalErrorIn
-                    (
-                        "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                        "polyTopoChanger::changeMesh\n"
-                        "(\n"
-                        "    polyMesh& mesh,\n"
-                        "    const polyTopoChange& ref\n"
-                        ")"
-                    )   << "Master point for face " << faces.size() + afI
+                    FatalErrorInFunction
+                        << "Master point for face " << faces.size() + afI
                         << " is out of range: " << af[afI].masterPointID()
                         << ".\n  Number of valid master points: "
                         << mesh.nPoints()
@@ -1214,15 +1158,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
                 {
                     if (nfap == 0)
                     {
-                        FatalErrorIn
-                        (
-                            "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                            "polyTopoChanger::changeMesh\n"
-                            "(\n"
-                            "    polyMesh& mesh,\n"
-                            "    const polyTopoChange& ref\n"
-                            ")"
-                        )   << "No patch face neighbours found for added "
+                        FatalErrorInFunction
+                            << "No patch face neighbours found for added "
                             << "patch face " << afI
                             << ".\nThere are no faces from patch "
                             << af[afI].patchID()
@@ -1267,15 +1204,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
                 {
                     if (nfap == 0 && mesh.nInternalFaces() > 0)
                     {
-                        FatalErrorIn
-                        (
-                            "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                            "polyTopoChanger::changeMesh\n"
-                            "(\n"
-                            "    polyMesh& mesh,\n"
-                            "    const polyTopoChange& ref\n"
-                            ")"
-                        )   << "No face neighbours found for added "
+                        FatalErrorInFunction
+                            << "No face neighbours found for added "
                             << "internal face " << afI
                             << ".\nThere are no internal faces "
                             << "around the master point "
@@ -1309,15 +1239,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
                  || af[afI].masterEdgeID() >= mesh.nEdges()
                 )
                 {
-                    FatalErrorIn
-                    (
-                        "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                        "polyTopoChanger::changeMesh\n"
-                        "(\n"
-                        "    polyMesh& mesh,\n"
-                        "    const polyTopoChange& ref\n"
-                        ")"
-                    )   << "Master edge for face " << faces.size() + afI
+                    FatalErrorInFunction
+                        << "Master edge for face " << faces.size() + afI
                         << " is out of range: " << af[afI].masterEdgeID()
                         << ".\n  Number of valid master edges: "
                         << mesh.nEdges()
@@ -1351,15 +1274,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
                 {
                     if (nfae == 0)
                     {
-                        FatalErrorIn
-                        (
-                            "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                            "polyTopoChanger::changeMesh\n"
-                            "(\n"
-                            "    polyMesh& mesh,\n"
-                            "    const polyTopoChange& ref\n"
-                            ")"
-                        )   << "No patch face neighbours found for added "
+                        FatalErrorInFunction
+                            << "No patch face neighbours found for added "
                             << "patch face " << afI
                             << ".  Error in mesh mapping."
                             << abort(FatalError);
@@ -1399,15 +1315,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
                 {
                     if (nfae == 0)
                     {
-                        FatalErrorIn
-                        (
-                            "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                            "polyTopoChanger::changeMesh\n"
-                            "(\n"
-                            "    polyMesh& mesh,\n"
-                            "    const polyTopoChange& ref\n"
-                            ")"
-                        )   << "No patch face neighbours found for added "
+                        FatalErrorInFunction
+                            << "No patch face neighbours found for added "
                             << "internal face " << afI
                             << ".  Error in mesh mapping."
                             << abort(FatalError);
@@ -1517,15 +1426,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
         {
             if (newCellFaces[cellI].size() < 4)
             {
-                FatalErrorIn
-                (
-                    "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                    "polyTopoChanger::changeMesh\n"
-                    "(\n"
-                    "    polyMesh& mesh,\n"
-                    "    const polyTopoChange& ref\n"
-                    ")"
-                )   << "Cell " << cellI << " has got three or less faces "
+                FatalErrorInFunction
+                    << "Cell " << cellI << " has got three or less faces "
                     << "and has not been removed.  "
                     << "This is not a valid cell." << endl
                     << "Cell faces: " << newCellFaces[cellI]
@@ -1582,15 +1484,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
                  || ac[acI].masterPointID() >= mesh.nPoints()
                 )
                 {
-                    FatalErrorIn
-                    (
-                        "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                        "polyTopoChanger::changeMesh\n"
-                        "(\n"
-                        "    polyMesh& mesh,\n"
-                        "    const polyTopoChange& ref\n"
-                        ")"
-                    )   << "Master point for cell " << nPreservedCells + acI
+                    FatalErrorInFunction
+                        << "Master point for cell " << nPreservedCells + acI
                         << " is out of range: " << ac[acI].masterPointID()
                         << ".\n  Number of valid master points: "
                         << mesh.nPoints()
@@ -1618,15 +1513,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
                  || ac[acI].masterEdgeID() >= mesh.nEdges()
                 )
                 {
-                    FatalErrorIn
-                    (
-                        "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                        "polyTopoChanger::changeMesh\n"
-                        "(\n"
-                        "    polyMesh& mesh,\n"
-                        "    const polyTopoChange& ref\n"
-                        ")"
-                    )   << "Master edge for cell " << nPreservedCells + acI
+                    FatalErrorInFunction
+                        << "Master edge for cell " << nPreservedCells + acI
                         << " is out of range: " << ac[acI].masterEdgeID()
                         << ".\n  Number of valid master edges: "
                         << mesh.nEdges()
@@ -1654,15 +1542,8 @@ Foam::autoPtr<Foam::mapPolyMesh> Foam::polyTopoChanger::changeMesh
                  || ac[acI].masterFaceID() >= mesh.nFaces()
                 )
                 {
-                    FatalErrorIn
-                    (
-                        "Foam::autoPtr<Foam::mapPolyMesh> Foam::"
-                        "polyTopoChanger::changeMesh\n"
-                        "(\n"
-                        "    polyMesh& mesh,\n"
-                        "    const polyTopoChange& ref\n"
-                        ")"
-                    )   << "Master face for cell " << nPreservedCells + acI
+                    FatalErrorInFunction
+                        << "Master face for cell " << nPreservedCells + acI
                         << " is out of range: " << ac[acI].masterFaceID()
                         << ".\n  Number of valid master faces: "
                         << mesh.nFaces()

@@ -98,10 +98,10 @@ class polyTopoChange
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        polyTopoChange(const polyTopoChange&);
+        polyTopoChange(const polyTopoChange&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const polyTopoChange&);
+        void operator=(const polyTopoChange&) = delete;
 
 
     // Private static data
@@ -131,7 +131,7 @@ public:
 
 
     //- Destructor
-    ~polyTopoChange();
+    ~polyTopoChange() = default;
 
 
     // Member Functions

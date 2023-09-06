@@ -63,14 +63,8 @@ Foam::label Foam::prismatic2DRefinement::getAnchorLevel
     // Sanity check for expected number of points
     if (nPoints != 3 && nPoints != 4)
     {
-        FatalErrorIn
-        (
-            "label prismatic2DRefinement::getAnchorLevel"
-            "\n("
-            "\n    const label faceI,"
-            "\n    const label nPoints"
-            "\n) const"
-        )   << "Trying to find anchor level with " << nPoints << " points"
+        FatalErrorInFunction
+            << "Trying to find anchor level with " << nPoints << " points"
             << " smaller than anchor level. Only nPoints = 3 and 4 are"
             << " supported."
             << abort(FatalError);
@@ -81,14 +75,8 @@ Foam::label Foam::prismatic2DRefinement::getAnchorLevel
     // an error
     if (f.size() <= 3 && nPoints == 4)
     {
-        FatalErrorIn
-        (
-            "label prismatic2DRefinement::getAnchorLevel"
-            "\n("
-            "\n    const label faceI,"
-            "\n    const label nPoints"
-            "\n) const"
-        )   << "Expected to find at least 4 points with level lower than"
+        FatalErrorInFunction
+            << "Expected to find at least 4 points with level lower than"
             << " anchor level."
             << nl
             << "Make sure to call this function with nPoints = 4 only if"
@@ -162,10 +150,8 @@ void Foam::prismatic2DRefinement::appendFaceSplitInfo
                     specialPatchEdgeJ = edgeI;
                     break;
                 default:
-                    FatalErrorIn
-                    (
-                        "prismatic2DRefinement::appendFaceSplitInfo(...)"
-                    )   << "Found more than two edges on face " << faceI
+                    FatalErrorInFunction
+                        << "Found more than two edges on face " << faceI
                         << " on the special patch (empty or wedge)."
                         << nl
                         << "Either this is not a valid 2D mesh or"
@@ -186,10 +172,8 @@ void Foam::prismatic2DRefinement::appendFaceSplitInfo
     {
         if (edgeMidPoint[specialPatchEdgeI] == -1)
         {
-            FatalErrorIn
-            (
-                "prismatic2DRefinement::appendFaceSplitInfo(...)"
-            )   << "Empty patch edge with index: " << specialPatchEdgeI
+            FatalErrorInFunction
+                << "Empty patch edge with index: " << specialPatchEdgeI
                 << " not marked for splitting"
                 << nl
                 << "Check edgeMidPoint selection algorithm."
@@ -198,10 +182,8 @@ void Foam::prismatic2DRefinement::appendFaceSplitInfo
 
         if (edgeMidPoint[specialPatchEdgeI] == -1)
         {
-            FatalErrorIn
-            (
-                "prismatic2DRefinement::appendFaceSplitInfo(...)"
-            )   << "Empty patch edge with index: " << specialPatchEdgeJ
+            FatalErrorInFunction
+                << "Empty patch edge with index: " << specialPatchEdgeJ
                 << " not marked for splitting"
                 << nl
                 << "Check edgeMidPoint selection algorithm."
@@ -232,10 +214,8 @@ void Foam::prismatic2DRefinement::appendFaceSplitInfo
     }
     else
     {
-        FatalErrorIn
-        (
-            "prismatic2DRefinement::appendFaceSplitInfo(...)"
-        )   << "Found invalid indices for edges on special patches:"
+        FatalErrorInFunction
+            << "Found invalid indices for edges on special patches:"
             << nl
             << "specialPatchEdgeI: " << specialPatchEdgeI
             << ", specialPatchEdgeJ: " << specialPatchEdgeJ
@@ -294,7 +274,7 @@ void Foam::prismatic2DRefinement::setNewFaceNeighbours
 
         if (fpI == -1)
         {
-            FatalErrorIn("void prismatic2DRefinement::setNewFaceNeighbours(...)")
+            FatalErrorInFunction
                 << "Point: " << pointI << " not found in face: " << f
                 << ", with face index: " << faceI
                 << nl
@@ -318,7 +298,7 @@ void Foam::prismatic2DRefinement::setNewFaceNeighbours
         // If the point is the same as pointI, we did not find any valid point
         if (anchorPointI == pointI)
         {
-            FatalErrorIn("void prismatic2DRefinement::setNewFaceNeighbours(...)")
+            FatalErrorInFunction
                 << "Could not find different adjacent anchor point."
                 << nl
                 << "pointI: " << pointI << " faceI: " << faceI
@@ -375,7 +355,7 @@ void Foam::prismatic2DRefinement::setNewFaceNeighbours
 
             if (fpI == -1)
             {
-                FatalErrorIn("void prismatic2DRefinement::setNewFaceNeighbours(...)")
+                FatalErrorInFunction
                     << "Point: " << pointI << " not found in face: " << f
                     << ", with face index: " << faceI
                     << nl
@@ -399,7 +379,7 @@ void Foam::prismatic2DRefinement::setNewFaceNeighbours
             // If the point is the same as pointI, we did not find any valid point
             if (anchorPointI == pointI)
             {
-                FatalErrorIn("void prismatic2DRefinement::setNewFaceNeighbours(...)")
+                FatalErrorInFunction
                     << "Could not find different adjacent anchor point."
                     << nl
                     << "pointI: " << pointI << " faceI: " << faceI
@@ -507,10 +487,8 @@ void Foam::prismatic2DRefinement::addFaceMids
             }
             else
             {
-                FatalErrorIn
-                (
-                    "void prismatic2DRefinement::addFaceMids(...)"
-                )   << "Other face: "
+                FatalErrorInFunction
+                    << "Other face: "
                     << faceJ
                     << " has not been selected for splitting,"
                     << " while the face on original side: "
@@ -604,10 +582,8 @@ void Foam::prismatic2DRefinement::setRefinementInstruction
     else
     {
         // List has not been reset correctly, issue an error
-        FatalErrorIn
-        (
-            "prismatic2DRefinement::setRefinementInstruction(...)"
-        )   << "Refinement level indicator list has not been"
+        FatalErrorInFunction
+            << "Refinement level indicator list has not been"
             << " reset properly." << nl
             << "Either the call to updateMesh() after performing"
             << " refinement has not been made or the call to"
@@ -1177,10 +1153,8 @@ void Foam::prismatic2DRefinement::setRefinementInstruction
                 // cell points
                 const labelList& cPoints = meshCellPoints[cellI];
 
-                FatalErrorIn
-                (
-                    "prismatic2DRefinement::setRefinementInstruction(...)"
-                )   << "Cell " << cellI
+                FatalErrorInFunction
+                    << "Cell " << cellI
                     << " of level " << cellLevel_[cellI]
                     << " does not seem to have enough points of "
                     << " lower level" << endl
@@ -1195,10 +1169,8 @@ void Foam::prismatic2DRefinement::setRefinementInstruction
                 // indicates an invalid mesh
                 const labelList& cPoints = meshCellPoints[cellI];
 
-                FatalErrorIn
-                (
-                    "prismatic2DRefinement::setRefinementInstruction(...)"
-                )   << "Cell " << cellI
+                FatalErrorInFunction
+                    << "Cell " << cellI
                     << " of level " << cellLevel_[cellI]
                     << " has odd number of anchor points"
                     << " (should be even for 2D mesh). "
@@ -1373,10 +1345,8 @@ void Foam::prismatic2DRefinement::setRefinementInstruction
                 // we have correctly marked the anchor points
                 if (cellCounter != cAdded.size())
                 {
-                    FatalErrorIn
-                    (
-                        "prismatic2DRefinement::setRefinementInstruction(...)"
-                    )   << "Problem while adding cells."
+                    FatalErrorInFunction
+                        << "Problem while adding cells."
                         << nl
                         << "Going through base face on special patch"
                         << " (empty or wedge) and adding cells, we collected: "
@@ -1631,10 +1601,8 @@ void Foam::prismatic2DRefinement::setRefinementInstruction
             // Additional sanity check
             if (f.size() != 4)
             {
-                FatalErrorIn
-                (
-                    "prismatic2DRefinement::appendFaceSplitInfo(...)"
-                )   << "The original face has: " << f.size() << " points,"
+                FatalErrorInFunction
+                    << "The original face has: " << f.size() << " points,"
                     << " while it should have exactly 4 points in order"
                     << " to split it in two."
                     << " faceI: " << faceI
@@ -1700,10 +1668,8 @@ void Foam::prismatic2DRefinement::setRefinementInstruction
                     )
                     {
                         // Edges are not marked for refinement, issue an error
-                        FatalErrorIn
-                        (
-                            "prismatic2DRefinement::appendFaceSplitInfo(...)"
-                        )   << "Trying to split a face into two, but"
+                        FatalErrorInFunction
+                            << "Trying to split a face into two, but"
                             << " edges on special patches (empty or wedge)"
                             << " are not properly set."
                             << nl
@@ -1735,10 +1701,8 @@ void Foam::prismatic2DRefinement::setRefinementInstruction
                     else
                     {
                         // Point not on either of edges, issue an error
-                        FatalErrorIn
-                        (
-                            "prismatic2DRefinement::appendFaceSplitInfo(...)"
-                        )   << "Trying to split a face into two, but"
+                        FatalErrorInFunction
+                            << "Trying to split a face into two, but"
                             << " the point: " << pointI << " can't be found"
                             << " on either of edges. "
                             << nl
@@ -2041,10 +2005,8 @@ void Foam::prismatic2DRefinement::setRefinementInstruction
                 {
                     // If pointJ is equal to -1, this means that the pointI
                     // was not found on edge, something went wrong
-                    FatalErrorIn
-                    (
-                        "prismatic2DRefinement::setRefinementInstruction(...)"
-                    )   << "Point: " << pointI << " not found on edge: "
+                    FatalErrorInFunction
+                        << "Point: " << pointI << " not found on edge: "
                         << edgeI << nl
                         << "Looping through face points and face edges did"
                         << " not ensure synchronous behaviour."
@@ -2133,11 +2095,8 @@ void Foam::prismatic2DRefinement::setRefinementInstruction
                                     }
                                     else
                                     {
-                                        FatalErrorIn
-                                        (
-                                            "prismatic2DRefinement::"
-                                            "setRefinementInstruction(...)"
-                                        )   << "Other edge: "
+                                        FatalErrorInFunction
+                                            << "Other edge: "
                                             << edgeJ
                                             << " has not been selected for"
                                             << " splitting, while the edge on"
@@ -2210,10 +2169,8 @@ void Foam::prismatic2DRefinement::setRefinementInstruction
                 {
                     // The edge is not split and the other point is an
                     // anchor. This should never happen
-                    FatalErrorIn
-                    (
-                        "prismatic2DRefinement::setRefinementInstruction(...)"
-                    )   << "Attempted to create internal face for an edge that"
+                    FatalErrorInFunction
+                        << "Attempted to create internal face for an edge that"
                         << " is not split and the other point that is an anchor."
                         << nl
                         << "Cell: " << cellI
@@ -2510,11 +2467,8 @@ void Foam::prismatic2DRefinement::setUnrefinementInstruction
 
         if (facesToRemove.size() != splitFaces.size())
         {
-            FatalErrorIn
-            (
-                "prismatic2DRefinement::setUnrefinementInstruction"
-                "(polyTopoChange& ref)"
-            )   << "Either the initial set of split points to unrefine does not"
+            FatalErrorInFunction
+                << "Either the initial set of split points to unrefine does not"
                 << " seem to be consistent or there are no mid points of"
                 << " refined cells."
                 << abort(FatalError);
@@ -2552,11 +2506,8 @@ void Foam::prismatic2DRefinement::setUnrefinementInstruction
                 {
                     // Error: different region cells touching in split point
                     // This is not a valid unrefinement pattern
-                    FatalErrorIn
-                    (
-                        "polyhedralRefinement::setUnrefinementInstruction"
-                        "(polyTopoChange& ref)"
-                    )   << "Different region cells touching in split point."
+                    FatalErrorInFunction
+                        << "Different region cells touching in split point."
                         << abort(FatalError);
                 }
             }
@@ -2570,11 +2521,8 @@ void Foam::prismatic2DRefinement::setUnrefinementInstruction
         else
         {
             // Error: Cannot find region for point
-            FatalErrorIn
-            (
-                "polyhedralRefinement::setUnrefinementInstruction"
-                "(polyTopoChange& ref)"
-            )   << "Different region cells touching in split point."
+            FatalErrorInFunction
+                << "Different region cells touching in split point."
                 << abort(FatalError);
         }
     }

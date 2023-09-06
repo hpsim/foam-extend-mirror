@@ -90,6 +90,7 @@ Foam::polyTopoChanger::polyTopoChanger
 :
     PtrList<polyMeshModifier>(),
     regIOobject(io),
+    morphIndex_(mesh.time().timeIndex()),
     mesh_(mesh)
 {
     readModifiers();
@@ -283,11 +284,8 @@ void Foam::polyTopoChanger::addTopologyModifiers
     {
         if (tm[tmI]->topoChanger() != *this)
         {
-            FatalErrorIn
-            (
-                "void polyTopoChanger::addTopologyModifiers("
-                "const List<polyMeshModifier*>& tm)"
-            )   << "Mesh modifier created with different mesh reference."
+            FatalErrorInFunction
+                << "Mesh modifier created with different mesh reference."
                 << abort(FatalError);
         }
         set(tmI, tm[tmI]);

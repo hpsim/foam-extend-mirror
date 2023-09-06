@@ -312,7 +312,7 @@ public:
 
 
     //- Destructor
-    virtual ~refinement();
+    virtual ~refinement() = default;
 
 
     // Member Functions

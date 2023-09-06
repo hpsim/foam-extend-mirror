@@ -66,10 +66,10 @@ class repatchPolyTopoChanger
         directTopoChange& meshMod();
 
         //- Disallow default bitwise copy construct
-        repatchPolyTopoChanger(const repatchPolyTopoChanger&);
+        repatchPolyTopoChanger(const repatchPolyTopoChanger&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const repatchPolyTopoChanger&);
+        void operator=(const repatchPolyTopoChanger&) = delete;
 
 
 public:
@@ -80,10 +80,8 @@ public:
         explicit repatchPolyTopoChanger(polyMesh& mesh);
 
 
-    // Destructor
-
-        virtual ~repatchPolyTopoChanger()
-        {}
+    //- Destructor
+    virtual ~repatchPolyTopoChanger() = default;
 
 
     // Member Functions
@@ -107,7 +105,7 @@ public:
             const bool zoneFlip
         );
 
-        //- Change anchor point (zero'th point of face) for a boundary face.
+        //- Change anchor point (zeroth point of face) for a boundary face.
         void changeAnchorPoint
         (
             const label faceID,

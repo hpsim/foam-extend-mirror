@@ -199,10 +199,8 @@ void Foam::polyhedralRefinement::createInternalFaces
                     {
                         const labelList& cPoints = meshCellPoints[cellI];
 
-                        FatalErrorIn
-                        (
-                            "polyhedralRefinement::createInternalFaces(...)"
-                        )   << "cell:" << cellI << " cLevel:" << cLevel
+                        FatalErrorInFunction
+                            << "cell:" << cellI << " cLevel:" << cLevel
                             << " cell points:" << cPoints
                             << " pointLevel:"
                             << IndirectList<label>(pointLevel_, cPoints)()
@@ -266,10 +264,7 @@ void Foam::polyhedralRefinement::createInternalFaces
                     {
                         const labelList& cPoints = meshCellPoints[cellI];
 
-                        FatalErrorIn
-                        (
-                            "polyhedralRefinement::createInternalFaces(...)"
-                        )
+                        FatalErrorInFunction
                             << "cell:" << cellI << " cLevel:" << cLevel
                             << " cell points:" << cPoints
                             << " pointLevel:"
@@ -375,7 +370,7 @@ Foam::label Foam::polyhedralRefinement::getAnchorCell
         Perr<< "cell: " << cellI << " anchorPoints: " << cellAnchorPoints[cellI]
             << endl;
 
-        FatalErrorIn("polyhedralRefinement::getAnchorCell(...)")
+        FatalErrorInFunction
             << "Could not find point " << pointI
             << " in the anchorPoints for cell " << cellI << endl
             << "Does your original mesh obey the 2:1 constraint and"
@@ -449,7 +444,7 @@ Foam::label Foam::polyhedralRefinement::findLevel
 
         if (pointLevel_[pointI] < wantedLevel)
         {
-            FatalErrorIn("polyhedralRefinement::findLevel(...)")
+            FatalErrorInFunction
                 << "face:" << f
                 << " level:" << IndirectList<label>(pointLevel_, f)()
                 << " startFp:" << startFp
@@ -471,7 +466,7 @@ Foam::label Foam::polyhedralRefinement::findLevel
         }
     }
 
-    FatalErrorIn("polyhedralRefinement::findLevel(...)")
+    FatalErrorInFunction
         << "face:" << f
         << " level:" << IndirectList<label>(pointLevel_, f)()
         << " startFp:" << startFp
@@ -763,11 +758,9 @@ void Foam::polyhedralRefinement::setRefinementInstruction
     }
     else
     {
-        // List has not been resetted correctly, issue an error
-        FatalErrorIn
-        (
-            "polyhedralRefinement::setRefinementInstruction(...)"
-        )   << "Refinement level indicator list has not been"
+        // List has not been reset correctly, issue an error
+        FatalErrorInFunction
+            << "Refinement level indicator list has not been"
             << " resetted properly." << nl
             << "Either the call to updateMesh() after performing"
             << " refinement has not been made or the call to"
@@ -1804,7 +1797,7 @@ void Foam::polyhedralRefinement::setRefinementInstruction
 
         if (minPointI != labelMax && minPointI != mesh_.nPoints())
         {
-            FatalErrorIn("polyhedralRefinement::setRefinementInstruction(...)")
+            FatalErrorInFunction
                 << "Added point labels not consecutive to existing mesh points."
                 << nl
                 << "mesh_.nPoints():" << mesh_.nPoints()
@@ -1827,10 +1820,8 @@ void Foam::polyhedralRefinement::setUnrefinementInstruction
     // Check whether the refinementLevelIndicator is valid
     if (refinementLevelIndicator_.size() != mesh_.nCells())
     {
-        FatalErrorIn
-        (
-            "polyhedralRefinement::setUnrefinementInstruction(...)"
-        )   << "Refinement level indicator list has invalid size: "
+        FatalErrorInFunction
+            << "Refinement level indicator list has invalid size: "
             << refinementLevelIndicator_.size()
             << ", number of cells: " << mesh_.nCells()
             << nl
@@ -1854,11 +1845,8 @@ void Foam::polyhedralRefinement::setUnrefinementInstruction
         {
             if (cellLevel_[cellI] < 0)
             {
-                FatalErrorIn
-                (
-                    "polyhedralRefinement::setUnrefinementInstruction"
-                    "(polyTopoChange& ref)"
-                )   << "Illegal cell level " << cellLevel_[cellI]
+                FatalErrorInFunction
+                    << "Illegal cell level " << cellLevel_[cellI]
                     << " for cell " << cellI
                     << abort(FatalError);
             }
@@ -1954,11 +1942,8 @@ void Foam::polyhedralRefinement::setUnrefinementInstruction
 
         if (facesToRemove.size() != splitFaces.size())
         {
-            FatalErrorIn
-            (
-                "polyhedralRefinement::setUnrefinementInstruction"
-                "(polyTopoChange& ref)"
-            )   << "Either the initial set of split points to unrefine does not"
+            FatalErrorInFunction
+                << "Either the initial set of split points to unrefine does not"
                 << " seem to be consistent or there are no mid points of"
                 << " refined cells."
                 << abort(FatalError);
@@ -1996,11 +1981,8 @@ void Foam::polyhedralRefinement::setUnrefinementInstruction
                 {
                     // Error: different region cells touching in split point
                     // This is not a valid unrefinement pattern
-                    FatalErrorIn
-                    (
-                        "polyhedralRefinement::setUnrefinementInstruction"
-                        "(polyTopoChange& ref)"
-                    )   << "Different region cells touching in split point."
+                    FatalErrorInFunction
+                        << "Different region cells touching in split point."
                         << abort(FatalError);
                 }
             }
@@ -2014,11 +1996,8 @@ void Foam::polyhedralRefinement::setUnrefinementInstruction
         else
         {
             // Error: Cannot find region for point
-            FatalErrorIn
-            (
-                "polyhedralRefinement::setUnrefinementInstruction"
-                "(polyTopoChange& ref)"
-            )   << "Different region cells touching in split point."
+            FatalErrorInFunction
+                << "Different region cells touching in split point."
                 << abort(FatalError);
         }
     }
@@ -2046,12 +2025,6 @@ Foam::polyhedralRefinement::polyhedralRefinement
 )
 :
     refinement(name, dict, index, mme)
-{}
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::polyhedralRefinement::~polyhedralRefinement()
 {}
 
 

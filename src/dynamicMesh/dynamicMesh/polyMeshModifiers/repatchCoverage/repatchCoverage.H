@@ -85,10 +85,10 @@ class repatchCoverage
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        repatchCoverage(const repatchCoverage&);
+        repatchCoverage(const repatchCoverage&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const repatchCoverage&);
+        void operator=(const repatchCoverage&) = delete;
 
 
         // Helper functions
@@ -128,9 +128,8 @@ public:
         );
 
 
-    // Destructor
-
-        virtual ~repatchCoverage();
+    //- Destructor
+    virtual ~repatchCoverage() = default;
 
 
     // Member Functions

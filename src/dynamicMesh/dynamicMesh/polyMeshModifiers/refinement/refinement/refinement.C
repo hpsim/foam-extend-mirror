@@ -517,10 +517,7 @@ void Foam::refinement::checkInternalOrientation
     // Check orientation error
     if ((dir & n) < 0)
     {
-        FatalErrorIn
-        (
-            "refinement::checkInternalOrientation(...)"
-        )
+        FatalErrorInFunction
             << "cell:" << cellI << " old face:" << faceI
             << " newFace:" << newFace << endl
             << " coords:" << compactPoints
@@ -604,10 +601,7 @@ void Foam::refinement::checkBoundaryOrientation
     // Check orientation error
     if ((dir & n) < 0)
     {
-        FatalErrorIn
-        (
-            "refinement::checkBoundaryOrientation(...)"
-        )
+        FatalErrorInFunction
             << "cell:" << cellI << " old face:" << faceI
             << " newFace:" << newFace
             << " coords:" << compactPoints
@@ -865,11 +859,8 @@ Foam::label Foam::refinement::faceConsistentUnrefinement
             // Check whether the cell has not been marked for unrefinement
             if (!cellsToUnrefine[own])
             {
-                FatalErrorIn
-                (
-                    "label refinement::faceConsistentUnrefinement"
-                    "(boolList& cellsToUnrefine)"
-                )   << "Cell not marked for unrefinement, indicating a"
+                FatalErrorInFunction
+                    << "Cell not marked for unrefinement, indicating a"
                     << " previous unnoticed problem with unrefinement."
                     << nl
                     << "Owner: " << own << ", neighbour: " << nei
@@ -895,11 +886,8 @@ Foam::label Foam::refinement::faceConsistentUnrefinement
             // Check whether the cell has not been marked for unrefinement
             if (!cellsToUnrefine[nei])
             {
-                FatalErrorIn
-                (
-                    "label refinement::faceConsistentUnrefinement"
-                    "(boolList& cellsToUnrefine)"
-                )   << "Cell not marked for unrefinement, indicating a"
+                FatalErrorInFunction
+                    << "Cell not marked for unrefinement, indicating a"
                     << " previous unnoticed problem with unrefinement."
                     << nl
                     << "Owner: " << own << ", neighbour: " << nei
@@ -1210,16 +1198,8 @@ Foam::refinement::refinement
      || pointLevel_.size() != mesh_.nPoints()
     )
     {
-        FatalErrorIn
-        (
-            "refinement::refinement"
-            "\n("
-            "\n    const word& name,"
-            "\n    const dictionary& dict,"
-            "\n    const label index,"
-            "\n    const polyTopoChanger& mme"
-            "\n)"
-        )   << "Restarted from inconsistent cellLevel or pointLevel files."
+        FatalErrorInFunction
+            << "Restarted from inconsistent cellLevel or pointLevel files."
             << endl
             << "Number of cells in mesh: " << mesh_.nCells()
             << " does not equal size of cellLevel: " << cellLevel_.size() << nl
@@ -1231,16 +1211,8 @@ Foam::refinement::refinement
     // Check specified number of maximum cells
     if (maxCells_ < 1)
     {
-        FatalErrorIn
-        (
-            "refinement::refinement"
-            "\n("
-            "\n    const word& name,"
-            "\n    const dictionary& dict,"
-            "\n    const label index,"
-            "\n    const polyTopoChanger& mme"
-            "\n)"
-        )   << "Specified zero or negative maxCells."
+        FatalErrorInFunction
+            << "Specified zero or negative maxCells."
             << nl
             << "This is not allowed."
             << abort(FatalError);
@@ -1249,16 +1221,8 @@ Foam::refinement::refinement
     // Check maximum refinement level
     if (maxRefinementLevel_ < 0)
     {
-        FatalErrorIn
-        (
-            "refinement::refinement"
-            "\n("
-            "\n    const word& name,"
-            "\n    const dictionary& dict,"
-            "\n    const label index,"
-            "\n    const polyTopoChanger& mme"
-            "\n)"
-        )   << "Negative maxRefinementLevel specified."
+        FatalErrorInFunction
+            << "Negative maxRefinementLevel specified."
             << nl
             << "This is not allowed."
             << abort(FatalError);
@@ -1268,16 +1232,8 @@ Foam::refinement::refinement
     // not using point based refinement strategy, issue a warning
     if (!edgeBasedConsistency_ && maxRefinementLevel_ > 2)
     {
-        WarningIn
-        (
-            "refinement::refinement"
-            "\n("
-            "\n    const word& name,"
-            "\n    const dictionary& dict,"
-            "\n    const label index,"
-            "\n    const polyTopoChanger& mme"
-            "\n)"
-        )   << "You are not using point based consistency for dynamic"
+        WarningInFunction
+            << "You are not using point based consistency for dynamic"
             << " refinement."
             << nl
             << "Since you are allowing more than two maximum refinement"
@@ -1292,16 +1248,8 @@ Foam::refinement::refinement
     // Check number of refinement buffer layers
     if (nRefinementBufferLayers_ < 0)
     {
-        FatalErrorIn
-        (
-            "refinement::refinement"
-            "\n("
-            "\n    const word& name,"
-            "\n    const dictionary& dict,"
-            "\n    const label index,"
-            "\n    const polyTopoChanger& mme"
-            "\n)"
-        )   << "Negative nRefinementBufferLayers specified."
+        FatalErrorInFunction
+            << "Negative nRefinementBufferLayers specified."
             << nl
             << "This is not allowed."
             << abort(FatalError);
@@ -1310,16 +1258,8 @@ Foam::refinement::refinement
     // Check number of unrefinement buffer layers
     if (nUnrefinementBufferLayers_ < 0)
     {
-        FatalErrorIn
-        (
-            "refinement::refinement"
-            "\n("
-            "\n    const word& name,"
-            "\n    const dictionary& dict,"
-            "\n    const label index,"
-            "\n    const polyTopoChanger& mme"
-            "\n)"
-        )   << "Negative nUnrefinementBufferLayers specified."
+        FatalErrorInFunction
+            << "Negative nUnrefinementBufferLayers specified."
             << nl
             << "This is not allowed."
             << abort(FatalError);
@@ -1329,16 +1269,8 @@ Foam::refinement::refinement
     // number of refinement buffer layers + 2
     if (nUnrefinementBufferLayers_ < nRefinementBufferLayers_ + 2)
     {
-        WarningIn
-        (
-            "refinement::refinement"
-            "\n("
-            "\n    const word& name,"
-            "\n    const dictionary& dict,"
-            "\n    const label index,"
-            "\n    const polyTopoChanger& mme"
-            "\n)"
-        )   << "Using " << nUnrefinementBufferLayers_
+        WarningInFunction
+            << "Using " << nUnrefinementBufferLayers_
             << " unrefinement buffer layers and " << nRefinementBufferLayers_
             << " refinement buffer layers."
             << nl
@@ -1349,12 +1281,6 @@ Foam::refinement::refinement
             << endl;
     }
 }
-
-
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::refinement::~refinement()
-{}
 
 
 // * * * * * * * * * * * * * Public Member Functions * * * * * * * * * * * * //

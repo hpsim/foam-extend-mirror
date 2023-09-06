@@ -62,12 +62,6 @@ Foam::polyTopoChange::polyTopoChange(const polyMesh& mesh)
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::polyTopoChange::~polyTopoChange()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 Foam::label Foam::polyTopoChange::setAction(const topoAction& action)
@@ -86,10 +80,8 @@ Foam::label Foam::polyTopoChange::setAction(const topoAction& action)
         {
             if (removedPoints_.find(pmp.pointID()) != removedPoints_.end())
             {
-                FatalErrorIn
-                (
-                    "label polyTopoChange::setAction(const topoAction& action)"
-                )   << "Modifying point " << pmp.pointID()
+                FatalErrorInFunction
+                    << "Modifying point " << pmp.pointID()
                     << " for the second time or modifying a removed point.  "
                     << "This is not allowed."
                     << abort(FatalError);
@@ -109,10 +101,8 @@ Foam::label Foam::polyTopoChange::setAction(const topoAction& action)
         {
             if (removedPoints_.find(prp.pointID()) != removedPoints_.end())
             {
-                FatalErrorIn
-                (
-                    "label polyTopoChange::setAction(const topoAction& action)"
-                )   << "Removing point " << prp.pointID()
+                FatalErrorInFunction
+                    << "Removing point " << prp.pointID()
                     << " for the second time or removing a modified point.  "
                     << "This is not allowed."
                     << abort(FatalError);
@@ -137,10 +127,8 @@ Foam::label Foam::polyTopoChange::setAction(const topoAction& action)
         {
             if (removedFaces_.find(pmf.faceID()) != removedFaces_.end())
             {
-                FatalErrorIn
-                (
-                    "label polyTopoChange::setAction(const topoAction& action)"
-                )   << "Modifying face " << pmf.faceID()
+                FatalErrorInFunction
+                    << "Modifying face " << pmf.faceID()
                     << " for the second time or modifying a removed face.  "
                     << "This is not allowed."
                     << abort(FatalError);
@@ -160,10 +148,8 @@ Foam::label Foam::polyTopoChange::setAction(const topoAction& action)
         {
             if (removedFaces_.find(prf.faceID()) != removedFaces_.end())
             {
-                FatalErrorIn
-                (
-                    "label polyTopoChange::setAction(const topoAction& action)"
-                )   << "Removing face " << prf.faceID()
+                FatalErrorInFunction
+                    << "Removing face " << prf.faceID()
                     << " for the second time or removing a modified face.  "
                     << "This is not allowed."
                     << abort(FatalError);
@@ -196,10 +182,8 @@ Foam::label Foam::polyTopoChange::setAction(const topoAction& action)
         {
             if (removedCells_.find(prc.cellID()) != removedCells_.end())
             {
-                FatalErrorIn
-                (
-                    "label polyTopoChange::setAction(const topoAction& action)"
-                )   << "Removing cell " << prc.cellID()
+                FatalErrorInFunction
+                    << "Removing cell " << prc.cellID()
                     << " for the second time.  This is not allowed."
                     << abort(FatalError);
             }
@@ -211,10 +195,8 @@ Foam::label Foam::polyTopoChange::setAction(const topoAction& action)
     }
     else
     {
-        FatalErrorIn
-        (
-            "label polyTopoChange::setAction(const topoAction& action)"
-        )   << "Unknown type of topoChange: " << action.type()
+        FatalErrorInFunction
+            << "Unknown type of topoChange: " << action.type()
             << abort(FatalError);
 
         // Dummy return to keep compiler happy

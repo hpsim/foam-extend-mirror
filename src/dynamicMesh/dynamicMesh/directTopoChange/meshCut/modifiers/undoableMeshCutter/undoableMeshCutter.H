@@ -129,10 +129,10 @@ class undoableMeshCutter
 
 
         //- Disallow default bitwise copy construct
-        undoableMeshCutter(const undoableMeshCutter&);
+        undoableMeshCutter(const undoableMeshCutter&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const undoableMeshCutter&);
+        void operator=(const undoableMeshCutter&) = delete;
 
 
 public:
@@ -149,9 +149,8 @@ public:
         undoableMeshCutter(const polyMesh& mesh, const bool undoable = true);
 
 
-    // Destructor
-
-        ~undoableMeshCutter();
+    //- Destructor
+    ~undoableMeshCutter();
 
 
     // Member Functions
