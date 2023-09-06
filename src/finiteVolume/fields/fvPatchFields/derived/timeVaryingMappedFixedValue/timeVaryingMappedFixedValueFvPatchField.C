@@ -733,7 +733,8 @@ void timeVaryingMappedFixedValueFvPatchField<Type>::write(Ostream& os) const
 
     if (fieldTableName_ != this->dimensionedInternalField().name())
     {
-        os.writeKeyword("fieldTableName") << fieldTableName_ << token::END_STATEMENT << nl;
+        os.writeKeyword("fieldTableName") << fieldTableName_
+            << token::END_STATEMENT << nl;
     }
 
     this->writeEntry("value", os);

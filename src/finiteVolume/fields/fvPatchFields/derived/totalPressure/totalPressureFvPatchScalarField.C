@@ -162,11 +162,8 @@ void Foam::totalPressureFvPatchScalarField::updateCoeffs(const vectorField& Up)
     if (!this->db().objectRegistry::found(phiName_))
     {
         // Flux not available, do not update
-        InfoIn
-        (
-            "void totalPressureFvPatchScalarField::"
-            "updateCoeffs(const vectorField& Up)"
-        )   << "Flux field " << phiName_ << " not found.  "
+        InfoInFunction
+            << "Flux field " << phiName_ << " not found.  "
             << "Performing fixed value update" << endl;
 
         fixedValueFvPatchScalarField::updateCoeffs();

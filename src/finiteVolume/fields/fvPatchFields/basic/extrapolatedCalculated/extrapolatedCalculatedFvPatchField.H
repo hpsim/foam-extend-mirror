@@ -128,11 +128,15 @@ public:
             const DimensionedField<Type, volMesh>& iF
         ) const
         {
-            return tmp<fvPatchField<Type>>
+            return tmp<fvPatchField<Type> >
             (
                 new extrapolatedCalculatedFvPatchField<Type>(*this, iF)
             );
         }
+
+
+    //- Destructor
+    virtual ~extrapolatedCalculatedFvPatchField() = default;
 
 
     // Member functions

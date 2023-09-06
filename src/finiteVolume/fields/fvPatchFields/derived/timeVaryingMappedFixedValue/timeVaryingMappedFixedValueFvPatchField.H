@@ -189,7 +189,7 @@ public:
         }
 
     //- Destructor
-    ~timeVaryingMappedFixedValueFvPatchField() = default;
+    virtual ~timeVaryingMappedFixedValueFvPatchField() = default;
 
 
     // Member functions

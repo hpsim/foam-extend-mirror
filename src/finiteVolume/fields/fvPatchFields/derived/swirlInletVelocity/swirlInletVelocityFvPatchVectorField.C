@@ -36,7 +36,7 @@ swirlInletVelocityFvPatchVectorField
     const DimensionedField<vector, volMesh>& iF
 )
 :
-    fixedValueFvPatchField<vector>(p, iF),
+    fixedValueFvPatchVectorField(p, iF),
     origin_(vector::zero),
     axis_(vector::zero),
     axialVelocity_(),
@@ -53,7 +53,7 @@ swirlInletVelocityFvPatchVectorField
     const dictionary& dict
 )
 :
-    fixedValueFvPatchField<vector>(p, iF, dict),
+    fixedValueFvPatchVectorField(p, iF, dict),
     origin_(dict.lookup("origin")),
     axis_(dict.lookup("axis")),
     axialVelocity_(Function1<scalar>::New("axialVelocity", dict)),
@@ -71,7 +71,7 @@ swirlInletVelocityFvPatchVectorField
     const fvPatchFieldMapper& mapper
 )
 :
-    fixedValueFvPatchField<vector>(ptf, p, iF, mapper),
+    fixedValueFvPatchVectorField(ptf, p, iF, mapper),
     origin_(ptf.origin_),
     axis_(ptf.axis_),
     axialVelocity_(ptf.axialVelocity_, false),
@@ -86,7 +86,7 @@ swirlInletVelocityFvPatchVectorField
     const swirlInletVelocityFvPatchVectorField& ptf
 )
 :
-    fixedValueFvPatchField<vector>(ptf),
+    fixedValueFvPatchVectorField(ptf),
     origin_(ptf.origin_),
     axis_(ptf.axis_),
     axialVelocity_(ptf.axialVelocity_, false),
@@ -102,7 +102,7 @@ swirlInletVelocityFvPatchVectorField
     const DimensionedField<vector, volMesh>& iF
 )
 :
-    fixedValueFvPatchField<vector>(ptf, iF),
+    fixedValueFvPatchVectorField(ptf, iF),
     origin_(ptf.origin_),
     axis_(ptf.axis_),
     axialVelocity_(ptf.axialVelocity_, false),
@@ -112,6 +112,38 @@ swirlInletVelocityFvPatchVectorField
 
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
+
+void Foam::swirlInletVelocityFvPatchVectorField::autoMap
+(
+    const fvPatchFieldMapper& m
+)
+{
+    fixedValueFvPatchVectorField::autoMap(m);
+}
+
+
+void Foam::swirlInletVelocityFvPatchVectorField::rmap
+(
+    const fvPatchVectorField& ptf,
+    const labelList& addr
+)
+{
+    fixedValueFvPatchVectorField::rmap(ptf, addr);
+
+    const swirlInletVelocityFvPatchVectorField& tiptf =
+        refCast<const swirlInletVelocityFvPatchVectorField>(ptf);
+
+    origin_ = tiptf.origin_;
+
+    axis_ = tiptf.axis_;
+
+    axialVelocity_.reset(tiptf.axialVelocity_().clone().ptr());
+
+    radialVelocity_.reset(tiptf.radialVelocity_().clone().ptr());
+
+    tangentialVelocity_.reset(tiptf.tangentialVelocity_().clone().ptr());
+}
+
 
 void Foam::swirlInletVelocityFvPatchVectorField::updateCoeffs()
 {
@@ -139,7 +171,7 @@ void Foam::swirlInletVelocityFvPatchVectorField::updateCoeffs()
       + tangentialVelocity*(axisHat ^ rHat)
     );
 
-    fixedValueFvPatchField<vector>::updateCoeffs();
+    fixedValueFvPatchVectorField::updateCoeffs();
 }
 
 

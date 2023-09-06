@@ -120,6 +120,10 @@ public:
         }
 
 
+    //- Destructor
+    virtual ~calculatedFvPatchField() = default;
+
+
     // Member functions
 
         // Access
