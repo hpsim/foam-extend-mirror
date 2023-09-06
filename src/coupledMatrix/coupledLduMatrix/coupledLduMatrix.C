@@ -52,12 +52,6 @@ Foam::coupledLduMatrix::coupledLduMatrix(const label size)
 {}
 
 
-// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
-
-Foam::coupledLduMatrix::~coupledLduMatrix()
-{}
-
-
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
 bool Foam::coupledLduMatrix::diagonal() const

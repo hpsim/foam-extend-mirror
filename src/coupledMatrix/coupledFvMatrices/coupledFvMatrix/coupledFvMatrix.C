@@ -35,7 +35,7 @@ void Foam::coupledFvMatrix<Type>::checkSize() const
 {
     if (this->size() < 1)
     {
-        FatalErrorIn("void Foam::coupledFvMatrix<Type>::checkSize() const")
+        FatalErrorInFunction
             << "No matrices added to coupled matrix"
             << abort(FatalError);
     }
@@ -73,7 +73,7 @@ Foam::coupledFvMatrix<Type>::solve(const dictionary& solverControls)
 {
     if (debug)
     {
-        InfoIn("coupledFvMatrix<Type>::solve(const dictionary&)")
+        InfoInFunction
             << "solving coupledFvMatrix<Type>" << endl;
     }
 

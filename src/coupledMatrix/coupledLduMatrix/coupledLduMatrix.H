@@ -58,10 +58,10 @@ class coupledLduMatrix
     // Private Member Functions
 
         //- Disallow default bitwise copy construct
-        coupledLduMatrix(const coupledLduMatrix&);
+        coupledLduMatrix(const coupledLduMatrix&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const coupledLduMatrix&);
+        void operator=(const coupledLduMatrix&) = delete;
 
 
 public:
@@ -78,9 +78,8 @@ public:
         coupledLduMatrix(const label size);
 
 
-    // Destructor
-
-        ~coupledLduMatrix();
+    //- Destructor
+    ~coupledLduMatrix() = default;
 
 
     // Member Functions

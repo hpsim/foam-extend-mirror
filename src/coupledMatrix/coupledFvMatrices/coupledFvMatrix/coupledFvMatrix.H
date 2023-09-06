@@ -60,10 +60,10 @@ class coupledFvMatrix
     // Private member functions
 
         //- Disallow default bitwise copy construct
-        coupledFvMatrix(const coupledFvMatrix<Type>&);
+        coupledFvMatrix(const coupledFvMatrix<Type>&) = delete;
 
         //- Disallow default bitwise assignment
-        void operator=(const coupledFvMatrix<Type>&);
+        void operator=(const coupledFvMatrix<Type>&) = delete;
 
 
         //- Check size
@@ -87,10 +87,8 @@ public:
         {}
 
 
-    // Destructor
-
-        ~coupledFvMatrix()
-        {}
+    //- Destructor
+    ~coupledFvMatrix() = default;
 
 
     // Member functions
