@@ -52,20 +52,15 @@ tmp<gradScheme<Type> > gradScheme<Type>::New
 {
     if (fv::debug)
     {
-        Info<< "gradScheme<Type>::New"
-               "(const fvMesh& mesh, Istream& schemeData) : "
-               "constructing gradScheme<Type>"
+        InfoInFunction
+            << "constructing gradScheme<Type>"
             << endl;
     }
 
     if (schemeData.eof())
     {
-        FatalIOErrorIn
-        (
-            "gradScheme<Type>::New"
-            "(const fvMesh& mesh, Istream& schemeData)",
-            schemeData
-        )   << "Grad scheme not specified" << endl << endl
+        FatalIOErrorInFunction(schemeData)
+            << "Grad scheme not specified" << endl << endl
             << "Valid grad schemes are :" << endl
             << IstreamConstructorTablePtr_->sortedToc()
             << exit(FatalIOError);
@@ -78,12 +73,8 @@ tmp<gradScheme<Type> > gradScheme<Type>::New
 
     if (cstrIter == IstreamConstructorTablePtr_->end())
     {
-        FatalIOErrorIn
-        (
-            "gradScheme<Type>::New"
-            "(const fvMesh& mesh, Istream& schemeData)",
-            schemeData
-        )   << "Unknown grad scheme " << schemeName << nl << nl
+        FatalIOErrorInFunction(schemeData)
+            << "Unknown grad scheme " << schemeName << nl << nl
             << "Valid grad schemes are :" << endl
             << IstreamConstructorTablePtr_->sortedToc()
             << exit(FatalIOError);
@@ -243,13 +234,8 @@ gradScheme<Type>::fvmGrad
     const GeometricField<Type, fvPatchField, volMesh>& vf
 ) const
 {
-    FatalErrorIn
-    (
-        "tmp<BlockLduSystem> gradScheme<Type>::fvmGrad\n"
-        "(\n"
-        "    GeometricField<Type, fvPatchField, volMesh>&"
-        ")\n"
-    )   << "Implicit gradient operator currently defined only for "
+    FatalErrorInFunction
+        << "Implicit gradient operator currently defined only for "
         << "Gauss linear and leastSquares "
         << "(cell and face limiters are optional)."
         << abort(FatalError);

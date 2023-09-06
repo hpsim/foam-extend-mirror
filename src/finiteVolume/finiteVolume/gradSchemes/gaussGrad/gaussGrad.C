@@ -87,7 +87,7 @@ gaussGrad<Type>::gradf
     Field<GradType>& igGrad = gGrad;
     const Field<Type>& issf = ssf;
 
-    forAll(owner, faceI)
+    forAll (owner, faceI)
     {
         GradType Sfssf = Sf[faceI]*issf[faceI];
 
@@ -95,7 +95,7 @@ gaussGrad<Type>::gradf
         igGrad[neighbour[faceI]] -= Sfssf;
     }
 
-    forAll(mesh.boundary(), patchI)
+    forAll (mesh.boundary(), patchI)
     {
         const unallocLabelList& pFaceCells =
             mesh.boundary()[patchI].faceCells();
@@ -104,7 +104,7 @@ gaussGrad<Type>::gradf
 
         const fvsPatchField<Type>& pssf = ssf.boundaryField()[patchI];
 
-        forAll(mesh.boundary()[patchI], faceI)
+        forAll (mesh.boundary()[patchI], faceI)
         {
             igGrad[pFaceCells[faceI]] += pSf[faceI]*pssf[faceI];
         }
@@ -118,36 +118,6 @@ gaussGrad<Type>::gradf
 }
 
 
-// template<class Type>
-// tmp
-// <
-//     GeometricField
-//     <
-//         typename outerProduct<vector, Type>::type, fvPatchField, volMesh
-//     >
-// >
-// gaussGrad<Type>::calcGrad
-// (
-//     const GeometricField<Type, fvPatchField, volMesh>& vsf,
-//     const word& name
-// ) const
-// {
-//     typedef typename outerProduct<vector, Type>::type GradType;
-
-//     tmp<GeometricField<GradType, fvPatchField, volMesh> > tgGrad
-//     (
-//         gradf(tinterpScheme_().interpolate(vsf), name)
-//     );
-//     GeometricField<GradType, fvPatchField, volMesh>& gGrad = tgGrad();
-
-//     gGrad.rename("grad(" + vsf.name() + ')');
-//     this->correctBoundaryConditions(vsf, gGrad);
-
-//     return tgGrad;
-// }
-
-
-// NEW FORMULATION: deltas.  See CJ Marooney OFW17.  HJ, 8/Dec/2022
 template<class Type>
 tmp
 <
@@ -164,111 +134,17 @@ gaussGrad<Type>::calcGrad
 {
     typedef typename outerProduct<vector, Type>::type GradType;
 
-    const fvMesh& mesh = vsf.mesh();
-
     tmp<GeometricField<GradType, fvPatchField, volMesh> > tgGrad
     (
-        new GeometricField<GradType, fvPatchField, volMesh>
-        (
-            IOobject
-            (
-                name,
-                vsf.instance(),
-                mesh,
-                IOobject::NO_READ,
-                IOobject::NO_WRITE
-            ),
-            mesh,
-            dimensioned<GradType>
-            (
-                "zero",
-                vsf.dimensions()/dimLength,
-                pTraits<GradType>::zero
-            ),
-            extrapolatedCalculatedFvPatchField<GradType>::typeName
-        )
+        gradf(tinterpScheme_().interpolate(vsf), name)
     );
     GeometricField<GradType, fvPatchField, volMesh>& gGrad = tgGrad();
 
-    // Get weights
-    surfaceScalarField w = this->tinterpScheme_().weights(vsf);
-
-    const surfaceVectorField& Sf = mesh.Sf();
-    
-    // updateCoupledPatchFields for patchNeighbourField update
-    // HJ, 10/Sep/2021
-    vsf.boundaryField().updateCoupledPatchFields();
-
-    // Get access to internal fields
-
-    const Field<Type>& vsfIn = vsf.internalField();
-
-    Field<GradType>& gGradIn = gGrad.internalField();
-
-    const scalarField& wIn = w.internalField();
-    const vectorField& SfIn = Sf.internalField();
-
-    const unallocLabelList& own = mesh.owner();
-    const unallocLabelList& nei = mesh.neighbour();
-
-    label ownFaceI, neiFaceI;
-
-    forAll (own, faceI)
-    {
-        ownFaceI = own[faceI];
-        neiFaceI = nei[faceI];
-
-        Type deltaVsf = vsfIn[neiFaceI] - vsfIn[ownFaceI];
-
-        // Both Sf and own-nei swap values: sign remains the same
-        // HJ, 8/Dec/2022
-        gGradIn[ownFaceI] += (1 - wIn[faceI])*SfIn[faceI]*deltaVsf;
-        gGradIn[neiFaceI] += wIn[faceI]*SfIn[faceI]*deltaVsf;
-    }
-
-    // Boundary faces
-    forAll (vsf.boundaryField(), patchI)
-    {
-        const scalarField& patchW = w.boundaryField()[patchI];
-
-        const vectorField& patchSf = Sf.boundaryField()[patchI];
-
-        const unallocLabelList& faceCells =
-            gGrad.boundaryField()[patchI].patch().faceCells();
-
-        if (vsf.boundaryField()[patchI].coupled())
-        {
-            Field<Type> neiVsf =
-                vsf.boundaryField()[patchI].patchNeighbourField();
-
-            forAll (neiVsf, patchFaceI)
-            {
-                gGrad[faceCells[patchFaceI]] +=
-                    (1 - patchW[patchFaceI])*patchSf[patchFaceI]*
-                    (neiVsf[patchFaceI] - vsfIn[faceCells[patchFaceI]]);
-            }
-        }
-        else
-        {
-            const fvPatchField<Type>& patchVsf = vsf.boundaryField()[patchI];
-
-            forAll (patchVsf, patchFaceI)
-            {
-                gGrad[faceCells[patchFaceI]] +=
-                    (1 - patchW[patchFaceI])*patchSf[patchFaceI]*
-                    (patchVsf[patchFaceI] - vsfIn[faceCells[patchFaceI]]);
-            }
-        }
-    }
-
-    gGradIn /= mesh.V();
-
-    gGrad.correctBoundaryConditions();
+    gGrad.rename("grad(" + vsf.name() + ')');
     this->correctBoundaryConditions(vsf, gGrad);
 
     return tgGrad;
 }
-
 
 template<class Type>
 tmp

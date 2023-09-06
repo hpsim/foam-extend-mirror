@@ -71,6 +71,7 @@ grad
 )
 {
     typedef typename outerProduct<vector, Type>::type GradType;
+
     tmp<GeometricField<GradType, fvPatchField, volMesh> > Grad
     (
         fvc::grad(tssf())
